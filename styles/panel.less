@@ -1,0 +1,58 @@
+@panel_titlecolor: #555;
+
+.panel {
+    position: fixed;
+    display: block;
+    width: 300px;
+    height: 300px;
+    left: 100px;
+    top: 100px;
+    outline: 1px solid @panel_titlecolor;
+    overflow: hidden;
+    z-index: 10;
+    .panel_background();
+    .drop_shadow();
+
+    .title-wrapper {
+        position: absolute;
+        left: 0; right: 0; top: 0;
+        height: 20px;
+        line-height: 20px;
+        color: white;
+        font-size: 12px;
+        padding: 0 3px;
+        cursor: pointer;
+        .gradient_background(@panel_titlecolor);
+        .buttons {
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            cursor: pointer;
+            span {
+                display: inline-block;
+                line-height: 20px;
+                height: 20px;
+            }
+            span:hover {
+                background-color: darken(@panel_titlecolor, 10%);
+            }
+            img {
+                width: 10px; height: 10px;
+                padding: 5px;
+            }
+        }
+    }
+    .content-wrapper {
+        position: absolute;
+        left: 0; right: 0; top: 20px; bottom: 0;
+        padding: 5px;
+    }
+    .resize {
+        position: absolute;
+        bottom: 0; right: 0;
+        width: 10px;
+        height: 10px;
+        background: url(imgs/corner.svg);
+    }
+}

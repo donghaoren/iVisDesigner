@@ -1,0 +1,78 @@
+#menubar {
+    position: fixed;
+    left: 0; right: 0; top: 0;
+    height: @menubar_height;
+    border-bottom: 1px solid #AAA;
+    z-index: 100;
+    .panel_background();
+    .drop_shadow();
+}
+
+.menu {
+    font-size: 13px;
+    span {
+        cursor: pointer;
+    }
+}
+.menu > li img {
+    width: 20px;
+    height: 20px;
+    padding: 5px;
+}
+.menu > li {
+    float: left;
+    line-height: @menubar_height;
+    position: relative;
+
+    & > span {
+        display: inline-block;
+        padding: 0px 10px;
+        line-height: @menubar_height;
+    }
+    &:hover > span {
+        .gradient_background(#CCC, 5%);
+    }
+    &.active > span {
+        .gradient_background(@activeColor);
+        color: white;
+    }
+}
+.menu > li > ul {
+    position: absolute;
+    top: 31px;
+    min-width: 120px;
+    white-space: nowrap;
+    background: url(imgs/panel.png);
+    display: none;
+    border: 1px solid #AAA;
+    border-top: none;
+    padding: 4px 0;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    li {
+        position: relative;
+    }
+    li > span {
+        padding: 0 20px;
+        display: block;
+    }
+    li > span > .toggle-indicator {
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: none;
+    }
+    li > span.toggle-on > .toggle-indicator {
+        display: block;
+        background: url(imgs/mark.svg);
+        width: 20px;
+        height: 30px;
+    }
+    li.divider {
+        border-bottom: 1px solid #CCC;
+    }
+    li:hover > span {
+        color: white;
+        .gradient_background(@activeColor);
+    }
+}

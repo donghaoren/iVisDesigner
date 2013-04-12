@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>iVisDesigner</title>
+    <link rel="stylesheet" type="text/css" href="{{css:toolkit.css}}" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style id="style-dimensions" type="text/css"></style>
+</head>
+<body>
+
+<div id="view">
+  <canvas id="canvas-back"></canvas>
+  <canvas id="canvas-main"></canvas>
+  <canvas id="canvas-front"></canvas>
+</div>
+
+<div id="menubar">
+
+<ul class="menu">
+  <li>
+    <img src="imgs/logo.svg" />
+  </li>
+  <li>
+    <span>iVisDesigner</span>
+    <ul>
+      <li><span>Register...</span></li>
+      <li><span>Login...</span></li>
+      <li><span>Logout</span></li>
+    </ul>
+  </li>
+  <li>
+    <span>Dataset</span>
+    <ul>
+      <li><span>Load Dataset...</span></li>
+      <li><span>Another action</span></li>
+      <li><span>Something else here Something else here</span></li>
+      <li class="divider"></li>
+      <li><span>Separated link</span></li>
+    </ul>
+  </li>
+  <li>
+    <span>File</span>
+    <ul>
+      <li><span>Action</span></li>
+      <li><span>Another action</span></li>
+      <li><span>Something else here</span></li>
+      <li class="divider"></li>
+      <li><span>Separated link</span></li>
+    </ul>
+  </li>
+  <li>
+    <span>Panel</span>
+    <ul>
+      <li><span data-toggle="#panel-scheme">Scheme<span class="toggle-indicator"></span></span></li>
+      <li><span data-toggle="#panel-tools">Tools<span class="toggle-indicator"></span></span></li>
+      <li><span data-command="panels.reset">Reset</span></li>
+    </ul>
+  </li>
+  <li>
+    <span>Help</span>
+    <ul>
+      <li><span>Action</span></li>
+      <li><span>Another action</span></li>
+      <li><span>Something else here</span></li>
+      <li class="divider"></li>
+      <li><span>Separated link</span></li>
+    </ul>
+  </li>
+</ul>
+
+</div>
+
+<div id="panel-scheme" class="panel" data-title="Scheme">
+    <h3>Scheme</h3>
+    <p>Some thing some thing</p>
+</div>
+<div id="panel-tools" class="panel" data-title="Tools">
+    <h3>Tools</h3>
+    <p>Some thing some thing</p>
+</div>
+
+<div id="system-loading" style="position: fixed;z-index: 100000;left: 0; right: 0; top: 0; bottom: 0;padding-top: 100px;text-align: center;font-size: 16px;background-color: white;">
+  <p>Loading...</p>
+</div>
+
+<script type="text/javascript" src="{{js:libraries.js}}"></script>
+<script type="text/javascript" src="{{js:config.js}}"></script>
+<script type="text/javascript" src="{{js:toolkit.js}}"></script>
+</body>
+</html>

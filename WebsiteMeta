@@ -1,0 +1,23 @@
+#!/usr/bin/python
+
+CSS("toolkit.css", ["styles/toolkit.less"])
+
+Javascript("libraries.js", [
+    #"libraries/jquery-1.9.1.js"
+    "libraries/jquery-2.0.0-beta3.js",
+    "libraries/js-yaml.js"
+])
+
+Javascript("toolkit.js", [
+    "scripts/panel.js",
+    "scripts/menu.js",
+    "scripts/toolkit.js"
+])
+
+Image("imgs/panel.png", "images/panel.png")
+Image("imgs/corner.svg", "images/corner.svg")
+Image("imgs/cross.svg", "images/cross.svg")
+Image("imgs/mark.svg", "images/mark.svg")
+Image("imgs/logo.svg", "images/logo.svg")
+
+HTML("toolkit.html", "toolkit.html")

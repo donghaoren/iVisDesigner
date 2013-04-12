@@ -1,0 +1,18 @@
+@blue: #1e76b3;
+@gray: gray;
+@activeColor: @blue;
+
+@menubar_height: 30px;
+
+.panel_background {
+    background: url("imgs/panel.png");
+}
+.drop_shadow {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.gradient_background(@color, @val: 10%) {
+    background: @color;
+    background: -webkit-gradient(linear, left top, left bottom, from(lighten(@color, @val)), to(@color));
+    background: -moz-linear-gradient(top,  lighten(@color, @val),  to(@color));
+}
