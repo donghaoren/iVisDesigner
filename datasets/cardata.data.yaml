@@ -1,0 +1,30 @@
+cars:
+  - _id: C00001
+    mpg: 1
+    cylinders: 2
+    acceleration: 3
+    modelyear: 4
+    origin: 5
+  - _id: C00002
+    mpg: 2
+    cylinders: 3
+    acceleration: 4
+    modelyear: 5
+    origin: 6
+  - _id: C00003
+    mpg: 3
+    cylinders: 4
+    acceleration: 5
+    modelyear: 6
+    origin: 7
+
+links:
+  - source: C00001
+    target: C00002
+  - source: C00002
+    target: C00003
+
+static:
+  f1:
+    f2: 123
+    f3: 234

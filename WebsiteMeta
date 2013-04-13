@@ -9,6 +9,7 @@ Javascript("libraries.js", [
 ])
 
 Javascript("toolkit.js", [
+    "scripts/utils.js",
     "scripts/panel.js",
     "scripts/menu.js",
     "scripts/toolkit.js"
@@ -17,7 +18,18 @@ Javascript("toolkit.js", [
 Image("imgs/panel.png", "images/panel.png")
 Image("imgs/corner.svg", "images/corner.svg")
 Image("imgs/cross.svg", "images/cross.svg")
+Image("imgs/stroke.svg", "images/stroke.svg")
 Image("imgs/mark.svg", "images/mark.svg")
 Image("imgs/logo.svg", "images/logo.svg")
 
+# Image("imgs/types_number.svg", "images/types_number.svg")
+# Image("imgs/types_object.svg", "images/types_object.svg")
+# Image("imgs/types_collection.svg", "images/types_collection.svg")
+# Image("imgs/types_sequence.svg", "images/types_sequence.svg")
+
+Binary("datasets/cardata.schema", "datasets/cardata.yaml");
+Binary("datasets/cardata.data", "datasets/cardata.data.yaml");
+
 HTML("toolkit.html", "toolkit.html")
+
+WriteDeployList("deploy_list")

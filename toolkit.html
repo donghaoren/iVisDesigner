@@ -25,15 +25,15 @@
   <li>
     <span>iVisDesigner</span>
     <ul>
-      <li><span>Register...</span></li>
-      <li><span>Login...</span></li>
-      <li><span>Logout</span></li>
+      <li><span data-command="account.register">Register...</span></li>
+      <li><span data-command="account.login">Login...</span></li>
+      <li><span data-command="account.logout">Logout</span></li>
     </ul>
   </li>
   <li>
     <span>Dataset</span>
     <ul>
-      <li><span>Load Dataset...</span></li>
+      <li><span data-command="dataset.load">Load Dataset...</span></li>
       <li><span>Another action</span></li>
       <li><span>Something else here Something else here</span></li>
       <li class="divider"></li>
@@ -43,8 +43,8 @@
   <li>
     <span>File</span>
     <ul>
-      <li><span>Action</span></li>
-      <li><span>Another action</span></li>
+      <li><span>Load</span></li>
+      <li><span>Save</span></li>
       <li><span>Something else here</span></li>
       <li class="divider"></li>
       <li><span>Separated link</span></li>
@@ -53,8 +53,9 @@
   <li>
     <span>Panel</span>
     <ul>
-      <li><span data-toggle="#panel-scheme">Scheme<span class="toggle-indicator"></span></span></li>
+      <li><span data-toggle="#panel-schema">Schema<span class="toggle-indicator"></span></span></li>
       <li><span data-toggle="#panel-tools">Tools<span class="toggle-indicator"></span></span></li>
+      <li><span data-toggle="#panel-log">Log<span class="toggle-indicator"></span></span></li>
       <li><span data-command="panels.reset">Reset</span></li>
     </ul>
   </li>
@@ -72,17 +73,30 @@
 
 </div>
 
-<div id="panel-scheme" class="panel" data-title="Scheme">
-    <h3>Scheme</h3>
-    <p>Some thing some thing</p>
-</div>
-<div id="panel-tools" class="panel" data-title="Tools">
-    <h3>Tools</h3>
-    <p>Some thing some thing</p>
+<div id="panel-container">
+  <div id="panel-schema" class="panel" data-title="Schema">
+    <div id="data-schema"></div>
+  </div>
+  <div id="panel-tools" class="panel" data-title="Tools">
+    <div id="tools-container">
+      <span class="btn" data-switch="tools:current" data-value="track">Track</span>
+      <span class="btn" data-switch="tools:current" data-value="map">Map</span>
+      <span class="btn" data-switch="tools:current" data-value="circle">Circle</span>
+    </div>
+  </div>
+  <div id="panel-log" class="panel" data-title="Log">
+    <div id="log-container">
+      <ul></ul>
+    </div>
+  </div>
 </div>
 
-<div id="system-loading" style="position: fixed;z-index: 100000;left: 0; right: 0; top: 0; bottom: 0;padding-top: 100px;text-align: center;font-size: 16px;background-color: white;">
-  <p>Loading...</p>
+<div id="system-loading" style="position:fixed;z-index:100000;left:0;right:0;top:0;bottom:0;padding-top:100px;text-align:center;font-size:16px;background-color:white;">
+  <div style="text-align:left;display:inline-block;">
+    <h3 style="margin-bottom:10px;font-size:20px;">iVisDesigner is Loading...</h3>
+    <p>Browser requirements: HTML5 support (Javascript, Canvas, SVG).</p>
+    <p>Recommended browsers: latest Chrome, Safari or Firefox.</p>
+  </div>
 </div>
 
 <script type="text/javascript" src="{{js:libraries.js}}"></script>

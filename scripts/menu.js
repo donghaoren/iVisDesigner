@@ -1,3 +1,10 @@
+// iVisDesigner
+// Author: Donghao Ren, 2013.04
+// See LICENSE.txt for license information.
+
+// menu.js
+// The main menu scripts.
+
 (function($) {
 
 $(".menu > li").each(function() {

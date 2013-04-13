@@ -1,4 +1,4 @@
-@blue: #1e76b3;
+@blue: #1754AD;
 @gray: gray;
 @activeColor: @blue;
 
@@ -14,5 +14,11 @@
 .gradient_background(@color, @val: 10%) {
     background: @color;
     background: -webkit-gradient(linear, left top, left bottom, from(lighten(@color, @val)), to(@color));
-    background: -moz-linear-gradient(top,  lighten(@color, @val),  to(@color));
+    background: -moz-linear-gradient(top, lighten(@color, @val), @color);
+}
+
+.gradient_background_inv(@color, @val: 10%) {
+    background: @color;
+    background: -webkit-gradient(linear, left top, left bottom, from(@color), to(lighten(@color, @val)));
+    background: -moz-linear-gradient(top, @color, lighten(@color, @val));
 }

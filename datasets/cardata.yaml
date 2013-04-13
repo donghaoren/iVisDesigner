@@ -1,0 +1,27 @@
+cars:
+  type: collection
+  fields:
+    mpg: number
+    cylinders: number
+    acceleration: number
+    modelyear: number
+    origin: number
+
+links:
+  type: collection
+  fields:
+    source:
+      type: reference
+      of: cars._
+    target:
+      type: reference
+      of: cars._
+
+static:
+  type: object
+  fields:
+    f1:
+      type: object
+      fields:
+        f2: number
+        f3: number

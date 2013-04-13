@@ -136,7 +136,7 @@ def Delimiter(L, R):
 
     regex_math = re.compile(htcomment_start + r" *(math|lmath)\: *(.*?)" + htcomment_end, re.DOTALL)
 
-    regex_lessimport = re.compile(r'\@import +\"([0-9a-zA-Z\.\-\_\/]+\.less)\"')
+    regex_lessimport = re.compile(r'\@import +\"([0-9a-zA-Z\.\-\_]+\.less)\"')
 
 def mustache_render(templ, obj):
     parsed = pystache.parse(ensure_unicode(templ, "utf-8"), delimiters = (u"[[", u"]]"))
@@ -156,7 +156,8 @@ Delimiter("{{", "}}")
 def resolve_includes(source):
     global regex_include
     data = ensure_unicode(source.get_text_contents(), 'utf-8')
-    data = regex_include.sub(lambda m: resolve_includes(File(m.group(1))), data)
+    sdir = os.path.dirname(str(source))
+    data = regex_include.sub(lambda m: resolve_includes(File(os.path.join(sdir, m.group(1)))), data)
     return data
 
 def include_build_function(target, source, env, minify = '', mustache = 0):
@@ -591,6 +592,20 @@ def TemporaryDirectory(dir):
     global temporary_directory
     temporary_directory = dir
 
+global_target_list = []
+
+def append_target(target):
+    global global_target_list
+    t = os.path.relpath(target, output_directory)
+    global_target_list.append(t)
+
+def GetTargetList():
+    return global_target_list
+
+def WriteDeployList(file):
+    deploy_list = "\n".join(GetTargetList())
+    open(file, "w").write(deploy_list.encode("utf-8"))
+
 # Add mustache.
 
 def Mustache(name, source):
@@ -610,6 +625,7 @@ def Page(url, source, template, title = '', extra = {}):
     output = "%s/%s" % (output_directory, url)
     env.Substitute(temp, [ temp_name, template ])
     env.HTML(output, temp, SWB_title = title, SWB_url = url, SWB_extra = extra)
+    append_target(output)
 
 # Add pure HTML file, just expand metadata.
 def HTML(url, source, title = '', extra = {}):
@@ -625,6 +641,7 @@ def HTML(url, source, title = '', extra = {}):
         env.ResolveIncludes(temp_r, source)
         env.Markdown(temp_c, temp_r)
         env.HTML(output, temp_c, SWB_title = title, SWB_url = url, SWB_extra = extra)
+    append_target(output)
 
 # Add Javascript, source can be multiple files.
 def Javascript(url, source):
@@ -635,6 +652,7 @@ def Javascript(url, source):
         env.Javascript(min, s)
         mins.append(min)
     env.Concat(output, mins)
+    append_target(output)
 
 # Add CSS, source can be multiple files.
 def CSS(url, source):
@@ -648,10 +666,12 @@ def CSS(url, source):
             env.CSS(min, s)
         mins.append(min)
     env.Concat(output, mins)
+    append_target(output)
 
 def Binary(url, source):
     output = "%s/%s" % (output_directory, url)
     env.Copy(output, source)
+    append_target(output)
 
 def Binaries(url_path, list):
     for file in list:
@@ -663,10 +683,12 @@ def Image(url, source):
 def ImageMagick(url, source, args = ""):
     output = "%s/%s" % (output_directory, url)
     env.ImageMagick(output, source, SWB_args = args)
+    append_target(output)
 
 def YAML2JSON(url, source):
     output = "%s/%s" % (output_directory, url)
     env.YAML2JSON(output, source)
+    append_target(output)
 
 def Images(url_path, list):
     Binaries(url_path, list)
