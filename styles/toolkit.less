@@ -1,21 +1,21 @@
-/*!
-* iVisDesigner - A project by Donghao Ren, PKUVIS Group, All rights reserved.
-*/
-
+// iVisDesigner
+// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+// See LICENSE.txt for copyright information.
 
 @import "reset.less";
 @import "defines.less";
+@import "basichtml.less";
 @import "menu.less";
 @import "panel.less";
 
 body {
     -webkit-user-select: none;
     overflow: hidden;
-    font-family: Arial;
+    font-family: @main_font;
     font-size: 12px;
 }
 pre {
-    font-family: Monaco, monospace;
+    font-family: @mono_font;
 }
 
 #view {

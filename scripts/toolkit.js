@@ -1,6 +1,6 @@
 // iVisDesigner
-// Author: Donghao Ren, 2013.04
-// See LICENSE.txt for license information.
+// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+// See LICENSE.txt for copyright information.
 
 // toolkit.js
 // The main javascript file for the toolkit.
@@ -157,6 +157,8 @@ IV.loadDataset = function(name) {
 
 {{include: interface.js}}
 {{include: dataprovider.js}}
+{{include: objects/objects.js}}
+{{include: tools/tools.js}}
 
 // ------------------------------------------------------------------------
 // System Initialization

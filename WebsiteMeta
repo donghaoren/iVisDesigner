@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+# iVisDesigner
+# Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+# See LICENSE.txt for copyright information.
+
 CSS("toolkit.css", ["styles/toolkit.less"])
 
 Javascript("libraries.js", [
@@ -31,5 +35,7 @@ Binary("datasets/cardata.schema", "datasets/cardata.yaml");
 Binary("datasets/cardata.data", "datasets/cardata.data.yaml");
 
 HTML("toolkit.html", "toolkit.html")
+HTML("credits.html", "credits.html")
+HTML("license.html", "license.html")
 
 WriteDeployList("deploy_list")

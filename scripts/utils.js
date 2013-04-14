@@ -1,7 +1,6 @@
-// Visualization Assembly Line
-
-// Author: Donghao Ren
-// Date  : 2012.05.23
+// iVisDesigner
+// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+// See LICENSE.txt for copyright information.
 
 // utils.js
 // A framework for our application.
@@ -856,7 +855,11 @@ NS.Vector.prototype = {
 		var a = Math.acos(this.x / l);
 		if (this.y < 0) a = -a;
 		return a;
-	}
+	},
+    interp: function(v, t) {
+        return new NS.Vector(this.x + (v.x - this.x) * t,
+                             this.y + (v.y - this.y) * t);
+    }
 };
 
 NS.array_unique = function(array) {

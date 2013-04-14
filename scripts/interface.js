@@ -1,6 +1,6 @@
 // iVisDesigner
-// Author: Donghao Ren, 2013.04
-// See LICENSE.txt for license information.
+// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+// See LICENSE.txt for copyright information.
 
 // interface.js:
 // Initialize and manage the interface of iVisDesigner, dispatch events.
@@ -12,6 +12,7 @@
         $("#panel-schema").IVPanel({ right: 10, top: 40, width: 200, height: 400 }).IVPanel("show");
         $("#panel-tools").IVPanel({ left: 10, top: 40, width: 100, height: 400 }).IVPanel("show");
         $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("show");
+        $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 50, width: 600 }).IVPanel("hide");
     });
     IV.raiseEvent("command:panels.reset");
     // data-toggle
@@ -45,7 +46,19 @@
             IV.set(key, value);
         });
     });
-
+    // data-href
+    $("span[data-open-page]").each(function() {
+        var href =$(this).attr("data-open-page");
+        $(this).click(function() {
+            $("#panel-page").IVPanel("show");
+            if(href.substr(0, 7) == "base64:") {
+                var ht = atob(href.substr(7));
+                $("#panel-page-container").html(ht);
+            } else {
+                $("#panel-page-container").load(href);
+            }
+        });
+    });
     $("span[data-command]").each(function() {
         var command = $(this).attr("data-command");
         $(this).click(function() {

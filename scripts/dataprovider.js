@@ -1,6 +1,6 @@
 // iVisDesigner
-// Author: Donghao Ren, 2013.04
-// See LICENSE.txt for license information.
+// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+// See LICENSE.txt for copyright information.
 
 // dataprovider.js
 // Load data schema and data contents.

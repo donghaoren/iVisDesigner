@@ -1,3 +1,7 @@
+// iVisDesigner
+// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+// See LICENSE.txt for copyright information.
+
 @panel_titlecolor: #555;
 
 .btn {
@@ -81,6 +85,9 @@
         left: 0; right: 0; top: 20px; bottom: 0;
         overflow: hidden;
     }
+    &.scroll .content-wrapper {
+        overflow-y: scroll;
+    }
     .resize {
         position: absolute;
         bottom: 0; right: 0;
@@ -144,4 +151,8 @@
             margin-left: 5px;
         }
     }
+}
+
+#panel-page-container {
+    padding: 10px;
 }

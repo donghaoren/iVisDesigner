@@ -1,6 +1,6 @@
 // iVisDesigner
-// Author: Donghao Ren, 2013.04
-// See LICENSE.txt for license information.
+// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+// See LICENSE.txt for copyright information.
 
 // panel.js
 // Implements a jQuery plugin IVPanel.
@@ -25,6 +25,11 @@
         $(container[1]).append($this.children());
 
         $this.append(container);
+
+        $this.css({
+            left: "0px", top: "0px",
+            width: "100px", height: "100px"
+        });
 
         var title_wrapper = $this.children(".title-wrapper");
         var resize_button = $this.children(".resize");
@@ -132,7 +137,7 @@
     if(params.top) {
         $(this).css("top", params.top + "px");
         if(params.bottom) {
-            $(this).css("width", $(window).height() - (params.top + params.bottom) + "px");
+            $(this).css("height", $(window).height() - (params.top + params.bottom) + "px");
         }
     } else if(params.bottom) {
         $(this).css("top", $(window).height() - params.bottom - $this.height() + "px");
@@ -144,6 +149,18 @@
         }
     } else if(params.right) {
         $(this).css("left", $(window).width() - params.right - $this.width() + "px");
+    }
+    if(params.vcenter !== undefined) {
+        var l = ($(window).width() - $this.width()) / 2.0 + params.vcenter;
+        console.log(l);
+        $this.css("left", l + "px");
+    }
+    if(params.hcenter !== undefined) {
+        var l = ($(window).height() - $this.height()) / 2.0 + params.hcenter;
+        $this.css("top", l + "px");
+    }
+    if(params.title) {
+        $this.children(".title-wrapper").children(".title").text(params.title);
     }
     return $this;
   };

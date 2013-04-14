@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--
+iVisDesigner
+Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+See ./license.html for copyright information.
+-->
 <html>
 <head>
     <meta charset="utf-8" />
@@ -28,6 +33,9 @@
       <li><span data-command="account.register">Register...</span></li>
       <li><span data-command="account.login">Login...</span></li>
       <li><span data-command="account.logout">Logout</span></li>
+      <li class="divider"></li>
+      <li><span data-open-page="base64:{{base64:license.html}}">License</span></li>
+      <li><span data-open-page="base64:{{base64:credits.html}}">Credits</span></li>
     </ul>
   </li>
   <li>
@@ -62,11 +70,7 @@
   <li>
     <span>Help</span>
     <ul>
-      <li><span>Action</span></li>
-      <li><span>Another action</span></li>
-      <li><span>Something else here</span></li>
-      <li class="divider"></li>
-      <li><span>Separated link</span></li>
+      <li><span data-openurl="doc.html">Documentation</span></li>
     </ul>
   </li>
 </ul>
@@ -89,6 +93,10 @@
       <ul></ul>
     </div>
   </div>
+  <div id="panel-page" class="panel scroll" data-title="Page">
+    <div id="panel-page-container" class="basic">
+    </div>
+  </div>
 </div>
 
 <div id="system-loading" style="position:fixed;z-index:100000;left:0;right:0;top:0;bottom:0;padding-top:100px;text-align:center;font-size:16px;background-color:white;">
@@ -96,6 +104,7 @@
     <h3 style="margin-bottom:10px;font-size:20px;">iVisDesigner is Loading...</h3>
     <p>Browser requirements: HTML5 support (Javascript, Canvas, SVG).</p>
     <p>Recommended browsers: latest Chrome, Safari or Firefox.</p>
+    <p><a href="{{ref:license.html}}">License</a>, <a href="{{ref:credits.html}}">Credits</a>.</p>
   </div>
 </div>
 
