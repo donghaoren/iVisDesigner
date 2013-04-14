@@ -131,15 +131,19 @@
     }
     if(params.top) {
         $(this).css("top", params.top + "px");
+        if(params.bottom) {
+            $(this).css("width", $(window).height() - (params.top + params.bottom) + "px");
+        }
+    } else if(params.bottom) {
+        $(this).css("top", $(window).height() - params.bottom - $this.height() + "px");
     }
     if(params.left) {
         $(this).css("left", params.left + "px");
-    }
-    if(params.right) {
+        if(params.right) {
+            $(this).css("width", $(window).width() - (params.left + params.right) + "px");
+        }
+    } else if(params.right) {
         $(this).css("left", $(window).width() - params.right - $this.width() + "px");
-    }
-    if(params.bottom) {
-        $(this).css("top", $(window).height() - params.bottom - $this.height() + "px");
     }
     return $this;
   };

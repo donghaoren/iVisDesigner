@@ -79,7 +79,8 @@ delim_R = "}}"
 def Delimiter(L, R):
     global delim_L
     global delim_R
-    global regex_partial, regex_include, regex_js, regex_css, regex_ref, regex_active, regex_meta;
+    global regex_partial, regex_include, regex_js, regex_css, regex_ref, regex_active, regex_meta
+    global regex_base64
     global regex_mustache, regex_mustache_render, regex_mustache_render_first
     global regex_mustache_local
     global regex_mustache_render_yaml_include
@@ -102,7 +103,8 @@ def Delimiter(L, R):
     htcomment_end = re.escape("-->")
 
     regex_partial = re.compile(reg_L + r' *partial: *([0-9a-zA-Z\-\_\.]+) *' + reg_R)
-    regex_include = re.compile(reg_L + r' *include: *([0-9a-zA-Z\-\_\.]+) *' + reg_R)
+    regex_include = re.compile(reg_L + r' *include: *([0-9a-zA-Z\-\_\.\/]+) *' + reg_R)
+    regex_base64 = re.compile(reg_L + r' *base64: *([0-9a-zA-Z\-\_\.\/]+) *' + reg_R)
 
     regex_js = re.compile(reg_L + r" *js: *([0-9a-zA-Z\-\_\.\,\/]+) *" + reg_R)
     regex_css = re.compile(reg_L + r" *css: *([0-9a-zA-Z\-\_\.\,\/]+) *" + reg_R)
@@ -136,7 +138,7 @@ def Delimiter(L, R):
 
     regex_math = re.compile(htcomment_start + r" *(math|lmath)\: *(.*?)" + htcomment_end, re.DOTALL)
 
-    regex_lessimport = re.compile(r'\@import +\"([0-9a-zA-Z\.\-\_]+\.less)\"')
+    regex_lessimport = re.compile(r'\@import +\"([0-9a-zA-Z\.\-\_\/]+\.less)\"')
 
 def mustache_render(templ, obj):
     parsed = pystache.parse(ensure_unicode(templ, "utf-8"), delimiters = (u"[[", u"]]"))
@@ -158,6 +160,7 @@ def resolve_includes(source):
     data = ensure_unicode(source.get_text_contents(), 'utf-8')
     sdir = os.path.dirname(str(source))
     data = regex_include.sub(lambda m: resolve_includes(File(os.path.join(sdir, m.group(1)))), data)
+    data = regex_base64.sub(lambda m: base64.b64encode(open(os.path.join(sdir, m.group(1)), "r").read()), data)
     return data
 
 def include_build_function(target, source, env, minify = '', mustache = 0):
@@ -340,7 +343,7 @@ def include_scanner(node, env, path, parents = []):
     path = os.path.dirname(node.rstr())
     if path == "":
         path = "."
-    result = regex_include.findall(text)
+    result = regex_include.findall(text) + regex_base64.findall(text)
     for inc in result:
         if inc in parents:
             raise Exception("Circular includes on '%s'." % str(node))

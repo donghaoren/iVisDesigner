@@ -4,7 +4,7 @@
             "path": ".",
             "folder_exclude_patterns": [ "deploy", "temp" ],
             "file_exclude_patterns": [
-                "*.png", "*.jpg", "*.gif", "*.svg",
+                "*.png", "*.jpg", "*.gif",
                 "*.dblite", "makefile", "SConstruct", "deploy_list", "deploy_local.sh"
             ]
         }

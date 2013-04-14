@@ -11,7 +11,7 @@
     IV.addListener("command:panels.reset", function() {
         $("#panel-schema").IVPanel({ right: 10, top: 40, width: 200, height: 400 }).IVPanel("show");
         $("#panel-tools").IVPanel({ left: 10, top: 40, width: 100, height: 400 }).IVPanel("show");
-        $("#panel-log").IVPanel({ width: 400, bottom: 10, right: 10, height: 100 }).IVPanel("show");
+        $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("show");
     });
     IV.raiseEvent("command:panels.reset");
     // data-toggle

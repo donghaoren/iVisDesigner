@@ -13,11 +13,11 @@
     .gradient_background(#CCC);
 
     &:hover {
-        .gradient_background(@activeColor);
+        .gradient_background(@active_color);
         color: white;
     }
     &.active {
-        .gradient_background_inv(darken(@activeColor, 5%));
+        .gradient_background_inv(darken(@active_color, 5%));
         color: white;
     }
 }
@@ -117,11 +117,11 @@
         padding-left: 10px;
         border-radius: 2px 0 0 2px;
         &:hover {
-            .gradient_background(@activeColor);
+            .gradient_background(@active_color);
             color: white;
         }
         &.active {
-            .gradient_background_inv(darken(@activeColor, 5%));
+            .gradient_background_inv(darken(@active_color, 5%));
             color: white;
         }
 
