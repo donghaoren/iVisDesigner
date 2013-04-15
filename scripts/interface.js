@@ -51,11 +51,15 @@
         var href =$(this).attr("data-open-page");
         $(this).click(function() {
             $("#panel-page").IVPanel("show");
-            if(href.substr(0, 7) == "base64:") {
-                var ht = atob(href.substr(7));
-                $("#panel-page-container").html(ht);
+            if(href[0] == "#") {
+                $("#panel-page-container").html($(href).html());
             } else {
-                $("#panel-page-container").load(href);
+                if(href.substr(0, 7) == "base64:") {
+                    var ht = atob(href.substr(7));
+                    $("#panel-page-container").html(ht);
+                } else {
+                    $("#panel-page-container").load(href);
+                }
             }
         });
     });

@@ -4,6 +4,11 @@
 # Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 # See LICENSE.txt for copyright information.
 
+execfile("version.py")
+
+Meta("version", IV_version)
+Meta("revision", IV_rev)
+
 CSS("toolkit.css", ["styles/toolkit.less"])
 
 Javascript("libraries.js", [

@@ -15,6 +15,13 @@ See ./license.html for copyright information.
 </head>
 <body>
 
+<script type="text/plain" id="about-text">
+<h2>About iVisDesigner</h2>
+<p>Version {{version}}, r{{revision}}.</p>
+<p>Build time: {{build_time}}.</p>
+{{include:license.html}}
+</script>
+
 <div id="view">
   <canvas id="canvas-back"></canvas>
   <canvas id="canvas-main"></canvas>
@@ -30,12 +37,12 @@ See ./license.html for copyright information.
   <li>
     <span>iVisDesigner</span>
     <ul>
+      <li><span data-open-page="#about-text">About</span></li>
+      <li><span data-open-page="base64:{{base64:credits.html}}">Credits</span></li>
+      <li class="divider"></li>
       <li><span data-command="account.register">Register...</span></li>
       <li><span data-command="account.login">Login...</span></li>
       <li><span data-command="account.logout">Logout</span></li>
-      <li class="divider"></li>
-      <li><span data-open-page="base64:{{base64:license.html}}">License</span></li>
-      <li><span data-open-page="base64:{{base64:credits.html}}">Credits</span></li>
     </ul>
   </li>
   <li>
