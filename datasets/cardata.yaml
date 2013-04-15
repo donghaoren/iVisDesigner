@@ -1,27 +1,31 @@
-cars:
-  type: collection
-  fields:
-    mpg: number
-    cylinders: number
-    acceleration: number
-    modelyear: number
-    origin: number
+type: object
+fields:
+  cars:
+    type: collection
+    fields:
+      name: { type: string }
+      mpg: { type: number, min: 0, max: 50 }
+      cylinders: { type: number, min: 3, max: 8 }
+      displacement: { type: number, min: 0, max: 500 }
+      horsepower: { type: number, min: 0, max: 250 }
+      acceleration: { type: number, min: 0, max: 30 }
+      modelyear: { type: number, min: 70, max: 82 }
+      origin: { type: number, min: 1, max: 3 }
+  links:
+    type: collection
+    fields:
+      source:
+        type: reference
+        of: cars._
+      target:
+        type: reference
+        of: cars._
 
-links:
-  type: collection
-  fields:
-    source:
-      type: reference
-      of: cars._
-    target:
-      type: reference
-      of: cars._
-
-static:
-  type: object
-  fields:
-    f1:
-      type: object
-      fields:
-        f2: number
-        f3: number
+  static:
+    type: object
+    fields:
+      f1:
+        type: object
+        fields:
+          f2: { type: number }
+          f3: { type: number }

@@ -152,7 +152,6 @@
     }
     if(params.vcenter !== undefined) {
         var l = ($(window).width() - $this.width()) / 2.0 + params.vcenter;
-        console.log(l);
         $this.css("left", l + "px");
     }
     if(params.hcenter !== undefined) {

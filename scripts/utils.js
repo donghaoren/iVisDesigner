@@ -345,6 +345,7 @@ NS.raiseEvent = function(key, parameters) {
         try {
             r = ev.listeners[i].f(parameters);
         } catch(e) {
+            console.log(e);
         }
         if(r) break;
     }
@@ -842,6 +843,12 @@ NS.Vector.prototype = {
         var l = this.length();
         return new NS.Vector(this.x / l, this.y / l);
     },
+    distance2: function(p) {
+        return (this.x - p.x) * (this.x - p.x) + (this.y - p.y) * (this.y - p.y);
+    },
+    distance: function(p) {
+        return Math.sqrt(this.distance2(p));
+    },
     rotate: function(angle) {
         return new NS.Vector(this.x * Math.cos(angle) - this.y * Math.sin(angle),
                              this.x * Math.sin(angle) + this.y * Math.cos(angle));
@@ -885,72 +892,6 @@ NS.insidePolygon = function(poly, pt) {
          (c = !c);
      }
     return c;
-};
-
-NS.footPoint = function(pt, line) {
-	var A = line.first;
-	var B = line.second;
-	var BA = { x: B.x- A.x, y:B.y- A.y};
-	var s= BA.x * BA.x + BA.y * BA.y;
-	if (s==0) return 0;
-	return -1 * (BA.x * (A.x - pt.x) + BA.y * ( A.y - pt.y) ) / s;
-};
-NS.footPoint2 = function(pt, A, B) {
-
-	var BA = { x: B.x- A.x, y:B.y- A.y};
-	var s= BA.x * BA.x + BA.y * BA.y;
-	if (s==0) return 0;
-	return -1 * (BA.x * (A.x - pt.x) + BA.y * ( A.y - pt.y) ) / s;
-};
-NS.lineSegmentDrift = function(line, u) {
-	var p = new NS.Vector();
-	p.x = (line.second.x - line.first.x) * u + line.first.x;
-	p.y = (line.second.y - line.first.y) * u + line.first.y;
-	return p;
-}
-
-NS.linesIntersect = function(line1, line2) {
-	var BA = {}, CD = {}, CA = {};
- 	BA.x = line1.first.x - line1.second.x;
-	BA.y = line1.first.y - line1.second.y;
-
-	CD.x = line2.second.x - line2.first.x;
-	CD.y = line2.second.y - line2.first.y;
-
-	CA.x = line1.first.x - line2.first.x;
-	CA.y = line1.first.y - line2.first.y;
-
-	var deno = BA.x * CD.y - BA.y * CD.x;
-	if (deno === 0) return;
-	var re = {};
-	re.u1 = (CA.x * CD.y - CA.y * CD.x) / deno;
-	re.u2 = (CA.y * BA.x - CA.x * BA.y) / deno;
-	re.point = NS.lineSegmentDrift(line1, re.u1);
-//	re.point = {};
-//	re.point.x = (line1.second.x - line1.first.x) * re.u1 + line1.first.x;
-//	re.point.y = (line1.second.y - line1.first.y) * re.u1 + line1.first.y;
-	return re;
-};
-// Distance between point and line SEGMENT
-NS.distancePointLineSegment = function(pt, line) {
-	var u = NS.footPoint(pt,line);
-	var t={};
-	if (u<0) {	t= line.first; }
-	else if (u>1) { t= line.second;}
-	else
-	{
-		t = NS.lineSegmentDrift(line, u);
-//		t.x= (line.second.x-line.first.x)*u + line.first.x;
-//		t.y= (line.second.y-line.first.y)*u + line.first.y;
-	}
-	return NS.distance(pt.x, pt.y, t.x, t.y);
-};
-// Distance between point and line
-NS.distancePointLine = function(pt, line) {
-	var u = NS.footPoint(pt,line);
-	var t={};
-	t = NS.lineSegmentDrift(line, u);
-	return NS.distance(pt.x, pt.y, t.x, t.y);
 };
 
 (function() {
@@ -1208,6 +1149,17 @@ NS.distance2 = function(a,b) {
     return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 };
 
+NS.pointLineSegmentDistance = function(pt, p1, p2) {
+    var d = p2.sub(p1);
+    var t = pt.sub(p1).dot(d) / d.dot(d);
+    if(t < 0)
+        return pt.distance(p1);
+    if(t > 1)
+        return pt.distance(p2);
+    var pfoot = p1.interp(p2, t);
+    return pt.distance(pfoot);
+};
+
 // width, height may be negative.
 NS.Rectangle = function(x0, y0, width, height, angle) {
     if(!angle) angle = 0;
@@ -1272,7 +1224,7 @@ NS.Color = function(r, g, b, a) {
     this.r = parseFloat(r);
     this.g = parseFloat(g);
     this.b = parseFloat(b);
-    this.a = a ? parseFloat(a) : 1;
+    this.a = (a !== undefined) ? parseFloat(a) : 1;
 };
 NS.parseColorINT = function(s) {
     var v = s.split(",");
@@ -1300,6 +1252,7 @@ NS.Color.prototype = {
         return "rgb(" + this.toINT() + ")";
     },
     toRGBA : function(alpha) {
+        if(alpha === undefined) alpha = 1;
         return "rgba(" + this.toINT() + "," + (this.a * alpha).toFixed(3) + ")";
     }
 };
@@ -1354,6 +1307,15 @@ NS.wrapText = function(context, text, x, y, maxWidth, lineHeight) {
 	context.fillText(line, x, y);
 	if (line !== '') y += lineHeight;
 	return y;
+};
+
+NS.longestStrong = function(strs) {
+    var slong = null;
+    for(var i in strs) {
+        var s = strs[i];
+        if(slong == null || s.length > slong.length) slong = s;
+    }
+    return slong;
 };
 
 return NS;

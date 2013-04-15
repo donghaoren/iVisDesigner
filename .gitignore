@@ -1,0 +1,8 @@
+temp/
+deploy/
+dist/
+images/unused
+*.sublime-workspace
+*.sublime-project
+*.dblite
+deploy_list

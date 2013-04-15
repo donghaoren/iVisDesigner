@@ -11,7 +11,7 @@
     IV.addListener("command:panels.reset", function() {
         $("#panel-schema").IVPanel({ right: 10, top: 40, width: 200, height: 400 }).IVPanel("show");
         $("#panel-tools").IVPanel({ left: 10, top: 40, width: 100, height: 400 }).IVPanel("show");
-        $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("show");
+        $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("hide");
         $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 50, width: 600 }).IVPanel("hide");
     });
     IV.raiseEvent("command:panels.reset");
@@ -48,9 +48,13 @@
     });
     // data-href
     $("span[data-open-page]").each(function() {
-        var href =$(this).attr("data-open-page");
+        var href = $(this).attr("data-open-page");
+        var title = $(this).attr("data-open-page-title");
         $(this).click(function() {
             $("#panel-page").IVPanel("show");
+            if(title) {
+                $("#panel-page").IVPanel({ title: title });
+            }
             if(href[0] == "#") {
                 $("#panel-page-container").html($(href).html());
             } else {
