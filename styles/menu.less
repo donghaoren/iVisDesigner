@@ -40,7 +40,7 @@
 .menu > li > ul {
     position: absolute;
     top: 31px;
-    min-width: 120px;
+    min-width: 150px;
     white-space: nowrap;
     .panel_background();
     display: none;
@@ -54,20 +54,23 @@
         position: relative;
     }
     li > span {
-        padding: 0 20px;
+        padding: 0 25px;
         display: block;
     }
+    li > span > .icon,
     li > span > .toggle-indicator {
         position: absolute;
-        left: 0;
+        left: 5px;
         top: 0;
+        width: 20px;
+        height: 30px;
+        text-align: center;
+    }
+    li > span > .toggle-indicator {
         display: none;
     }
     li > span.toggle-on > .toggle-indicator {
         display: block;
-        background: url(imgs/mark.svg);
-        width: 20px;
-        height: 30px;
     }
     li.divider {
         border-bottom: 1px solid #CCC;

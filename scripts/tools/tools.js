@@ -79,5 +79,4 @@ IV.listen("tools:current", function(val) {
 {{include: circle.js}}
 {{include: line.js}}
 
-IV.current_tool = IV.tools.Track;
-IV.current_tool.onActive();
+IV.set("tools:current", "Select");

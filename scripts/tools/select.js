@@ -3,7 +3,7 @@
 IV.tools.Select = {
     onActive: function() {
         var $this = this;
-        IV.vis.clearSelection();
+        if(IV.vis) IV.vis.clearSelection();
         IV.triggerRender("main,back");
 
         IV.tools.beginSelectObject(function(context, e_down) {

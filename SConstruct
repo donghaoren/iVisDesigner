@@ -160,11 +160,14 @@ def resolve_includes(source):
     data = ensure_unicode(source.get_text_contents(), 'utf-8')
     sdir = os.path.dirname(str(source))
     data = regex_include.sub(lambda m: resolve_includes(File(os.path.join(sdir, m.group(1)))), data)
-    data = regex_base64.sub(lambda m: base64.b64encode(open(os.path.join(sdir, m.group(1)), "r").read()), data)
+    def b64_encode_file(f):
+        c = open(f, "r").read()
+        return base64.b64encode(c)
+    data = regex_base64.sub(lambda m: b64_encode_file(os.path.join(sdir, m.group(1))), data)
     return data
 
 def include_build_function(target, source, env, minify = '', mustache = 0):
-    data = "";
+    data = ""
     for s in source:
         data += resolve_includes(s)
 
@@ -341,6 +344,7 @@ def include_scanner(node, env, path, parents = []):
     files = [];
     text = ensure_unicode(node.get_text_contents(), 'utf-8')
     path = os.path.dirname(node.rstr())
+    print str(node)
     if path == "":
         path = "."
     result = regex_include.findall(text) + regex_base64.findall(text)
@@ -350,7 +354,9 @@ def include_scanner(node, env, path, parents = []):
         files.append(path + "/" + inc)
     r = env.File(files);
     for inc in result:
-        r += include_scanner(File(path + "/" + inc), env, path, parents + [inc])
+        if os.path.splitext(inc)[1].lower()[1:] in set([
+            "html", "js", "css", "less", "md"
+        ]): r += include_scanner(File(path + "/" + inc), env, path, parents + [inc])
     return r
 
 # Substitute builder, Template + Partials + HTML = Output Page.

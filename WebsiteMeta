@@ -9,7 +9,7 @@ execfile("version.py")
 Meta("version", IV_version)
 Meta("revision", IV_rev)
 
-CSS("toolkit.css", ["styles/toolkit.less"])
+CSS("toolkit.css", ["styles/font-awesome.css", "styles/toolkit.less"])
 
 Javascript("libraries.js", [
     #"libraries/jquery-1.9.1.js"
@@ -31,6 +31,7 @@ Image("imgs/cross.svg", "images/cross.svg")
 Image("imgs/stroke.svg", "images/stroke.svg")
 Image("imgs/mark.svg", "images/mark.svg")
 Image("imgs/logo.svg", "images/logo.svg")
+Image("imgs/glyphs.svg", "images/glyphs.svg")
 
 # Image("imgs/types_number.svg", "images/types_number.svg")
 # Image("imgs/types_object.svg", "images/types_object.svg")

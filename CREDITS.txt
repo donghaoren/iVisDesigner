@@ -54,4 +54,9 @@ Subtle Patterns
 ====
 
 Homepage: http://subtlepatterns.com
-License: Creative Commons Attribution-ShareAlike 3.0 Unported License, <http://creativecommons.org/licenses/by-sa/3.0/deed.en_US>
+License: Creative Commons Attribution-ShareAlike 3.0 Unported License, http://creativecommons.org/licenses/by-sa/3.0/deed.en_US
+
+Font Awesome
+====
+
+Font Awesome by Dave Gandy - http://fortawesome.github.com/Font-Awesome

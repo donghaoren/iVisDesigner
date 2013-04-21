@@ -70,13 +70,11 @@
                 display: inline-block;
                 line-height: 20px;
                 height: 20px;
+                width: 20px;
+                text-align: center;
             }
             span:hover {
                 .gradient_background_inv(darken(@panel_titlecolor, 10%));
-            }
-            img {
-                width: 8px; height: 8px;
-                padding: 6px;
             }
         }
     }
@@ -91,8 +89,8 @@
     .resize {
         position: absolute;
         bottom: 0; right: 0;
-        width: 10px;
-        height: 10px;
+        width: 8px;
+        height: 8px;
         background: url(imgs/corner.svg);
     }
 }
@@ -186,6 +184,7 @@
 
 .popup {
     position: absolute;
+    overflow: hidden;
     .panel_background();
     .drop_shadow();
     border-radius: 2px;
@@ -195,10 +194,25 @@
     .actions {
         position: absolute;
         left: 0; right: 0; bottom: 0;
-        height: 30px;
-        line-height: 30px;
+        height: 21;
+        line-height: 21px;
+        padding: 3px;
         text-align: right;
         background-color: rgba(0, 0, 0, 0.2);
+        .btn {
+            font-size: 12px;
+            line-height: 15px;
+            height: 15px;
+            padding: 3px 5px;
+            margin: 0;
+        }
+    }
+    .resize {
+        position: absolute;
+        bottom: 0; right: 0;
+        width: 8px;
+        height: 8px;
+        background: url(imgs/corner.svg);
     }
 }
 

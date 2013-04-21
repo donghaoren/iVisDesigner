@@ -81,3 +81,13 @@
         }
     }
 }
+
+
+// Glyph
+.xicon_content(@c) {
+    content: @c;
+    font-style: normal;
+    font-weight: normal;
+}
+.xicon-cross:before { .xicon_content("✕"); }
+.xicon-mark:before { .xicon_content("✓"); }

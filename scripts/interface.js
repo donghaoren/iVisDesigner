@@ -25,6 +25,29 @@
         $this.mousedown(function(e) {
             e.stopPropagation();
         });
+        var resize_button = $this.children(".resize");
+        var mouse_state = null;
+        resize_button.mousedown(function(e) {
+            mouse_state = [
+                "resize",
+                e.pageX, e.pageY,
+                $this.width(),
+                $this.height()
+            ];
+        });
+        $(window).mousemove(function(e) {
+            if(mouse_state && mouse_state[0] == "resize") {
+                var nx = e.pageX - mouse_state[1] + mouse_state[3];
+                var ny = e.pageY - mouse_state[2] + mouse_state[4];
+                if(nx < 50) nx = 50;
+                if(ny < 40) ny = 40;
+                $this.css("width", nx + "px");
+                $this.css("height", ny + "px");
+            }
+        });
+        $(window).mouseup(function(e) {
+            mouse_state = null;
+        });
         $this.detach();
     });
     IV.popups.show = function(key, anchor, width, height, info) {
@@ -66,7 +89,7 @@
         $("#panel-tools").IVPanel({ left: 10, top: 40, width: 100, height: 400 }).IVPanel("show");
         $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("hide");
         $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 50, width: 600 }).IVPanel("hide");
-        $("#panel-style").IVPanel({ right: 10, top: 460, width: 200, height: 200 }).IVPanel("show");
+        $("#panel-style").IVPanel({ right: 220, top: 40, left: 120, height: 50 }).IVPanel("show");
     });
     IV.raiseEvent("command:panels.reset");
 
@@ -109,6 +132,7 @@
         var title = $(this).attr("data-open-page-title");
         $(this).click(function() {
             $("#panel-page").IVPanel("show");
+            $("#panel-page").IVPanel("front");
             if(title) {
                 $("#panel-page").IVPanel({ title: title });
             }

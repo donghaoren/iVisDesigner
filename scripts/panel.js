@@ -15,8 +15,8 @@
             '<div class="title-wrapper">' +
                 '<span class="title">' + $this.attr("data-title") + '</span>' +
                 '<span class="buttons">' +
-                    '<span class="button-minimize"><img src="imgs/stroke.svg" ondragstart="return false;" /></span>' +
-                    '<span class="button-close"><img src="imgs/cross.svg" ondragstart="return false;" /></span>' +
+                    '<span class="button-minimize"><i class="icon-angle-up"></i></span>' +
+                    '<span class="button-close"><i class="xicon-cross"></i></span>' +
                 '</span>' +
             '</div>' +
             '<div class="content-wrapper"></div>' +
@@ -79,8 +79,7 @@
                 $this.css("height", ny + "px");
             }
         });
-        $this.mousedown(function(e) {
-            e.stopPropagation();
+        data.reorder = function() {
             // Reorder panels.
             var panels = $("#panel-container > .panel");
             var zidxs = [];
@@ -102,14 +101,10 @@
             panels.each(function() {
                 $(this).css("z-index", zidxs[idx++]);
             });
-            /*
-            setTimeout(function() {
-                var parent = $("#panel-container").get(0);
-                var t = $this.get(0);
-                parent.appendChild(t);
-            }, 1);*/
-            //$("#panel-container").append($this);
-
+        };
+        $this.mousedown(function(e) {
+            e.stopPropagation();
+            data.reorder();
         });
         $(window).mouseup(function(e) {
             mouse_state = null;
@@ -126,6 +121,10 @@
         $this.hide();
         if(data.toggle_selector)
             data.toggle_selector.removeClass("toggle-on");
+        return;
+    }
+    if(params == "front") {
+        data.reorder();
         return;
     }
     if(params.width) {

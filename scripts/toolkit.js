@@ -302,15 +302,15 @@ IV.test = function() {
     var track2 = new IV.objects.Track("cars:displacement",
         new IV.objects.Point(new IV.Vector(200,100)),
         new IV.objects.Point(new IV.Vector(500,100)));
-    var track3 = new IV.objects.Track("cars:acceleration",
-        new IV.objects.Point(new IV.Vector(600,100)),
-        new IV.objects.Point(new IV.Vector(600,400)));
+    var track3 = new IV.objects.Track("cars:cylinders",
+        new IV.objects.Point(new IV.Vector(600,400)),
+        new IV.objects.Point(new IV.Vector(600,100)));
     var scatter = new IV.objects.Scatter(track1, track2);
     var circle = new IV.objects.Circle("cars", {
         center: scatter,
         style: new IV.objects.Style({
             fill_style: new IV.Color(0, 0, 0, 0.2),
-            radius: 3
+            radius: 5
         })
     });
     var line = new IV.objects.Line("cars", {
@@ -324,8 +324,8 @@ IV.test = function() {
     IV.vis.addObject(track1);
     IV.vis.addObject(track2);
     IV.vis.addObject(track3);
-    IV.vis.addObject(circle);
     IV.vis.addObject(line);
+    IV.vis.addObject(circle);
     IV.triggerRender("main,back");
     IV.render();
 };
