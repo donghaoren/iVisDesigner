@@ -156,3 +156,75 @@
 #panel-page-container {
     padding: 10px;
 }
+
+#panel-style-container {
+    font-size: 13px;
+    padding: 5px;
+    line-height: 19px;
+
+    .color-selector {
+        display: inline-block;
+        vertical-align: top;
+        width: 17px; height: 17px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        border-radius: 2px;
+    }
+    .group {
+        display: inline-block;
+        white-space: nowrap;
+        border-radius: 2px;
+        margin-right: 4px;
+    }
+}
+
+#popup-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+.popup {
+    position: absolute;
+    .panel_background();
+    .drop_shadow();
+    border-radius: 2px;
+    border: 1px solid @panel_titlecolor;
+    z-index: 1000;
+
+    .actions {
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 30px;
+        line-height: 30px;
+        text-align: right;
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+}
+
+.popup[data-popup="color-selector"] {
+    h3 {
+        font-size: 12px;
+        margin: 5px 5px;
+    }
+    p {
+        margin: 2px 5px;
+    }
+    .predefined {
+        span {
+            display: inline-block;
+            vertical-align: top;
+            width: 17px;
+            height: 17px;
+            margin: 2px 0;
+            border-radius: 2px;
+            cursor: pointer;
+            &:hover {
+                border: 1px solid white;
+                box-shadow: 0 0 2px black;
+                width: 15px;
+                height: 15px;
+            }
+        }
+    }
+}

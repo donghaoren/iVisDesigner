@@ -96,6 +96,7 @@ IV_version = {
   </div>
   <div id="panel-tools" class="panel" data-title="Tools">
     <div id="tools-container">
+      <span class="btn" data-switch="tools:current" data-value="Select">Select</span>
       <span class="btn" data-switch="tools:current" data-value="Track">Track</span>
       <span class="btn" data-switch="tools:current" data-value="Scatter">Scatter</span>
       <span class="btn" data-switch="tools:current" data-value="Circle">Circle</span>
@@ -110,6 +111,39 @@ IV_version = {
   <div id="panel-page" class="panel scroll" data-title="Page">
     <div id="panel-page-container" class="basic">
     </div>
+  </div>
+  <div id="panel-style" class="panel" data-title="Style">
+    <div id="panel-style-container">
+      <span class="group">Stroke: <span class="color-selector" data-bind="stroke_style"></span></span>
+      <span class="group">Fill: <span class="color-selector" data-bind="fill_style"></span></span>
+      <span class="group">Width: <span class="control-numeric-value" data-bind="width"></span></span>
+      <span class="group">Radius: <span class="control-numeric-value" data-bind="radius"></span></span>
+    </div>
+  </div>
+</div>
+<div id="popup-container"></div>
+<div data-popup="color-selector" class="popup">
+  <h3>Predefined Colors</h3>
+  <p>
+    <span class="predefined">
+      <span data-color="#000000"></span>
+      <span data-color="#1f77b4"></span>
+      <span data-color="#ff7f0e"></span>
+      <span data-color="#2ca02c"></span>
+      <span data-color="#d62728"></span>
+      <span data-color="#9467bd"></span>
+      <span data-color="#8c564b"></span>
+      <span data-color="#e377c2"></span>
+      <span data-color="#7f7f7f"></span>
+      <span data-color="#bcbd22"></span>
+      <span data-color="#17becf"></span>
+    </span>
+  </p>
+  <h3>Alpha</h3>
+  <p><span class="input-alpha control-numeric-value"></span></p>
+  <div class="actions">
+    <span class="btn" data-action="ok">OK</span>
+    <span class="btn" data-action="cancel">Cancel</span>
   </div>
 </div>
 

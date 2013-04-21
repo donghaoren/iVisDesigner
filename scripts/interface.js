@@ -2,19 +2,76 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
-// interface.js:
+// scripts/interface.js:
 // Initialize and manage the interface of iVisDesigner, dispatch events.
 // Including:
 //   panels, menus, window resize, mouse events, keyboard events, etc.
 
 (function() {
+    $(".control-numeric-value").each(function() {
+        $(this).IVNumericValue();
+    });
+    // Controls.
+    $(".input-numeric").each(function() {
+        $(this).IVInputNumeric();
+    });
+
+    // Popups
+    IV.popups = { };
+    $(".popup").each(function() {
+        var $this = $(this);
+        var key = $this.attr("data-popup");
+        IV.popups[key] = $this;
+        $this.mousedown(function(e) {
+            e.stopPropagation();
+        });
+        $this.detach();
+    });
+    IV.popups.show = function(key, anchor, width, height, info) {
+        var p = IV.popups[key];
+        $("#popup-container").children().detach();
+        $("#popup-container").append(p);
+        var margin = 5;
+        var x = anchor.offset().left - width - margin;
+        var y = anchor.offset().top - height - margin;
+        var cx = anchor.offset().left + anchor.width() / 2;
+        var cy = anchor.offset().top + anchor.height() / 2;
+        if(cx < $(window).width() / 2) x = anchor.offset().left + anchor.width() + margin;
+        if(cy < $(window).height() / 2) y = anchor.offset().top + anchor.height() + margin;
+        p.css({
+            width: width + "px",
+            height: height + "px",
+            left: x + "px",
+            top: y + "px"
+        });
+
+        p.data().selector = p;
+        p.data().hide = function() {
+            p.detach();
+        }
+        if(p.data().onShow) p.data().onShow(info);
+        return p.data();
+    };
+    $(window).mousedown(function() {
+        $("#popup-container").children().each(function() {
+            var data = $(this).data();
+            if(data.finalize) data.finalize();
+            $(this).detach();
+        });
+    });
+
+    // Panels
     IV.addListener("command:panels.reset", function() {
         $("#panel-schema").IVPanel({ right: 10, top: 40, width: 200, height: 400 }).IVPanel("show");
         $("#panel-tools").IVPanel({ left: 10, top: 40, width: 100, height: 400 }).IVPanel("show");
         $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("hide");
         $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 50, width: 600 }).IVPanel("hide");
+        $("#panel-style").IVPanel({ right: 10, top: 460, width: 200, height: 200 }).IVPanel("show");
     });
     IV.raiseEvent("command:panels.reset");
+
+    {{include: panels/panels.js}}
+
     // data-toggle
     $("span[data-toggle]").each(function() {
         var id = $(this).attr("data-toggle");

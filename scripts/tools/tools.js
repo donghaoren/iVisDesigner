@@ -55,22 +55,26 @@ IV.tools = { };
         delete mouse_trackers[key];
     };
 
-    IV.tools.beginSelectObject = function(f, key) {
+    IV.tools.beginSelectObject = function(f, key, action) {
         IV.tools.beginTrackMouse(function(e) {
-            var context = IV.vis.selectObject(new IV.Vector(e.offsetX, e.offsetY), IV.data);
-            f(context);
+            var context = IV.vis.selectObject(new IV.Vector(e.offsetX, e.offsetY), IV.data, action);
+            f(context, e);
         }, key);
     };
     IV.tools.endSelectObject = IV.tools.endTrackMouse;
 })();
 
 IV.listen("tools:current", function(val) {
-    if(IV.current_tool)
+    if(IV.current_tool && IV.current_tool.onInactive)
         IV.current_tool.onInactive();
+
     IV.current_tool = IV.tools[val];
-    IV.current_tool.onActive();
+
+    if(IV.current_tool.onActive)
+        IV.current_tool.onActive();
 });
 
+{{include: select.js}}
 {{include: track.js}}
 {{include: circle.js}}
 {{include: line.js}}

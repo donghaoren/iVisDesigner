@@ -2,6 +2,9 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
+// scripts/objects/objects.js
+// Objects in iVisDesigner.
+
 IV.objects = { };
 
 IV.objects.BaseObject = function(proto) {
@@ -11,9 +14,19 @@ IV.objects.BaseObject = function(proto) {
 };
 IV.objects.BaseObject.prototype = {
     can: function(cap) { return false; },
+    get: function(context) { return null; },
+    getStyle: function(context) { return this.get(context); },
+    getPoint: function(context) { return this.get(context); },
+    getNumber: function(context) { return this.get(context); },
     render: function() { },
+    renderSelected: function() { },
     renderGuide: function() { },
-    select: function() { return null; }
+    renderGuideSelected: function() { },
+    select: function() { return null; },
+    clone: function() {
+        console.log("Clone not implemented: ", this);
+        throw "AS";
+    }
 };
 
 {{include: base.js}}

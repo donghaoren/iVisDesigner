@@ -2,7 +2,7 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
-// utils.js
+// scripts/utils.js
 // A framework for our application.
 
 var IV = (function() {
@@ -657,7 +657,7 @@ NS.bindToggle = function(selection, key) {
         else selection.removeClass("active");
     });
     return NS;
-}; // 左手钢琴协奏曲 拉威尔
+};
 
 NS.bindOption = function(selection, key, cls) {
     if(!cls) cls = "active";
@@ -1232,6 +1232,24 @@ NS.parseColorINT = function(s) {
     var g = parseInt(v[1]);
     var b = parseInt(v[2]);
     return new NS.Color(r, g, b);
+};
+NS.parseColorHEX = function(s) {
+    var hex2int = {
+        "0": 0, "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9,
+        "a": 10, "b": 11, "c": 12, "d": 13, "e": 14, "f": 15,
+        "A": 10, "B": 11, "C": 12, "D": 13, "E": 14, "F": 15
+    };
+    if(s.length == 6) {
+        var r = hex2int[s[0]] * 16 + hex2int[s[1]];
+        var g = hex2int[s[2]] * 16 + hex2int[s[3]];
+        var b = hex2int[s[4]] * 16 + hex2int[s[5]];
+        return new NS.Color(r, g, b);
+    } else {
+        var r = hex2int[s[0]] * 16 + hex2int[s[0]];
+        var g = hex2int[s[1]] * 16 + hex2int[s[1]];
+        var b = hex2int[s[2]] * 16 + hex2int[s[2]];
+        return new NS.Color(r, g, b);
+    }
 };
 NS.parseColorINTA = function(s) {
     var v = s.split(",");

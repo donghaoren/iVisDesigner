@@ -2,37 +2,32 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
-// shapes.js
+// scripts/objects/shapes.js
 // Define objects for various shapes.
 
 (function() {
 
 var Circle = function(path, info) {
+    this.type = "Circle";
     this.path = path;
     // Center
-    this.anchor_center = info.center;
-
-    // Radius
-    if(info.radius)
-        this.f_radius = info.radius;
-    else
-        this.f_radius = new IV.objects.Number(2);
-
+    this.center = info.center;
     // Style
     if(info.style)
-        this.s_style = info.style;
+        this.style = info.style;
     else {
-        this.s_style = new IV.objects.Style({
-            fill_style: new IV.Color(0, 0, 0, 1)
+        this.style = new IV.objects.Style({
+            fill_style: new IV.Color(0, 0, 0, 1),
+            radius: 3
         });
     }
 };
 
 Circle.prototype = new IV.objects.BaseObject({
     render: function(g, context) {
-        var pt = this.anchor_center.getPoint(context);
-        var radius = this.f_radius.getNumber(context);
-        var style = this.s_style.getStyle(context);
+        var pt = this.center.getPoint(context);
+        var style = this.style.getStyle(context);
+        var radius = style.radius;
         g.beginPath();
         g.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
         if(style.fill_style) {
@@ -43,6 +38,29 @@ Circle.prototype = new IV.objects.BaseObject({
             g.strokeStyle = style.stroke_style.toRGBA();
             g.stroke();
         }
+    },
+    renderSelected: function(g, context) {
+        var pt = this.center.getPoint(context);
+        var style = this.style.getStyle(context);
+        var radius = style.radius;
+        g.beginPath();
+        g.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
+        g.strokeStyle = IV.colors.selection.toRGBA(0.1);
+        g.stroke();
+    },
+    select: function(pt, data, action) {
+        var selected = false;
+        var $this = this;
+        data.enumeratePath(this.path, function(context) {
+            var c = $this.center.getPoint(context);
+            var style = $this.style.getStyle(context);
+            var radius = style.radius;
+            if(pt.distance(c) <= radius) {
+                selected = true;
+            }
+        });
+        if(selected) return { };
+        return null;
     }
 });
 
@@ -54,9 +72,9 @@ var Line = function(path, info) {
     this.point2 = info.point2;
     // Style
     if(info.style)
-        this.s_style = info.style;
+        this.style = info.style;
     else {
-        this.s_style = new IV.objects.Style({
+        this.style = new IV.objects.Style({
             stroke_style: new IV.Color(0, 0, 0, 1),
             width: 1
         });
@@ -67,7 +85,7 @@ Line.prototype = new IV.objects.BaseObject({
     render: function(g, context) {
         var p1 = this.point1.getPoint(context);
         var p2 = this.point2.getPoint(context);
-        var style = this.s_style.getStyle(context);
+        var style = this.style.getStyle(context);
         g.beginPath();
         g.moveTo(p1.x, p1.y);
         g.lineTo(p2.x, p2.y);
@@ -76,6 +94,30 @@ Line.prototype = new IV.objects.BaseObject({
             if(style.width) g.lineWidth = style.width;
             g.stroke();
         }
+    },
+    renderSelected: function(g, context) {
+        var p1 = this.point1.getPoint(context);
+        var p2 = this.point2.getPoint(context);
+        var style = this.style.getStyle(context);
+        g.beginPath();
+        g.moveTo(p1.x, p1.y);
+        g.lineTo(p2.x, p2.y);
+        g.strokeStyle = IV.colors.selection.toRGBA(0.1);
+        g.stroke();
+    },
+    select: function(pt, data, action) {
+        var selected = false;
+        var $this = this;
+        data.enumeratePath(this.path, function(context) {
+            var p1 = $this.point1.getPoint(context);
+            var p2 = $this.point2.getPoint(context);
+            var d = IV.pointLineSegmentDistance(pt, p1, p2);
+            if(d <= 4) {
+                selected = true;
+            }
+        });
+        if(selected) return { };
+        return null;
     }
 });
 

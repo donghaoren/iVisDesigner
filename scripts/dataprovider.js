@@ -2,7 +2,7 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
-// dataprovider.js
+// scripts/dataprovider.js
 // Load data schema and data contents.
 
 IV.dataprovider = { };

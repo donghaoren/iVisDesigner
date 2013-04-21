@@ -21,6 +21,7 @@ Javascript("toolkit.js", [
     "scripts/utils.js",
     "scripts/panel.js",
     "scripts/menu.js",
+    "scripts/controls.js",
     "scripts/toolkit.js"
 ])
 

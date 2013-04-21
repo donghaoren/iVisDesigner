@@ -1,0 +1,83 @@
+.input-numeric {
+    display: inline-block;
+    white-space: nowrap;
+
+    input {
+        border: none;
+        margin: 0; padding: 0;
+        outline: none;
+
+        font-size: 12px;
+        line-height: 17px;
+        height: 17px;
+        vertical-align: top;
+
+        border: 1px solid gray;
+        border-right: none;
+        border-radius: 2px 0 0 2px;
+
+        width: 4em;
+
+        &:hover, &:active, &:focus {
+            border: 1px solid @active_color;
+            border-right: none;
+            outline: none;
+        }
+        &:focus {
+            background-color: lighten(@active_color, 60%);
+        }
+    }
+    span {
+        display: inline-block;
+        font-size: 12px;
+        line-height: 17px;
+        height: 17px;
+        width: 10px;
+        border: 1px solid gray;
+        border-radius: 0 2px 2px 0;
+        text-align: center;
+        cursor: pointer;
+        vertical-align: top;
+
+        &:hover {
+            border: 1px solid @active_color;
+            background-color: @active_color;
+            color: white;
+        }
+    }
+}
+.control-numeric-value {
+    line-height: 19px;
+    display: inline-block;
+    white-space: nowrap;
+    .path {
+        display: inline-block;
+        cursor: pointer;
+        border-radius: 2px;
+        height: 19px;
+        line-height: 19px;
+        margin: 0 2px;
+        &:hover {
+            background-color: @active_color;
+            color: white;
+        }
+    }
+    .toggle {
+        display: inline-block;
+        font-size: 12px;
+        line-height: 17px;
+        height: 17px;
+        width: 10px;
+        border: 1px solid gray;
+        border-radius: 2px;
+        text-align: center;
+        cursor: pointer;
+        vertical-align: top;
+
+        &:hover {
+            border: 1px solid @active_color;
+            background-color: @active_color;
+            color: white;
+        }
+    }
+}

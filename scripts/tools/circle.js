@@ -1,3 +1,7 @@
+// iVisDesigner
+// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+// See LICENSE.txt for copyright information.
+
 (function() {
 
 IV.tools.Circle = {
@@ -8,7 +12,8 @@ IV.tools.Circle = {
             var path = IV.get("selected-path");
             if(IV.data.schemaAtPath(path)) {
                 var circle = new IV.objects.Circle(path, {
-                    center: context.obj
+                    center: context.obj,
+                    style: IV.panels.style.createStyle()
                 });
                 IV.vis.addObject(circle);
                 IV.triggerRender("main");

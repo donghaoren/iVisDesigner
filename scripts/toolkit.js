@@ -2,7 +2,7 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
-// toolkit.js
+// scripts/toolkit.js
 // The main javascript file for the toolkit.
 
 // ------------------------------------------------------------------------
@@ -66,7 +66,7 @@ IV.renderFront = function() {
     var ctx = IV.canvas.front.getContext("2d");
     ctx.clearRect(0, 0, IV.canvas.front.width, IV.canvas.front.height);
 
-    if(IV.current_tool) {
+    if(IV.current_tool && IV.current_tool.render) {
         IV.current_tool.render(ctx);
     }
 };
@@ -78,6 +78,13 @@ IV.renderBack = function() {
     if(IV.vis) {
         IV.vis.renderGuide(ctx, IV.data);
     }
+};
+
+// ------------------------------------------------------------------------
+// Global Colors
+// ------------------------------------------------------------------------
+IV.colors = {
+    selection: IV.parseColorHEX("1F77B4")
 };
 
 // ------------------------------------------------------------------------
@@ -100,6 +107,7 @@ IV.on("reset", function() {
         content: null
     };
     IV.vis = new IV.Visualization();
+    IV.selection = [];
     IV.data.enumeratePath = IV.enumeratePath;
     IV.data.schemaAtPath = IV.schemaAtPath;
 });
@@ -300,9 +308,9 @@ IV.test = function() {
     var scatter = new IV.objects.Scatter(track1, track2);
     var circle = new IV.objects.Circle("cars", {
         center: scatter,
-        radius: new IV.objects.Number(5),
         style: new IV.objects.Style({
-            fill_style: new IV.Color(0, 0, 0, 0.2)
+            fill_style: new IV.Color(0, 0, 0, 0.2),
+            radius: 3
         })
     });
     var line = new IV.objects.Line("cars", {

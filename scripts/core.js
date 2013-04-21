@@ -2,13 +2,14 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
-// core.js
+// scripts/core.js
 // iVisDesigner Core Classes and Functions.
 
 {{include: objects/objects.js}}
 
 IV.Visualization = function() {
     this.objects = [];
+    this.selection = [];
 };
 
 IV.Visualization.prototype = {
@@ -26,11 +27,29 @@ IV.Visualization.prototype = {
                 g.restore();
             });
         });
+        this.selection.forEach(function(c) {
+            var obj = c.obj;
+            var path = obj.path;
+            if(!path) return;
+            data.enumeratePath(path, function(context) {
+                g.save();
+                try { obj.renderSelected(g, context); }
+                catch(e) { console.log(e); }
+                g.restore();
+            });
+        });
     },
     renderGuide: function(g, data) {
         this.objects.forEach(function(obj) {
             g.save();
             try { obj.renderGuide(g, data); }
+            catch(e) { console.log(e); }
+            g.restore();
+        });
+        this.selection.forEach(function(c) {
+            var obj = c.obj;
+            g.save();
+            try { obj.renderGuideSelected(g, data); }
             catch(e) { console.log(e); }
             g.restore();
         });
@@ -45,5 +64,13 @@ IV.Visualization.prototype = {
             }
         }
         return null;
+    },
+    appendSelection: function(ctx) {
+        this.selection.push(ctx);
+        ctx.obj.selected = true;
+    },
+    clearSelection: function() {
+        this.selection.forEach(function(c) { c.obj.selected = false; });
+        this.selection = [];
     }
 };
