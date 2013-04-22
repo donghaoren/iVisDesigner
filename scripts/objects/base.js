@@ -98,4 +98,25 @@ NumberLinear.prototype = new IV.objects.BaseObject({
 });
 IV.objects.NumberLinear = NumberLinear;
 
+// Color Linear
+var ColorLinear = function(path, color1, color2) {
+    this.path = path;
+    this.color1 = color1;
+    this.color2 = color2;
+    this.type = "ColorLinear";
+};
+ColorLinear.prototype = new IV.objects.BaseObject({
+    get: function(context) {
+        var value = context.get(this.path);
+        var s = context.getSchema(this.path);
+        if(s.max !== undefined && s.min !== undefined)
+            value = (value - s.min) / (s.max - s.min);
+        return this.color1.interp(this.color2, value);
+    },
+    clone: function() {
+        return new ColorLinear(this.path, this.color1, this.color2);
+    }
+});
+IV.objects.ColorLinear = ColorLinear;
+
 })();

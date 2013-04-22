@@ -1272,6 +1272,17 @@ NS.Color.prototype = {
     toRGBA : function(alpha) {
         if(alpha === undefined) alpha = 1;
         return "rgba(" + this.toINT() + "," + (this.a * alpha).toFixed(3) + ")";
+    },
+    interp: function(dest, s) {
+        return new NS.Color(
+            this.r + s * (dest.r - this.r),
+            this.g + s * (dest.g - this.g),
+            this.b + s * (dest.b - this.b),
+            this.a + s * (dest.a - this.a)
+        );
+    },
+    clone: function() {
+        return new NS.Color(this.r, this.g, this.b, this.a);
     }
 };
 

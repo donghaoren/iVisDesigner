@@ -11,77 +11,18 @@
     $(".control-numeric-value").each(function() {
         $(this).IVNumericValue();
     });
+    $(".control-color-value").each(function() {
+        $(this).IVColorValue();
+    });
     // Controls.
     $(".input-numeric").each(function() {
         $(this).IVInputNumeric();
     });
-
-    // Popups
-    IV.popups = { };
-    $(".popup").each(function() {
-        var $this = $(this);
-        var key = $this.attr("data-popup");
-        IV.popups[key] = $this;
-        $this.mousedown(function(e) {
-            e.stopPropagation();
-        });
-        var resize_button = $this.children(".resize");
-        var mouse_state = null;
-        resize_button.mousedown(function(e) {
-            mouse_state = [
-                "resize",
-                e.pageX, e.pageY,
-                $this.width(),
-                $this.height()
-            ];
-        });
-        $(window).mousemove(function(e) {
-            if(mouse_state && mouse_state[0] == "resize") {
-                var nx = e.pageX - mouse_state[1] + mouse_state[3];
-                var ny = e.pageY - mouse_state[2] + mouse_state[4];
-                if(nx < 50) nx = 50;
-                if(ny < 40) ny = 40;
-                $this.css("width", nx + "px");
-                $this.css("height", ny + "px");
-            }
-        });
-        $(window).mouseup(function(e) {
-            mouse_state = null;
-        });
-        $this.detach();
+    $(".color-selector").each(function() {
+        $(this).IVColorPicker();
     });
-    IV.popups.show = function(key, anchor, width, height, info) {
-        var p = IV.popups[key];
-        $("#popup-container").children().detach();
-        $("#popup-container").append(p);
-        var margin = 5;
-        var x = anchor.offset().left - width - margin;
-        var y = anchor.offset().top - height - margin;
-        var cx = anchor.offset().left + anchor.width() / 2;
-        var cy = anchor.offset().top + anchor.height() / 2;
-        if(cx < $(window).width() / 2) x = anchor.offset().left + anchor.width() + margin;
-        if(cy < $(window).height() / 2) y = anchor.offset().top + anchor.height() + margin;
-        p.css({
-            width: width + "px",
-            height: height + "px",
-            left: x + "px",
-            top: y + "px"
-        });
 
-        p.data().selector = p;
-        p.data().hide = function() {
-            p.detach();
-        }
-        if(p.data().onShow) p.data().onShow(info);
-        return p.data();
-    };
-    $(window).mousedown(function() {
-        $("#popup-container").children().each(function() {
-            var data = $(this).data();
-            if(data.finalize) data.finalize();
-            $(this).detach();
-        });
-    });
+    {{include: popups.js}}
 
     // Panels
     IV.addListener("command:panels.reset", function() {

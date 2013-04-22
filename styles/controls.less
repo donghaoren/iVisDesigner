@@ -16,7 +16,7 @@
         border-right: none;
         border-radius: 2px 0 0 2px;
 
-        width: 4em;
+        width: 3em;
 
         &:hover, &:active, &:focus {
             border: 1px solid @active_color;
@@ -46,10 +46,15 @@
         }
     }
 }
-.control-numeric-value {
+.control-numeric-value, .control-color-value {
     line-height: 19px;
     display: inline-block;
     white-space: nowrap;
+    border-radius: 2px;
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 2px;
+    margin: -2px;
+
     .path {
         display: inline-block;
         cursor: pointer;
@@ -65,20 +70,30 @@
     .toggle {
         display: inline-block;
         font-size: 12px;
-        line-height: 17px;
-        height: 17px;
+        line-height: 19px;
+        height: 19px;
         width: 10px;
-        border: 1px solid gray;
         border-radius: 2px;
         text-align: center;
         cursor: pointer;
         vertical-align: top;
-
+        background-color: rgba(255,255,255,0.3);
         &:hover {
-            border: 1px solid @active_color;
             background-color: @active_color;
             color: white;
         }
+    }
+}
+
+.color-selector {
+    display: inline-block;
+    vertical-align: top;
+    width: 17px; height: 17px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    border-radius: 2px;
+    &.empty {
+        background-color: transparent !important;
     }
 }
 

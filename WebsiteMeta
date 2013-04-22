@@ -31,12 +31,6 @@ Image("imgs/cross.svg", "images/cross.svg")
 Image("imgs/stroke.svg", "images/stroke.svg")
 Image("imgs/mark.svg", "images/mark.svg")
 Image("imgs/logo.svg", "images/logo.svg")
-Image("imgs/glyphs.svg", "images/glyphs.svg")
-
-# Image("imgs/types_number.svg", "images/types_number.svg")
-# Image("imgs/types_object.svg", "images/types_object.svg")
-# Image("imgs/types_collection.svg", "images/types_collection.svg")
-# Image("imgs/types_sequence.svg", "images/types_sequence.svg")
 
 Binary("datasets/cardata.schema", "datasets/cardata.yaml");
 Binary("datasets/cardata.data", "datasets/cardata.data.yaml");
