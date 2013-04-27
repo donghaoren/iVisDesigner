@@ -1,0 +1,2 @@
+var IV_Config = {
+};

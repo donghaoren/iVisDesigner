@@ -111,7 +111,7 @@ ColorLinear.prototype = new IV.objects.BaseObject({
         var s = context.getSchema(this.path);
         if(s.max !== undefined && s.min !== undefined)
             value = (value - s.min) / (s.max - s.min);
-        return this.color1.interp(this.color2, value);
+        return this.color1.interpLab(this.color2, value);
     },
     clone: function() {
         return new ColorLinear(this.path, this.color1, this.color2);

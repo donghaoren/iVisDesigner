@@ -7,14 +7,15 @@
 execfile("version.py")
 
 Meta("version", IV_version)
-Meta("revision", IV_rev)
+Meta("revision", IV_rev.upper())
 
 CSS("toolkit.css", ["styles/font-awesome.css", "styles/toolkit.less"])
 
 Javascript("libraries.js", [
     #"libraries/jquery-1.9.1.js"
     "libraries/jquery-2.0.0-beta3.js",
-    "libraries/js-yaml.js"
+    "libraries/js-yaml.js",
+    "libraries/chroma.js"
 ])
 
 Javascript("toolkit.js", [
@@ -31,6 +32,8 @@ Image("imgs/logo.svg", "images/logo.svg")
 
 Binary("datasets/cardata.schema", "datasets/cardata.yaml");
 Binary("datasets/cardata.data", "datasets/cardata.data.yaml");
+Binary("datasets/temperature.schema", "datasets/temperature.yaml");
+Binary("datasets/temperature.data", "datasets/temperature.data.yaml");
 
 HTML("toolkit.html", "toolkit.html")
 HTML("credits.html", "credits.html")

@@ -4,25 +4,31 @@
 
 @panel_titlecolor: #555;
 
-.btn {
-    display: inline-block;
-    height: 20px;
-    line-height: 20px;
-    font-size: 13px;
-    padding: 0 5px;
-    margin: 3px;
-    cursor: pointer;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    border-radius: 2px;
-    .gradient_background(#CCC);
-
-    &:hover {
-        .gradient_background(@active_color);
-        color: white;
+.tab {
+    & > .header {
+        border-radius: 2px 2px 0 0;
+        white-space: nowrap;
+        & > [data-tab] {
+            display: inline-block;
+            line-height: 15px;
+            height: 15px;
+            padding: 2px 5px;
+            border-radius: 2px 2px 0 0;
+            cursor: pointer;
+            &.active {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+            &:hover, &:active {
+                color: white;
+                background-color: @active_color;
+                border-radius: 2px;
+            }
+        }
     }
-    &.active {
-        .gradient_background_inv(darken(@active_color, 5%));
-        color: white;
+    & > .tabs {
+        padding: 4px;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 0 0 2px 2px;
     }
 }
 
@@ -153,6 +159,7 @@
 
 #panel-page-container {
     padding: 10px;
+    background-color: rgba(255, 255, 255, 0.6);
 }
 
 #panel-style-container {
@@ -170,6 +177,7 @@
 
 #popup-container {
     position: fixed;
+    z-index: 10000;
     left: 0;
     top: 0;
 }
@@ -181,20 +189,20 @@
     .drop_shadow();
     border-radius: 2px;
     border: 1px solid @panel_titlecolor;
-    z-index: 1000;
 
     .actions {
         position: absolute;
+        white-space: nowrap;
         left: 0; right: 0; bottom: 0;
-        height: 21;
-        line-height: 21px;
+        height: 19px;
+        line-height: 19px;
         padding: 3px;
         text-align: right;
         background-color: rgba(0, 0, 0, 0.2);
         .btn {
             font-size: 12px;
-            line-height: 15px;
-            height: 15px;
+            line-height: 13px;
+            height: 13px;
             padding: 3px 5px;
             margin: 0;
         }
@@ -215,6 +223,7 @@
     }
     p {
         margin: 2px 5px;
+        line-height: 19px;
     }
     .predefined {
         span {
@@ -222,15 +231,73 @@
             vertical-align: top;
             width: 17px;
             height: 17px;
-            margin: 2px 0;
+            margin: 2px 2px;
             border-radius: 2px;
             cursor: pointer;
-            &:hover {
+            box-shadow: 0 0 2px gray;
+            &:hover, &.active {
                 border: 1px solid white;
                 box-shadow: 0 0 2px black;
                 width: 15px;
                 height: 15px;
             }
+        }
+    }
+    .selected-color {
+        display: inline-block;
+        width: 17px;
+        height: 17px;
+        border-radius: 2px;
+        border: 1px solid #888;
+        vertical-align: top;
+    }
+    .hcl-picker .picker {
+        display: inline-block;
+        border: 2px solid gray;
+        padding: 2px;
+        background-color: black;
+        border-radius: 2px;
+        white-space: nowrap;
+        & > span {
+            vertical-align: top;
+            position: relative;
+            display: inline-block;
+        }
+        /*
+        table {
+            line-height: 19px;
+            tr { height: 22px; }
+            td:first-child {
+                text-align: right;
+                padding-right: 2px;
+            }
+        }
+        */
+        .xy-marker {
+            display: block;
+            position: absolute;
+            left: 0; top: 0;
+            border-radius: 2px;
+            width: 2px; height: 2px;
+            border: 1px solid white;
+            box-shadow: 0 0 1px black;
+        }
+        .l-marker {
+            display: block;
+            position: absolute;
+            left: 0; top: 0;
+            height: 1px;
+            width: 18px;
+            border: 1px solid white;
+            box-shadow: 0 0 1px black;
+        }
+        .picker-canvas, .picker-canvas-w {
+            width: 250px; height: 100px;
+            cursor: crosshair;
+        }
+        .picker-canvas-side, .picker-canvas-side-w {
+            width: 20px; height: 100px;
+            cursor: crosshair;
         }
     }
 }

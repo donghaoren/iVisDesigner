@@ -14,6 +14,9 @@
     $(".control-color-value").each(function() {
         $(this).IVColorValue();
     });
+    $(".control-select-value").each(function() {
+        $(this).IVSelectValue();
+    });
     // Controls.
     $(".input-numeric").each(function() {
         $(this).IVInputNumeric();
@@ -21,6 +24,36 @@
     $(".color-selector").each(function() {
         $(this).IVColorPicker();
     });
+
+    // tabs
+    $(".tab").each(function() {
+        var $this = $(this);
+        var header = $this.children(".header");
+        var tabs = $this.children(".tabs");
+        var show_tab = function(name) {
+            tabs.children().each(function() {
+                if($(this).attr("data-tab") == name)
+                    $(this).show();
+                else $(this).hide();
+            });
+            header.children("[data-tab]").each(function() {
+                if($(this).attr("data-tab") == name)
+                    $(this).addClass("active");
+                else $(this).removeClass("active");
+            });
+        };
+        header.children("[data-tab]").each(function() {
+            $(this).click(function() {
+                var tabname = $(this).attr("data-tab");
+                show_tab(tabname);
+            });
+        });
+        if($this.attr("data-default"))
+            show_tab($this.attr("data-default"));
+        else
+            $(header.children("[data-tab]")[0]).click();
+    });
+
 
     {{include: popups.js}}
 

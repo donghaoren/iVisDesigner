@@ -49,3 +49,47 @@ IV.tools.Track = {
 };
 
 })();
+
+(function() {
+
+IV.tools.Scatter = {
+    onActive: function() {
+        var obj1 = null;
+        var obj2 = null;
+        IV.vis.clearSelection();
+        IV.triggerRender("main,back");
+
+        IV.tools.beginSelectObject(function(context) {
+            var path = IV.get("selected-path");
+            if(!context) {
+                obj1 = null;
+                obj2 = null;
+                IV.vis.clearSelection();
+                IV.triggerRender("main,back");
+                return;
+            }
+            if(!obj1) {
+                obj1 = context.obj;
+                IV.vis.appendSelection(context);
+                IV.triggerRender("main,back");
+            } else if(!obj2) {
+                obj2 = context.obj;
+                if(IV.data.schemaAtPath(path)) {
+                    if(obj1.type == "Track" && obj2.type == "Track") {
+                        var scatter = new IV.objects.Scatter(obj1, obj2);
+                        IV.vis.addObject(scatter);
+                    }
+                }
+                obj1 = null;
+                obj2 = null;
+                IV.vis.clearSelection();
+                IV.triggerRender("main,back");
+            }
+        }, "tools:Line");
+    },
+    onInactive: function() {
+        IV.tools.endSelectObject("tools:Line");
+    }
+};
+
+})();

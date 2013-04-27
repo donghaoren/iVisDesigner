@@ -866,7 +866,9 @@ NS.Vector.prototype = {
     interp: function(v, t) {
         return new NS.Vector(this.x + (v.x - this.x) * t,
                              this.y + (v.y - this.y) * t);
-    }
+    },
+    callMoveTo: function(g) { g.moveTo(this.x, this.y); },
+    callLineTo: function(g) { g.lineTo(this.x, this.y); }
 };
 
 NS.array_unique = function(array) {
@@ -1226,6 +1228,10 @@ NS.Color = function(r, g, b, a) {
     this.b = parseFloat(b);
     this.a = (a !== undefined) ? parseFloat(a) : 1;
 };
+NS.parseColorChroma = function(c, a) {
+    var rgb = c.rgb();
+    return new NS.Color(rgb[0], rgb[1], rgb[2], a);
+};
 NS.parseColorINT = function(s) {
     var v = s.split(",");
     var r = parseInt(v[0]);
@@ -1273,6 +1279,9 @@ NS.Color.prototype = {
         if(alpha === undefined) alpha = 1;
         return "rgba(" + this.toINT() + "," + (this.a * alpha).toFixed(3) + ")";
     },
+    toChroma: function() {
+        return chroma.color(this.r, this.g, this.b);
+    },
     interp: function(dest, s) {
         return new NS.Color(
             this.r + s * (dest.r - this.r),
@@ -1280,6 +1289,12 @@ NS.Color.prototype = {
             this.b + s * (dest.b - this.b),
             this.a + s * (dest.a - this.a)
         );
+    },
+    interpLab: function(dest, s) {
+        var scale = chroma.scale([ this.toChroma(), dest.toChroma() ]);
+        var r = NS.parseColorChroma(scale.mode('lab')(s));
+        r.a = this.a + s * (dest.a - this.a);
+        return r;
     },
     clone: function() {
         return new NS.Color(this.r, this.g, this.b, this.a);

@@ -18,25 +18,22 @@ IV.Visualization.prototype = {
     },
     render: function(g, data) {
         this.objects.forEach(function(obj) {
-            var path = obj.path;
-            if(!path) return;
-            data.enumeratePath(path, function(context) {
-                g.save();
-                try { obj.render(g, context); }
-                catch(e) { console.log(e); }
-                g.restore();
-            });
+            g.save();
+            try {
+                obj.render(g, data);
+            } catch(e) {
+                console.log(e);
+            }
+            g.restore();
         });
         this.selection.forEach(function(c) {
-            var obj = c.obj;
-            var path = obj.path;
-            if(!path) return;
-            data.enumeratePath(path, function(context) {
-                g.save();
-                try { obj.renderSelected(g, context); }
-                catch(e) { console.log(e); }
-                g.restore();
-            });
+            g.save();
+            try {
+                c.obj.renderSelected(g, data);
+            } catch(e) {
+                console.log(e);
+            }
+            g.restore();
         });
     },
     renderGuide: function(g, data) {

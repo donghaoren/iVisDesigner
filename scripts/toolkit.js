@@ -12,6 +12,14 @@
 {{include: core.js}}
 
 // ------------------------------------------------------------------------
+// Process Configuration
+// ------------------------------------------------------------------------
+
+IV.config = $.extend({
+    key: "defualt"
+}, IV_Config);
+
+// ------------------------------------------------------------------------
 // Canvas and Rendering
 // ------------------------------------------------------------------------
 IV.canvas = {
@@ -189,6 +197,7 @@ IV.schemaAtPath = function(path) {
 IV.enumeratePath = function(path, callback) {
     var context = { };
     context.get = function(path) {
+        if(context._cache[path]) return context._cache[path];
         if(context[path] !== undefined) return context[path];
         var split = path.split(":");
         var ctx = context._tree;
@@ -208,6 +217,7 @@ IV.enumeratePath = function(path, callback) {
                 rslt = ctx._obj;
             }
         }
+        context._cache[path] = rslt;
         return rslt;
     };
     context._tree = { };
@@ -220,6 +230,7 @@ IV.enumeratePath = function(path, callback) {
     var process_level = function(prefix, spath, ctx, schema_fields, data) {
         //console.log(prefix, spath, ctx, schema_fields, data);
         if(spath.length == 0) {
+            context._cache = { };
             callback(context);
             return;
         }
@@ -292,38 +303,42 @@ $(function() {
     // Remove the loading indicator.
     $("#system-loading").remove();
     // Default dataset: cardata.
-    IV.loadDataset("cardata");
+    IV.loadDataset("temperature");
 });
 
 IV.test = function() {
-    var track1 = new IV.objects.Track("cars:mpg",
+    var track1 = new IV.objects.Track("days:min",
         new IV.objects.Point(new IV.Vector(200,100)),
         new IV.objects.Point(new IV.Vector(200,400)));
-    var track2 = new IV.objects.Track("cars:displacement",
+    var track2 = new IV.objects.Track("days:day",
         new IV.objects.Point(new IV.Vector(200,100)),
         new IV.objects.Point(new IV.Vector(500,100)));
-    var track3 = new IV.objects.Track("cars:cylinders",
+    var track3 = new IV.objects.Track("days:max",
         new IV.objects.Point(new IV.Vector(600,400)),
         new IV.objects.Point(new IV.Vector(600,100)));
     var scatter = new IV.objects.Scatter(track1, track2);
-    var circle = new IV.objects.Circle("cars", {
+    var circle = new IV.objects.Circle("days", {
         center: scatter,
         style: new IV.objects.Style({
             fill_style: new IV.Color(0, 0, 0, 0.2),
             radius: 5
         })
     });
-    var line = new IV.objects.Line("cars", {
-        point1: scatter,
+    var line = new IV.objects.LineThrough("days", {
+        points: scatter,
         point2: track3,
         style: new IV.objects.Style({
-            stroke_style: new IV.Color(0, 0, 0, 0.2)
+            stroke_style: new IV.Color(0, 0, 0, 0.2),
+            width: 1,
+            line_cap: "round",
+            line_join: "round"
         })
     });
 
     IV.vis.addObject(track1);
     IV.vis.addObject(track2);
     IV.vis.addObject(track3);
+    IV.vis.addObject(scatter);
     IV.vis.addObject(line);
     IV.vis.addObject(circle);
     IV.triggerRender("main,back");

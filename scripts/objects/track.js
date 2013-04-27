@@ -35,7 +35,7 @@ Track.prototype = new IV.objects.BaseObject({
         IV.enumeratePath(this.getLongPath(), function(context) {
             var p1 = $this.anchor1.getPoint(context);
             var p2 = $this.anchor2.getPoint(context);
-            callback(p1, p2);
+            callback(p1, p2, context);
         });
     },
     renderGuide: function(g) {
@@ -142,6 +142,100 @@ Scatter.prototype = new IV.objects.BaseObject({
 
         var p = d1.scale(p2.sub(p1).dot(d2) / d1.dot(d2)).add(p1);
         return p;
+    },
+    renderGuide: function(g) {
+        if(this.selected) return;
+        var $this = this;
+        $this.track1.enumerateGuide(function(p1, p2, ctx1) {
+            $this.track2.enumerateGuide(function(q1, q2, ctx2) {
+                var d2 = p2.sub(p1).rotate90();
+                var d1 = q2.sub(q1);
+                var scatter = function(p1, p2) {
+                    return d1.scale(p2.sub(p1).dot(d2) / d1.dot(d2)).add(p1);
+                };
+                var kscatter = function(k1, k2) {
+                    return scatter(p1.interp(p2, k1), q1.interp(q2, k2));
+                };
+                g.strokeStyle = "gray";
+                g.beginPath();
+                kscatter(0.2, 0.1).callMoveTo(g);
+                kscatter(0.1, 0.1).callLineTo(g);
+                kscatter(0.1, 0.2).callLineTo(g);
+                g.stroke();
+                g.beginPath();
+                kscatter(0.2, 0.9).callMoveTo(g);
+                kscatter(0.1, 0.9).callLineTo(g);
+                kscatter(0.1, 0.8).callLineTo(g);
+                g.stroke();
+                g.beginPath();
+                kscatter(0.8, 0.1).callMoveTo(g);
+                kscatter(0.9, 0.1).callLineTo(g);
+                kscatter(0.9, 0.2).callLineTo(g);
+                g.stroke();
+                g.beginPath();
+                kscatter(0.8, 0.9).callMoveTo(g);
+                kscatter(0.9, 0.9).callLineTo(g);
+                kscatter(0.9, 0.8).callLineTo(g);
+                g.stroke();
+            });
+        });
+    },
+    renderGuideSelected: function(g) {
+        var $this = this;
+        $this.track1.enumerateGuide(function(p1, p2, ctx1) {
+            $this.track2.enumerateGuide(function(q1, q2, ctx2) {
+                var d2 = p2.sub(p1).rotate90();
+                var d1 = q2.sub(q1);
+                var scatter = function(p1, p2) {
+                    return d1.scale(p2.sub(p1).dot(d2) / d1.dot(d2)).add(p1);
+                };
+                var kscatter = function(k1, k2) {
+                    return scatter(p1.interp(p2, k1), q1.interp(q2, k2));
+                };
+                g.strokeStyle = IV.colors.selection.toRGBA();
+                g.beginPath();
+                kscatter(0.2, 0.1).callMoveTo(g);
+                kscatter(0.1, 0.1).callLineTo(g);
+                kscatter(0.1, 0.2).callLineTo(g);
+                g.stroke();
+                g.beginPath();
+                kscatter(0.2, 0.9).callMoveTo(g);
+                kscatter(0.1, 0.9).callLineTo(g);
+                kscatter(0.1, 0.8).callLineTo(g);
+                g.stroke();
+                g.beginPath();
+                kscatter(0.8, 0.1).callMoveTo(g);
+                kscatter(0.9, 0.1).callLineTo(g);
+                kscatter(0.9, 0.2).callLineTo(g);
+                g.stroke();
+                g.beginPath();
+                kscatter(0.8, 0.9).callMoveTo(g);
+                kscatter(0.9, 0.9).callLineTo(g);
+                kscatter(0.9, 0.8).callLineTo(g);
+                g.stroke();
+            });
+        });
+    },
+    select: function(pt, data, action) {
+        var $this = this;
+        var rslt = null;
+        $this.track1.enumerateGuide(function(p1, p2, ctx1) {
+            $this.track2.enumerateGuide(function(q1, q2, ctx2) {
+                var d2 = p2.sub(p1).rotate90();
+                var d1 = q2.sub(q1);
+                var scatter = function(p1, p2) {
+                    return d1.scale(p2.sub(p1).dot(d2) / d1.dot(d2)).add(p1);
+                };
+                var kscatter = function(k1, k2) {
+                    return scatter(p1.interp(p2, k1), q1.interp(q2, k2));
+                };
+                if(kscatter(0.1, 0.1).distance(pt) < 4.0) rslt = { };
+                if(kscatter(0.9, 0.1).distance(pt) < 4.0) rslt = { };
+                if(kscatter(0.9, 0.9).distance(pt) < 4.0) rslt = { };
+                if(kscatter(0.1, 0.9).distance(pt) < 4.0) rslt = { };
+            });
+        });
+        return rslt;
     }
 });
 

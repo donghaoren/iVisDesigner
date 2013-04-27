@@ -29,3 +29,8 @@
     background: -webkit-gradient(linear, left top, left bottom, from(@color), to(lighten(@color, @val)));
     background: -moz-linear-gradient(top, @color, lighten(@color, @val));
 }
+.gradient_background_append(@existing, @color, @val: 10%) {
+    background-image: @existing, @color;
+    background-image: @existing, -webkit-gradient(linear, left top, left bottom, from(lighten(@color, @val)), to(@color));
+    background-image: @existing, -moz-linear-gradient(top, lighten(@color, @val), @color);
+}

@@ -23,8 +23,13 @@ IV_version = {
 </script>
 <script type="text/plain" id="about-text">
 <h2>About iVisDesigner</h2>
-<p>Version {{version}}, r{{revision}}.</p>
-<p>Build time: {{build_time}}.</p>
+<p><i>Version {{version}}. Build time: {{build_time}}.</i></p>
+<ul>
+  <li>Design and Program: <b><a href="https://donghaoren.org">Donghao Ren</a></b>, Peking University</li>
+  <li>Advisor: <b><a href="http://vis.pku.edu.cn/yuanxiaoru/">Prof. Xiaoru Yuan</a></b>, Peking University</li>
+  <li>Affiliation: <a href="http://vis.pku.edu.cn/">PKU Visualization and Visual Analytics Group</a>,
+                   <a href="http://www.pku.edu.cn/">Peking University</a></li>
+</ul>
 {{include:license.html}}
 </script>
 
@@ -123,36 +128,56 @@ IV_version = {
     <div id="panel-style-container">
       <span class="group">Stroke: <span class="control-color-value" data-bind="stroke_style"></span></span>
       <span class="group">Fill: <span class="control-color-value" data-bind="fill_style"></span></span>
-      <span class="group">Width: <span class="control-numeric-value" data-bind="width"></span></span>
-      <span class="group">Radius: <span class="control-numeric-value" data-bind="radius"></span></span>
+      <span class="group">Width: <span class="control-numeric-value" data-bind="width"
+        data-min="0" data-max="20" data-delta-scale="1"></span></span>
+      <span class="group">Radius: <span class="control-numeric-value" data-bind="radius"
+        data-min="0" data-max="20" data-delta-scale="1"></span></span>
+      <span class="group">Cap: <span class="control-select-value" data-options="butt|Butt,round|Round,square|Square" data-bind="line_cap"></span></span>
+      <span class="group">Join: <span class="control-select-value" data-options="miter|Miter,round|Round,bevel|Bevel" data-bind="line_join"></span></span>
     </div>
   </div>
 </div>
 <div id="popup-container"></div>
 <div data-popup="color-selector" class="popup">
-  <h3>Predefined Colors</h3>
+  <div class="tab" data-default="predefined">
+    <div class="header">
+      <span data-tab="predefined">Predefined</span>
+      <span data-tab="hcl">HCL</span>
+    </div>
+    <div class="tabs">
+      <div data-tab="predefined">
+        <p><span class="predefined">000000,ffffff,888888,1f77b4,ff7f0e,2ca02c,d62728,9467bd,8c564b,e377c2,bcbd22,17becf</span></p>
+        <p><span class="predefined">BD0026,F03B20,FD8D3C,FEB24C,FED976,FFFFB2,045A8D,2B8CBE,74A9CF,A6BDDB,D0D1E6,F1EEF6</span></p>
+        <p><span class="predefined">252525,636363,969696,BDBDBD,D9D9D9,F7F7F7,B2182B,EF8A62,FDDBC7,D1E5F0,67A9CF,2166AC</span></p>
+      </div>
+      <div data-tab="hcl" class="hcl-picker">
+        <p>Component: <select class="method">
+          <option value="L">Luminance - Hue, Chroma</option>
+          <option value="H">Hue - Chroma, Luminance</option>
+          <option value="C">Chroma - Hue, Luminance</option>
+        </select></p>
+        <p><span class="picker">
+          <span class="picker-canvas-w">
+            <canvas class="picker-canvas" width="100" height="40"></canvas>
+            <span class="xy-marker"></span>
+          </span>
+          <span class="picker-canvas-side-w">
+            <canvas class="picker-canvas-side" width="5" height="50"></canvas>
+            <span class="l-marker"></span>
+          </span>
+        </span></p>
+      </div>
+    </div>
+  </div>
   <p>
-    <span class="predefined">
-      <span data-color="#000000"></span>
-      <span data-color="#1f77b4"></span>
-      <span data-color="#ff7f0e"></span>
-      <span data-color="#2ca02c"></span>
-      <span data-color="#d62728"></span>
-      <span data-color="#9467bd"></span>
-      <span data-color="#8c564b"></span>
-      <span data-color="#e377c2"></span>
-      <span data-color="#7f7f7f"></span>
-      <span data-color="#bcbd22"></span>
-      <span data-color="#17becf"></span>
-    </span>
+    R: <span class="input-red input-numeric" data-min="0" data-max="255" data-delta-scale="50"></span>
+    G: <span class="input-green input-numeric" data-min="0" data-max="255" data-delta-scale="50"></span>
+    B: <span class="input-blue input-numeric" data-min="0" data-max="255" data-delta-scale="50"></span>
+    Alpha: <span class="input-alpha input-numeric" data-min="0" data-max="1" data-delta-scale="0.2"></span>
   </p>
-  <h3>Picker</h3>
-  <p>
-  </p>
-  <h3>Alpha</h3>
-  <p><span class="input-alpha input-numeric"></span></p>
   <div class="actions">
-    <span class="btn remove">Remove</span>
+    <span class="selected-color"></span>
+    <span class="btn" data-action="remove">Remove</span>
     <span class="btn" data-action="ok"><i class="xicon-mark"></i></span>
     <span class="btn" data-action="cancel"><i class="xicon-cross"></i></span>
   </div>
@@ -170,6 +195,13 @@ IV_version = {
 
 <script type="text/javascript" src="{{js:libraries.js}}"></script>
 <script type="text/javascript" src="{{js:config.js}}"></script>
+<script type="text/javascript">
+IV_Config = $.extend({
+  version: IV_version.version,
+  revision: IV_version.revision,
+  build_time: IV_version.build_time
+}, IV_Config);
+</script>
 <script type="text/javascript" src="{{js:toolkit.js}}"></script>
 </body>
 </html>
