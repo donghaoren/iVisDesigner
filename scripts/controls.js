@@ -52,7 +52,9 @@ $.fn.IVInputNumeric = function(num) {
         data.get = function() {
             var v = input.val().trim();
             if(v == "") return null;
-            return parseFloat(v);
+            var r = parseFloat(v);
+            if(isNaN(r)) return null;
+            return r;
         };
         data.set = function(num) {
             if(num === undefined || num === null) {
@@ -362,7 +364,6 @@ $.fn.IVSelectValue = function(obj) {
         });
 
         data.get = function() {
-            console.log(data.select.val());
             return new IV.objects.Plain(data.select.val());
         };
         data.set = function(v) {

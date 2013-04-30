@@ -52,15 +52,21 @@ IV.Visualization.prototype = {
         });
     },
     selectObject: function(pt, data, action) {
+        var best_context = null;
+        var mind = 1e10;
         for(var i in this.objects) {
             var obj = this.objects[i];
             var context = obj.select(pt, data, action);
             if(context) {
+                var d = context.distance ? context.distance : 1e10;
                 context.obj = obj;
-                return context;
+                if(!best_context || d < mind) {
+                    mind = d;
+                    best_context = context;
+                }
             }
         }
-        return null;
+        return best_context;
     },
     appendSelection: function(ctx) {
         this.selection.push(ctx);

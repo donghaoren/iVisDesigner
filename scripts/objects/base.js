@@ -77,6 +77,27 @@ CompositeColorAlpha.prototype = new IV.objects.BaseObject({
 });
 IV.objects.CompositeColorAlpha = CompositeColorAlpha;
 
+var PointOffset = function(point, offset) {
+    this.offset = offset;
+    this.point = point;
+    this.path = point.path;
+    this.type = "PointOffset";
+};
+PointOffset.prototype = new IV.objects.BaseObject({
+    get: function(context) {
+        var pt = this.point.getPoint(context);
+        return pt.add(this.offset);
+    },
+    can: function(cap) {
+        if(cap == "get-point") return true;
+        return false;
+    },
+    clone: function() {
+        return new PointOffset(this.point, this.offset);
+    }
+});
+IV.objects.PointOffset = PointOffset;
+
 // Linear
 var NumberLinear = function(path, min, max) {
     this.path = path;

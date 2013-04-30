@@ -9,5 +9,5 @@ fields:
   refs:
     type: collection
     fields:
-      a: { type: reference }
-      b: { type: reference }
+      a: { type: reference, of: days }
+      b: { type: reference, of: days }

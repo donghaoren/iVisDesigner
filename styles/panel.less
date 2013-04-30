@@ -5,6 +5,7 @@
 @panel_titlecolor: #555;
 
 .tab {
+    margin-bottom: 5px;
     & > .header {
         border-radius: 2px 2px 0 0;
         white-space: nowrap;
@@ -39,6 +40,7 @@
     overflow: hidden;
     z-index: 10;
     border-radius: 2px;
+    .select_none();
     .panel_background();
     .drop_shadow();
 
@@ -254,14 +256,15 @@
     .hcl-picker .picker {
         display: inline-block;
         border: 2px solid gray;
+        background-color: gray;
         padding: 2px;
-        background-color: black;
         border-radius: 2px;
         white-space: nowrap;
         & > span {
             vertical-align: top;
             position: relative;
             display: inline-block;
+            box-shadow: 0 0 4px black;
         }
         /*
         table {

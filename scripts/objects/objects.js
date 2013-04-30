@@ -18,6 +18,7 @@ IV.objects.BaseObject.prototype = {
     getStyle: function(context) { return this.get(context); },
     getPoint: function(context) { return this.get(context); },
     getNumber: function(context) { return this.get(context); },
+    getPath: function() { return this.path; },
     render: function() { },
     renderSelected: function() { },
     renderGuide: function() { },

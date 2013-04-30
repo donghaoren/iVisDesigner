@@ -24,6 +24,12 @@ var Circle = function(path, info) {
 };
 
 Circle.prototype = new IV.objects.BaseObject({
+    can: function(cap) {
+        if(cap == "get-point") return true;
+    },
+    get: function(context) {
+        return this.center.getPoint(context);
+    },
     render: function(g, data) {
         var $this = this;
         data.enumeratePath($this.path, function(context) {
@@ -56,18 +62,36 @@ Circle.prototype = new IV.objects.BaseObject({
         });
     },
     select: function(pt, data, action) {
-        var selected = false;
+        var rslt = null;
         var $this = this;
         data.enumeratePath(this.path, function(context) {
             var c = $this.center.getPoint(context);
             var style = $this.style.getStyle(context);
-            var radius = style.radius;
-            if(pt.distance(c) <= radius + 4) {
-                selected = true;
+            var radius = style.radius || 0;
+            var d = Math.abs(pt.distance(c) - radius);
+            if(d <= 4) {
+                if(!rslt || rslt.distance < d) {
+                    rslt = { distance: d };
+                    if(action == "move") {
+                        if($this.center.type == "plain") {
+                            rslt.original = $this.center.obj;
+                            rslt.onMove = function(p0, p1) {
+                                $this.center.obj = rslt.original.sub(p0).add(p1);
+                                return { trigger_render: "main" };
+                            };
+                        }
+                        if($this.center.type == "PointOffset") {
+                            rslt.original = $this.center.offset;
+                            rslt.onMove = function(p0, p1) {
+                                $this.center.offset = rslt.original.sub(p0).add(p1);
+                                return { trigger_render: "main" };
+                            };
+                        }
+                    }
+                }
             }
         });
-        if(selected) return { };
-        return null;
+        return rslt;
     }
 });
 
@@ -116,23 +140,23 @@ Line.prototype = new IV.objects.BaseObject({
             g.beginPath();
             g.moveTo(p1.x, p1.y);
             g.lineTo(p2.x, p2.y);
-            g.strokeStyle = IV.colors.selection.toRGBA(0.5);
+            g.strokeStyle = IV.colors.selection.toRGBA();
             g.stroke();
         });
     },
     select: function(pt, data, action) {
-        var selected = false;
+        var rslt = null;
         var $this = this;
         data.enumeratePath(this.path, function(context) {
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
             if(d <= 4) {
-                selected = true;
+                if(!rslt || rslt.distance < d)
+                    rslt = { distance: d };
             }
         });
-        if(selected) return { };
-        return null;
+        return rslt;
     }
 });
 
@@ -191,7 +215,7 @@ LineThrough.prototype = new IV.objects.BaseObject({
             }
             index++;
         });
-        g.strokeStyle = IV.colors.selection.toRGBA(0.5);
+        g.strokeStyle = IV.colors.selection.toRGBA();
         g.stroke();
     },
     select: function(pt, data, action) {
@@ -200,15 +224,15 @@ LineThrough.prototype = new IV.objects.BaseObject({
         data.enumeratePath($this.path, function(context) {
             pts.push($this.points.getPoint(context));
         });
-        var selected = false;
+        var rslt = null;
         for(var i = 0; i < pts.length - 1; i++) {
             var d = IV.pointLineSegmentDistance(pt, pts[i], pts[i + 1]);
             if(d <= 4) {
-                selected = true;
+                if(!rslt || rslt.distance < d)
+                    rslt = { distance: d };
             }
         }
-        if(selected) return { };
-        return null;
+        return rslt;
     }
 });
 

@@ -72,16 +72,29 @@
     // data-toggle
     $("span[data-toggle]").each(function() {
         var id = $(this).attr("data-toggle");
-        $(id).data().toggle_selector = $(this);
-        if($(id).is(":visible")) {
-            $(this).addClass("toggle-on");
+        if(id[0] == "#") {
+            $(id).data().toggle_selector = $(this);
+            if($(id).is(":visible")) {
+                $(this).addClass("toggle-on");
+            } else {
+                $(this).removeClass("toggle-on");
+            }
+            $(this).click(function() {
+                $(id).toggle();
+                $(this).toggleClass("toggle-on");
+            });
         } else {
-            $(this).removeClass("toggle-on");
+            if(!IV.exists(id)) IV.add(id, "bool");
+            if(IV.get(id)) {
+                $(this).addClass("toggle-on");
+            } else {
+                $(this).removeClass("toggle-on");
+            }
+            $(this).click(function() {
+                IV.set(id, !IV.get(id));
+                $(this).toggleClass("toggle-on");
+            });
         }
-        $(this).click(function() {
-            $(id).toggle();
-            $(this).toggleClass("toggle-on");
-        });
     });
     // data-switch
     $("span[data-switch]").each(function() {

@@ -37,6 +37,7 @@ IV_version = {
   <canvas id="canvas-back"></canvas>
   <canvas id="canvas-main"></canvas>
   <canvas id="canvas-front"></canvas>
+  <canvas id="canvas-overlay"></canvas>
 </div>
 
 <div id="menubar">
@@ -80,6 +81,12 @@ IV_version = {
       <li><span>Something else here</span></li>
       <li class="divider"></li>
       <li><span>Separated link</span></li>
+    </ul>
+  </li>
+  <li>
+    <span>View</span>
+    <ul>
+      <li><span data-toggle="visible-guide">Guide<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
     </ul>
   </li>
   <li>
@@ -187,9 +194,12 @@ IV_version = {
 <div id="system-loading" style="position:fixed;z-index:100000;left:0;right:0;top:0;bottom:0;padding-top:100px;text-align:center;font-size:16px;background-color:white;">
   <div style="text-align:left;display:inline-block;">
     <h3 style="margin-bottom:10px;font-size:20px;">iVisDesigner is Loading...</h3>
-    <p>Browser requirements: HTML5 support (Javascript, Canvas, SVG).</p>
-    <p>Recommended browsers: latest Chrome, Safari or Firefox.</p>
-    <p><a href="{{ref:license.html}}">License</a>, <a href="{{ref:credits.html}}">Credits</a>.</p>
+    <p style="margin: 0.3em 0; padding: 0">Browser requirements: HTML5 support (Javascript, Canvas, SVG).</p>
+    <p style="margin: 0.3em 0; padding: 0">Recommended browsers: latest
+        <a href="http://www.google.com/chrome">Chrome</a>,
+        <a href="http://www.apple.com/safari">Safari</a> or
+        <a href="http://www.mozilla.org/firefox">Firefox</a>.</p>
+    <p style="margin: 0.3em 0; padding: 0"><a href="{{ref:license.html}}">License</a>, <a href="{{ref:credits.html}}">Credits</a>.</p>
   </div>
 </div>
 

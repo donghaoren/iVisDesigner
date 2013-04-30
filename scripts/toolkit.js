@@ -25,11 +25,12 @@ IV.config = $.extend({
 IV.canvas = {
     main: document.getElementById("canvas-main"),
     front: document.getElementById("canvas-front"),
-    back: document.getElementById("canvas-back")
+    back: document.getElementById("canvas-back"),
+    overlay: document.getElementById("canvas-overlay")
 };
 
 IV.needs_render = {
-    main: false, front: false, back: false
+    main: false, front: false, back: false, overlay: false
 };
 
 IV.triggerRender = function(name) {
@@ -38,6 +39,7 @@ IV.triggerRender = function(name) {
         "tools": "front",
         "front": "front",
         "back": "back",
+        "overlay": "overlay",
         "main": "main"
     };
     for(var i in names) {
@@ -58,6 +60,10 @@ IV.render = function() {
         IV.renderBack();
         IV.needs_render.back = false;
     }
+    if(IV.needs_render.overlay) {
+        IV.renderOverlay();
+        IV.needs_render.overlay = false;
+    }
 };
 
 // Render functions.
@@ -65,7 +71,7 @@ IV.renderMain = function() {
     var ctx = IV.canvas.main.getContext("2d");
     ctx.clearRect(0, 0, IV.canvas.main.width, IV.canvas.main.height);
 
-    if(IV.vis) {
+    if(IV.vis && IV.data) {
         IV.vis.render(ctx, IV.data);
     }
 };
@@ -75,7 +81,7 @@ IV.renderFront = function() {
     ctx.clearRect(0, 0, IV.canvas.front.width, IV.canvas.front.height);
 
     if(IV.current_tool && IV.current_tool.render) {
-        IV.current_tool.render(ctx);
+        IV.current_tool.render(ctx, IV.data);
     }
 };
 
@@ -83,9 +89,16 @@ IV.renderBack = function() {
     var ctx = IV.canvas.back.getContext("2d");
     ctx.clearRect(0, 0, IV.canvas.back.width, IV.canvas.back.height);
 
-    if(IV.vis) {
-        IV.vis.renderGuide(ctx, IV.data);
+    if(IV.vis && IV.data) {
+        if(IV.get("visible-guide"))
+            IV.vis.renderGuide(ctx, IV.data);
     }
+};
+
+IV.renderOverlay = function() {
+    var ctx = IV.canvas.overlay.getContext("2d");
+    ctx.clearRect(0, 0, IV.canvas.overlay.width, IV.canvas.overlay.height);
+    IV.tools.renderOverlay(ctx);
 };
 
 // ------------------------------------------------------------------------
@@ -108,16 +121,24 @@ IV.addEvent("reset");
 // Selected path
 IV.add("selected-path", "string");
 
+IV.add("visible-guide", "bool", true);
+IV.listen("visible-guide", function(val) {
+    IV.triggerRender("back");
+    IV.render();
+});
+
 IV.on("reset", function() {
-    IV.data = {
+    IV.data = null; /*{
         name: null,
         schema: null,
         content: null
-    };
+    };*/
     IV.vis = new IV.Visualization();
     IV.selection = [];
+    /*
     IV.data.enumeratePath = IV.enumeratePath;
     IV.data.schemaAtPath = IV.schemaAtPath;
+    */
 });
 
 // ------------------------------------------------------------------------
@@ -161,7 +182,6 @@ IV.renderSchema = function(schema, prev_path) {
 };
 
 IV.loadDataSchema = function(schema) {
-    IV.data.schema = schema;
     $("#data-schema").children().remove();
     $("#data-schema").append(IV.renderSchema(schema.fields, ""));
     $("#data-schema span.key").each(function() {
@@ -176,94 +196,16 @@ IV.loadDataSchema = function(schema) {
 };
 
 IV.loadData = function(data) {
-    IV.data.content = data;
+    IV.data = data;
 };
 
 IV.updateData = function() {
-};
-
-IV.schemaAtPath = function(path) {
-    var schema = IV.data.schema;
-    if(!path || path == "") return schema;
-    var split = path.split(":");
-    for(var i in split) {
-        if(!schema || !schema.fields) return null;
-        var c = split[i];
-        schema = schema.fields[c];
-    }
-    return schema;
-};
-
-IV.enumeratePath = function(path, callback) {
-    var context = { };
-    context.get = function(path) {
-        if(context._cache[path]) return context._cache[path];
-        if(context[path] !== undefined) return context[path];
-        var split = path.split(":");
-        var ctx = context._tree;
-        var rslt = null;
-        for(var i = 0; i < split.length; i++) {
-            var c = split[i];
-            if(ctx[c]) {
-                ctx = ctx[c];
-            } else {
-                rslt = ctx._obj;
-                for(var j = i; j < split.length; j++) {
-                    if(rslt) rslt = rslt[split[j]];
-                }
-                break;
-            }
-            if(i == split.length - 1) {
-                rslt = ctx._obj;
-            }
-        }
-        context._cache[path] = rslt;
-        return rslt;
-    };
-    context._tree = { };
-    context._tree._obj = IV.data.content;
-    context.getSchema = IV.data.schemaAtPath;
-    if(!path || path == "") {
-        callback(context);
-        return;
-    }
-    var process_level = function(prefix, spath, ctx, schema_fields, data) {
-        //console.log(prefix, spath, ctx, schema_fields, data);
-        if(spath.length == 0) {
-            context._cache = { };
-            callback(context);
-            return;
-        }
-        var here = spath[0];
-        var schema_here = schema_fields[here];
-        var data_here = data[here];
-        var path_here = prefix.concat([here]);
-        if(schema_here.type == "collection" || schema_here.type == "sequence") {
-            for(var i in data_here) {
-                ctx[here] = {
-                    _obj: data_here[i]
-                };
-                context[path_here] = data_here[i];
-                process_level(path_here, spath.slice(1), ctx[here], schema_here.fields, data_here[i]);
-            }
-        } else {
-            ctx[here] = {
-                _obj: data_here
-            };
-            var val = data_here[i];
-            context[path_here] = val;
-            process_level(path_here, spath.slice(1), ctx[here], schema_here.fields, data_here);
-        }
-    };
-    process_level([], path.split(":"), context._tree, IV.data.schema.fields, IV.data.content);
 };
 
 IV.loadDataset = function(name) {
     IV.raiseEvent("reset");
     IV.dataprovider.loadSchema(name)
     .done(function(schema) {
-        // Metadata.
-        IV.data.name = name;
         // Set schema.
         IV.loadDataSchema(schema);
         // Load data content.

@@ -1353,10 +1353,11 @@ NS.wrapText = function(context, text, x, y, maxWidth, lineHeight) {
 	return y;
 };
 
-NS.longestStrong = function(strs) {
+NS.longestString = function(strs) {
     var slong = null;
     for(var i in strs) {
         var s = strs[i];
+        if(!s) continue;
         if(slong == null || s.length > slong.length) slong = s;
     }
     return slong;
