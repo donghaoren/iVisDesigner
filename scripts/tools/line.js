@@ -44,4 +44,24 @@ IV.tools.Line = {
     }
 };
 
+IV.tools.LineThrough = {
+    onActive: function() {
+        var $this = this;
+        IV.tools.beginSelectLocation(function(loc) {
+            var path = IV.get("selected-path");
+            if(IV.data.schemaAtPath(path)) {
+                var circle = new IV.objects.LineThrough(path, {
+                    points: loc,
+                    style: IV.panels.style.createStyle()
+                });
+                IV.vis.addObject(circle);
+                IV.triggerRender("main");
+            }
+        }, "tools:LineThrough");
+    },
+    onInactive: function() {
+        IV.tools.endSelectLocation("tools:LineThrough");
+    }
+};
+
 })();

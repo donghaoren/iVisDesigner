@@ -164,6 +164,7 @@ $(window).mousedown(function() {
             refresh();
         } else {
             mycolor = null;
+            p.find(".input-alpha").IVInputNumeric(1);
             refresh();
         }
         if(mycolor) hclpicker_load(mycolor);

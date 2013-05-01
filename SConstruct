@@ -346,7 +346,6 @@ def include_scanner(node, env, path, parents = []):
     files = [];
     text = ensure_unicode(node.get_text_contents(), 'utf-8')
     path = os.path.dirname(node.rstr())
-    print str(node)
     if path == "":
         path = "."
     result = regex_include.findall(text) + regex_base64.findall(text)

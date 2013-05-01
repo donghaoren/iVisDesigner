@@ -60,7 +60,7 @@
     // Panels
     IV.addListener("command:panels.reset", function() {
         $("#panel-schema").IVPanel({ right: 10, top: 40, width: 200, height: 400 }).IVPanel("show");
-        $("#panel-tools").IVPanel({ left: 10, top: 40, width: 100, height: 400 }).IVPanel("show");
+        $("#panel-tools").IVPanel({ left: 10, top: 40, width: 69, height: 400 }).IVPanel("show");
         $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("hide");
         $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 50, width: 600 }).IVPanel("hide");
         $("#panel-style").IVPanel({ right: 220, top: 40, left: 120, height: 50 }).IVPanel("show");
@@ -145,10 +145,22 @@
     var resize_function = function() {
         var w = $("#view").width();
         var h = $("#view").height();
+        var dev_ratio = window.devicePixelRatio || 1;
+        var g = IV.canvas["main"].getContext("2d");
+        var backing_ratio = g.webkitBackingStorePixelRatio ||
+                                g.mozBackingStorePixelRatio ||
+                                g.msBackingStorePixelRatio ||
+                                g.oBackingStorePixelRatio ||
+                                g.backingStorePixelRatio || 1;
+        var ratio = dev_ratio / backing_ratio;
         for(var i in IV.canvas) {
-            IV.canvas[i].width = w;
-            IV.canvas[i].height = h;
+            IV.canvas[i].width = Math.round(w * ratio);
+            IV.canvas[i].height = Math.round(h * ratio);
+            $(IV.canvas[i]).css("width", w + "px");
+            $(IV.canvas[i]).css("height", h + "px");
         }
+        IV.viewarea.width = w;
+        IV.viewarea.height = h;
         IV.needs_render.main = true;
         IV.needs_render.front = true;
         IV.needs_render.back = true;
@@ -167,8 +179,10 @@
     $("#view").mousedown(function(e) {
         var offsetX = e.pageX - $("#view").offset().left;
         var offsetY = e.pageY - $("#view").offset().top;
-        var o = { offsetX: offsetX,
-                  offsetY: offsetY,
+        var pt = IV.viewarea.transformRAWLocation(offsetX, offsetY);
+        var o = { offset: pt,
+                  offsetX: pt.x,
+                  offsetY: pt.y,
                   pageX: e.pageX,
                   pageY: e.pageY, shift: e.shiftKey };
         mouse_state = true;
@@ -178,10 +192,13 @@
     $(window).mousemove(function(e) {
         var offsetX = e.pageX - $("#view").offset().left;
         var offsetY = e.pageY - $("#view").offset().top;
-        var o = { offsetX: offsetX,
-                  offsetY: offsetY,
+        var pt = IV.viewarea.transformRAWLocation(offsetX, offsetY);
+        var o = { offset: pt,
+                  offsetX: pt.x,
+                  offsetY: pt.y,
                   pageX: e.pageX,
-                  pageY: e.pageY, shift: e.shiftKey };
+                  pageY: e.pageY,
+                  shift: e.shiftKey };
         var w = $("#view").width();
         var h = $("#view").height();
         var insideView = offsetX >= 0 && offsetX < w && offsetY >= 0 && offsetY < h;
@@ -194,8 +211,10 @@
     $(window).mouseup(function(e) {
         var offsetX = e.pageX - $("#view").offset().left;
         var offsetY = e.pageY - $("#view").offset().top;
-        var o = { offsetX: offsetX,
-                  offsetY: offsetY,
+        var pt = IV.viewarea.transformRAWLocation(offsetX, offsetY);
+        var o = { offset: pt,
+                  offsetX: pt.x,
+                  offsetY: pt.y,
                   pageX: e.pageX,
                   pageY: e.pageY, shift: e.shiftKey };
         mouse_state = false;
@@ -213,8 +232,9 @@
         touch_state = true;
         var offsetX = e.touches[0].pageX - $("#view").offset().left;
         var offsetY = e.touches[0].pageY - $("#view").offset().top;
-        var o = { offsetX: offsetX,
-                  offsetY: offsetY,
+        var pt = IV.viewarea.transformRAWLocation(offsetX, offsetY);
+        var o = { offsetX: pt.x,
+                  offsetY: pt.y,
                   pageX: e.pageX,
                   pageY: e.pageY, shift: false };
         IV.raiseEvent("view-mousedown", o);
@@ -223,8 +243,9 @@
     view_elem.addEventListener('touchmove',function(e) {
         var offsetX = e.touches[0].pageX - $("#view").offset().left;
         var offsetY = e.touches[0].pageY - $("#view").offset().top;
-        var o = { offsetX: offsetX,
-                  offsetY: offsetY,
+        var pt = IV.viewarea.transformRAWLocation(offsetX, offsetY);
+        var o = { offsetX: pt.x,
+                  offsetY: pt.y,
                   pageX: e.pageX,
                   pageY: e.pageY, shift: false };
         IV.raiseEvent("view-mousemove", o);
@@ -233,8 +254,9 @@
     view_elem.addEventListener('touchend', function(e) {
         var offsetX = e.changedTouches[0].pageX - $("#view").offset().left;
         var offsetY = e.changedTouches[0].pageY - $("#view").offset().top;
-        var o = { offsetX: offsetX,
-                  offsetY: offsetY,
+        var pt = IV.viewarea.transformRAWLocation(offsetX, offsetY);
+        var o = { offsetX: pt.x,
+                  offsetY: pt.y,
                   pageX: e.pageX,
                   pageY: e.pageY, shift: false };
         IV.raiseEvent("view-mouseup", o);

@@ -22,6 +22,32 @@ IV.config = $.extend({
 // ------------------------------------------------------------------------
 // Canvas and Rendering
 // ------------------------------------------------------------------------
+
+IV.viewarea = {
+    // The origin in screen coordinates.
+    width: 0, height: 0,
+    location: new IV.Vector(0.5, 0.5),
+    // Scale factor.
+    scale: 1,
+    set: function(g) {
+        var dev_ratio = window.devicePixelRatio || 1;
+        var backing_ratio = g.webkitBackingStorePixelRatio ||
+                                g.mozBackingStorePixelRatio ||
+                                g.msBackingStorePixelRatio ||
+                                g.oBackingStorePixelRatio ||
+                                g.backingStorePixelRatio || 1;
+        var ratio = dev_ratio / backing_ratio;
+        g.scale(ratio, ratio);
+        g.translate(this.location.x + this.width / 2, this.location.y + this.height / 2);
+        g.scale(this.scale, this.scale);
+    },
+    transformRAWLocation: function(x, y) {
+        var px = (x - this.location.x - this.width / 2) / this.scale;
+        var py = (y - this.location.y - this.height / 2) / this.scale;
+        return new IV.Vector(px, py);
+    }
+};
+
 IV.canvas = {
     main: document.getElementById("canvas-main"),
     front: document.getElementById("canvas-front"),
@@ -70,35 +96,50 @@ IV.render = function() {
 IV.renderMain = function() {
     var ctx = IV.canvas.main.getContext("2d");
     ctx.clearRect(0, 0, IV.canvas.main.width, IV.canvas.main.height);
+    ctx.save();
+    IV.viewarea.set(ctx);
 
     if(IV.vis && IV.data) {
         IV.vis.render(ctx, IV.data);
     }
+    ctx.restore();
 };
 
 IV.renderFront = function() {
     var ctx = IV.canvas.front.getContext("2d");
     ctx.clearRect(0, 0, IV.canvas.front.width, IV.canvas.front.height);
+    ctx.save();
+    IV.viewarea.set(ctx);
 
     if(IV.current_tool && IV.current_tool.render) {
         IV.current_tool.render(ctx, IV.data);
     }
+    ctx.restore();
 };
 
 IV.renderBack = function() {
     var ctx = IV.canvas.back.getContext("2d");
     ctx.clearRect(0, 0, IV.canvas.back.width, IV.canvas.back.height);
+    ctx.save();
+    IV.viewarea.set(ctx);
 
     if(IV.vis && IV.data) {
         if(IV.get("visible-guide"))
             IV.vis.renderGuide(ctx, IV.data);
     }
+
+    ctx.restore();
 };
 
 IV.renderOverlay = function() {
     var ctx = IV.canvas.overlay.getContext("2d");
     ctx.clearRect(0, 0, IV.canvas.overlay.width, IV.canvas.overlay.height);
+    ctx.save();
+    IV.viewarea.set(ctx);
+
     IV.tools.renderOverlay(ctx);
+
+    ctx.restore();
 };
 
 // ------------------------------------------------------------------------
@@ -245,7 +286,7 @@ $(function() {
     // Remove the loading indicator.
     $("#system-loading").remove();
     // Default dataset: cardata.
-    IV.loadDataset("temperature");
+    IV.loadDataset("cardata");
 });
 
 IV.test = function() {
@@ -286,4 +327,4 @@ IV.test = function() {
     IV.triggerRender("main,back");
     IV.render();
 };
-setTimeout(IV.test, 300);
+//setTimeout(IV.test, 300);

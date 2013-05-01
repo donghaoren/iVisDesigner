@@ -7,6 +7,7 @@
 
 (function() {
 
+// Plain Object.
 var Plain = function(obj) {
     this.obj = obj;
     this.type = "plain";
@@ -29,7 +30,7 @@ IV.objects.Number = Plain;
 IV.objects.Style = Plain;
 IV.objects.Point = Plain;
 
-// Composite
+// Composite Object.
 var Composite = function(obj, wrap) {
     // Copy all fields.
     var fields = { };
@@ -60,6 +61,7 @@ Composite.prototype = new IV.objects.BaseObject({
 });
 IV.objects.Composite = Composite;
 
+// Composite Color and Alpha.
 var CompositeColorAlpha = function(color, alpha) {
     this.color = color;
     this.alpha = alpha;
@@ -77,6 +79,7 @@ CompositeColorAlpha.prototype = new IV.objects.BaseObject({
 });
 IV.objects.CompositeColorAlpha = CompositeColorAlpha;
 
+// Point Offset.
 var PointOffset = function(point, offset) {
     this.offset = offset;
     this.point = point;
@@ -88,6 +91,12 @@ PointOffset.prototype = new IV.objects.BaseObject({
         var pt = this.point.getPoint(context);
         return pt.add(this.offset);
     },
+    getPath: function() {
+        return this.point.getPath();
+    },
+    getGuidePath: function() {
+        return this.point.getGuidePath();
+    },
     can: function(cap) {
         if(cap == "get-point") return true;
         return false;
@@ -98,7 +107,7 @@ PointOffset.prototype = new IV.objects.BaseObject({
 });
 IV.objects.PointOffset = PointOffset;
 
-// Linear
+// Linear Mapping.
 var NumberLinear = function(path, min, max) {
     this.path = path;
     this.min = min;
@@ -119,7 +128,7 @@ NumberLinear.prototype = new IV.objects.BaseObject({
 });
 IV.objects.NumberLinear = NumberLinear;
 
-// Color Linear
+// Color Linear Mapping.
 var ColorLinear = function(path, color1, color2) {
     this.path = path;
     this.color1 = color1;

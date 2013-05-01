@@ -7,6 +7,7 @@
 
 IV.objects = { };
 
+// The base class for objects.
 IV.objects.BaseObject = function(proto) {
     for(var i in proto) {
         this[i] = proto[i];
@@ -19,14 +20,14 @@ IV.objects.BaseObject.prototype = {
     getPoint: function(context) { return this.get(context); },
     getNumber: function(context) { return this.get(context); },
     getPath: function() { return this.path; },
+    getGuidePath: function() { return this.guide_path; },
     render: function() { },
     renderSelected: function() { },
     renderGuide: function() { },
     renderGuideSelected: function() { },
     select: function() { return null; },
     clone: function() {
-        console.log("Clone not implemented: ", this);
-        throw "AS";
+        throw new Error("Clone not implemented: " + this.type);
     }
 };
 

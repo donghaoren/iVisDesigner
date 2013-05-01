@@ -57,7 +57,7 @@ $.fn.IVInputNumeric = function(num) {
             return r;
         };
         data.set = function(num) {
-            if(num === undefined || num === null) {
+            if(num === undefined || num === null || isNaN(num)) {
                 input.val("");
             } else {
                 input.val(num);

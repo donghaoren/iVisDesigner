@@ -2,7 +2,11 @@ temp/
 deploy/
 dist/
 images/unused
+images/iconfont/*.svg
+images/iconfont/*.ttf
+images/iconfont/*.css
 *.sublime-workspace
 *.sublime-project
 *.dblite
+*.pyc
 deploy_list

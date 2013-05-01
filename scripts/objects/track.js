@@ -12,6 +12,7 @@ var Track = function(path, anchor1, anchor2) {
     this.anchor1 = anchor1;
     this.anchor2 = anchor2;
     this.path = path;
+    this.guide_path = IV.path.deepest([ anchor1.getPath(), anchor2.getPath() ]);
 };
 
 Track.prototype = new IV.objects.BaseObject({
@@ -27,13 +28,10 @@ Track.prototype = new IV.objects.BaseObject({
             value = (value - s.min) / (s.max - s.min);
         return p1.interp(p2, value);
     },
-    getLongPath: function() {
-        return IV.longestString([this.anchor1.path, this.anchor2.path]);
-    },
     enumerateGuide: function(data, callback) {
         var $this = this;
         var count = 0;
-        data.enumeratePath(this.getLongPath(), function(context) {
+        data.enumeratePath(this.guide_path, function(context) {
             var p1 = $this.anchor1.getPoint(context);
             var p2 = $this.anchor2.getPoint(context);
             callback(p1, p2, context);
@@ -130,7 +128,8 @@ var Scatter = function(track1, track2) {
     this.type = "Scatter";
     this.track1 = track1;
     this.track2 = track2;
-    this.path = IV.longestString([track1.path, track2.path]);
+    this.path = IV.path.deepest([ track1.getPath(), track2.getPath() ]);
+    this.guide_path = IV.path.deepest([ track1.getGuidePath(), track2.getGuidePath() ]);
 };
 
 Scatter.prototype = new IV.objects.BaseObject({
@@ -149,6 +148,19 @@ Scatter.prototype = new IV.objects.BaseObject({
 
         var p = d1.scale(p2.sub(p1).dot(d2) / d1.dot(d2)).add(p1);
         return p;
+    },
+    enumerateGuide: function(data, callback) {
+        var $this = this;
+        var count = 0;
+        data.enumeratePath(this.guide_path, function(context) {
+            var p1 = $this.track1.anchor1.getPoint(context);
+            var p2 = $this.track1.anchor2.getPoint(context);
+            var q1 = $this.track2.anchor1.getPoint(context);
+            var q2 = $this.track2.anchor2.getPoint(context);
+            callback(p1, p2, q1, q2, context);
+            count++;
+            if(count >= 3) return false;
+        });
     },
     _getmarkers: function(p1, p2, q1, q2) {
         var d2 = p2.sub(p1).rotate90();
@@ -170,33 +182,28 @@ Scatter.prototype = new IV.objects.BaseObject({
         return lines;
     },
     renderGuide: function(g, data) {
-        if(this.selected) return;
         var $this = this;
-        $this.track1.enumerateGuide(data, function(p1, p2, ctx1) {
-            $this.track2.enumerateGuide(data, function(q1, q2, ctx2) {
-                g.strokeStyle = "rgba(128,128,128,0.5)";
-                g.fillStyle = "rgba(128,128,128,1)";
-                $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
-                    g.beginPath();
-                    l[0].callMoveTo(g);
-                    l[1].callLineTo(g);
-                    g.stroke();
-                });
+        $this.enumerateGuide(data, function(p1, p2, q1, q2) {
+            g.strokeStyle = "rgba(128,128,128,0.5)";
+            g.fillStyle = "rgba(128,128,128,1)";
+            $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
+                g.beginPath();
+                l[0].callMoveTo(g);
+                l[1].callLineTo(g);
+                g.stroke();
             });
         });
     },
     renderGuideSelected: function(g, data) {
         var $this = this;
-        $this.track1.enumerateGuide(data, function(p1, p2, ctx1) {
-            $this.track2.enumerateGuide(data, function(q1, q2, ctx2) {
-                g.strokeStyle = IV.colors.selection.toRGBA();
-                g.fillStyle = IV.colors.selection.toRGBA();
-                $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
-                    g.beginPath();
-                    l[0].callMoveTo(g);
-                    l[1].callLineTo(g);
-                    g.stroke();
-                });
+        $this.enumerateGuide(data, function(p1, p2, q1, q2) {
+            g.strokeStyle = IV.colors.selection.toRGBA();
+            g.fillStyle = IV.colors.selection.toRGBA();
+            $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
+                g.beginPath();
+                l[0].callMoveTo(g);
+                l[1].callLineTo(g);
+                g.stroke();
             });
         });
     },
@@ -204,12 +211,10 @@ Scatter.prototype = new IV.objects.BaseObject({
         if(!IV.get("visible-guide")) return null;
         var $this = this;
         var rslt = null;
-        $this.track1.enumerateGuide(data, function(p1, p2, ctx1) {
-            $this.track2.enumerateGuide(data, function(q1, q2, ctx2) {
-                $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
-                    var d = IV.pointLineSegmentDistance(pt, l[0], l[1]);
-                    if(d < 4.0) rslt = { distance: d };
-                });
+        $this.enumerateGuide(data, function(p1, p2, q1, q2) {
+            $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
+                var d = IV.pointLineSegmentDistance(pt, l[0], l[1]);
+                if(d < 4.0) rslt = { distance: d };
             });
         });
         return rslt;

@@ -12,6 +12,26 @@ IV.Visualization = function() {
     this.selection = [];
 };
 
+IV.path = { };
+
+IV.path.commonPrefix = function(paths) {
+    if(!paths || paths.length == 0) return null;
+    var prefix = paths[0];
+    for(var i = 1; i < paths.length; i++) {
+        var p = paths[i];
+        if(!p) continue;
+        var len = 0;
+        for(; len < p.length; len++)
+            if(p[len] != prefix[len]) break;
+        prefix = prefix.substr(0, len);
+    }
+    return prefix;
+};
+
+IV.path.deepest = function(paths) {
+    return IV.longestString(paths);
+};
+
 IV.Visualization.prototype = {
     addObject: function(component) {
         this.objects.push(component);
