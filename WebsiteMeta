@@ -47,6 +47,8 @@ Binary("datasets/cardata.schema", "datasets/cardata.yaml");
 Binary("datasets/cardata.data", "datasets/cardata.data.yaml");
 Binary("datasets/temperature.schema", "datasets/temperature.yaml");
 Binary("datasets/temperature.data", "datasets/temperature.data.yaml");
+Binary("datasets/bjairdata.schema", "datasets/bjairdata.yaml");
+Binary("datasets/bjairdata.data", "datasets/bjairdata.data.yaml");
 
 HTML("toolkit.html", "toolkit.html")
 HTML("credits.html", "credits.html")

@@ -363,11 +363,17 @@ $.fn.IVSelectValue = function(obj) {
             if(data.changed) data.changed(data.get());
         });
 
+        if($this.attr("data-default")) data.select.val($this.attr("data-default"));
+
         data.get = function() {
             return new IV.objects.Plain(data.select.val());
         };
         data.set = function(v) {
             if(v) data.select.val(v.obj);
+            else {
+                if($this.attr("data-default"))
+                    data.select.val($this.attr("data-default"));
+            }
         };
         data.is_created = true;
     }

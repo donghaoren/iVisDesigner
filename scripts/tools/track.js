@@ -25,7 +25,7 @@ IV.tools.Track = {
         }, "tools:Track");
     },
     onInactive: function() {
-        IV.tools.endTrackMouse("tools:Track");
+        IV.tools.endSelectLocation("tools:Track");
     }
 };
 

@@ -112,6 +112,15 @@ PlainDatasetContext.prototype = {
         this.cache[path] = obj;
         return obj;
     },
+    enumeratePath: function(path, callback) {
+        var rctx = this.duplicate();
+        var spath = path ? path.split(":") : [];
+        var schema = this.data.schemaAtPath(this.path);
+        var obj;
+        if(this.depth > 0) obj = this.list[this.depth - 1].obj;
+        else obj = this.data.obj;
+        enumerate_path_subtree(rctx, spath, this.depth, obj, schema, callback);
+    },
     getSchema: function(path) {
         return this.data.schemaAtPath(path);
     },
@@ -123,6 +132,8 @@ PlainDatasetContext.prototype = {
         var r = new PlainDatasetContext();
         r.data = this.data;
         r.list = this.list.slice();
+        r.depth = this.depth;
+        r.path = this.path;
         r.cache = { };
         return r;
     }
@@ -131,6 +142,8 @@ var enumerate_path_subtree = function(context, spath, idx, obj, schema, callback
     if(idx == spath.length) {
         // Clear cache.
         context.cache = { };
+        context.depth = idx;
+        context.path = spath.join(":");
         return callback(context);
     }
     var cpath = spath[idx];

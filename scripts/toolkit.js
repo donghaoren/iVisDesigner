@@ -60,6 +60,10 @@ IV.needs_render = {
 };
 
 IV.triggerRender = function(name) {
+    if(!name) {
+        for(var i in IV.needs_render) IV.needs_render[i] = true;
+        return;
+    }
     var names = name.split(",");
     var map = {
         "tools": "front",
@@ -224,6 +228,10 @@ IV.renderSchema = function(schema, prev_path) {
 
 IV.loadDataSchema = function(schema) {
     $("#data-schema").children().remove();
+    var rootelem_span = $('<span class="key">ROOT</span>');
+    var rootelem = $("<li/>").append(rootelem_span);
+    rootelem_span.data().path = "";
+    $("#data-schema").append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));
     $("#data-schema").append(IV.renderSchema(schema.fields, ""));
     $("#data-schema span.key").each(function() {
         var $this = $(this);
@@ -286,7 +294,7 @@ $(function() {
     // Remove the loading indicator.
     $("#system-loading").remove();
     // Default dataset: cardata.
-    IV.loadDataset("cardata");
+    IV.loadDataset("bjairdata");
 });
 
 IV.test = function() {
@@ -307,7 +315,7 @@ IV.test = function() {
             radius: 5
         })
     });
-    var line = new IV.objects.LineThrough("days", {
+    var line = new IV.objects.LineThrough("", {
         points: scatter,
         point2: track3,
         style: new IV.objects.Style({

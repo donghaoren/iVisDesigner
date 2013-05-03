@@ -57,7 +57,8 @@ Circle.prototype = new IV.objects.BaseObject({
             var radius = style.radius;
             g.beginPath();
             g.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
-            g.strokeStyle = IV.colors.selection.toRGBA(0.5);
+            g.strokeStyle = IV.colors.selection.toRGBA();
+            g.lineWidth = 1.0 / IV.viewarea.scale;
             g.stroke();
         });
     },
@@ -70,7 +71,7 @@ Circle.prototype = new IV.objects.BaseObject({
             var radius = style.radius || 0;
             var d = Math.abs(pt.distance(c) - radius);
             if(d <= 4) {
-                if(!rslt || rslt.distance < d) {
+                if(!rslt || rslt.distance > d) {
                     rslt = { distance: d };
                     if(action == "move") {
                         if($this.center.type == "plain") {
@@ -141,6 +142,7 @@ Line.prototype = new IV.objects.BaseObject({
             g.moveTo(p1.x, p1.y);
             g.lineTo(p2.x, p2.y);
             g.strokeStyle = IV.colors.selection.toRGBA();
+            g.lineWidth = 1.0 / IV.viewarea.scale;
             g.stroke();
         });
     },
@@ -152,7 +154,7 @@ Line.prototype = new IV.objects.BaseObject({
             var p2 = $this.point2.getPoint(context);
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
             if(d <= 4) {
-                if(!rslt || rslt.distance < d)
+                if(!rslt || rslt.distance > d)
                     rslt = { distance: d };
             }
         });
@@ -165,6 +167,7 @@ IV.objects.Line = Line;
 var LineThrough = function(path, info) {
     this.path = path;
     this.points = info.points;
+    this.type = "LineThrough";
     // Style
     if(info.style)
         this.style = info.style;
@@ -181,57 +184,65 @@ LineThrough.prototype = new IV.objects.BaseObject({
         var $this = this;
         var index = 0;
         var style = null;
-        g.beginPath();
-        data.enumeratePath($this.path, function(context) {
-            var p = $this.points.getPoint(context);
-            if(!style) style = $this.style.getStyle(context);
-            if(index == 0) {
-                g.moveTo(p.x, p.y);
-            } else {
-                g.lineTo(p.x, p.y);
+        data.enumeratePath($this.path, function(fctx) {
+            g.beginPath();
+            fctx.enumeratePath($this.points.getPath(), function(context) {
+                var p = $this.points.getPoint(context);
+                if(!style) style = $this.style.getStyle(context);
+                if(index == 0) {
+                    g.moveTo(p.x, p.y);
+                } else {
+                    g.lineTo(p.x, p.y);
+                }
+                index++;
+            });
+            if(style && style.stroke_style) {
+                g.strokeStyle = style.stroke_style.toRGBA();
+                if(style.width) g.lineWidth = style.width;
+                if(style.line_cap) g.lineCap = style.line_cap;
+                if(style.line_join) g.lineJoin = style.line_join;
+                g.stroke();
             }
-            index++;
         });
-        if(style && style.stroke_style) {
-            g.strokeStyle = style.stroke_style.toRGBA();
-            if(style.width) g.lineWidth = style.width;
-            if(style.line_cap) g.lineCap = style.line_cap;
-            if(style.line_join) g.lineJoin = style.line_join;
-            g.stroke();
-        }
     },
     renderSelected: function(g, data) {
         var $this = this;
         var index = 0;
         var style = null;
-        g.beginPath();
-        data.enumeratePath($this.path, function(context) {
-            var p = $this.points.getPoint(context);
-            if(!style) style = $this.style.getStyle(context);
-            if(index == 0) {
-                g.moveTo(p.x, p.y);
-            } else {
-                g.lineTo(p.x, p.y);
-            }
-            index++;
+        data.enumeratePath($this.path, function(fctx) {
+            g.beginPath();
+            fctx.enumeratePath($this.points.getPath(), function(context) {
+                var p = $this.points.getPoint(context);
+                if(!style) style = $this.style.getStyle(context);
+                if(index == 0) {
+                    g.moveTo(p.x, p.y);
+                } else {
+                    g.lineTo(p.x, p.y);
+                }
+                index++;
+            });
+            g.lineJoin = "round";
+            g.strokeStyle = IV.colors.selection.toRGBA();
+            g.lineWidth = 1.0 / IV.viewarea.scale;
+            g.stroke();
         });
-        g.strokeStyle = IV.colors.selection.toRGBA();
-        g.stroke();
     },
     select: function(pt, data, action) {
-        var pts = [];
-        var $this = this;
-        data.enumeratePath($this.path, function(context) {
-            pts.push($this.points.getPoint(context));
-        });
         var rslt = null;
-        for(var i = 0; i < pts.length - 1; i++) {
-            var d = IV.pointLineSegmentDistance(pt, pts[i], pts[i + 1]);
-            if(d <= 4) {
-                if(!rslt || rslt.distance < d)
-                    rslt = { distance: d };
+        var $this = this;
+        data.enumeratePath($this.path, function(fctx) {
+            var pts = [];
+            fctx.enumeratePath($this.points.getPath(), function(context) {
+                pts.push($this.points.getPoint(context));
+            });
+            for(var i = 0; i < pts.length - 1; i++) {
+                var d = IV.pointLineSegmentDistance(pt, pts[i], pts[i + 1]);
+                if(d <= 4) {
+                    if(!rslt || rslt.distance > d)
+                        rslt = { distance: d };
+                }
             }
-        }
+        });
         return rslt;
     }
 });

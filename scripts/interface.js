@@ -184,7 +184,9 @@
                   offsetX: pt.x,
                   offsetY: pt.y,
                   pageX: e.pageX,
-                  pageY: e.pageY, shift: e.shiftKey };
+                  pageY: e.pageY,
+                  page: new IV.Vector(e.pageX, e.pageY),
+                  shift: e.shiftKey };
         mouse_state = true;
         IV.raiseEvent("view-mousedown", o);
         IV.render();
@@ -198,6 +200,7 @@
                   offsetY: pt.y,
                   pageX: e.pageX,
                   pageY: e.pageY,
+                  page: new IV.Vector(e.pageX, e.pageY),
                   shift: e.shiftKey };
         var w = $("#view").width();
         var h = $("#view").height();
@@ -216,7 +219,9 @@
                   offsetX: pt.x,
                   offsetY: pt.y,
                   pageX: e.pageX,
-                  pageY: e.pageY, shift: e.shiftKey };
+                  pageY: e.pageY,
+                  page: new IV.Vector(e.pageX, e.pageY),
+                  shift: e.shiftKey };
         mouse_state = false;
         IV.raiseEvent("view-mouseup", o);
         IV.render();
@@ -236,7 +241,9 @@
         var o = { offsetX: pt.x,
                   offsetY: pt.y,
                   pageX: e.pageX,
-                  pageY: e.pageY, shift: false };
+                  pageY: e.pageY,
+                  page: new IV.Vector(e.pageX, e.pageY),
+                  shift: false };
         IV.raiseEvent("view-mousedown", o);
         IV.render();
     });
@@ -247,7 +254,9 @@
         var o = { offsetX: pt.x,
                   offsetY: pt.y,
                   pageX: e.pageX,
-                  pageY: e.pageY, shift: false };
+                  pageY: e.pageY,
+                  page: new IV.Vector(e.pageX, e.pageY),
+                  shift: false };
         IV.raiseEvent("view-mousemove", o);
         IV.render();
     });
@@ -258,7 +267,9 @@
         var o = { offsetX: pt.x,
                   offsetY: pt.y,
                   pageX: e.pageX,
-                  pageY: e.pageY, shift: false };
+                  pageY: e.pageY,
+                  page: new IV.Vector(e.pageX, e.pageY),
+                  shift: false };
         IV.raiseEvent("view-mouseup", o);
         IV.render();
     });

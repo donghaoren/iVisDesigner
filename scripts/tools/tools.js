@@ -181,4 +181,6 @@ IV.listen("tools:current", function(val) {
 {{include: circle.js}}
 {{include: line.js}}
 
+{{include: viewarea.js}}
+
 IV.set("tools:current", "Select");
