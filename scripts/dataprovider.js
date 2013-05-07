@@ -84,6 +84,7 @@ var PlainDataset = function(obj, schema) {
     this.id_map = id_map;
     this.obj = obj;
     this.schema = schema;
+    this.schema_cache = { };
 };
 var PlainDatasetContext = function() {
     this.cache = { };
@@ -122,17 +123,25 @@ PlainDatasetContext.prototype = {
         enumerate_path_subtree(rctx, spath, this.depth, obj, schema, callback);
     },
     getSchema: function(path) {
-        return this.data.schemaAtPath(path);
+        return this.data.getSchema(path);
     },
-    resolveReference: function(path, refpath) {
+    referenceContext: function(path) {
         var ref = this.get(path);
-        var sch = this.getSchema(path);
+        return this.data.contextForItem(ref._target, this.getSchema(path).of);
+    },
+    referenceItem: function(path) {
+        var ref = this.get(path);
+        return ref._target;
     },
     duplicate: function() {
         var r = new PlainDatasetContext();
+        // Data: reference of the data object.
         r.data = this.data;
+        // List: { obj: object, cpath: path component }
         r.list = this.list.slice();
+        // Depth: depth in the tree.
         r.depth = this.depth;
+        // Path: path to reference this.
         r.path = this.path;
         r.cache = { };
         return r;
@@ -179,13 +188,58 @@ PlainDataset.prototype = {
         var spath = path ? path.split(":") : [];
         enumerate_path_subtree(ctx, spath, 0, this.obj, this.schema, callback);
     },
+    contextForItem: function(item, path) {
+        var ctx = new PlainDatasetContext();
+        var spath = path ? path.split(":") : [];
+        ctx.data = this;
+        ctx.list = [];
+        ctx.depth = spath.length;
+        ctx.path = path;
+        var pi = item;
+        var items = [];
+        while(pi) {
+            if(pi != this.obj) // Don't add the root object.
+                items.push(pi);
+            pi = pi._parent;
+        }
+        items = items.reverse();
+        for(var i = 0; i < items.length; i++) {
+            ctx.list[i] = {
+                obj: items[i],
+                cpath: spath[i]
+            };
+        }
+        return ctx;
+    },
+    getSchema: function(path) { return this.schemaAtPath(path); },
     schemaAtPath: function(path) {
+        if(this.schema_cache[path]) return this.schema_cache[path];
         var s = this.schema;
         var spath = path ? path.split(":") : [];
         for(var i in spath) {
             s = s.fields[spath[i]];
         }
+        this.schema_cache[path] = s;
         return s;
+    },
+    assignSchema: function(path, schema) {
+        // Clear the schema cache.
+        this.schema_cache = { };
+        var $this = this;
+        var pfx = path.lastIndexOf(":");
+        var last = path.substr(pfx + 1);
+        pfx = pfx < 0 ? "" : path.substr(0, pfx);
+        var sch = this.schemaAtPath(pfx);
+        sch.fields[last] = schema;
+        var update = function() {
+            $this.enumeratePath(pfx, function(context) {
+                var item = context.get(pfx);
+                var obj = schema.get(item, context);
+                data[last] = obj;
+            });
+        };
+        schema.update = update;
+        return schema;
     }
 };
 

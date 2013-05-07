@@ -105,6 +105,13 @@ IV.tools = { };
         IV.tools.beginTrackMouse(function(e) {
             var p0 = new IV.Vector(e.offsetX, e.offsetY)
             var context = IV.vis.selectObject(p0, IV.data);
+
+            var captured_object = function(obj) {
+                var ref_path = IV.get("selected-reference");
+                if(ref_path) f(new IV.objects.ReferenceWrapper(ref_path, obj));
+                else f(obj);
+            };
+
             if(context && context.obj.can("get-point")) {
                 var diff = null;
                 e.move(function(e_move) {
@@ -114,14 +121,14 @@ IV.tools = { };
                 e.release(function() {
                     overlay_info.line = null;
                     if(diff == null) {
-                        f(context.obj);
+                        captured_object(context.obj);
                     } else {
-                        f(new IV.objects.PointOffset(context.obj, diff));
+                        captured_object(new IV.objects.PointOffset(context.obj, diff));
                     }
                 });
             } else {
                 e.release(function() {
-                    f(new IV.objects.Plain(new IV.Vector(e.offsetX, e.offsetY)));
+                    captured_object(new IV.objects.Plain(new IV.Vector(e.offsetX, e.offsetY)));
                 });
             }
         }, key);

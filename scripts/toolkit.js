@@ -165,6 +165,7 @@ IV.addEvent("reset");
 
 // Selected path
 IV.add("selected-path", "string");
+IV.add("selected-reference", "string");
 
 IV.add("visible-guide", "bool", true);
 IV.listen("visible-guide", function(val) {
@@ -204,21 +205,20 @@ IV.renderSchema = function(schema, prev_path) {
         var span = $("<span></span>").text(key).addClass("key");
         // Types.
         if(child.type == "number")
-            span.append($("<span />").text("num"));
+            span.append($("<span />").addClass("type").text("num"));
         if(child.type == "collection")
-            span.append($("<span />").text("set"));
+            span.append($("<span />").addClass("type").text("set"));
         if(child.type == "object")
-            span.append($("<span />").text("obj"));
+            span.append($("<span />").addClass("type").text("obj"));
         if(child.type == "sequence")
-            span.append($("<span />").text("seq"));
+            span.append($("<span />").addClass("type").text("seq"));
         if(child.type == "reference")
-            span.append($("<span />").text("ref"));
+            span.append($("<span />").addClass("type ref").text("ref"));
         span.data().schema = schema;
         span.data().key = key;
         span.data().path = this_path;
         var li = $("<li></li>")
             .append(span);
-        // Append children.
         if(child.type == "collection" || child.type == "object" || child.type == "sequence")
             li.append(IV.renderSchema(child.fields, this_path));
         elem.append(li);
@@ -240,6 +240,22 @@ IV.loadDataSchema = function(schema) {
             $this.addClass("active");
             var data = $this.data();
             IV.set("selected-path", data.path);
+        });
+    });
+    $("#data-schema span.ref").each(function() {
+        var $this = $(this);
+        var p = $this.parent();
+        $this.click(function(e) {
+            if($this.is(".active")) {
+                $("#data-schema span.ref").removeClass("active");
+                IV.set("selected-reference", null);
+            } else {
+                $("#data-schema span.ref").removeClass("active");
+                $this.addClass("active");
+                var data = p.data();
+                IV.set("selected-reference", data.path);
+            }
+            e.stopPropagation();
         });
     });
 };
@@ -294,7 +310,7 @@ $(function() {
     // Remove the loading indicator.
     $("#system-loading").remove();
     // Default dataset: cardata.
-    IV.loadDataset("bjairdata");
+    IV.loadDataset("cardata");
 });
 
 IV.test = function() {

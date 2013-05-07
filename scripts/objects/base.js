@@ -149,4 +149,19 @@ ColorLinear.prototype = new IV.objects.BaseObject({
 });
 IV.objects.ColorLinear = ColorLinear;
 
+var ReferenceWrapper = function(ref_path, object) {
+    this.obj = object;
+    this.reference_path = ref_path;
+};
+ReferenceWrapper.prototype = new IV.objects.BaseObject({
+    get: function(context) {
+        var ref_context = context.referenceContext(this.reference_path);
+        return this.obj.get(ref_context);
+    },
+    clone: function() {
+        return new ReferenceWrapper(this.reference_path, this.obj);
+    }
+});
+IV.objects.ReferenceWrapper = ReferenceWrapper;
+
 })();
