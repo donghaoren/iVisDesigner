@@ -16,10 +16,10 @@ fields:
     fields:
       source:
         type: reference
-        of: cars._
+        of: cars
       target:
         type: reference
-        of: cars._
+        of: cars
 
   static:
     type: object

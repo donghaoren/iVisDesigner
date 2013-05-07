@@ -4467,10 +4467,10 @@ cars:
 
 
 links:
-  - source: { _id: chevy_s10 }
-    target: { _id: dodge_rampage }
-  - source: { _id: dodge_rampage }
-    target: { _id: chevy_s10 }
+  - source: { id: chevy_s10 }
+    target: { id: dodge_rampage }
+  - source: { id: ford_ranger }
+    target: { id: chevy_s10 }
 
 static:
   f1:
