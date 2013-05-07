@@ -2,6 +2,35 @@
 
 IV.tools.Line = {
     onActive: function() {
+        var $this = this;
+        $this.loc1 = null;
+        $this.loc2 = null;
+        IV.tools.beginSelectLocation(function(loc) {
+            if(!$this.loc1) {
+                $this.loc1 = loc;
+                return;
+            } else {
+                $this.loc2 = loc;
+                var path = IV.get("selected-path");
+                var line = new IV.objects.Line(path, {
+                    point1: $this.loc1,
+                    point2: $this.loc2,
+                    style: IV.panels.style.createStyle()
+                });
+                IV.vis.addObject(line);
+                IV.triggerRender("main,back");
+                $this.loc1 = null;
+                $this.loc2 = null;
+            }
+        }, "tools:Line");
+    },
+    onInactive: function() {
+        IV.tools.endSelectLocation("tools:Line");
+    }
+};
+/*
+IV.tools.Line = {
+    onActive: function() {
         var obj1 = null;
         var obj2 = null;
         IV.vis.clearSelection();
@@ -43,7 +72,7 @@ IV.tools.Line = {
         IV.tools.endSelectObject("tools:Line");
     }
 };
-
+*/
 IV.tools.LineThrough = {
     onActive: function() {
         var $this = this;
