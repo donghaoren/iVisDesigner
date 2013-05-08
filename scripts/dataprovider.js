@@ -9,41 +9,6 @@
 
 IV.dataprovider = { };
 
-function make_async(obj, done, fail) {
-    if(!obj) obj = { };
-    if(done) obj.ondone = done;
-    else obj.ondone = function() {};
-    if(fail) obj.onfail = fail;
-    else obj.onfail = function() {};
-    obj.done = function(f) {
-        obj.ondone = f;
-        return obj;
-    };
-    obj.fail = function(f) {
-        obj.onfail = f;
-        return obj;
-    };
-    return obj;
-};
-
-IV.dataprovider.listDatasets = function(done, fail) {
-    var r = make_async(done, fail);
-    setTimeout(function() {
-        r.ondone([ "cardata", "temperature" ]);
-    }, 1);
-    return r;
-};
-
-IV.dataprovider.loadSchema = function(name, done, fail) {
-    var r = make_async(done, fail);
-    $.get("datasets/" + name + ".schema", function(data) {
-        jsyaml.loadAll(data, function(doc) {
-            r.ondone(doc);
-        });
-    });
-    return r;
-};
-
 var PlainDataset = function(obj, schema) {
     // Preprocess object.
     var process_subtree = function(obj, schema, parent, onobject) {
@@ -74,7 +39,13 @@ var PlainDataset = function(obj, schema) {
     process_subtree(obj, schema, null, function(obj, schema, parent, rtype) {
         if(schema.type == "object" || rtype == "item")
             obj._parent = parent;
-        if(obj._id) id_map[obj._id] = obj;
+        if(obj._id) {
+            id_map[obj._id] = obj;
+            obj.__id = obj._id;
+        } else {
+            if(schema.type == "object" || rtype == "item")
+                obj.__id = IV.generateUUID("::");
+        }
     });
     process_subtree(obj, schema, null, function(obj, schema, parent) {
         if(schema.type == "reference") {
@@ -116,7 +87,7 @@ PlainDatasetContext.prototype = {
     enumeratePath: function(path, callback) {
         var rctx = this.duplicate();
         var spath = path ? path.split(":") : [];
-        var schema = this.data.schemaAtPath(this.path);
+        var schema = this.data.getSchema(this.path);
         var obj;
         if(this.depth > 0) obj = this.list[this.depth - 1].obj;
         else obj = this.data.obj;
@@ -211,8 +182,8 @@ PlainDataset.prototype = {
         }
         return ctx;
     },
-    getSchema: function(path) { return this.schemaAtPath(path); },
-    schemaAtPath: function(path) {
+    //schemaAtPath: function(path) { return this.getSchema(path); },
+    getSchema: function(path) {
         if(this.schema_cache[path]) return this.schema_cache[path];
         var s = this.schema;
         var spath = path ? path.split(":") : [];
@@ -229,18 +200,49 @@ PlainDataset.prototype = {
         var pfx = path.lastIndexOf(":");
         var last = path.substr(pfx + 1);
         pfx = pfx < 0 ? "" : path.substr(0, pfx);
-        var sch = this.schemaAtPath(pfx);
+        var sch = this.getSchema(pfx);
         sch.fields[last] = schema;
         var update = function() {
             $this.enumeratePath(pfx, function(context) {
                 var item = context.get(pfx);
                 var obj = schema.get(item, context);
-                data[last] = obj;
+                item[last] = obj;
             });
+            $this._raiseEvent("onContentUpdate");
         };
         schema.update = update;
+
+        this._raiseEvent("onSchemaUpdate");
+
         return schema;
+    },
+    _raiseEvent: function(name, arg) {
+        if(this[name]) this[name](arg);
     }
+};
+function make_async(obj, done, fail) {
+    if(!obj) obj = { };
+    if(done) obj.ondone = done;
+    else obj.ondone = function() {};
+    if(fail) obj.onfail = fail;
+    else obj.onfail = function() {};
+    obj.done = function(f) {
+        obj.ondone = f;
+        return obj;
+    };
+    obj.fail = function(f) {
+        obj.onfail = f;
+        return obj;
+    };
+    return obj;
+};
+
+IV.dataprovider.listDatasets = function(done, fail) {
+    var r = make_async(done, fail);
+    setTimeout(function() {
+        r.ondone([ "cardata", "temperature" ]);
+    }, 1);
+    return r;
 };
 
 IV.dataprovider.loadData = function(name, done, fail) {
@@ -251,10 +253,6 @@ IV.dataprovider.loadData = function(name, done, fail) {
             $.get("datasets/" + name + ".data", function(data) {
                 jsyaml.loadAll(data, function(doc) {
                     var x = new PlainDataset(doc, schema);
-                    /*
-                    x.enumeratePath("refs:a", function(ctx) {
-                        console.log(ctx.resolveReference("refs:a"));
-                    });*/
                     r.ondone(x);
                 });
             });

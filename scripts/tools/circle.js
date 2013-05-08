@@ -9,12 +9,13 @@ IV.tools.Circle = {
         var $this = this;
         IV.tools.beginSelectLocation(function(loc) {
             var path = IV.get("selected-path");
-            if(IV.data.schemaAtPath(path)) {
+            if(IV.data.getSchema(path)) {
                 var circle = new IV.objects.Circle(path, {
                     center: loc,
                     style: IV.panels.style.createStyle()
                 });
                 IV.vis.addObject(circle);
+                IV.raise("vis:objects");
                 IV.triggerRender("main");
             }
         }, "tools:Circle");

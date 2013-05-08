@@ -12,11 +12,12 @@ IV.tools.Track = {
             } else {
                 $this.loc2 = loc;
                 var path = IV.get("selected-path");
-                if(IV.data.schemaAtPath(path) && IV.data.schemaAtPath(path).type == "number") {
+                if(IV.data.getSchema(path) && IV.data.getSchema(path).type == "number") {
                     var track = new IV.objects.Track(
                         path, $this.loc1, $this.loc2
                     );
                     IV.vis.addObject(track);
+                    IV.raise("vis:objects");
                     IV.triggerRender("main,back");
                 }
                 $this.loc1 = null;
@@ -46,24 +47,28 @@ IV.tools.Scatter = {
                 obj1 = null;
                 obj2 = null;
                 IV.vis.clearSelection();
+                IV.raise("vis:objects:selection");
                 IV.triggerRender("main,back");
                 return;
             }
             if(!obj1) {
                 obj1 = context.obj;
                 IV.vis.appendSelection(context);
+                IV.raise("vis:objects:selection");
                 IV.triggerRender("main,back");
             } else if(!obj2) {
                 obj2 = context.obj;
-                if(IV.data.schemaAtPath(path)) {
+                if(IV.data.getSchema(path)) {
                     if(obj1.type == "Track" && obj2.type == "Track") {
                         var scatter = new IV.objects.Scatter(obj1, obj2);
                         IV.vis.addObject(scatter);
+                        IV.raise("vis:objects");
                     }
                 }
                 obj1 = null;
                 obj2 = null;
                 IV.vis.clearSelection();
+                IV.raise("vis:objects:selection");
                 IV.triggerRender("main,back");
             }
         }, "tools:Line");

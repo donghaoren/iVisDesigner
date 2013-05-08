@@ -1,0 +1,15 @@
+type: object
+fields:
+  vertices:
+    type: collection
+    fields:
+      size: { type: number, min: 0, max: 1 }
+  edges:
+    type: collection
+    fields:
+      A:
+        type: reference
+        of: vertices
+      B:
+        type: reference
+        of: vertices

@@ -8,6 +8,24 @@
 //   panels, menus, window resize, mouse events, keyboard events, etc.
 
 (function() {
+    // Data-apply-children:
+    $("[data-apply-children]").each(function() {
+        var attr = $(this).attr("data-apply-children");
+        var kvs = attr.split(";").map(function(x) {
+            var k = x.split("=");
+            return { key: k[0], value: k[1] };
+        });
+        $(this).children().each(function() {
+            var $this = $(this);
+            kvs.forEach(function(t) {
+                $this.attr(t.key, t.value);
+            });
+        });
+    });
+    $("[ivfilter-remove-text-nodes]").each(function() {
+        $(this).contents().filter(function() { return this.nodeType === 3; }).remove();
+    });
+
     $(".control-numeric-value").each(function() {
         $(this).IVNumericValue();
     });
@@ -23,6 +41,10 @@
     });
     $(".color-selector").each(function() {
         $(this).IVColorPicker();
+    });
+
+    $(".scrollview").each(function() {
+        $(this).ScrollView();
     });
 
     // tabs
@@ -60,6 +82,7 @@
     // Panels
     IV.addListener("command:panels.reset", function() {
         $("#panel-schema").IVPanel({ right: 10, top: 40, width: 200, height: 400 }).IVPanel("show");
+        $("#panel-objects").IVPanel({ right: 10, top: 450, width: 200, bottom: 10 }).IVPanel("show");
         $("#panel-tools").IVPanel({ left: 10, top: 40, width: 69, height: 400 }).IVPanel("show");
         $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("hide");
         $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 50, width: 600 }).IVPanel("hide");

@@ -1,3 +1,5 @@
+// This file can be considered as a set of jQuery plugins, independent of IV's files.
+
 $.fn.IVInputNumeric = function(num) {
     var $this = this;
     var data = $this.data();
@@ -40,8 +42,10 @@ $.fn.IVInputNumeric = function(num) {
             }
         });
         $(window).mouseup(function() {
-            slider_context = null;
-            fire();
+            if(slider_context) {
+                slider_context = null;
+                fire();
+            }
         });
         input.focusout(fire);
         input.keydown(function(e) {
@@ -100,9 +104,10 @@ $.fn.IVNumericValue = function(obj) {
             data.delta_scale = parseFloat($this.attr("data-delta-scale"));
         }
         var onchanged = function() {
+            console.trace();
             if(data.current_mode == "plain") {
             } else {
-                if(data.path === undefined || data.path == "")
+                if(data.path === undefined || data.path == "" || data.path === null)
                     data.btn_path.text("-[]-");
                 else data.btn_path.text("-[" + data.path + "]-");
             }
@@ -382,4 +387,54 @@ $.fn.IVSelectValue = function(obj) {
         data.changed = obj;
     else data.set(obj);
     return this;
+};
+
+$.fn.ScrollView = function() {
+    var container = this;
+    var $this = this;
+    var view = container.children("div");
+    view.addClass("scrollview-content");
+    var scrollbar = $("<div />").addClass("scrollbar");
+    var guide = $("<div />").addClass("guide");
+    scrollbar.append(guide);
+    container.append(scrollbar);
+
+    var data = $this.data();
+
+    if(!data.is_created) {
+        data.is_created = true;
+
+        var get_top = function() {
+            var top = view.css("top");
+            if(!top) top = 0;
+            else top = parseFloat(top.replace("px", ""));
+            if(isNaN(top)) top = 0;
+            return top;
+        };
+        var set_top = function(top) {
+            var view_h = view.outerHeight();
+            var cont_h = container.height();
+            if(view_h < cont_h || view_h == 0) {
+                top = 0;
+                scrollbar.addClass("hide");
+            } else {
+                if(top > 0) top = 0;
+                if(top < cont_h - view_h) top = cont_h - view_h;
+                scrollbar.removeClass("hide");
+                guide.css({
+                    height: (cont_h / view_h * cont_h) + "px",
+                    top: (-top / view_h * cont_h) + "px"
+                });
+            }
+            view.css("top", top + "px");
+        };
+        container.mousewheel(function(e, delta) {
+            set_top(get_top() + delta);
+        });
+
+        var check_size = function() {
+            set_top(get_top());
+        };
+        var check_size_timer = setInterval(check_size, 200);
+    }
 };

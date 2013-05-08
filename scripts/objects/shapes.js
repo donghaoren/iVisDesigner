@@ -99,6 +99,7 @@ Circle.prototype = new IV.objects.BaseObject({
 IV.objects.Circle = Circle;
 
 var Line = function(path, info) {
+    this.type = "Line";
     this.path = path;
     this.point1 = info.point1;
     this.point2 = info.point2;

@@ -61,6 +61,8 @@
                 $this.width(),
                 $this.height()
             ];
+            e.stopPropagation();
+            e.preventDefault();
         });
         $(window).mousemove(function(e) {
             if(mouse_state && mouse_state[0] == "move") {

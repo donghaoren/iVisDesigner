@@ -1,0 +1,32 @@
+vertices:
+  - _id: v1
+    size: 1
+  - _id: v2
+    size: 2
+  - _id: v3
+    size: 3
+  - _id: v4
+    size: 4
+  - _id: v5
+    size: 5
+  - _id: v6
+    size: 6
+  - _id: v7
+    size: 7
+
+edges:
+  - A: { id: v1 }
+    B: { id: v2 }
+  - A: { id: v2 }
+    B: { id: v3 }
+  - A: { id: v3 }
+    B: { id: v4 }
+  - A: { id: v2 }
+    B: { id: v7 }
+  - A: { id: v5 }
+    B: { id: v6 }
+  - A: { id: v6 }
+    B: { id: v7 }
+  - A: { id: v7 }
+    B: { id: v1 }
+

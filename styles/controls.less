@@ -14,7 +14,7 @@
         .gradient_background(@active_color);
         color: white;
     }
-    &.active {
+    &.active, &:active {
         .gradient_background_inv(darken(@active_color, 5%));
         color: white;
     }
@@ -43,7 +43,7 @@ select {
     background-position: right center;
     background-repeat: no-repeat;
     padding-right: 15px;
-    &:hover, &.active {
+    &:hover, &.active, &:active {
         @color: @active_color;
         @val: 10%;
         .gradient_background_append(@icon_arrowdown_w, @active_color);
@@ -153,6 +153,35 @@ select {
     }
 }
 
+.scrollview {
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    & > div.scrollview-content {
+        position: absolute;
+        left: 0; right: 0;
+        top: 0;
+    }
+    & > .scrollbar {
+        display: none;
+        position: absolute;
+        right: 0; top: 0; bottom: 0;
+        width: 6px;
+        background-color: rgba(0, 0, 0, 0.1);
+        .guide {
+            position: absolute;
+            right: 0;
+            width: 6px;
+            background-color: rgba(0, 0, 0, 0.3);
+            height: 10px;
+            border-radius: 3px;
+        }
+        &.hide {
+            display: none !important;
+        }
+    }
+    &:hover > .scrollbar { display: block; }
+}
+
 
 // Glyph
 .xicon_content(@c) {
@@ -162,3 +191,4 @@ select {
 }
 .xicon-cross:before { .xicon_content("✕"); }
 .xicon-mark:before { .xicon_content("✓"); }
+
