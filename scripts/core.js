@@ -7,11 +7,6 @@
 
 {{include: objects/objects.js}}
 
-IV.Visualization = function() {
-    this.objects = [];
-    this.selection = [];
-};
-
 IV.path = { };
 
 IV.path.commonPrefix = function(paths) {
@@ -44,6 +39,12 @@ IV.generateUUID = function(prefix) {
     return r;
 };
 
+IV.Visualization = function(dataset) {
+    this.objects = [];
+    this.selection = [];
+    this.data = dataset;
+};
+
 IV.Visualization.prototype = {
     addObject: function(obj) {
         if(!obj.name) {
@@ -57,6 +58,9 @@ IV.Visualization.prototype = {
             }
         }
         this.objects.push(obj);
+        if(obj.onAttach) {
+            obj.onAttach(this);
+        }
         IV.raise("vis:objects");
     },
     removeObject: function(obj) {
@@ -64,8 +68,12 @@ IV.Visualization.prototype = {
         if(idx >= 0 && idx < this.objects.length) {
             this.objects = this.objects.slice(0, idx).concat(this.objects.slice(idx + 1));
         }
+        if(obj.onDetach) {
+            obj.onDetach(this);
+        }
     },
-    render: function(g, data) {
+    render: function(g) {
+        var data = this.data;
         this.objects.forEach(function(obj) {
             g.save();
             try {
@@ -85,7 +93,8 @@ IV.Visualization.prototype = {
             g.restore();
         });
     },
-    renderGuide: function(g, data) {
+    renderGuide: function(g) {
+        var data = this.data;
         this.objects.forEach(function(obj) {
             g.save();
             try {
@@ -106,7 +115,8 @@ IV.Visualization.prototype = {
             g.restore();
         });
     },
-    selectObject: function(pt, data, action) {
+    selectObject: function(pt, action) {
+        var data = this.data;
         var best_context = null;
         var mind = 1e10;
         for(var i in this.objects) {
@@ -131,7 +141,8 @@ IV.Visualization.prototype = {
         this.selection.forEach(function(c) { c.obj.selected = false; });
         this.selection = [];
     },
-    timerTick: function(data) {
+    timerTick: function() {
+        var data = this.data;
         this.objects.forEach(function(obj) {
             if(obj.timerTick) obj.timerTick(data);
         });

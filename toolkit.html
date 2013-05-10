@@ -122,15 +122,18 @@ IV_version = {
   <!-- Tools Panel -->
   <div id="panel-tools" class="panel" data-title="Tools">
     <div id="tools-container">
-      <div class="tool-icons" data-apply-children="data-switch=tools:current;class=btn btn-icon" ivfilter-remove-text-nodes>
-        <span data-value="Select"><i class="xicon-tools-arrow"></i></span>
-        <span data-value="Track"><i class="xicon-tools-track"></i></span>
-        <span data-value="Scatter"><i class="xicon-tools-scatter"></i></span>
-        <span data-value="Circle"><i class="xicon-tools-circle"></i></span>
-        <span data-value="Line"><i class="xicon-tools-line"></i></span>
-        <span data-value="LineThrough"><i class="xicon-tools-linethrough"></i></span>
-        <span data-value="Move"><i class="xicon-tools-move"></i></span>
-        <span data-value="Zoom"><i class="xicon-tools-zoom-out"></i></span>
+      <div class="tool-icons" ivfilter-remove-text-nodes>
+        <span data-apply-children="data-switch=tools:current;class=btn btn-icon" ivfilter-remove-text-nodes>
+          <span data-value="Select"><i class="xicon-tools-arrow"></i></span>
+          <span data-value="Track"><i class="xicon-tools-track"></i></span>
+          <span data-value="Scatter"><i class="xicon-tools-scatter"></i></span>
+          <span data-value="Circle"><i class="xicon-tools-circle"></i></span>
+          <span data-value="Line"><i class="xicon-tools-line"></i></span>
+          <span data-value="LineThrough"><i class="xicon-tools-linethrough"></i></span>
+          <span data-value="Move"><i class="xicon-tools-move"></i></span>
+          <span data-value="Zoom"><i class="xicon-tools-zoom-out"></i></span>
+        </span>
+        <span class="btn" data-popup="create-layout">Layout</span>
       </div>
     </div>
   </div>
@@ -227,6 +230,19 @@ IV_version = {
   <div class="actions">
     <span class="selected-color"></span>
     <span class="btn" data-action="remove">Remove</span>
+    <span class="btn" data-action="ok"><i class="xicon-mark"></i></span>
+    <span class="btn" data-action="cancel"><i class="xicon-cross"></i></span>
+  </div>
+  <div class="resize"></div>
+</div>
+
+<!-- Create layout popup -->
+<div data-popup="create-layout" class="popup">
+  <p>Vertex Path: <span data-field="vertex-path" class="input-path"></span></p>
+  <p>Point Field: <span data-field="point-field" class="input-string" data-default="pt"></span></p>
+  <p>Edge: <span data-field="edge-a" class="input-path"></span> - <span data-field="edge-b" class="input-path"></span></p>
+  <p>Algorithm: <span data-field="algorithm" class="control-select-value" data-options="fr|Fruchterman Reingold" data-default="fr"></span></p>
+  <div class="actions">
     <span class="btn" data-action="ok"><i class="xicon-mark"></i></span>
     <span class="btn" data-action="cancel"><i class="xicon-cross"></i></span>
   </div>

@@ -210,7 +210,12 @@ PlainDataset.prototype = {
             });
             $this._raiseEvent("onContentUpdate");
         };
+        var detach = function() {
+            delete sch.fields[last];
+            $this._raiseEvent("onSchemaUpdate");
+        };
         schema.update = update;
+        schema.detach = detach;
 
         this._raiseEvent("onSchemaUpdate");
 

@@ -19,6 +19,15 @@ var ForceLayout = function(path_item, cpath, path_edgeA, path_edgeB) {
 };
 
 ForceLayout.prototype = new IV.objects.BaseObject({
+    onAttach: function(vis) {
+        this._runStep(vis.data);
+    },
+    onDetach: function(vis) {
+        if(this.assigned_schema) {
+            // this.assigned_schema.detach();
+            this.assigned_schema = null;
+        }
+    },
     timerTick: function(data) {
         this._runStep(data);
     },

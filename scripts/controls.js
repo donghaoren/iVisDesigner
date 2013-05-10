@@ -83,6 +83,81 @@ $.fn.IVInputNumeric = function(num) {
     }
 };
 
+$.fn.IVInputString = function(str) {
+    var $this = this;
+    var data = $this.data();
+    if(!data.is_created) {
+        var input = $('<input type="text" />');
+        var fire = function() {
+            if(data.changed) data.changed(data.get());
+        };
+        $this.append(input);
+        input.focusout(fire);
+        input.keydown(function(e) {
+            if(e.which == 13) {
+                fire();
+            }
+        });
+        data.get = function() {
+            return input.val();
+        };
+        data.set = function(str) {
+            input.val(str);
+        };
+        if($this.attr("data-default")) data.set($this.attr("data-default"));
+        else data.set("");
+        data.is_created = true;
+    }
+    var input = $this.children("input");
+    if(str !== undefined) {
+        if(typeof(str) == "function") {
+            data.changed = str;
+        } else {
+            data.set(str);
+        }
+        return this;
+    } else {
+        return data.get();
+    }
+};
+
+$.fn.IVInputPath = function(str) {
+    var $this = this;
+    var data = $this.data();
+    if(!data.is_created) {
+        var input = $('<span />');
+        data.path = null;
+        var fire = function() {
+            if(data.changed) data.changed(data.get());
+        };
+        $this.append(input);
+        input.click(function() {
+            data.set(IV.get("selected-path"));
+            fire();
+        });
+        data.get = function() {
+            return data.path;
+        };
+        data.set = function(str) {
+            data.path = str;
+            if(!data.path) input.text("[]");
+            else input.text("[" + data.path + "]");
+        };
+        data.set(null);
+        data.is_created = true;
+    }
+    if(str !== undefined) {
+        if(typeof(str) == "function") {
+            data.changed = str;
+        } else {
+            data.set(str);
+        }
+        return this;
+    } else {
+        return data.get();
+    }
+};
+
 // This control allows binding to specific data path.
 $.fn.IVNumericValue = function(obj) {
     var $this = this;

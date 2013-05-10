@@ -73,14 +73,14 @@ IV.tools = { };
             hover: null
         };
         IV.tools.beginTrackMouse(function(e) {
-            var context = IV.vis.selectObject(new IV.Vector(e.offsetX, e.offsetY), IV.data, action);
+            var context = IV.vis.selectObject(new IV.Vector(e.offsetX, e.offsetY), action);
             f(context, e);
         }, key);
         IV.tools.beginTrackMouseMove(function(e, tracking) {
             if(tracking) {
                 overlay_info.hover = null;
             } else {
-                var context = IV.vis.selectObject(new IV.Vector(e.offsetX, e.offsetY), IV.data);
+                var context = IV.vis.selectObject(new IV.Vector(e.offsetX, e.offsetY));
                 if(context && context.obj) {
                     overlay_info.hover = context.obj;
                 } else {
@@ -104,7 +104,7 @@ IV.tools = { };
 
         IV.tools.beginTrackMouse(function(e) {
             var p0 = new IV.Vector(e.offsetX, e.offsetY)
-            var context = IV.vis.selectObject(p0, IV.data);
+            var context = IV.vis.selectObject(p0);
 
             var captured_object = function(obj) {
                 var ref_path = IV.get("selected-reference");
@@ -137,7 +137,7 @@ IV.tools = { };
             if(tracking) {
                 overlay_info.hover = null;
             } else {
-                var context = IV.vis.selectObject(new IV.Vector(e.offsetX, e.offsetY), IV.data);
+                var context = IV.vis.selectObject(new IV.Vector(e.offsetX, e.offsetY));
                 if(context && context.obj) {
                     overlay_info.hover = context.obj;
                 } else {

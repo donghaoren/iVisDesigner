@@ -278,6 +278,14 @@
     .drop_shadow();
     border-radius: 2px;
     border: 1px solid @panel_titlecolor;
+    padding-top: 5px;
+
+    .topbar {
+        background-color: @panel_titlecolor;
+        .gradient_background(@panel_titlecolor);
+        position: absolute;
+        left: 0; right: 0; top: 0; height: 5px;
+    }
 
     .actions {
         position: absolute;
@@ -287,7 +295,7 @@
         line-height: 19px;
         padding: 3px;
         text-align: right;
-        background-color: rgba(0, 0, 0, 0.2);
+        background-color: rgba(180, 180, 180, 0.8);
         .btn {
             font-size: 12px;
             line-height: 13px;
@@ -303,9 +311,6 @@
         height: 8px;
         background: url(imgs/corner.svg);
     }
-}
-
-.popup[data-popup="color-selector"] {
     h3 {
         font-size: 12px;
         margin: 5px 5px;
@@ -314,6 +319,9 @@
         margin: 2px 5px;
         line-height: 19px;
     }
+}
+
+.popup[data-popup="color-selector"] {
     .predefined {
         span {
             display: inline-block;

@@ -25,6 +25,23 @@
     $("[ivfilter-remove-text-nodes]").each(function() {
         $(this).contents().filter(function() { return this.nodeType === 3; }).remove();
     });
+    // data-switch
+    $("span[data-switch]").each(function() {
+        var key = $(this).attr("data-switch");
+        var value = $(this).attr("data-value");
+        var $this = $(this);
+        if(!IV.exists(key)) IV.add(key, "string");
+        IV.listen(key, function(v) {
+            if(v == value) {
+                $this.addClass("active");
+            } else {
+                $this.removeClass("active");
+            }
+        });
+        $(this).click(function() {
+            IV.set(key, value);
+        });
+    });
 
     $(".control-numeric-value").each(function() {
         $(this).IVNumericValue();
@@ -38,6 +55,12 @@
     // Controls.
     $(".input-numeric").each(function() {
         $(this).IVInputNumeric();
+    });
+    $(".input-path").each(function() {
+        $(this).IVInputPath();
+    });
+    $(".input-string").each(function() {
+        $(this).IVInputString();
     });
     $(".color-selector").each(function() {
         $(this).IVColorPicker();
@@ -119,21 +142,11 @@
             });
         }
     });
-    // data-switch
-    $("span[data-switch]").each(function() {
-        var key = $(this).attr("data-switch");
-        var value = $(this).attr("data-value");
-        var $this = $(this);
-        if(!IV.exists(key)) IV.add(key, "string");
-        IV.listen(key, function(v) {
-            if(v == value) {
-                $this.addClass("active");
-            } else {
-                $this.removeClass("active");
-            }
-        });
+    // data-popup
+    $("span[data-popup]").each(function() {
+        var key = $(this).attr("data-popup");
         $(this).click(function() {
-            IV.set(key, value);
+            IV.popups.show(key, $(this));
         });
     });
     // data-href

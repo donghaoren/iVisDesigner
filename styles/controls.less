@@ -54,33 +54,44 @@ select {
     }
 }
 
+input {
+    border: none;
+    margin: 0; padding: 0;
+    outline: none;
+
+    font-size: 12px;
+    line-height: 17px;
+    height: 17px;
+    vertical-align: top;
+
+    border: 1px solid gray;
+    border-radius: 2px;
+
+    width: 2.6em;
+    padding: 0 2px;
+
+    &:hover, &:active, &:focus {
+        border: 1px solid @active_color;
+        outline: none;
+    }
+    &:focus {
+        background-color: lighten(@active_color, 60%);
+    }
+}
+.input-string input {
+    width: 6em;
+}
 .input-numeric {
     display: inline-block;
     white-space: nowrap;
 
     input {
-        border: none;
-        margin: 0; padding: 0;
-        outline: none;
-
-        font-size: 12px;
-        line-height: 17px;
-        height: 17px;
-        vertical-align: top;
-
-        border: 1px solid gray;
         border-right: none;
         border-radius: 2px 0 0 2px;
-
-        width: 3em;
-
         &:hover, &:active, &:focus {
             border: 1px solid @active_color;
             border-right: none;
             outline: none;
-        }
-        &:focus {
-            background-color: lighten(@active_color, 60%);
         }
     }
     span {
@@ -102,6 +113,25 @@ select {
         }
     }
 }
+.input-path {
+    display: inline-block;
+    white-space: nowrap;
+
+    span {
+        display: inline-block;
+        cursor: pointer;
+        border-radius: 2px;
+        height: 19px;
+        line-height: 19px;
+        margin: 0 2px;
+        padding: 0 2px;
+        &:hover {
+            background-color: @active_color;
+            color: white;
+        }
+    }
+}
+
 .control-numeric-value, .control-color-value {
     line-height: 19px;
     display: inline-block;

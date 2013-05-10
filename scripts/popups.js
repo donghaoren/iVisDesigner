@@ -2,6 +2,7 @@
 IV.popups = { };
 $(".popup").each(function() {
     var $this = $(this);
+    $this.prepend('<div class="topbar"></div>');
     var key = $this.attr("data-popup");
     IV.popups[key] = $this;
     $this.mousedown(function(e) {
@@ -34,6 +35,8 @@ $(".popup").each(function() {
 });
 IV.popups.show = function(key, anchor, width, height, info) {
     var p = IV.popups[key];
+    if(!width) width = p.default_width;
+    if(!height) height = p.default_height;
     $("#popup-container").children().detach();
     $("#popup-container").append(p);
     var margin = 5;
@@ -64,6 +67,7 @@ $(window).mousedown(function() {
         $(this).detach();
     });
 });
+
 // Color select popup initialization.
 (function() {
     var p = IV.popups["color-selector"];
@@ -304,4 +308,29 @@ $(window).mousedown(function() {
     })();
 
     refresh();
+})();
+
+// Force Layout create popup.
+
+(function() {
+    var p = IV.popups["create-layout"];
+    p.default_width = 300;
+    p.default_height = 120;
+    var data = p.data();
+    p.find('[data-action="ok"]').click(function() {
+        var vertex_path = p.find('[data-field="vertex-path"]').data().get();
+        var field = p.find('[data-field="point-field"]').data().get();
+        var edgeA = p.find('[data-field="edge-a"]').data().get();
+        var edgeB = p.find('[data-field="edge-b"]').data().get();
+        var algo = p.find('[data-field="algorithm"]').data().get();
+        var obj = new IV.objects.ForceLayout(vertex_path, field, edgeA, edgeB);
+        IV.vis.addObject(obj);
+        IV.raise("vis:objects");
+        IV.triggerRender();
+        data.hide();
+        IV.render();
+    });
+    p.find('[data-action="cancel"]').click(function() {
+        data.hide();
+    });
 })();

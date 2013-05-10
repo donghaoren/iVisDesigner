@@ -64,7 +64,6 @@ IV.triggerRender = function(name) {
         for(var i in IV.needs_render) IV.needs_render[i] = true;
         return;
     }
-    var names = name.split(",");
     var map = {
         "tools": "front",
         "front": "front",
@@ -72,8 +71,10 @@ IV.triggerRender = function(name) {
         "overlay": "overlay",
         "main": "main"
     };
+    var names = name.split(",").map(function(x) { return map[x]; }).join(",").split(",");
+
     for(var i in names) {
-        IV.needs_render[map[names[i]]] = true;
+        IV.needs_render[names[i]] = true;
     }
 };
 
@@ -103,8 +104,8 @@ IV.renderMain = function() {
     ctx.save();
     IV.viewarea.set(ctx);
 
-    if(IV.vis && IV.data) {
-        IV.vis.render(ctx, IV.data);
+    if(IV.vis) {
+        IV.vis.render(ctx);
     }
     ctx.restore();
 };
@@ -127,9 +128,9 @@ IV.renderBack = function() {
     ctx.save();
     IV.viewarea.set(ctx);
 
-    if(IV.vis && IV.data) {
+    if(IV.vis) {
         if(IV.get("visible-guide"))
-            IV.vis.renderGuide(ctx, IV.data);
+            IV.vis.renderGuide(ctx);
     }
 
     ctx.restore();
@@ -147,8 +148,8 @@ IV.renderOverlay = function() {
 };
 
 IV.timerTick = function() {
-    if(IV.vis && IV.data) {
-        IV.vis.timerTick(IV.data);
+    if(IV.vis) {
+        IV.vis.timerTick();
     }
 };
 setInterval(function() {
@@ -253,12 +254,8 @@ IV.listen("visible-guide", function(val) {
 });
 
 IV.on("reset", function() {
-    IV.data = null; /*{
-        name: null,
-        schema: null,
-        content: null
-    };*/
-    IV.vis = new IV.Visualization();
+    IV.vis = null;
+    if(IV.data) IV.vis = new IV.Visualization(IV.data);
     IV.selection = [];
 });
 
@@ -303,7 +300,7 @@ IV.renderSchema = function(schema, prev_path) {
     return elem;
 };
 
-IV.loadDataSchema = function(schema) {
+IV.renderDataSchema = function(schema) {
     $("#data-schema").children().remove();
     var rootelem_span = $('<span class="key">ROOT</span>');
     var rootelem = $("<li/>").append(rootelem_span);
@@ -339,6 +336,7 @@ IV.loadDataSchema = function(schema) {
 
 IV.loadData = function(data) {
     IV.data = data;
+    IV.raiseEvent("reset");
 };
 
 IV.updateData = function() {
@@ -351,13 +349,13 @@ IV.loadDataset = function(name) {
     .done(function(data) {
         // We assume that the data follows the schema correctly.
         // Need some code to verify the above statement.
-        IV.loadDataSchema(data.schema);
+        IV.renderDataSchema(data.schema);
         IV.loadData(data);
         data.onContentUpdate = function() {
             IV.triggerRender("main,front,back");
         };
         data.onSchemaUpdate = function() {
-            IV.loadDataSchema(data.schema);
+            IV.renderDataSchema(data.schema);
         };
     })
     .fail(function() {
