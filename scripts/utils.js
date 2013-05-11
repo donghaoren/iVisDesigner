@@ -97,40 +97,35 @@ NS.tryRetry = function(f, on_finished, max_count) {
 
 NS.packObjects = function(objects, scheme) {
     var r = [];
-    for(var i in objects) {
-        var x = [];
-        for(var j in scheme) {
-            var def = scheme[j], val;
+    return objects.map(function(obj) {
+        return scheme.map(function(def) {
+            var val;
             if(typeof(def) == "string") {
-                val = objects[i][def];
+                val = obj[def];
             } else {
-                val = objects[i][def.key];
+                val = obj[def.key];
                 if(def.encode) val = def.encode(val);
             }
             x.push(val);
-        }
-        r.push(x);
-    }
-    return r;
+        });
+    });
 };
 
 NS.unpackObjects = function(array, scheme) {
     var r = [];
-    for(var i in array) {
-        var x = array[i];
+    return array.map(function(x) {
         var obj = { };
-        for(var j in scheme) {
-            var def = scheme[j], val = x[j];
+        scheme.forEach(function(def) {
+            var val = x[j];
             if(typeof(def) == "string") {
                 obj[def] = val;
             } else {
                 if(def.decode) val = def.decode(val);
                 obj[def.key] = val;
             }
-        }
+        });
         r.push(obj);
-    }
-    return r;
+    });
 };
 
 NS.getQuery = function(name) {
@@ -340,15 +335,16 @@ NS.raiseEvent = function(key, parameters) {
     if(!ev) return NS;
     if(ev.running) return NS;
     ev.running = true;
-    for(var i in ev.listeners) {
+    ev.listeners.some(function(listener) {
         var r;
         try {
-            r = ev.listeners[i].f(parameters);
+            r = listener.f(parameters);
         } catch(e) {
             console.log(e);
         }
-        if(r) break;
-    }
+        if(r) return true;
+        return false;
+    });
     ev.running = false;
     return NS;
 };
@@ -360,7 +356,7 @@ NS.raise = NS.raiseEvent;
 // Convert UTF-8 string to bytes array.
 function sha1_str2bytes(str) {
     var bytes = [];
-    for (var i = 0; i < str.length; i++) {
+    for(var i = 0; i < str.length; i++) {
         bytes.push(str.charCodeAt(i) & 0xff);
     }
     return bytes;
@@ -1033,7 +1029,7 @@ function chainHull_2D(P, n, H) {
 NS.convexHull = function(points) {
     var H = [];
     var pts = [];
-    for(var i in points) pts.push(points[i]);
+    for(var i = 0; i < points.length; i++) pts.push(points[i]);
     pts.sort(sortPointY);
     pts.sort(sortPointX);
     var n = chainHull_2D(pts, points.length, H);
@@ -1304,7 +1300,7 @@ NS.Color.prototype = {
 NS.parseCSV = function(string) {
     var lines = string.replace("\r", "").split("\n");
     var filtered_lines = [];
-    for(var i in lines) {
+    for(var i = 0; i < lines.length; i++) {
         lines[i] = lines[i].trim();
         if(lines[i].length > 0) filtered_lines.push(lines[i]);
     }
@@ -1355,7 +1351,7 @@ NS.wrapText = function(context, text, x, y, maxWidth, lineHeight) {
 
 NS.longestString = function(strs) {
     var slong = null;
-    for(var i in strs) {
+    for(var i = 0; i < strs.length; i++) {
         var s = strs[i];
         if(!s) continue;
         if(slong == null || s.length > slong.length) slong = s;
@@ -1378,6 +1374,13 @@ NS.trackMouseEvents = function(elem, handlers) {
         if(handlers.down) handlers.down(e);
     });
 }
+
+Array.prototype.forEachReversed = function(f) {
+    var i = this.length;
+    while(i--) {
+        f(this[i]);
+    };
+};
 
 return NS;
 

@@ -105,7 +105,7 @@
             var order = zidxs.map(function(z, i) { return [ z, i ] })
                                 .sort(function(a, b) { return a[0] - b[0] })
                                 .map(function(f) { return f[1] });
-            for(var i in order) {
+            for(var i = 0; i < order.length; i++) {
                 zidxs[order[i]] = base_idx + +i;
             }
             var idx = 0;

@@ -14,7 +14,7 @@ IV.panels.beginEdit = function(objects, callback) {
             var s = obj.style;
             IV.panels.style.loadStyle(s);
             IV.panels.style.listener = function(style) {
-                for(var i in objects) {
+                for(var i = 0; i < objects.length; i++) {
                     objects[i].style = style;
                 }
                 callback({ "style": style });

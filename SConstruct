@@ -176,6 +176,9 @@ def include_build_function(target, source, env, minify = '', mustache = 0):
     for t in target:
         fn = str(t)
         if minify == 'js':
+            # Here we use a file because weird behaviour while using pipes.
+            # uglifyjs complain that it received an unexpected EOF from the input
+            # stream, which seems truncated during.
             f_temp = open(fn + ".temp", "wb");
             f_temp.write(data.encode('utf-8'))
             f_temp.close()
@@ -195,9 +198,7 @@ def include_build_function(target, source, env, minify = '', mustache = 0):
 
             cmd = ["cleancss", "-o", fn, fn + ".temp"]
             cmd = " ".join([ '"' + x.replace('"', '\\"') + '"' for x in cmd ])
-            p = subprocess.Popen(cmd, stdin = subprocess.PIPE, shell = True)
-            p.stdin.write(data.encode('utf-8'))
-            p.stdin.close()
+            p = subprocess.Popen(cmd, shell = True)
             r = p.wait()
 
             os.unlink(fn + ".temp")

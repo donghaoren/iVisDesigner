@@ -73,7 +73,7 @@ IV.triggerRender = function(name) {
     };
     var names = name.split(",").map(function(x) { return map[x]; }).join(",").split(",");
 
-    for(var i in names) {
+    for(var i = 0; i < names.length; i++) {
         IV.needs_render[names[i]] = true;
     }
 };
@@ -386,7 +386,7 @@ IV.loadData = function(data) {
 IV.updateData = function() {
 };
 
-IV.loadDataset = function(name) {
+IV.loadDataset = function(name, callback) {
     IV.raiseEvent("reset");
     // Load data content.
     IV.dataprovider.loadData(name)
@@ -401,6 +401,7 @@ IV.loadDataset = function(name) {
         data.onSchemaUpdate = function() {
             IV.renderDataSchema(data.schema);
         };
+        if(callback) callback();
     })
     .fail(function() {
         IV.log("Failed to load data content.");
@@ -422,14 +423,6 @@ function browserTest() {
     if(!document.createElement("canvas").getContext) return false;
     return true;
 }
-
-$(function() {
-    if(!browserTest()) return;
-    // Remove the loading indicator.
-    $("#system-loading").remove();
-    // Default dataset: cardata.
-    IV.loadDataset("graph");
-});
 
 IV.test = function() {
     var L = new IV.objects.ForceLayout("vertices", "pt", "edges:A", "edges:B");
@@ -457,4 +450,15 @@ IV.test = function() {
     IV.render();
     IV.generateObjectList();
 };
-setTimeout(IV.test, 300);
+
+
+$(function() {
+    if(!browserTest()) return;
+    // Remove the loading indicator.
+    $("#system-loading").remove();
+    // Default dataset: cardata.
+    IV.loadDataset("graph", function() {
+        IV.test();
+    });
+});
+

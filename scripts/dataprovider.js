@@ -130,7 +130,8 @@ var enumerate_path_subtree = function(context, spath, idx, obj, schema, callback
     var cschema = schema.fields[cpath];
     var cobj = obj[cpath];
     if(cschema.type == "collection" || cschema.type == "sequence") {
-        for(var i in cobj) {
+        var cobj_length = cobj.length;
+        for(var i = 0; i < cobj_length; i++) {
             var o = cobj[i];
             context.list[idx] = {
                 obj: o,
@@ -187,7 +188,7 @@ PlainDataset.prototype = {
         if(this.schema_cache[path]) return this.schema_cache[path];
         var s = this.schema;
         var spath = path ? path.split(":") : [];
-        for(var i in spath) {
+        for(var i = 0; i < spath.length; i++) {
             s = s.fields[spath[i]];
         }
         this.schema_cache[path] = s;

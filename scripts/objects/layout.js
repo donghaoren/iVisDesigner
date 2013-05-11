@@ -98,7 +98,8 @@ ForceLayout.prototype = new IV.objects.BaseObject({
                 p.dx += dx / d * f;
                 p.dy += dy / d * f;
             }
-            for(var i in edges) {
+            var edges_l = edges.length;
+            for(var i = 0; i < edges_l; i++) {
                 var p = objs[edges[i][0]];
                 var q = objs[edges[i][1]];
                 var dx = p.x - q.x;

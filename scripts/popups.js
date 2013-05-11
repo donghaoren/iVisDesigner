@@ -69,6 +69,7 @@
         if(p.data().onShow) p.data().onShow(info);
         return p.data();
     };
+    /*
     $(window).mousedown(function() {
         if(!should_block_popup_hide) {
             $("#popup-container").children().each(function() {
@@ -79,6 +80,7 @@
         }
         should_block_popup_hide = false;
     });
+    */
 })();
 // Color select popup initialization.
 (function() {

@@ -108,7 +108,7 @@ Track.prototype = new IV.objects.BaseObject({
                                 return plain.offset;
                         });
                         rslt.onMove = function(p0, p1) {
-                            for(var i in move_targets) {
+                            for(var i = 0; i < move_targets.length; i++) {
                                 if(move_targets[i].type == "plain")
                                     move_targets[i].obj = p1.sub(p0).add(this.originals[i]);
                                 if(move_targets[i].type == "PointOffset")

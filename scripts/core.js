@@ -74,7 +74,7 @@ IV.Visualization.prototype = {
     },
     render: function(g) {
         var data = this.data;
-        this.objects.forEach(function(obj) {
+        this.objects.forEachReversed(function(obj) {
             g.save();
             try {
                 obj.render(g, data);
@@ -83,7 +83,7 @@ IV.Visualization.prototype = {
             }
             g.restore();
         });
-        this.selection.forEach(function(c) {
+        this.selection.forEachReversed(function(c) {
             g.save();
             try {
                 c.obj.renderSelected(g, data);
@@ -95,7 +95,7 @@ IV.Visualization.prototype = {
     },
     renderGuide: function(g) {
         var data = this.data;
-        this.objects.forEach(function(obj) {
+        this.objects.forEachReversed(function(obj) {
             g.save();
             try {
                 obj.renderGuide(g, data);
@@ -104,7 +104,7 @@ IV.Visualization.prototype = {
             }
             g.restore();
         });
-        this.selection.forEach(function(c) {
+        this.selection.forEachReversed(function(c) {
             var obj = c.obj;
             g.save();
             try {
@@ -119,7 +119,7 @@ IV.Visualization.prototype = {
         var data = this.data;
         var best_context = null;
         var mind = 1e10;
-        for(var i in this.objects) {
+        for(var i = 0; i < this.objects.length; i++) {
             var obj = this.objects[i];
             var context = obj.select(pt, data, action);
             if(context) {
