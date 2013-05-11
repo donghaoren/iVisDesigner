@@ -5,9 +5,11 @@ IV.tools.Track = {
         var $this = this;
         $this.loc1 = null;
         $this.loc2 = null;
+        IV.set("status", "Track: Select point A.");
         IV.tools.beginSelectLocation(function(loc) {
             if(!$this.loc1) {
                 $this.loc1 = loc;
+                IV.set("status", "Track: Select point B.");
                 return;
             } else {
                 $this.loc2 = loc;
@@ -22,6 +24,7 @@ IV.tools.Track = {
                 }
                 $this.loc1 = null;
                 $this.loc2 = null;
+                IV.set("status", "Track: Select point A.");
             }
         }, "tools:Track");
     },
@@ -41,6 +44,8 @@ IV.tools.Scatter = {
         IV.vis.clearSelection();
         IV.triggerRender("main,back");
 
+        IV.set("status", "Scatter: Select track A.");
+
         IV.tools.beginSelectObject(function(context) {
             var path = IV.get("selected-path");
             if(!context) {
@@ -49,6 +54,7 @@ IV.tools.Scatter = {
                 IV.vis.clearSelection();
                 IV.raise("vis:objects:selection");
                 IV.triggerRender("main,back");
+                IV.set("status", "Scatter: Select track A.");
                 return;
             }
             if(!obj1) {
@@ -56,6 +62,7 @@ IV.tools.Scatter = {
                 IV.vis.appendSelection(context);
                 IV.raise("vis:objects:selection");
                 IV.triggerRender("main,back");
+                IV.set("status", "Scatter: Select track B.");
             } else if(!obj2) {
                 obj2 = context.obj;
                 if(IV.data.getSchema(path)) {
@@ -70,6 +77,7 @@ IV.tools.Scatter = {
                 IV.vis.clearSelection();
                 IV.raise("vis:objects:selection");
                 IV.triggerRender("main,back");
+                IV.set("status", "Scatter: Select track A.");
             }
         }, "tools:Line");
     },

@@ -185,7 +185,7 @@
     line-height: 22px;
     font-size: 14px;
 
-    & > div {
+    & > div.item {
         display: block;
         position: relative;
         cursor: pointer;
@@ -239,6 +239,11 @@
             .gradient_background_inv(darken(@active_color, 5%));
             color: white;
         }
+    }
+
+    & > .divider {
+        height: 0px;
+        outline: 1px solid @active_color;
     }
 }
 
@@ -341,12 +346,20 @@
         }
     }
     .selected-color {
+        .selected-color-inner {
+            display: inline-block;
+            width: 17px;
+            height: 17px;
+        }
         display: inline-block;
+        overflow: hidden;
         width: 17px;
         height: 17px;
         border-radius: 2px;
         border: 1px solid #888;
         vertical-align: top;
+        background: @transparent_background;
+        background-size: 17px 17px;
     }
     .hcl-picker .picker {
         display: inline-block;

@@ -5,9 +5,11 @@ IV.tools.Line = {
         var $this = this;
         $this.loc1 = null;
         $this.loc2 = null;
+        IV.set("status", "Line: Select point A.");
         IV.tools.beginSelectLocation(function(loc) {
             if(!$this.loc1) {
                 $this.loc1 = loc;
+                IV.set("status", "Line: Select point B.");
                 return;
             } else {
                 $this.loc2 = loc;
@@ -22,6 +24,7 @@ IV.tools.Line = {
                 IV.triggerRender("main,back");
                 $this.loc1 = null;
                 $this.loc2 = null;
+                IV.set("status", "Line: Select point A.");
             }
         }, "tools:Line");
     },
@@ -33,6 +36,7 @@ IV.tools.Line = {
 IV.tools.LineThrough = {
     onActive: function() {
         var $this = this;
+        IV.set("status", "LineThrough: Select location of anchors.");
         IV.tools.beginSelectLocation(function(loc) {
             var path = IV.get("selected-path");
             if(IV.data.getSchema(path)) {

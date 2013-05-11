@@ -6,6 +6,7 @@ IV.tools.Select = {
         if(IV.vis) IV.vis.clearSelection();
         IV.raise("vis:objects:selection");
         IV.triggerRender("main,back");
+        IV.set("status", "Select object.");
 
         IV.tools.beginSelectObject(function(context, e_down) {
             if(context) {

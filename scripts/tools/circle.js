@@ -7,6 +7,7 @@
 IV.tools.Circle = {
     onActive: function() {
         var $this = this;
+        IV.set("status", "Circle: Select the center.");
         IV.tools.beginSelectLocation(function(loc) {
             var path = IV.get("selected-path");
             if(IV.data.getSchema(path)) {

@@ -3,6 +3,7 @@
 IV.tools.Move = {
     onActive: function() {
         var $this = this;
+        IV.set("status", "Drag to move the canvas.");
         IV.tools.beginTrackMouse(function(e_down) {
             var p0 = e_down.page;
             var l0 = IV.viewarea.location.clone();
@@ -22,6 +23,7 @@ IV.tools.Move = {
 IV.tools.Zoom = {
     onActive: function() {
         var $this = this;
+        IV.set("status", "Drag to zoom the canvas.");
         IV.tools.beginTrackMouse(function(e_down) {
             var y0 = e_down.page.y;
             var l0 = IV.viewarea.location.clone();

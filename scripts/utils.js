@@ -1363,6 +1363,22 @@ NS.longestString = function(strs) {
     return slong;
 };
 
+NS.trackMouseEvents = function(elem, handlers) {
+    var move_handler = function(e) {
+        if(handlers.move) handlers.move(e);
+    };
+    var up_handler = function(e) {
+        if(handlers.move) $(window).unbind("mousemove", move_handler);
+        $(window).unbind("mouseup", up_handler);
+        if(handlers.up) handlers.up(e);
+    };
+    elem.mousedown(function(e) {
+        if(handlers.move) $(window).bind("mousemove", move_handler);
+        $(window).bind("mouseup", up_handler);
+        if(handlers.down) handlers.down(e);
+    });
+}
+
 return NS;
 
 })(); // main nested function.

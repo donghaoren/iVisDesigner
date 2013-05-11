@@ -26,25 +26,28 @@ $.fn.IVInputNumeric = function(num) {
         $this.append(input);
         $this.append(btn_show_slider);
         var slider_context = null;
-        btn_show_slider.mousedown(function(e) {
-            slider_context = { y: e.pageY, val: data.get() };
-            if(slider_context.val === null) slider_context.val = 0;
-            return;
-        });
-        $(window).mousemove(function(e) {
-            if(slider_context) {
-                var dy = -e.pageY + slider_context.y;
-                var newval = slider_context.val + dy * 0.02 * data.delta_scale;
-                if(newval < data.min) newval = data.min;
-                if(newval > data.max) newval = data.max;
-                data.set(newval.toFixed(2));
-                fire();
-            }
-        });
-        $(window).mouseup(function() {
-            if(slider_context) {
-                slider_context = null;
-                fire();
+        btn_show_slider.mousedown();
+        IV.trackMouseEvents(btn_show_slider, {
+            down: function(e) {
+                slider_context = { y: e.pageY, val: data.get() };
+                if(slider_context.val === null) slider_context.val = 0;
+                return;
+            },
+            move: function(e) {
+                if(slider_context) {
+                    var dy = -e.pageY + slider_context.y;
+                    var newval = slider_context.val + dy * 0.02 * data.delta_scale;
+                    if(newval < data.min) newval = data.min;
+                    if(newval > data.max) newval = data.max;
+                    data.set(newval.toFixed(2));
+                    fire();
+                }
+            },
+            up: function() {
+                if(slider_context) {
+                    slider_context = null;
+                    fire();
+                }
             }
         });
         input.focusout(fire);
@@ -179,7 +182,6 @@ $.fn.IVNumericValue = function(obj) {
             data.delta_scale = parseFloat($this.attr("data-delta-scale"));
         }
         var onchanged = function() {
-            console.trace();
             if(data.current_mode == "plain") {
             } else {
                 if(data.path === undefined || data.path == "" || data.path === null)
@@ -467,17 +469,17 @@ $.fn.IVSelectValue = function(obj) {
 $.fn.ScrollView = function() {
     var container = this;
     var $this = this;
-    var view = container.children("div");
-    view.addClass("scrollview-content");
-    var scrollbar = $("<div />").addClass("scrollbar");
-    var guide = $("<div />").addClass("guide");
-    scrollbar.append(guide);
-    container.append(scrollbar);
-
     var data = $this.data();
 
     if(!data.is_created) {
         data.is_created = true;
+
+        var view = container.children("div");
+        view.addClass("scrollview-content");
+        var scrollbar = $("<div />").addClass("scrollbar");
+        var guide = $("<div />").addClass("guide");
+        scrollbar.append(guide);
+        container.append(scrollbar);
 
         var get_top = function() {
             var top = view.css("top");
@@ -510,6 +512,25 @@ $.fn.ScrollView = function() {
         var check_size = function() {
             set_top(get_top());
         };
-        var check_size_timer = setInterval(check_size, 200);
+        data.check_size_timer = setInterval(check_size, 200);
+
+        IV.trackMouseEvents(guide, {
+            down: function(e) {
+                this.top0 = parseFloat(guide.css("top").replace("px", ""));
+                this.mouse0 = e.pageY;
+                e.preventDefault();
+                scrollbar.addClass("dragging");
+            },
+            move: function(e) {
+                var new_top = this.top0 + e.pageY - this.mouse0;
+                var view_h = view.outerHeight();
+                var cont_h = container.height();
+                var rtop = -new_top * view_h / cont_h;
+                set_top(rtop);
+            },
+            up: function() {
+                scrollbar.removeClass("dragging");
+            }
+        });
     }
 };

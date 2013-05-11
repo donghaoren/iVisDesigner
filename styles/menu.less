@@ -81,3 +81,17 @@
         .gradient_background(@active_color);
     }
 }
+
+#statusbar {
+    position: fixed;
+    z-index: 100;
+    left: 0; right: 0; bottom: 0;
+    height: @statusbar_height;
+    line-height: @statusbar_height;
+    font-size: 11px;
+    padding: 0 5px;
+    .gradient_background(#CCC);
+    border-top: 1px solid #AAA;
+    overflow: hidden;
+    white-space: nowrap;
+}

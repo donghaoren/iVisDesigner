@@ -16,6 +16,7 @@ var ForceLayout = function(path_item, cpath, path_edgeA, path_edgeB) {
     this.points = { };
     this.type = "ForceLayout";
     this.assigned_schema = null;
+    this.enabled = false;
 };
 
 ForceLayout.prototype = new IV.objects.BaseObject({
@@ -29,7 +30,8 @@ ForceLayout.prototype = new IV.objects.BaseObject({
         }
     },
     timerTick: function(data) {
-        this._runStep(data);
+        if(this.enabled)
+            this._runStep(data);
     },
     _runStep: function(data) {
         var $this = this;
