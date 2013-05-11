@@ -33,6 +33,25 @@ ForceLayout.prototype = new IV.objects.BaseObject({
         if(this.enabled)
             this._runStep(data);
     },
+    getPropertyContext: function(data) {
+        // This function is for IV editing.
+        var $this = this;
+        return { items: [
+            { name: "Enabled", type: "bool",
+              value: $this.enabled,
+              set: function(val) {
+                $this.enabled = val;
+              }
+            },
+            { name: "Reset", type: "button",
+              set: function(val) {
+                $this.points = [];
+                this._runStep(data);
+                return { "render": "all" };
+              }
+            }
+        ] };
+    },
     _runStep: function(data) {
         var $this = this;
         var objs = { };

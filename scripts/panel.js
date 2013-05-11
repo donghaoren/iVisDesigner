@@ -149,7 +149,7 @@
             $(this).css("height", $(window).height() - menu_height - status_height - (params.top + params.bottom) + "px");
         }
     } else if(params.bottom) {
-        $(this).css("top", $(window).height() - menu_height - status_height - params.bottom - $this.height() + "px");
+        $(this).css("top", $(window).height() - status_height - params.bottom - $this.height() + "px");
     }
     if(params.left) {
         $(this).css("left", params.left - border_width + "px");

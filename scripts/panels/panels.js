@@ -20,6 +20,21 @@ IV.panels.beginEdit = function(objects, callback) {
                 callback({ "style": style });
             };
         }
+        var property_context = { items: [] };
+        if(obj.getPropertyContext) {
+            property_context = obj.getPropertyContext(IV.data);
+        }
+        var default_items = [
+            { name: "Name", type: "string",
+              value: obj.name,
+              set: function(val) {
+                obj.name = val;
+                IV.raise("vis:objects");
+              }
+          }
+        ];
+        property_context.items = default_items.concat(property_context.items);
+        IV.panels.property.loadContext(property_context);
     }
 };
 
@@ -33,3 +48,4 @@ IV.on("vis:objects:selection", function() {
 });
 
 {{include: style.js}}
+{{include: property.js}}

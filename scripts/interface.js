@@ -110,6 +110,7 @@
         $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("hide");
         $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 50, width: 600 }).IVPanel("hide");
         $("#panel-style").IVPanel({ right: 220, top: 10, left: 120, height: 50 }).IVPanel("show");
+        $("#panel-property").IVPanel({ left: 10, height: 54, width: 400, bottom: 10 }).IVPanel("show");
     });
     IV.raiseEvent("command:panels.reset");
 

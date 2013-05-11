@@ -62,7 +62,6 @@ input {
     font-size: 12px;
     line-height: 17px;
     height: 17px;
-    vertical-align: top;
 
     border: 1px solid gray;
     border-radius: 2px;
@@ -212,6 +211,15 @@ input {
     &:hover > .scrollbar, & > .scrollbar.dragging { display: block; }
 }
 
+.disp-active { display: none !important; }
+.active {
+    .disp-active {
+        display: inline !important;
+    }
+    .disp-inactive {
+        display: none !important;
+    }
+}
 
 // Glyph
 .xicon_content(@c) {
