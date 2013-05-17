@@ -458,7 +458,7 @@ $(function() {
     $("#system-loading").remove();
     // Default dataset: cardata.
     IV.loadDataset("graph", function() {
-        IV.test();
+        //IV.test();
     });
 });
 

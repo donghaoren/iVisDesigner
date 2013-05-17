@@ -60,9 +60,24 @@ IV_version = {
           Credits
         </span></li>
         <li class="divider"></li>
-        <li><span data-command="account.register"><span class="icon"><i class="icon-user"></i></span>Register...</span></li>
-        <li><span data-command="account.login"><span class="icon"><i class="icon-signin"></i></span>Login...</span></li>
-        <li><span data-command="account.logout"><span class="icon"><i class="icon-signout"></i></span>Logout</span></li>
+        <li>
+          <span data-command="account.register">
+            <span class="icon"><i class="icon-user"></i></span>
+            Register...
+          </span>
+        </li>
+        <li>
+          <span data-command="account.login">
+            <span class="icon"><i class="icon-signin"></i></span>
+            Login...
+          </span>
+        </li>
+        <li>
+          <span data-command="account.logout">
+            <span class="icon"><i class="icon-signout"></i></span>
+            Logout
+          </span>
+        </li>
       </ul>
     </li>
     <li>
@@ -88,18 +103,46 @@ IV_version = {
     <li>
       <span>View</span>
       <ul>
-        <li><span data-toggle="visible-guide">Guide<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
+        <li>
+          <span data-toggle="visible-guide">Guide
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
       </ul>
     </li>
     <li>
       <span>Panel</span>
       <ul>
-        <li><span data-toggle="#panel-schema">Schema<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
-        <li><span data-toggle="#panel-tools">Tools<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
-        <li><span data-toggle="#panel-objects">Objects<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
-        <li><span data-toggle="#panel-style">Style<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
-        <li><span data-toggle="#panel-property">Property<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
-        <li><span data-toggle="#panel-log">Log<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
+        <li>
+          <span data-toggle="#panel-schema">Schema
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-tools">Tools
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-objects">Objects
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-style">Style
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-property">Property
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-log">Log
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
         <li><span data-command="panels.reset">Reset</span></li>
       </ul>
     </li>
@@ -128,14 +171,30 @@ IV_version = {
     <div id="tools-container">
       <div class="tool-icons" ivfilter-remove-text-nodes>
         <span data-apply-children="data-switch=tools:current;class=btn btn-icon" ivfilter-remove-text-nodes>
-          <span data-value="Select" title="Select or move elements."><i class="xicon-tools-arrow"></i></span>
-          <span data-value="Track" title="Create a track for selected path."><i class="xicon-tools-track"></i></span>
-          <span data-value="Scatter" title="Create a scatterplot with two tracks."><i class="xicon-tools-scatter"></i></span>
-          <span data-value="Circle" title="Create a circle."><i class="xicon-tools-circle"></i></span>
-          <span data-value="Line" title="Create a line."><i class="xicon-tools-line"></i></span>
-          <span data-value="LineThrough" title="Create a line through."><i class="xicon-tools-linethrough"></i></span>
-          <span data-value="Move" title="Move the view."><i class="xicon-tools-move"></i></span>
-          <span data-value="Zoom" title="Zoom the view."><i class="xicon-tools-zoom-out"></i></span>
+          <span data-value="Select" title="Select or move elements.">
+            <i class="xicon-tools-arrow"></i>
+          </span>
+          <span data-value="Track" title="Create a track for selected path.">
+            <i class="xicon-tools-track"></i>
+          </span>
+          <span data-value="Scatter" title="Create a scatterplot with two tracks.">
+            <i class="xicon-tools-scatter"></i>
+          </span>
+          <span data-value="Circle" title="Create a circle.">
+            <i class="xicon-tools-circle"></i>
+          </span>
+          <span data-value="Line" title="Create a line.">
+            <i class="xicon-tools-line"></i>
+          </span>
+          <span data-value="LineThrough" title="Create a line through.">
+            <i class="xicon-tools-linethrough"></i>
+          </span>
+          <span data-value="Move" title="Move the view.">
+            <i class="xicon-tools-move"></i>
+          </span>
+          <span data-value="Zoom" title="Zoom the view.">
+            <i class="xicon-tools-zoom-out"></i>
+          </span>
         </span>
         <span class="btn" data-popup="create-layout">Layout</span>
       </div>
@@ -173,11 +232,17 @@ IV_version = {
       </span>
       <span class="group">
         <span class="text">Cap: </span>
-        <span class="control-select-value" data-options="butt|Butt,round|Round,square|Square" data-default="round" data-bind="line_cap"></span>
+        <span class="control-select-value"
+              data-options="butt|Butt,round|Round,square|Square"
+              data-default="round"
+              data-bind="line_cap"></span>
       </span>
       <span class="group">
         <span class="text">Join: </span>
-        <span class="control-select-value" data-options="miter|Miter,round|Round,bevel|Bevel" data-default="round" data-bind="line_join"></span>
+        <span class="control-select-value"
+              data-options="miter|Miter,round|Round,bevel|Bevel"
+              data-default="round"
+              data-bind="line_join"></span>
       </span>
     </div>
   </div>
@@ -207,9 +272,9 @@ IV_version = {
     </div>
     <div class="tabs">
       <div data-tab="predefined">
-        <p><span class="predefined">000000,ffffff,888888,1f77b4,ff7f0e,2ca02c,d62728,9467bd,8c564b,e377c2,bcbd22,17becf</span></p>
-        <p><span class="predefined">BD0026,F03B20,FD8D3C,FEB24C,FED976,FFFFB2,045A8D,2B8CBE,74A9CF,A6BDDB,D0D1E6,F1EEF6</span></p>
-        <p><span class="predefined">252525,636363,969696,BDBDBD,D9D9D9,F7F7F7,B2182B,EF8A62,FDDBC7,D1E5F0,67A9CF,2166AC</span></p>
+<p><span class="predefined">000000,ffffff,888888,1f77b4,ff7f0e,2ca02c,d62728,9467bd,8c564b,e377c2,bcbd22,17becf</span></p>
+<p><span class="predefined">BD0026,F03B20,FD8D3C,FEB24C,FED976,FFFFB2,045A8D,2B8CBE,74A9CF,A6BDDB,D0D1E6,F1EEF6</span></p>
+<p><span class="predefined">252525,636363,969696,BDBDBD,D9D9D9,F7F7F7,B2182B,EF8A62,FDDBC7,D1E5F0,67A9CF,2166AC</span></p>
       </div>
       <div data-tab="hcl" class="hcl-picker">
         <p>Component: <select class="method">
@@ -259,7 +324,8 @@ IV_version = {
 </div>
 
 <!-- System Loading Overlay -->
-<div id="system-loading" style="position:fixed;z-index:100000;left:0;right:0;top:0;bottom:0;padding-top:100px;text-align:center;font-size:16px;background-color:white;">
+<div id="system-loading"
+     style="position:fixed;z-index:100000;left:0;right:0;top:0;bottom:0;padding-top:100px;text-align:center;font-size:16px;background-color:white;">
   <div style="text-align:left;display:inline-block;">
     <h3 style="margin-bottom:10px;font-size:20px;">iVisDesigner is Loading...</h3>
     <p style="margin: 0.3em 0; padding: 0">Browser requirements: HTML5 support (Javascript, Canvas, SVG).</p>
@@ -267,7 +333,10 @@ IV_version = {
         <a href="http://www.google.com/chrome">Chrome</a>,
         <a href="http://www.apple.com/safari">Safari</a> or
         <a href="http://www.mozilla.org/firefox">Firefox</a>.</p>
-    <p style="margin: 0.3em 0; padding: 0"><a href="{{ref:license.html}}">License</a>, <a href="{{ref:credits.html}}">Credits</a>.</p>
+    <p style="margin: 0.3em 0; padding: 0">
+      <a href="{{ref:license.html}}">License</a>,
+      <a href="{{ref:credits.html}}">Credits</a>.
+    </p>
   </div>
 </div>
 

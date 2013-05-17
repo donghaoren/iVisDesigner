@@ -1,32 +1,1503 @@
-vertices:
-  - _id: v1
-    size: 1
-  - _id: v2
-    size: 2
-  - _id: v3
-    size: 3
-  - _id: v4
-    size: 4
-  - _id: v5
-    size: 5
-  - _id: v6
-    size: 6
-  - _id: v7
-    size: 7
-
-edges:
-  - A: { id: v1 }
-    B: { id: v2 }
-  - A: { id: v2 }
-    B: { id: v3 }
-  - A: { id: v3 }
-    B: { id: v4 }
-  - A: { id: v2 }
-    B: { id: v7 }
-  - A: { id: v5 }
-    B: { id: v6 }
-  - A: { id: v6 }
-    B: { id: v7 }
-  - A: { id: v7 }
-    B: { id: v1 }
-
+nodes:
+  - name: Myriel
+    group: 1
+    _id: "0"
+  - name: Napoleon
+    group: 1
+    _id: "1"
+  - name: Mlle.Baptistine
+    group: 1
+    _id: "2"
+  - name: Mme.Magloire
+    group: 1
+    _id: "3"
+  - name: CountessdeLo
+    group: 1
+    _id: "4"
+  - name: Geborand
+    group: 1
+    _id: "5"
+  - name: Champtercier
+    group: 1
+    _id: "6"
+  - name: Cravatte
+    group: 1
+    _id: "7"
+  - name: Count
+    group: 1
+    _id: "8"
+  - name: OldMan
+    group: 1
+    _id: "9"
+  - name: Labarre
+    group: 2
+    _id: "10"
+  - name: Valjean
+    group: 2
+    _id: "11"
+  - name: Marguerite
+    group: 3
+    _id: "12"
+  - name: Mme.deR
+    group: 2
+    _id: "13"
+  - name: Isabeau
+    group: 2
+    _id: "14"
+  - name: Gervais
+    group: 2
+    _id: "15"
+  - name: Tholomyes
+    group: 3
+    _id: "16"
+  - name: Listolier
+    group: 3
+    _id: "17"
+  - name: Fameuil
+    group: 3
+    _id: "18"
+  - name: Blacheville
+    group: 3
+    _id: "19"
+  - name: Favourite
+    group: 3
+    _id: "20"
+  - name: Dahlia
+    group: 3
+    _id: "21"
+  - name: Zephine
+    group: 3
+    _id: "22"
+  - name: Fantine
+    group: 3
+    _id: "23"
+  - name: Mme.Thenardier
+    group: 4
+    _id: "24"
+  - name: Thenardier
+    group: 4
+    _id: "25"
+  - name: Cosette
+    group: 5
+    _id: "26"
+  - name: Javert
+    group: 4
+    _id: "27"
+  - name: Fauchelevent
+    group: 0
+    _id: "28"
+  - name: Bamatabois
+    group: 2
+    _id: "29"
+  - name: Perpetue
+    group: 3
+    _id: "30"
+  - name: Simplice
+    group: 2
+    _id: "31"
+  - name: Scaufflaire
+    group: 2
+    _id: "32"
+  - name: Woman1
+    group: 2
+    _id: "33"
+  - name: Judge
+    group: 2
+    _id: "34"
+  - name: Champmathieu
+    group: 2
+    _id: "35"
+  - name: Brevet
+    group: 2
+    _id: "36"
+  - name: Chenildieu
+    group: 2
+    _id: "37"
+  - name: Cochepaille
+    group: 2
+    _id: "38"
+  - name: Pontmercy
+    group: 4
+    _id: "39"
+  - name: Boulatruelle
+    group: 6
+    _id: "40"
+  - name: Eponine
+    group: 4
+    _id: "41"
+  - name: Anzelma
+    group: 4
+    _id: "42"
+  - name: Woman2
+    group: 5
+    _id: "43"
+  - name: MotherInnocent
+    group: 0
+    _id: "44"
+  - name: Gribier
+    group: 0
+    _id: "45"
+  - name: Jondrette
+    group: 7
+    _id: "46"
+  - name: Mme.Burgon
+    group: 7
+    _id: "47"
+  - name: Gavroche
+    group: 8
+    _id: "48"
+  - name: Gillenormand
+    group: 5
+    _id: "49"
+  - name: Magnon
+    group: 5
+    _id: "50"
+  - name: Mlle.Gillenormand
+    group: 5
+    _id: "51"
+  - name: Mme.Pontmercy
+    group: 5
+    _id: "52"
+  - name: Mlle.Vaubois
+    group: 5
+    _id: "53"
+  - name: Lt.Gillenormand
+    group: 5
+    _id: "54"
+  - name: Marius
+    group: 8
+    _id: "55"
+  - name: BaronessT
+    group: 5
+    _id: "56"
+  - name: Mabeuf
+    group: 8
+    _id: "57"
+  - name: Enjolras
+    group: 8
+    _id: "58"
+  - name: Combeferre
+    group: 8
+    _id: "59"
+  - name: Prouvaire
+    group: 8
+    _id: "60"
+  - name: Feuilly
+    group: 8
+    _id: "61"
+  - name: Courfeyrac
+    group: 8
+    _id: "62"
+  - name: Bahorel
+    group: 8
+    _id: "63"
+  - name: Bossuet
+    group: 8
+    _id: "64"
+  - name: Joly
+    group: 8
+    _id: "65"
+  - name: Grantaire
+    group: 8
+    _id: "66"
+  - name: MotherPlutarch
+    group: 9
+    _id: "67"
+  - name: Gueulemer
+    group: 4
+    _id: "68"
+  - name: Babet
+    group: 4
+    _id: "69"
+  - name: Claquesous
+    group: 4
+    _id: "70"
+  - name: Montparnasse
+    group: 4
+    _id: "71"
+  - name: Toussaint
+    group: 5
+    _id: "72"
+  - name: Child1
+    group: 10
+    _id: "73"
+  - name: Child2
+    group: 10
+    _id: "74"
+  - name: Brujon
+    group: 4
+    _id: "75"
+  - name: Mme.Hucheloup
+    group: 8
+    _id: "76"
+links:
+  - source:
+      id: "1"
+    target:
+      id: "0"
+    value: 1
+  - source:
+      id: "2"
+    target:
+      id: "0"
+    value: 8
+  - source:
+      id: "3"
+    target:
+      id: "0"
+    value: 10
+  - source:
+      id: "3"
+    target:
+      id: "2"
+    value: 6
+  - source:
+      id: "4"
+    target:
+      id: "0"
+    value: 1
+  - source:
+      id: "5"
+    target:
+      id: "0"
+    value: 1
+  - source:
+      id: "6"
+    target:
+      id: "0"
+    value: 1
+  - source:
+      id: "7"
+    target:
+      id: "0"
+    value: 1
+  - source:
+      id: "8"
+    target:
+      id: "0"
+    value: 2
+  - source:
+      id: "9"
+    target:
+      id: "0"
+    value: 1
+  - source:
+      id: "11"
+    target:
+      id: "10"
+    value: 1
+  - source:
+      id: "11"
+    target:
+      id: "3"
+    value: 3
+  - source:
+      id: "11"
+    target:
+      id: "2"
+    value: 3
+  - source:
+      id: "11"
+    target:
+      id: "0"
+    value: 5
+  - source:
+      id: "12"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "13"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "14"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "15"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "17"
+    target:
+      id: "16"
+    value: 4
+  - source:
+      id: "18"
+    target:
+      id: "16"
+    value: 4
+  - source:
+      id: "18"
+    target:
+      id: "17"
+    value: 4
+  - source:
+      id: "19"
+    target:
+      id: "16"
+    value: 4
+  - source:
+      id: "19"
+    target:
+      id: "17"
+    value: 4
+  - source:
+      id: "19"
+    target:
+      id: "18"
+    value: 4
+  - source:
+      id: "20"
+    target:
+      id: "16"
+    value: 3
+  - source:
+      id: "20"
+    target:
+      id: "17"
+    value: 3
+  - source:
+      id: "20"
+    target:
+      id: "18"
+    value: 3
+  - source:
+      id: "20"
+    target:
+      id: "19"
+    value: 4
+  - source:
+      id: "21"
+    target:
+      id: "16"
+    value: 3
+  - source:
+      id: "21"
+    target:
+      id: "17"
+    value: 3
+  - source:
+      id: "21"
+    target:
+      id: "18"
+    value: 3
+  - source:
+      id: "21"
+    target:
+      id: "19"
+    value: 3
+  - source:
+      id: "21"
+    target:
+      id: "20"
+    value: 5
+  - source:
+      id: "22"
+    target:
+      id: "16"
+    value: 3
+  - source:
+      id: "22"
+    target:
+      id: "17"
+    value: 3
+  - source:
+      id: "22"
+    target:
+      id: "18"
+    value: 3
+  - source:
+      id: "22"
+    target:
+      id: "19"
+    value: 3
+  - source:
+      id: "22"
+    target:
+      id: "20"
+    value: 4
+  - source:
+      id: "22"
+    target:
+      id: "21"
+    value: 4
+  - source:
+      id: "23"
+    target:
+      id: "16"
+    value: 3
+  - source:
+      id: "23"
+    target:
+      id: "17"
+    value: 3
+  - source:
+      id: "23"
+    target:
+      id: "18"
+    value: 3
+  - source:
+      id: "23"
+    target:
+      id: "19"
+    value: 3
+  - source:
+      id: "23"
+    target:
+      id: "20"
+    value: 4
+  - source:
+      id: "23"
+    target:
+      id: "21"
+    value: 4
+  - source:
+      id: "23"
+    target:
+      id: "22"
+    value: 4
+  - source:
+      id: "23"
+    target:
+      id: "12"
+    value: 2
+  - source:
+      id: "23"
+    target:
+      id: "11"
+    value: 9
+  - source:
+      id: "24"
+    target:
+      id: "23"
+    value: 2
+  - source:
+      id: "24"
+    target:
+      id: "11"
+    value: 7
+  - source:
+      id: "25"
+    target:
+      id: "24"
+    value: 13
+  - source:
+      id: "25"
+    target:
+      id: "23"
+    value: 1
+  - source:
+      id: "25"
+    target:
+      id: "11"
+    value: 12
+  - source:
+      id: "26"
+    target:
+      id: "24"
+    value: 4
+  - source:
+      id: "26"
+    target:
+      id: "11"
+    value: 31
+  - source:
+      id: "26"
+    target:
+      id: "16"
+    value: 1
+  - source:
+      id: "26"
+    target:
+      id: "25"
+    value: 1
+  - source:
+      id: "27"
+    target:
+      id: "11"
+    value: 17
+  - source:
+      id: "27"
+    target:
+      id: "23"
+    value: 5
+  - source:
+      id: "27"
+    target:
+      id: "25"
+    value: 5
+  - source:
+      id: "27"
+    target:
+      id: "24"
+    value: 1
+  - source:
+      id: "27"
+    target:
+      id: "26"
+    value: 1
+  - source:
+      id: "28"
+    target:
+      id: "11"
+    value: 8
+  - source:
+      id: "28"
+    target:
+      id: "27"
+    value: 1
+  - source:
+      id: "29"
+    target:
+      id: "23"
+    value: 1
+  - source:
+      id: "29"
+    target:
+      id: "27"
+    value: 1
+  - source:
+      id: "29"
+    target:
+      id: "11"
+    value: 2
+  - source:
+      id: "30"
+    target:
+      id: "23"
+    value: 1
+  - source:
+      id: "31"
+    target:
+      id: "30"
+    value: 2
+  - source:
+      id: "31"
+    target:
+      id: "11"
+    value: 3
+  - source:
+      id: "31"
+    target:
+      id: "23"
+    value: 2
+  - source:
+      id: "31"
+    target:
+      id: "27"
+    value: 1
+  - source:
+      id: "32"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "33"
+    target:
+      id: "11"
+    value: 2
+  - source:
+      id: "33"
+    target:
+      id: "27"
+    value: 1
+  - source:
+      id: "34"
+    target:
+      id: "11"
+    value: 3
+  - source:
+      id: "34"
+    target:
+      id: "29"
+    value: 2
+  - source:
+      id: "35"
+    target:
+      id: "11"
+    value: 3
+  - source:
+      id: "35"
+    target:
+      id: "34"
+    value: 3
+  - source:
+      id: "35"
+    target:
+      id: "29"
+    value: 2
+  - source:
+      id: "36"
+    target:
+      id: "34"
+    value: 2
+  - source:
+      id: "36"
+    target:
+      id: "35"
+    value: 2
+  - source:
+      id: "36"
+    target:
+      id: "11"
+    value: 2
+  - source:
+      id: "36"
+    target:
+      id: "29"
+    value: 1
+  - source:
+      id: "37"
+    target:
+      id: "34"
+    value: 2
+  - source:
+      id: "37"
+    target:
+      id: "35"
+    value: 2
+  - source:
+      id: "37"
+    target:
+      id: "36"
+    value: 2
+  - source:
+      id: "37"
+    target:
+      id: "11"
+    value: 2
+  - source:
+      id: "37"
+    target:
+      id: "29"
+    value: 1
+  - source:
+      id: "38"
+    target:
+      id: "34"
+    value: 2
+  - source:
+      id: "38"
+    target:
+      id: "35"
+    value: 2
+  - source:
+      id: "38"
+    target:
+      id: "36"
+    value: 2
+  - source:
+      id: "38"
+    target:
+      id: "37"
+    value: 2
+  - source:
+      id: "38"
+    target:
+      id: "11"
+    value: 2
+  - source:
+      id: "38"
+    target:
+      id: "29"
+    value: 1
+  - source:
+      id: "39"
+    target:
+      id: "25"
+    value: 1
+  - source:
+      id: "40"
+    target:
+      id: "25"
+    value: 1
+  - source:
+      id: "41"
+    target:
+      id: "24"
+    value: 2
+  - source:
+      id: "41"
+    target:
+      id: "25"
+    value: 3
+  - source:
+      id: "42"
+    target:
+      id: "41"
+    value: 2
+  - source:
+      id: "42"
+    target:
+      id: "25"
+    value: 2
+  - source:
+      id: "42"
+    target:
+      id: "24"
+    value: 1
+  - source:
+      id: "43"
+    target:
+      id: "11"
+    value: 3
+  - source:
+      id: "43"
+    target:
+      id: "26"
+    value: 1
+  - source:
+      id: "43"
+    target:
+      id: "27"
+    value: 1
+  - source:
+      id: "44"
+    target:
+      id: "28"
+    value: 3
+  - source:
+      id: "44"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "45"
+    target:
+      id: "28"
+    value: 2
+  - source:
+      id: "47"
+    target:
+      id: "46"
+    value: 1
+  - source:
+      id: "48"
+    target:
+      id: "47"
+    value: 2
+  - source:
+      id: "48"
+    target:
+      id: "25"
+    value: 1
+  - source:
+      id: "48"
+    target:
+      id: "27"
+    value: 1
+  - source:
+      id: "48"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "49"
+    target:
+      id: "26"
+    value: 3
+  - source:
+      id: "49"
+    target:
+      id: "11"
+    value: 2
+  - source:
+      id: "50"
+    target:
+      id: "49"
+    value: 1
+  - source:
+      id: "50"
+    target:
+      id: "24"
+    value: 1
+  - source:
+      id: "51"
+    target:
+      id: "49"
+    value: 9
+  - source:
+      id: "51"
+    target:
+      id: "26"
+    value: 2
+  - source:
+      id: "51"
+    target:
+      id: "11"
+    value: 2
+  - source:
+      id: "52"
+    target:
+      id: "51"
+    value: 1
+  - source:
+      id: "52"
+    target:
+      id: "39"
+    value: 1
+  - source:
+      id: "53"
+    target:
+      id: "51"
+    value: 1
+  - source:
+      id: "54"
+    target:
+      id: "51"
+    value: 2
+  - source:
+      id: "54"
+    target:
+      id: "49"
+    value: 1
+  - source:
+      id: "54"
+    target:
+      id: "26"
+    value: 1
+  - source:
+      id: "55"
+    target:
+      id: "51"
+    value: 6
+  - source:
+      id: "55"
+    target:
+      id: "49"
+    value: 12
+  - source:
+      id: "55"
+    target:
+      id: "39"
+    value: 1
+  - source:
+      id: "55"
+    target:
+      id: "54"
+    value: 1
+  - source:
+      id: "55"
+    target:
+      id: "26"
+    value: 21
+  - source:
+      id: "55"
+    target:
+      id: "11"
+    value: 19
+  - source:
+      id: "55"
+    target:
+      id: "16"
+    value: 1
+  - source:
+      id: "55"
+    target:
+      id: "25"
+    value: 2
+  - source:
+      id: "55"
+    target:
+      id: "41"
+    value: 5
+  - source:
+      id: "55"
+    target:
+      id: "48"
+    value: 4
+  - source:
+      id: "56"
+    target:
+      id: "49"
+    value: 1
+  - source:
+      id: "56"
+    target:
+      id: "55"
+    value: 1
+  - source:
+      id: "57"
+    target:
+      id: "55"
+    value: 1
+  - source:
+      id: "57"
+    target:
+      id: "41"
+    value: 1
+  - source:
+      id: "57"
+    target:
+      id: "48"
+    value: 1
+  - source:
+      id: "58"
+    target:
+      id: "55"
+    value: 7
+  - source:
+      id: "58"
+    target:
+      id: "48"
+    value: 7
+  - source:
+      id: "58"
+    target:
+      id: "27"
+    value: 6
+  - source:
+      id: "58"
+    target:
+      id: "57"
+    value: 1
+  - source:
+      id: "58"
+    target:
+      id: "11"
+    value: 4
+  - source:
+      id: "59"
+    target:
+      id: "58"
+    value: 15
+  - source:
+      id: "59"
+    target:
+      id: "55"
+    value: 5
+  - source:
+      id: "59"
+    target:
+      id: "48"
+    value: 6
+  - source:
+      id: "59"
+    target:
+      id: "57"
+    value: 2
+  - source:
+      id: "60"
+    target:
+      id: "48"
+    value: 1
+  - source:
+      id: "60"
+    target:
+      id: "58"
+    value: 4
+  - source:
+      id: "60"
+    target:
+      id: "59"
+    value: 2
+  - source:
+      id: "61"
+    target:
+      id: "48"
+    value: 2
+  - source:
+      id: "61"
+    target:
+      id: "58"
+    value: 6
+  - source:
+      id: "61"
+    target:
+      id: "60"
+    value: 2
+  - source:
+      id: "61"
+    target:
+      id: "59"
+    value: 5
+  - source:
+      id: "61"
+    target:
+      id: "57"
+    value: 1
+  - source:
+      id: "61"
+    target:
+      id: "55"
+    value: 1
+  - source:
+      id: "62"
+    target:
+      id: "55"
+    value: 9
+  - source:
+      id: "62"
+    target:
+      id: "58"
+    value: 17
+  - source:
+      id: "62"
+    target:
+      id: "59"
+    value: 13
+  - source:
+      id: "62"
+    target:
+      id: "48"
+    value: 7
+  - source:
+      id: "62"
+    target:
+      id: "57"
+    value: 2
+  - source:
+      id: "62"
+    target:
+      id: "41"
+    value: 1
+  - source:
+      id: "62"
+    target:
+      id: "61"
+    value: 6
+  - source:
+      id: "62"
+    target:
+      id: "60"
+    value: 3
+  - source:
+      id: "63"
+    target:
+      id: "59"
+    value: 5
+  - source:
+      id: "63"
+    target:
+      id: "48"
+    value: 5
+  - source:
+      id: "63"
+    target:
+      id: "62"
+    value: 6
+  - source:
+      id: "63"
+    target:
+      id: "57"
+    value: 2
+  - source:
+      id: "63"
+    target:
+      id: "58"
+    value: 4
+  - source:
+      id: "63"
+    target:
+      id: "61"
+    value: 3
+  - source:
+      id: "63"
+    target:
+      id: "60"
+    value: 2
+  - source:
+      id: "63"
+    target:
+      id: "55"
+    value: 1
+  - source:
+      id: "64"
+    target:
+      id: "55"
+    value: 5
+  - source:
+      id: "64"
+    target:
+      id: "62"
+    value: 12
+  - source:
+      id: "64"
+    target:
+      id: "48"
+    value: 5
+  - source:
+      id: "64"
+    target:
+      id: "63"
+    value: 4
+  - source:
+      id: "64"
+    target:
+      id: "58"
+    value: 10
+  - source:
+      id: "64"
+    target:
+      id: "61"
+    value: 6
+  - source:
+      id: "64"
+    target:
+      id: "60"
+    value: 2
+  - source:
+      id: "64"
+    target:
+      id: "59"
+    value: 9
+  - source:
+      id: "64"
+    target:
+      id: "57"
+    value: 1
+  - source:
+      id: "64"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "65"
+    target:
+      id: "63"
+    value: 5
+  - source:
+      id: "65"
+    target:
+      id: "64"
+    value: 7
+  - source:
+      id: "65"
+    target:
+      id: "48"
+    value: 3
+  - source:
+      id: "65"
+    target:
+      id: "62"
+    value: 5
+  - source:
+      id: "65"
+    target:
+      id: "58"
+    value: 5
+  - source:
+      id: "65"
+    target:
+      id: "61"
+    value: 5
+  - source:
+      id: "65"
+    target:
+      id: "60"
+    value: 2
+  - source:
+      id: "65"
+    target:
+      id: "59"
+    value: 5
+  - source:
+      id: "65"
+    target:
+      id: "57"
+    value: 1
+  - source:
+      id: "65"
+    target:
+      id: "55"
+    value: 2
+  - source:
+      id: "66"
+    target:
+      id: "64"
+    value: 3
+  - source:
+      id: "66"
+    target:
+      id: "58"
+    value: 3
+  - source:
+      id: "66"
+    target:
+      id: "59"
+    value: 1
+  - source:
+      id: "66"
+    target:
+      id: "62"
+    value: 2
+  - source:
+      id: "66"
+    target:
+      id: "65"
+    value: 2
+  - source:
+      id: "66"
+    target:
+      id: "48"
+    value: 1
+  - source:
+      id: "66"
+    target:
+      id: "63"
+    value: 1
+  - source:
+      id: "66"
+    target:
+      id: "61"
+    value: 1
+  - source:
+      id: "66"
+    target:
+      id: "60"
+    value: 1
+  - source:
+      id: "67"
+    target:
+      id: "57"
+    value: 3
+  - source:
+      id: "68"
+    target:
+      id: "25"
+    value: 5
+  - source:
+      id: "68"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "68"
+    target:
+      id: "24"
+    value: 1
+  - source:
+      id: "68"
+    target:
+      id: "27"
+    value: 1
+  - source:
+      id: "68"
+    target:
+      id: "48"
+    value: 1
+  - source:
+      id: "68"
+    target:
+      id: "41"
+    value: 1
+  - source:
+      id: "69"
+    target:
+      id: "25"
+    value: 6
+  - source:
+      id: "69"
+    target:
+      id: "68"
+    value: 6
+  - source:
+      id: "69"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "69"
+    target:
+      id: "24"
+    value: 1
+  - source:
+      id: "69"
+    target:
+      id: "27"
+    value: 2
+  - source:
+      id: "69"
+    target:
+      id: "48"
+    value: 1
+  - source:
+      id: "69"
+    target:
+      id: "41"
+    value: 1
+  - source:
+      id: "70"
+    target:
+      id: "25"
+    value: 4
+  - source:
+      id: "70"
+    target:
+      id: "69"
+    value: 4
+  - source:
+      id: "70"
+    target:
+      id: "68"
+    value: 4
+  - source:
+      id: "70"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "70"
+    target:
+      id: "24"
+    value: 1
+  - source:
+      id: "70"
+    target:
+      id: "27"
+    value: 1
+  - source:
+      id: "70"
+    target:
+      id: "41"
+    value: 1
+  - source:
+      id: "70"
+    target:
+      id: "58"
+    value: 1
+  - source:
+      id: "71"
+    target:
+      id: "27"
+    value: 1
+  - source:
+      id: "71"
+    target:
+      id: "69"
+    value: 2
+  - source:
+      id: "71"
+    target:
+      id: "68"
+    value: 2
+  - source:
+      id: "71"
+    target:
+      id: "70"
+    value: 2
+  - source:
+      id: "71"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "71"
+    target:
+      id: "48"
+    value: 1
+  - source:
+      id: "71"
+    target:
+      id: "41"
+    value: 1
+  - source:
+      id: "71"
+    target:
+      id: "25"
+    value: 1
+  - source:
+      id: "72"
+    target:
+      id: "26"
+    value: 2
+  - source:
+      id: "72"
+    target:
+      id: "27"
+    value: 1
+  - source:
+      id: "72"
+    target:
+      id: "11"
+    value: 1
+  - source:
+      id: "73"
+    target:
+      id: "48"
+    value: 2
+  - source:
+      id: "74"
+    target:
+      id: "48"
+    value: 2
+  - source:
+      id: "74"
+    target:
+      id: "73"
+    value: 3
+  - source:
+      id: "75"
+    target:
+      id: "69"
+    value: 3
+  - source:
+      id: "75"
+    target:
+      id: "68"
+    value: 3
+  - source:
+      id: "75"
+    target:
+      id: "25"
+    value: 3
+  - source:
+      id: "75"
+    target:
+      id: "48"
+    value: 1
+  - source:
+      id: "75"
+    target:
+      id: "41"
+    value: 1
+  - source:
+      id: "75"
+    target:
+      id: "70"
+    value: 1
+  - source:
+      id: "75"
+    target:
+      id: "71"
+    value: 1
+  - source:
+      id: "76"
+    target:
+      id: "64"
+    value: 1
+  - source:
+      id: "76"
+    target:
+      id: "65"
+    value: 1
+  - source:
+      id: "76"
+    target:
+      id: "66"
+    value: 1
+  - source:
+      id: "76"
+    target:
+      id: "63"
+    value: 1
+  - source:
+      id: "76"
+    target:
+      id: "62"
+    value: 1
+  - source:
+      id: "76"
+    target:
+      id: "48"
+    value: 1
+  - source:
+      id: "76"
+    target:
+      id: "58"
+    value: 1

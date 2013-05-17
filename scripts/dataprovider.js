@@ -258,6 +258,7 @@ IV.dataprovider.loadData = function(name, done, fail) {
             var schema = doc;
             $.get("datasets/" + name + ".data", function(data) {
                 jsyaml.loadAll(data, function(doc) {
+                    console.log(doc, schema);
                     var x = new PlainDataset(doc, schema);
                     r.ondone(x);
                 });

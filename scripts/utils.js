@@ -33,7 +33,11 @@ var NS = { };
 
     };
     Date.prototype.getFullString = function() {
-        return months[this.getMonth()] + " " + addth(this.getDate()) + ", " + this.getFullYear() + " " + num_pad(this.getHours()) + ":" + num_pad(this.getMinutes());
+        return months[this.getMonth()] + " " +
+               addth(this.getDate()) + ", " +
+               this.getFullYear() + " " +
+               num_pad(this.getHours()) + ":" +
+               num_pad(this.getMinutes());
     };
     Date.prototype.getDayString = function() {
         return months[this.getMonth()] + " " + addth(this.getDate()) + ", " + this.getFullYear();
@@ -129,7 +133,9 @@ NS.unpackObjects = function(array, scheme) {
 };
 
 NS.getQuery = function(name) {
-    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)')
+             .exec(location.search)||[,""])[1]
+             .replace(/\+/g, '%20'))||null;
 };
 
 // Colors.
@@ -155,32 +161,14 @@ var color_qualitative_cold = [
 ];
 var color_qualitative_nodes = [
 // red one.
-
-"#F8AB8E",
-"#EA9378",
-"#DA7C64",
-"#C86652",
-"#B45241",
-"#9F3F32",
-"#882D24",
-"#701E18",
-"#57100E",
-"#3F0500"
-/* blue
-"#CFD0FD",
-"#B3BAEF",
-"#98A4DF",
-"#7D8ECD",
-"#647AB9",
-"#4D65A3",
-"#37528C",
-"#233F73",
-"#102D59",
-"#031D3E"
-*/
+    "#F8AB8E", "#EA9378", "#DA7C64", "#C86652", "#B45241", "#9F3F32", "#882D24", "#701E18", "#57100E", "#3F0500"
+// blue
+    // "#CFD0FD", "#B3BAEF", "#98A4DF", "#7D8ECD", "#647AB9", "#4D65A3", "#37528C", "#233F73", "#102D59", "#031D3E"
 ];
-var color_qualitative_hcl =
-"#7D99C6,#5CA0C3,#39A5B9,#1DA8AA,#1FAA96,#39AA81,#54A96B,#6EA656,#87A145,#9E9B39,#B59436,#C88B3C,#D98249,#E47A5B".split(",");
+var color_qualitative_hcl = [
+    "#7D99C6", "#5CA0C3", "#39A5B9", "#1DA8AA", "#1FAA96", "#39AA81", "#54A96B",
+    "#6EA656", "#87A145", "#9E9B39", "#B59436", "#C88B3C", "#D98249", "#E47A5B"];
+
 var gradient_interpolate = function(p, gradient) {
     if(p < 0) return gradient[0];
     if(p >= 1) return gradient[gradient.length - 1];
@@ -446,7 +434,8 @@ function sha1_hash(data) {
             W[t] = sha1_S(1, W[t - 3] ^ W[t - 8] ^ W[t - 14] ^ W[t - 16]);
         A = H[0]; B = H[1]; C = H[2]; D = H[3]; E = H[4];
         for(var t = 0; t < 80; t++) {
-            tmp = sha1_add(sha1_S(5, A), sha1_add(sha1_add(sha1_add(sha1_func(t, B, C, D), E), W[t]), sha1_const_K(t)));
+            tmp = sha1_add(sha1_S(5, A),
+                    sha1_add(sha1_add(sha1_add(sha1_func(t, B, C, D), E), W[t]), sha1_const_K(t)));
             E = D; D = C; C = sha1_S(30, B); B = A; A = tmp;
         }
         H[0] = sha1_add(H[0], A);

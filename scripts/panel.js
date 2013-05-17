@@ -137,6 +137,9 @@
     var menu_height = 30;
     var status_height = 18;
     var border_width = 1;
+    var area_width = $(window).width();
+    var area_height = $(window).height() - menu_height - status_height;
+
     if(params.width) {
         $(this).css("width", params.width + "px");
     }
@@ -146,7 +149,7 @@
     if(params.top) {
         $(this).css("top", menu_height + params.top - border_width + "px");
         if(params.bottom) {
-            $(this).css("height", $(window).height() - menu_height - status_height - (params.top + params.bottom) + "px");
+            $(this).css("height", area_height - (params.top + params.bottom) + "px");
         }
     } else if(params.bottom) {
         $(this).css("top", $(window).height() - status_height - params.bottom - $this.height() + "px");
@@ -154,17 +157,17 @@
     if(params.left) {
         $(this).css("left", params.left - border_width + "px");
         if(params.right) {
-            $(this).css("width", $(window).width() - (params.left + params.right) + "px");
+            $(this).css("width", area_width - (params.left + params.right) + "px");
         }
     } else if(params.right) {
-        $(this).css("left", $(window).width() - params.right - $this.width() - border_width + "px");
+        $(this).css("left", area_width - params.right - $this.width() - border_width + "px");
     }
     if(params.vcenter !== undefined) {
-        var l = ($(window).width() - $this.width()) / 2.0 + params.vcenter;
+        var l = (area_width - $this.width()) / 2.0 + params.vcenter;
         $this.css("left", l - border_width + "px");
     }
     if(params.hcenter !== undefined) {
-        var l = ($(window).height() - menu_height - status_height - $this.height()) / 2.0 + menu_height + params.hcenter;
+        var l = (area_height - $this.height()) / 2.0 + menu_height + params.hcenter;
         $this.css("top", l - border_width + "px");
     }
     if(params.title) {

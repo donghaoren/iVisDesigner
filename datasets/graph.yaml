@@ -1,15 +1,17 @@
 type: object
 fields:
-  vertices:
+  nodes:
     type: collection
     fields:
-      size: { type: number, min: 0, max: 1 }
-  edges:
+      name: { type: string }
+      group: { type: number, min: 0, max: 10 }
+  links:
     type: collection
     fields:
-      A:
+      source:
         type: reference
-        of: vertices
-      B:
+        of: nodes
+      target:
         type: reference
-        of: vertices
+        of: nodes
+      value: { type: number, min: 0, max: 10 }
