@@ -4464,15 +4464,3 @@ cars:
       acceleration: 19.4
       modelyear: 82
       origin: 1
-
-
-links:
-  - source: { id: chevy_s10 }
-    target: { id: dodge_rampage }
-  - source: { id: ford_ranger }
-    target: { id: chevy_s10 }
-
-static:
-  f1:
-    f2: 123
-    f3: 234

@@ -457,8 +457,12 @@ $(function() {
     // Remove the loading indicator.
     $("#system-loading").remove();
     // Default dataset: cardata.
-    IV.loadDataset("graph", function() {
+    IV.loadDataset("cardata", function() {
         //IV.test();
+        //IV.vis.addObject(new IV.objects.GoogleMap("stations:lng", "stations:lat", new IV.Vector(0, 0), 116.37371, 39.86390, 9));
+        //IV.triggerRender();
+        //IV.render();
+        //IV.generateObjectList();
     });
 });
 

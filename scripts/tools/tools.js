@@ -177,7 +177,15 @@ IV.listen("tools:current", function(val) {
     if(IV.current_tool && IV.current_tool.onInactive)
         IV.current_tool.onInactive();
 
-    IV.current_tool = IV.tools[val];
+    if(IV.tools[val]) {
+        IV.current_tool = IV.tools[val];
+    } else {
+        IV.current_tool = {
+            onActive: function() {
+                IV.set("status", "This tool is not implemeted yet.");
+            }
+        };
+    }
 
     if(IV.current_tool.onActive)
         IV.current_tool.onActive();

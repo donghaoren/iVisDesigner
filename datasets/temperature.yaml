@@ -6,8 +6,3 @@ fields:
       day: { type: number, min: 0, max: 114 }
       min: { type: number, min: 40, max: 80 }
       max: { type: number, min: 40, max: 80 }
-  refs:
-    type: collection
-    fields:
-      a: { type: reference, of: days }
-      b: { type: reference, of: days }

@@ -57,7 +57,7 @@ IV.Visualization.prototype = {
                 break;
             }
         }
-        this.objects.push(obj);
+        this.objects.unshift(obj);
         if(obj.onAttach) {
             obj.onAttach(this);
         }
