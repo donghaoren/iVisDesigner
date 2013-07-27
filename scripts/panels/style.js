@@ -57,6 +57,8 @@
         fill_style: new IV.Color(0, 0, 0, 1),
         stroke_style: new IV.Color(0, 0, 0, 1),
         width: 1,
-        radius: 1
+        radius: 1,
+        line_cap: "round",
+        line_cap: "round"
     }));
 })();

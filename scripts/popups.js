@@ -1,69 +1,87 @@
-// Popups
-IV.popups = { };
-$(".popup").each(function() {
-    var $this = $(this);
-    var key = $this.attr("data-popup");
-    IV.popups[key] = $this;
-    $this.mousedown(function(e) {
-        e.stopPropagation();
-    });
-    var resize_button = $this.children(".resize");
-    var mouse_state = null;
-    resize_button.mousedown(function(e) {
-        mouse_state = [
-            "resize",
-            e.pageX, e.pageY,
-            $this.width(),
-            $this.height()
-        ];
-    });
-    $(window).mousemove(function(e) {
-        if(mouse_state && mouse_state[0] == "resize") {
-            var nx = e.pageX - mouse_state[1] + mouse_state[3];
-            var ny = e.pageY - mouse_state[2] + mouse_state[4];
-            if(nx < 50) nx = 50;
-            if(ny < 40) ny = 40;
-            $this.css("width", nx + "px");
-            $this.css("height", ny + "px");
-        }
-    });
-    $(window).mouseup(function(e) {
-        mouse_state = null;
-    });
-    $this.detach();
-});
-IV.popups.show = function(key, anchor, width, height, info) {
-    var p = IV.popups[key];
-    $("#popup-container").children().detach();
-    $("#popup-container").append(p);
-    var margin = 5;
-    var x = anchor.offset().left - width - margin;
-    var y = anchor.offset().top - height - margin;
-    var cx = anchor.offset().left + anchor.width() / 2;
-    var cy = anchor.offset().top + anchor.height() / 2;
-    if(cx < $(window).width() / 2) x = anchor.offset().left + anchor.width() + margin;
-    if(cy < $(window).height() / 2) y = anchor.offset().top + anchor.height() + margin;
-    p.css({
-        width: width + "px",
-        height: height + "px",
-        left: x + "px",
-        top: y + "px"
-    });
+(function() {
+    // Popups
+    IV.popups = { };
+    var should_block_popup_hide = false;
+    $(".popup").each(function() {
+        var $this = $(this);
+        $this.prepend('<div class="topbar"></div>');
+        var key = $this.attr("data-popup");
+        IV.popups[key] = $this;
 
-    p.data().selector = p;
-    p.data().hide = function() {
-        p.detach();
-    }
-    if(p.data().onShow) p.data().onShow(info);
-    return p.data();
-};
-$(window).mousedown(function() {
-    $("#popup-container").children().each(function() {
-        var data = $(this).data();
-        if(data.finalize) data.finalize();
-        $(this).detach();
+        var resize_button = $this.children(".resize");
+        var mouse_state = null;
+
+        $this.mousedown(function() {
+            should_block_popup_hide = true;
+        });
+
+        resize_button.mousedown(function(e) {
+            mouse_state = [
+                "resize",
+                e.pageX, e.pageY,
+                $this.width(),
+                $this.height()
+            ];
+            $(window).bind("mousemove", my_move);
+            $(window).bind("mouseup", my_up);
+        });
+        var my_move = function(e) {
+            if(mouse_state && mouse_state[0] == "resize") {
+                var nx = e.pageX - mouse_state[1] + mouse_state[3];
+                var ny = e.pageY - mouse_state[2] + mouse_state[4];
+                if(nx < 50) nx = 50;
+                if(ny < 40) ny = 40;
+                $this.css("width", nx + "px");
+                $this.css("height", ny + "px");
+            }
+        };
+        var my_up = function(e) {
+            mouse_state = null;
+            $(window).unbind("mousemove", my_move);
+            $(window).unbind("mouseup", my_up);
+        };
+        $this.detach();
     });
-});
+    IV.popups.show = function(key, anchor, width, height, info) {
+        var p = IV.popups[key];
+        if(!width) width = p.default_width;
+        if(!height) height = p.default_height;
+        $("#popup-container").children().detach();
+        $("#popup-container").append(p);
+        var margin = 5;
+        var x = anchor.offset().left - width - margin;
+        var y = anchor.offset().top - height - margin;
+        var cx = anchor.offset().left + anchor.width() / 2;
+        var cy = anchor.offset().top + anchor.height() / 2;
+        if(cx < $(window).width() / 2) x = anchor.offset().left + anchor.width() + margin;
+        if(cy < $(window).height() / 2) y = anchor.offset().top + anchor.height() + margin;
+        p.css({
+            width: width + "px",
+            height: height + "px",
+            left: x + "px",
+            top: y + "px"
+        });
+
+        p.data().selector = p;
+        p.data().hide = function() {
+            p.detach();
+        }
+        if(p.data().onShow) p.data().onShow(info);
+        return p.data();
+    };
+    /*
+    $(window).mousedown(function() {
+        if(!should_block_popup_hide) {
+            $("#popup-container").children().each(function() {
+                var data = $(this).data();
+                if(data.finalize) data.finalize();
+                $(this).detach();
+            });
+        }
+        should_block_popup_hide = false;
+    });
+    */
+})();
 // Color select popup initialization.
 (function() {
     var p = IV.popups["color-selector"];
@@ -73,7 +91,7 @@ $(window).mousedown(function() {
     var inp_g = p.find(".input-green");
     var inp_b = p.find(".input-blue");
     var refresh = function() {
-        p.find(".selected-color").css({
+        p.find(".selected-color-inner").css({
             "background-color": mycolor ? mycolor.toRGBA() : "transparent"
         });
         p.find(".predefined span[data-color]").each(function() {
@@ -272,18 +290,23 @@ $(window).mousedown(function() {
         $(cpicker).parent().mousedown(function(e) {
             picker_mouse_mode = "xy";
             picker_move_f(e);
+            $(window).bind("mousemove", picker_move_f);
+            $(window).bind("mouseup", picker_up);
         });
         $(cside).parent().mousedown(function(e) {
             picker_mouse_mode = "l";
             picker_move_f(e);
+            $(window).bind("mousemove", picker_move_f);
+            $(window).bind("mouseup", picker_up);
         });
-        $(window).mousemove(picker_move_f);
-        $(window).mouseup(function() {
+        var picker_up = function() {
             if(picker_mouse_mode) {
                 picker_mouse_mode = null;
                 if(mycolor) hclpicker_load(mycolor);
             }
-        });
+            $(window).unbind("mousemove", picker_move_f);
+            $(window).unbind("mouseup", picker_up);
+        };
         p.find(".hcl-picker .method").change(function() {
             var val = $(this).val();
             var hcl = get_hcl(px, py, pl);
@@ -304,4 +327,29 @@ $(window).mousedown(function() {
     })();
 
     refresh();
+})();
+
+// Force Layout create popup.
+
+(function() {
+    var p = IV.popups["create-layout"];
+    p.default_width = 300;
+    p.default_height = 120;
+    var data = p.data();
+    p.find('[data-action="ok"]').click(function() {
+        var vertex_path = p.find('[data-field="vertex-path"]').data().get();
+        var field = p.find('[data-field="point-field"]').data().get();
+        var edgeA = p.find('[data-field="edge-a"]').data().get();
+        var edgeB = p.find('[data-field="edge-b"]').data().get();
+        var algo = p.find('[data-field="algorithm"]').data().get();
+        var obj = new IV.objects.ForceLayout(vertex_path, field, edgeA, edgeB);
+        IV.vis.addObject(obj);
+        IV.raise("vis:objects");
+        IV.triggerRender();
+        data.hide();
+        IV.render();
+    });
+    p.find('[data-action="cancel"]').click(function() {
+        data.hide();
+    });
 })();

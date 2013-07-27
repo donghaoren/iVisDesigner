@@ -7,11 +7,6 @@
 
 {{include: objects/objects.js}}
 
-IV.Visualization = function() {
-    this.objects = [];
-    this.selection = [];
-};
-
 IV.path = { };
 
 IV.path.commonPrefix = function(paths) {
@@ -32,12 +27,54 @@ IV.path.deepest = function(paths) {
     return IV.longestString(paths);
 };
 
+IV.path.isDescendant = function(path_parent, path_child) {
+};
+
+IV.generateUUID = function(prefix) {
+    var r = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+    if(prefix) return prefix + r;
+    return r;
+};
+
+IV.Visualization = function(dataset) {
+    this.objects = [];
+    this.selection = [];
+    this.data = dataset;
+};
+
 IV.Visualization.prototype = {
-    addObject: function(component) {
-        this.objects.push(component);
+    addObject: function(obj) {
+        if(!obj.name) {
+            var names = { };
+            this.objects.forEach(function(o) { names[o.name] = true; });
+            for(var i = 1;; i++) {
+                var name = obj.type + i;
+                if(names[name]) continue;
+                obj.name = name;
+                break;
+            }
+        }
+        this.objects.unshift(obj);
+        if(obj.onAttach) {
+            obj.onAttach(this);
+        }
+        IV.raise("vis:objects");
     },
-    render: function(g, data) {
-        this.objects.forEach(function(obj) {
+    removeObject: function(obj) {
+        var idx = this.objects.indexOf(obj);
+        if(idx >= 0 && idx < this.objects.length) {
+            this.objects = this.objects.slice(0, idx).concat(this.objects.slice(idx + 1));
+        }
+        if(obj.onDetach) {
+            obj.onDetach(this);
+        }
+    },
+    render: function(g) {
+        var data = this.data;
+        this.objects.forEachReversed(function(obj) {
             g.save();
             try {
                 obj.render(g, data);
@@ -46,7 +83,7 @@ IV.Visualization.prototype = {
             }
             g.restore();
         });
-        this.selection.forEach(function(c) {
+        this.selection.forEachReversed(function(c) {
             g.save();
             try {
                 c.obj.renderSelected(g, data);
@@ -56,25 +93,33 @@ IV.Visualization.prototype = {
             g.restore();
         });
     },
-    renderGuide: function(g, data) {
-        this.objects.forEach(function(obj) {
+    renderGuide: function(g) {
+        var data = this.data;
+        this.objects.forEachReversed(function(obj) {
             g.save();
-            try { obj.renderGuide(g, data); }
-            catch(e) { console.log(e); }
+            try {
+                obj.renderGuide(g, data);
+            } catch(e) {
+                console.log(e);
+            }
             g.restore();
         });
-        this.selection.forEach(function(c) {
+        this.selection.forEachReversed(function(c) {
             var obj = c.obj;
             g.save();
-            try { obj.renderGuideSelected(g, data); }
-            catch(e) { console.log(e); }
+            try {
+                obj.renderGuideSelected(g, data);
+            } catch(e) {
+                console.log(e);
+            }
             g.restore();
         });
     },
-    selectObject: function(pt, data, action) {
+    selectObject: function(pt, action) {
+        var data = this.data;
         var best_context = null;
         var mind = 1e10;
-        for(var i in this.objects) {
+        for(var i = 0; i < this.objects.length; i++) {
             var obj = this.objects[i];
             var context = obj.select(pt, data, action);
             if(context) {
@@ -95,5 +140,11 @@ IV.Visualization.prototype = {
     clearSelection: function() {
         this.selection.forEach(function(c) { c.obj.selected = false; });
         this.selection = [];
+    },
+    timerTick: function() {
+        var data = this.data;
+        this.objects.forEach(function(obj) {
+            if(obj.timerTick) obj.timerTick(data);
+        });
     }
 };

@@ -9,7 +9,9 @@ execfile("version.py")
 Meta("version", IV_version)
 Meta("revision", IV_rev.upper())
 
-CSS("toolkit.css", ["styles/toolkit.less", "styles/font-awesome.css", "images/iconfont/ivfont.css"])
+CSS("toolkit.css", ["styles/toolkit.less",
+                    "styles/font-awesome.css",
+                    "images/iconfont/ivfont.css"])
 
 from iconfont import CreateIconFont
 
@@ -27,6 +29,7 @@ env.IconFont("images/iconfont/ivfont.css",
 Javascript("libraries.js", [
     #"libraries/jquery-1.9.1.js"
     "libraries/jquery-2.0.0-beta3.js",
+    "libraries/jquery.mousewheel.js",
     "libraries/js-yaml.js",
     "libraries/chroma.js"
 ])
@@ -49,6 +52,8 @@ Binary("datasets/temperature.schema", "datasets/temperature.yaml");
 Binary("datasets/temperature.data", "datasets/temperature.data.yaml");
 Binary("datasets/bjairdata.schema", "datasets/bjairdata.yaml");
 Binary("datasets/bjairdata.data", "datasets/bjairdata.data.yaml");
+Binary("datasets/graph.schema", "datasets/graph.yaml");
+Binary("datasets/graph.data", "datasets/graph.data.yaml");
 
 HTML("toolkit.html", "toolkit.html")
 HTML("credits.html", "credits.html")

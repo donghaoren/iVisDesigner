@@ -33,7 +33,11 @@ var NS = { };
 
     };
     Date.prototype.getFullString = function() {
-        return months[this.getMonth()] + " " + addth(this.getDate()) + ", " + this.getFullYear() + " " + num_pad(this.getHours()) + ":" + num_pad(this.getMinutes());
+        return months[this.getMonth()] + " " +
+               addth(this.getDate()) + ", " +
+               this.getFullYear() + " " +
+               num_pad(this.getHours()) + ":" +
+               num_pad(this.getMinutes());
     };
     Date.prototype.getDayString = function() {
         return months[this.getMonth()] + " " + addth(this.getDate()) + ", " + this.getFullYear();
@@ -97,44 +101,41 @@ NS.tryRetry = function(f, on_finished, max_count) {
 
 NS.packObjects = function(objects, scheme) {
     var r = [];
-    for(var i in objects) {
-        var x = [];
-        for(var j in scheme) {
-            var def = scheme[j], val;
+    return objects.map(function(obj) {
+        return scheme.map(function(def) {
+            var val;
             if(typeof(def) == "string") {
-                val = objects[i][def];
+                val = obj[def];
             } else {
-                val = objects[i][def.key];
+                val = obj[def.key];
                 if(def.encode) val = def.encode(val);
             }
             x.push(val);
-        }
-        r.push(x);
-    }
-    return r;
+        });
+    });
 };
 
 NS.unpackObjects = function(array, scheme) {
     var r = [];
-    for(var i in array) {
-        var x = array[i];
+    return array.map(function(x) {
         var obj = { };
-        for(var j in scheme) {
-            var def = scheme[j], val = x[j];
+        scheme.forEach(function(def) {
+            var val = x[j];
             if(typeof(def) == "string") {
                 obj[def] = val;
             } else {
                 if(def.decode) val = def.decode(val);
                 obj[def.key] = val;
             }
-        }
+        });
         r.push(obj);
-    }
-    return r;
+    });
 };
 
 NS.getQuery = function(name) {
-    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)')
+             .exec(location.search)||[,""])[1]
+             .replace(/\+/g, '%20'))||null;
 };
 
 // Colors.
@@ -160,32 +161,14 @@ var color_qualitative_cold = [
 ];
 var color_qualitative_nodes = [
 // red one.
-
-"#F8AB8E",
-"#EA9378",
-"#DA7C64",
-"#C86652",
-"#B45241",
-"#9F3F32",
-"#882D24",
-"#701E18",
-"#57100E",
-"#3F0500"
-/* blue
-"#CFD0FD",
-"#B3BAEF",
-"#98A4DF",
-"#7D8ECD",
-"#647AB9",
-"#4D65A3",
-"#37528C",
-"#233F73",
-"#102D59",
-"#031D3E"
-*/
+    "#F8AB8E", "#EA9378", "#DA7C64", "#C86652", "#B45241", "#9F3F32", "#882D24", "#701E18", "#57100E", "#3F0500"
+// blue
+    // "#CFD0FD", "#B3BAEF", "#98A4DF", "#7D8ECD", "#647AB9", "#4D65A3", "#37528C", "#233F73", "#102D59", "#031D3E"
 ];
-var color_qualitative_hcl =
-"#7D99C6,#5CA0C3,#39A5B9,#1DA8AA,#1FAA96,#39AA81,#54A96B,#6EA656,#87A145,#9E9B39,#B59436,#C88B3C,#D98249,#E47A5B".split(",");
+var color_qualitative_hcl = [
+    "#7D99C6", "#5CA0C3", "#39A5B9", "#1DA8AA", "#1FAA96", "#39AA81", "#54A96B",
+    "#6EA656", "#87A145", "#9E9B39", "#B59436", "#C88B3C", "#D98249", "#E47A5B"];
+
 var gradient_interpolate = function(p, gradient) {
     if(p < 0) return gradient[0];
     if(p >= 1) return gradient[gradient.length - 1];
@@ -340,15 +323,16 @@ NS.raiseEvent = function(key, parameters) {
     if(!ev) return NS;
     if(ev.running) return NS;
     ev.running = true;
-    for(var i in ev.listeners) {
+    ev.listeners.some(function(listener) {
         var r;
         try {
-            r = ev.listeners[i].f(parameters);
+            r = listener.f(parameters);
         } catch(e) {
             console.log(e);
         }
-        if(r) break;
-    }
+        if(r) return true;
+        return false;
+    });
     ev.running = false;
     return NS;
 };
@@ -360,7 +344,7 @@ NS.raise = NS.raiseEvent;
 // Convert UTF-8 string to bytes array.
 function sha1_str2bytes(str) {
     var bytes = [];
-    for (var i = 0; i < str.length; i++) {
+    for(var i = 0; i < str.length; i++) {
         bytes.push(str.charCodeAt(i) & 0xff);
     }
     return bytes;
@@ -450,7 +434,8 @@ function sha1_hash(data) {
             W[t] = sha1_S(1, W[t - 3] ^ W[t - 8] ^ W[t - 14] ^ W[t - 16]);
         A = H[0]; B = H[1]; C = H[2]; D = H[3]; E = H[4];
         for(var t = 0; t < 80; t++) {
-            tmp = sha1_add(sha1_S(5, A), sha1_add(sha1_add(sha1_add(sha1_func(t, B, C, D), E), W[t]), sha1_const_K(t)));
+            tmp = sha1_add(sha1_S(5, A),
+                    sha1_add(sha1_add(sha1_add(sha1_func(t, B, C, D), E), W[t]), sha1_const_K(t)));
             E = D; D = C; C = sha1_S(30, B); B = A; A = tmp;
         }
         H[0] = sha1_add(H[0], A);
@@ -1033,7 +1018,7 @@ function chainHull_2D(P, n, H) {
 NS.convexHull = function(points) {
     var H = [];
     var pts = [];
-    for(var i in points) pts.push(points[i]);
+    for(var i = 0; i < points.length; i++) pts.push(points[i]);
     pts.sort(sortPointY);
     pts.sort(sortPointX);
     var n = chainHull_2D(pts, points.length, H);
@@ -1304,7 +1289,7 @@ NS.Color.prototype = {
 NS.parseCSV = function(string) {
     var lines = string.replace("\r", "").split("\n");
     var filtered_lines = [];
-    for(var i in lines) {
+    for(var i = 0; i < lines.length; i++) {
         lines[i] = lines[i].trim();
         if(lines[i].length > 0) filtered_lines.push(lines[i]);
     }
@@ -1355,12 +1340,35 @@ NS.wrapText = function(context, text, x, y, maxWidth, lineHeight) {
 
 NS.longestString = function(strs) {
     var slong = null;
-    for(var i in strs) {
+    for(var i = 0; i < strs.length; i++) {
         var s = strs[i];
         if(!s) continue;
         if(slong == null || s.length > slong.length) slong = s;
     }
     return slong;
+};
+
+NS.trackMouseEvents = function(elem, handlers) {
+    var move_handler = function(e) {
+        if(handlers.move) handlers.move(e);
+    };
+    var up_handler = function(e) {
+        if(handlers.move) $(window).unbind("mousemove", move_handler);
+        $(window).unbind("mouseup", up_handler);
+        if(handlers.up) handlers.up(e);
+    };
+    elem.mousedown(function(e) {
+        if(handlers.move) $(window).bind("mousemove", move_handler);
+        $(window).bind("mouseup", up_handler);
+        if(handlers.down) handlers.down(e);
+    });
+}
+
+Array.prototype.forEachReversed = function(f) {
+    var i = this.length;
+    while(i--) {
+        f(this[i]);
+    };
 };
 
 return NS;

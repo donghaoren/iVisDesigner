@@ -8,6 +8,41 @@
 //   panels, menus, window resize, mouse events, keyboard events, etc.
 
 (function() {
+    // Data-apply-children:
+    $("[data-apply-children]").each(function() {
+        var attr = $(this).attr("data-apply-children");
+        var kvs = attr.split(";").map(function(x) {
+            var k = x.split("=");
+            return { key: k[0], value: k[1] };
+        });
+        $(this).children().each(function() {
+            var $this = $(this);
+            kvs.forEach(function(t) {
+                $this.attr(t.key, t.value);
+            });
+        });
+    });
+    $("[ivfilter-remove-text-nodes]").each(function() {
+        $(this).contents().filter(function() { return this.nodeType === 3; }).remove();
+    });
+    // data-switch
+    $("span[data-switch]").each(function() {
+        var key = $(this).attr("data-switch");
+        var value = $(this).attr("data-value");
+        var $this = $(this);
+        if(!IV.exists(key)) IV.add(key, "string");
+        IV.listen(key, function(v) {
+            if(v == value) {
+                $this.addClass("active");
+            } else {
+                $this.removeClass("active");
+            }
+        });
+        $(this).click(function() {
+            IV.set(key, value);
+        });
+    });
+
     $(".control-numeric-value").each(function() {
         $(this).IVNumericValue();
     });
@@ -21,8 +56,18 @@
     $(".input-numeric").each(function() {
         $(this).IVInputNumeric();
     });
+    $(".input-path").each(function() {
+        $(this).IVInputPath();
+    });
+    $(".input-string").each(function() {
+        $(this).IVInputString();
+    });
     $(".color-selector").each(function() {
         $(this).IVColorPicker();
+    });
+
+    $(".scrollview").each(function() {
+        $(this).ScrollView();
     });
 
     // tabs
@@ -59,11 +104,13 @@
 
     // Panels
     IV.addListener("command:panels.reset", function() {
-        $("#panel-schema").IVPanel({ right: 10, top: 40, width: 200, height: 400 }).IVPanel("show");
-        $("#panel-tools").IVPanel({ left: 10, top: 40, width: 69, height: 400 }).IVPanel("show");
+        $("#panel-schema").IVPanel({ right: 10, top: 10, width: 200, height: 400 }).IVPanel("show");
+        $("#panel-objects").IVPanel({ right: 10, top: 420, width: 200, bottom: 10 }).IVPanel("show");
+        $("#panel-tools").IVPanel({ left: 10, top: 10, width: 69, height: 400 }).IVPanel("show");
         $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("hide");
         $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 50, width: 600 }).IVPanel("hide");
-        $("#panel-style").IVPanel({ right: 220, top: 40, left: 120, height: 50 }).IVPanel("show");
+        $("#panel-style").IVPanel({ right: 220, top: 10, left: 120, height: 50 }).IVPanel("show");
+        $("#panel-property").IVPanel({ left: 10, height: 54, width: 400, bottom: 10 }).IVPanel("show");
     });
     IV.raiseEvent("command:panels.reset");
 
@@ -96,21 +143,11 @@
             });
         }
     });
-    // data-switch
-    $("span[data-switch]").each(function() {
-        var key = $(this).attr("data-switch");
-        var value = $(this).attr("data-value");
-        var $this = $(this);
-        if(!IV.exists(key)) IV.add(key, "string");
-        IV.listen(key, function(v) {
-            if(v == value) {
-                $this.addClass("active");
-            } else {
-                $this.removeClass("active");
-            }
-        });
+    // data-popup
+    $("span[data-popup]").each(function() {
+        var key = $(this).attr("data-popup");
         $(this).click(function() {
-            IV.set(key, value);
+            IV.popups.show(key, $(this));
         });
     });
     // data-href
@@ -175,6 +212,8 @@
 
     // Mouse events.
     var mouse_state = false;
+
+    IV.isTrackingMouse = function() { return mouse_state; }
 
     $("#view").mousedown(function(e) {
         var offsetX = e.pageX - $("#view").offset().left;

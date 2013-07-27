@@ -4,14 +4,22 @@ IV.tools.Select = {
     onActive: function() {
         var $this = this;
         if(IV.vis) IV.vis.clearSelection();
+        IV.raise("vis:objects:selection");
         IV.triggerRender("main,back");
+        IV.set("status", "Select object.");
 
         IV.tools.beginSelectObject(function(context, e_down) {
-            IV.vis.clearSelection();
-            IV.triggerRender("main,back");
             if(context) {
+                if(!e_down.shift) IV.vis.clearSelection();
                 IV.vis.appendSelection(context);
-            } else return;
+                IV.triggerRender("main,back");
+                IV.raise("vis:objects:selection");
+            } else {
+                IV.vis.clearSelection();
+                IV.triggerRender("main,back");
+                IV.raise("vis:objects:selection");
+                return;
+            }
             if(context.onMove) {
                 var handle_r = function(r) {
                     if(!r) return;
@@ -32,10 +40,6 @@ IV.tools.Select = {
                     }
                 });
             }
-            IV.panels.beginEdit([context.obj], function(edit) {
-                IV.triggerRender("main,back");
-                IV.render();
-            });
         }, "tools:Select", "move");
     },
     onInactive: function() {

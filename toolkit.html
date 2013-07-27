@@ -21,6 +21,7 @@ IV_version = {
   "build_time": new Date("{{build_time_iso}}")
 };
 </script>
+
 <script type="text/plain" id="about-text">
 <h2>About iVisDesigner</h2>
 <p><i>Version {{version}}. Build time: {{build_time}}.</i></p>
@@ -33,6 +34,7 @@ IV_version = {
 {{include:license.html}}
 </script>
 
+<!-- Main View -->
 <div id="view">
   <canvas id="canvas-back"></canvas>
   <canvas id="canvas-main"></canvas>
@@ -40,117 +42,234 @@ IV_version = {
   <canvas id="canvas-overlay"></canvas>
 </div>
 
+<!-- Menu Bar -->
 <div id="menubar">
-
-<ul class="menu">
-  <li>
-    <img src="data:image/svg+xml;base64,{{base64:images/logo.svg}}" />
-  </li>
-  <li>
-    <span>iVisDesigner</span>
-    <ul>
-      <li><span data-open-page="#about-text" data-open-page-title="About iVisDesigner">
-        <span class="icon"><i class="icon-info-sign"></i></span>
-        About
-      </span></li>
-      <li><span data-open-page="base64:{{base64:credits.html}}" data-open-page-title="Credits">
-        <span class="icon"><i class="icon-bookmark"></i></span>
-        Credits
-      </span></li>
-      <li class="divider"></li>
-      <li><span data-command="account.register"><span class="icon"><i class="icon-user"></i></span>Register...</span></li>
-      <li><span data-command="account.login"><span class="icon"><i class="icon-signin"></i></span>Login...</span></li>
-      <li><span data-command="account.logout"><span class="icon"><i class="icon-signout"></i></span>Logout</span></li>
-    </ul>
-  </li>
-  <li>
-    <span>Dataset</span>
-    <ul>
-      <li><span data-command="dataset.load">Load Dataset...</span></li>
-      <li><span>Another action</span></li>
-      <li><span>Something else here Something else here</span></li>
-      <li class="divider"></li>
-      <li><span>Separated link</span></li>
-    </ul>
-  </li>
-  <li>
-    <span>File</span>
-    <ul>
-      <li><span>Load</span></li>
-      <li><span>Save</span></li>
-      <li><span>Something else here</span></li>
-      <li class="divider"></li>
-      <li><span>Separated link</span></li>
-    </ul>
-  </li>
-  <li>
-    <span>View</span>
-    <ul>
-      <li><span data-toggle="visible-guide">Guide<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
-    </ul>
-  </li>
-  <li>
-    <span>Panel</span>
-    <ul>
-      <li><span data-toggle="#panel-schema">Schema<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
-      <li><span data-toggle="#panel-tools">Tools<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
-      <li><span data-toggle="#panel-style">Style<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
-      <li><span data-toggle="#panel-log">Log<span class="toggle-indicator"><i class="xicon-mark"></i></span></span></li>
-      <li><span data-command="panels.reset">Reset</span></li>
-    </ul>
-  </li>
-  <li>
-    <span>Help</span>
-    <ul>
-      <li><span data-openurl="doc.html">Documentation <i class="xicon-tools-circle"></i></span></li>
-    </ul>
-  </li>
-</ul>
-
+  <ul class="menu">
+    <li>
+      <img src="data:image/svg+xml;base64,{{base64:images/logo.svg}}" />
+    </li>
+    <li>
+      <span>iVisDesigner</span>
+      <ul>
+        <li><span data-open-page="#about-text" data-open-page-title="About iVisDesigner">
+          <span class="icon"><i class="icon-info-sign"></i></span>
+          About
+        </span></li>
+        <li><span data-open-page="base64:{{base64:credits.html}}" data-open-page-title="Credits">
+          <span class="icon"><i class="icon-bookmark"></i></span>
+          Credits
+        </span></li>
+        <li class="divider"></li>
+        <li>
+          <span data-command="account.register">
+            <span class="icon"><i class="icon-user"></i></span>
+            Register...
+          </span>
+        </li>
+        <li>
+          <span data-command="account.login">
+            <span class="icon"><i class="icon-signin"></i></span>
+            Login...
+          </span>
+        </li>
+        <li>
+          <span data-command="account.logout">
+            <span class="icon"><i class="icon-signout"></i></span>
+            Logout
+          </span>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <span>Dataset</span>
+      <ul>
+        <li><span data-command="dataset.load">Load Dataset...</span></li>
+        <li><span>Another action</span></li>
+        <li><span>Something else here Something else here</span></li>
+        <li class="divider"></li>
+        <li><span>Separated link</span></li>
+      </ul>
+    </li>
+    <li>
+      <span>File</span>
+      <ul>
+        <li><span>Load</span></li>
+        <li><span>Save</span></li>
+        <li><span>Something else here</span></li>
+        <li class="divider"></li>
+        <li><span>Separated link</span></li>
+      </ul>
+    </li>
+    <li>
+      <span>View</span>
+      <ul>
+        <li>
+          <span data-toggle="visible-guide">Guide
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <span>Panel</span>
+      <ul>
+        <li>
+          <span data-toggle="#panel-schema">Schema
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-tools">Tools
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-objects">Objects
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-style">Style
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-property">Property
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-log">Log
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li><span data-command="panels.reset">Reset</span></li>
+      </ul>
+    </li>
+    <li>
+      <span>Help</span>
+      <ul>
+        <li><span data-openurl="doc.html">Documentation</span></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<div id="statusbar">
+  <span class="status-text">Ready.</span>
 </div>
 
+<!-- Panels -->
 <div id="panel-container">
+  <!-- Schema Panel -->
   <div id="panel-schema" class="panel" data-title="Schema">
-    <div id="data-schema"></div>
+    <div class="scrollview">
+      <div id="data-schema"></div>
+    </div>
   </div>
+  <!-- Tools Panel -->
   <div id="panel-tools" class="panel" data-title="Tools">
     <div id="tools-container">
-      <div class="tool-icons">
-         <span class="btn btn-icon" data-switch="tools:current" data-value="Select"><i class="xicon-tools-arrow"></i>
-  </span><span class="btn btn-icon" data-switch="tools:current" data-value="Track"><i class="xicon-tools-track"></i>
-  </span><span class="btn btn-icon" data-switch="tools:current" data-value="Scatter"><i class="xicon-tools-scatter"></i>
-  </span><span class="btn btn-icon" data-switch="tools:current" data-value="Circle"><i class="xicon-tools-circle"></i>
-  </span><span class="btn btn-icon" data-switch="tools:current" data-value="Line"><i class="xicon-tools-line"></i>
-  </span><span class="btn btn-icon" data-switch="tools:current" data-value="LineThrough"><i class="xicon-tools-linethrough"></i>
-  </span><span class="btn btn-icon" data-switch="tools:current" data-value="Move"><i class="xicon-tools-move"></i>
-  </span><span class="btn btn-icon" data-switch="tools:current" data-value="Zoom"><i class="xicon-tools-zoom-out"></i>
-  </span>
+      <div class="tool-icons" ivfilter-remove-text-nodes>
+        <span data-apply-children="data-switch=tools:current;class=btn btn-icon" ivfilter-remove-text-nodes>
+          <span data-value="Select" title="Select or move elements.">
+            <i class="xicon-tools-arrow"></i>
+          </span>
+          <span data-value="Track" title="Create a track for selected path.">
+            <i class="xicon-tools-track"></i>
+          </span>
+          <span data-value="Scatter" title="Create a scatterplot with two tracks.">
+            <i class="xicon-tools-scatter"></i>
+          </span>
+          <span data-value="Circle" title="Create a circle.">
+            <i class="xicon-tools-circle"></i>
+          </span>
+          <span data-value="Line" title="Create a line.">
+            <i class="xicon-tools-line"></i>
+          </span>
+          <span data-value="Bar" title="Create a bar.">
+            <i class="xicon-tools-bar"></i>
+          </span>
+          <span data-value="LineThrough" title="Create a line through.">
+            <i class="xicon-tools-linethrough"></i>
+          </span>
+          <span data-value="Polygon" title="Create a polygon with several points.">
+            <i class="xicon-tools-polygon"></i>
+          </span>
+          <span data-value="Move" title="Move the view.">
+            <i class="xicon-tools-move"></i>
+          </span>
+          <span data-value="Zoom" title="Zoom the view.">
+            <i class="xicon-tools-zoom"></i>
+          </span>
+        </span>
+        <span class="btn" data-popup="create-layout">Layout</span>
       </div>
     </div>
   </div>
+  <!-- Objects Panel -->
+  <div id="panel-objects" class="panel" data-title="Objects">
+    <div class="scrollview">
+      <div id="object-list"></div>
+    </div>
+  </div>
+  <!-- Property Panel -->
+  <div id="panel-property" class="panel" data-title="Property">
+    <div id="panel-property-container">
+    </div>
+  </div>
+  <!-- Style Panel -->
+  <div id="panel-style" class="panel" data-title="Style">
+    <div id="panel-style-container">
+      <span class="group">
+        <span class="text">Stroke: </span>
+        <span class="control-color-value" data-bind="stroke_style"></span>
+      </span>
+      <span class="group">
+        <span class="text">Fill: </span>
+        <span class="control-color-value" data-bind="fill_style"></span>
+      </span>
+      <span class="group">
+        <span class="text">Width: </span>
+        <span class="control-numeric-value" data-bind="width" data-min="0" data-max="20" data-delta-scale="1"></span>
+      </span>
+      <span class="group">
+        <span class="text">Radius: </span>
+        <span class="control-numeric-value" data-bind="radius" data-min="0" data-max="20" data-delta-scale="1"></span>
+      </span>
+      <span class="group">
+        <span class="text">Cap: </span>
+        <span class="control-select-value"
+              data-options="butt|Butt,round|Round,square|Square"
+              data-default="round"
+              data-bind="line_cap"></span>
+      </span>
+      <span class="group">
+        <span class="text">Join: </span>
+        <span class="control-select-value"
+              data-options="miter|Miter,round|Round,bevel|Bevel"
+              data-default="round"
+              data-bind="line_join"></span>
+      </span>
+    </div>
+  </div>
+  <!-- Log Panel -->
   <div id="panel-log" class="panel" data-title="Log">
     <div id="log-container">
       <ul></ul>
     </div>
   </div>
-  <div id="panel-page" class="panel scroll" data-title="Page">
-    <div id="panel-page-container" class="basic">
-    </div>
-  </div>
-  <div id="panel-style" class="panel" data-title="Style">
-    <div id="panel-style-container">
-      <span class="group">Stroke: <span class="control-color-value" data-bind="stroke_style"></span></span>
-      <span class="group">Fill: <span class="control-color-value" data-bind="fill_style"></span></span>
-      <span class="group">Width: <span class="control-numeric-value" data-bind="width"
-        data-min="0" data-max="20" data-delta-scale="1"></span></span>
-      <span class="group">Radius: <span class="control-numeric-value" data-bind="radius"
-        data-min="0" data-max="20" data-delta-scale="1"></span></span>
-      <span class="group">Cap: <span class="control-select-value" data-options="butt|Butt,round|Round,square|Square" data-default="round" data-bind="line_cap"></span></span>
-      <span class="group">Join: <span class="control-select-value" data-options="miter|Miter,round|Round,bevel|Bevel" data-default="round" data-bind="line_join"></span></span>
+  <!-- Page Panel -->
+  <div id="panel-page" class="panel" data-title="Page">
+    <div class="scrollview">
+      <div id="panel-page-container" class="basic"></div>
     </div>
   </div>
 </div>
+
+<!-- Popups -->
 <div id="popup-container"></div>
+
+<!-- Color selector popup -->
 <div data-popup="color-selector" class="popup">
   <div class="tab" data-default="predefined">
     <div class="header">
@@ -159,9 +278,9 @@ IV_version = {
     </div>
     <div class="tabs">
       <div data-tab="predefined">
-        <p><span class="predefined">000000,ffffff,888888,1f77b4,ff7f0e,2ca02c,d62728,9467bd,8c564b,e377c2,bcbd22,17becf</span></p>
-        <p><span class="predefined">BD0026,F03B20,FD8D3C,FEB24C,FED976,FFFFB2,045A8D,2B8CBE,74A9CF,A6BDDB,D0D1E6,F1EEF6</span></p>
-        <p><span class="predefined">252525,636363,969696,BDBDBD,D9D9D9,F7F7F7,B2182B,EF8A62,FDDBC7,D1E5F0,67A9CF,2166AC</span></p>
+<p><span class="predefined">000000,ffffff,888888,1f77b4,ff7f0e,2ca02c,d62728,9467bd,8c564b,e377c2,bcbd22,17becf</span></p>
+<p><span class="predefined">BD0026,F03B20,FD8D3C,FEB24C,FED976,FFFFB2,045A8D,2B8CBE,74A9CF,A6BDDB,D0D1E6,F1EEF6</span></p>
+<p><span class="predefined">252525,636363,969696,BDBDBD,D9D9D9,F7F7F7,B2182B,EF8A62,FDDBC7,D1E5F0,67A9CF,2166AC</span></p>
       </div>
       <div data-tab="hcl" class="hcl-picker">
         <p>Component: <select class="method">
@@ -189,7 +308,7 @@ IV_version = {
     Alpha: <span class="input-alpha input-numeric" data-min="0" data-max="1" data-delta-scale="0.2"></span>
   </p>
   <div class="actions">
-    <span class="selected-color"></span>
+    <span class="selected-color"><span class="selected-color-inner"></span></span>
     <span class="btn" data-action="remove">Remove</span>
     <span class="btn" data-action="ok"><i class="xicon-mark"></i></span>
     <span class="btn" data-action="cancel"><i class="xicon-cross"></i></span>
@@ -197,7 +316,22 @@ IV_version = {
   <div class="resize"></div>
 </div>
 
-<div id="system-loading" style="position:fixed;z-index:100000;left:0;right:0;top:0;bottom:0;padding-top:100px;text-align:center;font-size:16px;background-color:white;">
+<!-- Create layout popup -->
+<div data-popup="create-layout" class="popup">
+  <p>Vertex Path: <span data-field="vertex-path" class="input-path"></span></p>
+  <p>Point Field: <span data-field="point-field" class="input-string" data-default="pt"></span></p>
+  <p>Edge: <span data-field="edge-a" class="input-path"></span> - <span data-field="edge-b" class="input-path"></span></p>
+  <p>Algorithm: <span data-field="algorithm" class="control-select-value" data-options="fr|Fruchterman Reingold" data-default="fr"></span></p>
+  <div class="actions">
+    <span class="btn" data-action="ok"><i class="xicon-mark"></i></span>
+    <span class="btn" data-action="cancel"><i class="xicon-cross"></i></span>
+  </div>
+  <div class="resize"></div>
+</div>
+
+<!-- System Loading Overlay -->
+<div id="system-loading"
+     style="position:fixed;z-index:100000;left:0;right:0;top:0;bottom:0;padding-top:100px;text-align:center;font-size:16px;background-color:white;">
   <div style="text-align:left;display:inline-block;">
     <h3 style="margin-bottom:10px;font-size:20px;">iVisDesigner is Loading...</h3>
     <p style="margin: 0.3em 0; padding: 0">Browser requirements: HTML5 support (Javascript, Canvas, SVG).</p>
@@ -205,10 +339,14 @@ IV_version = {
         <a href="http://www.google.com/chrome">Chrome</a>,
         <a href="http://www.apple.com/safari">Safari</a> or
         <a href="http://www.mozilla.org/firefox">Firefox</a>.</p>
-    <p style="margin: 0.3em 0; padding: 0"><a href="{{ref:license.html}}">License</a>, <a href="{{ref:credits.html}}">Credits</a>.</p>
+    <p style="margin: 0.3em 0; padding: 0">
+      <a href="{{ref:license.html}}">License</a>,
+      <a href="{{ref:credits.html}}">Credits</a>.
+    </p>
   </div>
 </div>
 
+<!-- Scripts -->
 <script type="text/javascript" src="{{js:libraries.js}}"></script>
 <script type="text/javascript" src="{{js:config.js}}"></script>
 <script type="text/javascript">

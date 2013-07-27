@@ -32,10 +32,10 @@ IV.viewarea = {
     set: function(g) {
         var dev_ratio = window.devicePixelRatio || 1;
         var backing_ratio = g.webkitBackingStorePixelRatio ||
-                                g.mozBackingStorePixelRatio ||
-                                g.msBackingStorePixelRatio ||
-                                g.oBackingStorePixelRatio ||
-                                g.backingStorePixelRatio || 1;
+                            g.mozBackingStorePixelRatio ||
+                            g.msBackingStorePixelRatio ||
+                            g.oBackingStorePixelRatio ||
+                            g.backingStorePixelRatio || 1;
         var ratio = dev_ratio / backing_ratio;
         g.scale(ratio, ratio);
         g.translate(this.location.x + this.width / 2, this.location.y + this.height / 2);
@@ -64,7 +64,6 @@ IV.triggerRender = function(name) {
         for(var i in IV.needs_render) IV.needs_render[i] = true;
         return;
     }
-    var names = name.split(",");
     var map = {
         "tools": "front",
         "front": "front",
@@ -72,8 +71,10 @@ IV.triggerRender = function(name) {
         "overlay": "overlay",
         "main": "main"
     };
-    for(var i in names) {
-        IV.needs_render[map[names[i]]] = true;
+    var names = name.split(",").map(function(x) { return map[x]; }).join(",").split(",");
+
+    for(var i = 0; i < names.length; i++) {
+        IV.needs_render[names[i]] = true;
     }
 };
 
@@ -103,8 +104,8 @@ IV.renderMain = function() {
     ctx.save();
     IV.viewarea.set(ctx);
 
-    if(IV.vis && IV.data) {
-        IV.vis.render(ctx, IV.data);
+    if(IV.vis) {
+        IV.vis.render(ctx);
     }
     ctx.restore();
 };
@@ -127,9 +128,9 @@ IV.renderBack = function() {
     ctx.save();
     IV.viewarea.set(ctx);
 
-    if(IV.vis && IV.data) {
+    if(IV.vis) {
         if(IV.get("visible-guide"))
-            IV.vis.renderGuide(ctx, IV.data);
+            IV.vis.renderGuide(ctx);
     }
 
     ctx.restore();
@@ -145,6 +146,131 @@ IV.renderOverlay = function() {
 
     ctx.restore();
 };
+
+IV.timerTick = function() {
+    if(IV.vis) {
+        IV.vis.timerTick();
+    }
+};
+
+setInterval(function() {
+    IV.timerTick();
+    IV.render();
+}, 30);
+
+IV.generateObjectList = function() {
+    var olist = $("#object-list");
+    olist.children().remove();
+    if(!IV.vis) return;
+    IV.vis.objects.forEach(function(obj) {
+        var elem = $("<div />").addClass("group item");
+        var data = elem.data();
+        data.obj = obj;
+        elem.append($("<span >").addClass("name").text(obj.name));
+        elem.append($("<span >").addClass("type").text(" " + obj.type));
+        var buttons = $("<span >").addClass("buttons");
+        elem.append(buttons);
+
+        buttons.append($("<span >").append($('<i class="xicon-cross"></i>')).click(function(e) {
+            IV.vis.removeObject(obj);
+            IV.raise("vis:objects");
+            IV.triggerRender();
+            IV.render();
+            e.stopPropagation();
+        }));
+
+        elem.click(function(e) {
+            if(!e.shiftKey) IV.vis.clearSelection();
+            IV.vis.appendSelection({ obj: obj });
+            IV.raise("vis:objects:selection");
+        });
+
+        IV.trackMouseEvents(elem, {
+            offsets: [],
+            selected: null,
+            down: function(e) {
+                var $this = this;
+                $this.offsets = [];
+                $this.selected = null;
+                olist.children(".item").each(function() {
+                    $this.offsets.push({
+                        sel: $(this),
+                        dir: 0,
+                        y: $(this).offset().top
+                    });
+                    $this.offsets.push({
+                        sel: $(this),
+                        dir: 1,
+                        y: $(this).offset().top + $(this).height()
+                    });
+                });
+            },
+            move: function(e) {
+                olist.children(".divider").remove();
+                var n_item = null;
+                var n_dist = 1e10;
+                this.offsets.forEach(function(item) {
+                    var d = Math.abs(item.y - e.pageY);
+                    if(d < n_dist) {
+                        n_item = item;
+                        n_dist = d;
+                    }
+                });
+                if(n_item.dir == 0) {
+                    n_item.sel.before($('<div class="divider"></div>'));
+                } else {
+                    n_item.sel.after($('<div class="divider"></div>'));
+                }
+                if(n_item) this.selected = n_item;
+            },
+            up: function(e) {
+                if(!this.selected) return;
+                var idx = IV.vis.objects.indexOf(this.selected.sel.data().obj) + this.selected.dir;
+                var idx_me = IV.vis.objects.indexOf(obj);
+                if(idx >= 0 && idx_me >= 0) {
+                    if(idx <= idx_me) {
+                        for(var i = idx_me; i > idx; i--) {
+                            IV.vis.objects[i] = IV.vis.objects[i - 1];
+                        }
+                        IV.vis.objects[idx] = obj;
+                    } else {
+                        for(var i = idx_me; i < idx - 1; i++) {
+                            IV.vis.objects[i] = IV.vis.objects[i + 1];
+                        }
+                        IV.vis.objects[idx - 1] = obj;
+                    }
+                    IV.raise("vis:objects");
+                    IV.triggerRender();
+                    IV.render();
+                }
+            }
+        });
+
+        olist.append(elem);
+
+        data.update = function() {
+            if(obj.selected) {
+                elem.addClass("selected");
+            } else {
+                elem.removeClass("selected");
+            }
+        };
+        data.update();
+    });
+};
+IV.on("vis:objects", function() {
+    IV.generateObjectList();
+});
+IV.on("vis:objects:selection", function() {
+    $("#object-list").children(".item").each(function() {
+        $(this).data().update();
+    });
+});
+
+IV.add("status", "string");
+IV.listen("status", function(s) {
+    $(".status-text").text(s);
+});
 
 // ------------------------------------------------------------------------
 // Global Colors
@@ -174,17 +300,8 @@ IV.listen("visible-guide", function(val) {
 });
 
 IV.on("reset", function() {
-    IV.data = null; /*{
-        name: null,
-        schema: null,
-        content: null
-    };*/
-    IV.vis = new IV.Visualization();
+    IV.vis = new IV.Visualization(IV.data);
     IV.selection = [];
-    /*
-    IV.data.enumeratePath = IV.enumeratePath;
-    IV.data.schemaAtPath = IV.schemaAtPath;
-    */
 });
 
 // ------------------------------------------------------------------------
@@ -217,6 +334,8 @@ IV.renderSchema = function(schema, prev_path) {
         span.data().schema = schema;
         span.data().key = key;
         span.data().path = this_path;
+        if(this_path == IV.get("selected-path")) span.addClass("active");
+        if(this_path == IV.get("selected-reference")) span.children(".ref").addClass("active");
         var li = $("<li></li>")
             .append(span);
         if(child.type == "collection" || child.type == "object" || child.type == "sequence")
@@ -226,7 +345,7 @@ IV.renderSchema = function(schema, prev_path) {
     return elem;
 };
 
-IV.loadDataSchema = function(schema) {
+IV.renderDataSchema = function(schema) {
     $("#data-schema").children().remove();
     var rootelem_span = $('<span class="key">ROOT</span>');
     var rootelem = $("<li/>").append(rootelem_span);
@@ -262,30 +381,31 @@ IV.loadDataSchema = function(schema) {
 
 IV.loadData = function(data) {
     IV.data = data;
+    IV.raiseEvent("reset");
 };
 
 IV.updateData = function() {
 };
 
-IV.loadDataset = function(name) {
+IV.loadDataset = function(name, callback) {
     IV.raiseEvent("reset");
-    IV.dataprovider.loadSchema(name)
-    .done(function(schema) {
-        // Set schema.
-        IV.loadDataSchema(schema);
-        // Load data content.
-        IV.dataprovider.loadData(name)
-        .done(function(data) {
-            // We assume that the data follows the schema correctly.
-            // Need some code to verify the above statement.
-            IV.loadData(data);
-        })
-        .fail(function() {
-            IV.log("Failed to load data content.");
-        });
+    // Load data content.
+    IV.dataprovider.loadData(name)
+    .done(function(data) {
+        // We assume that the data follows the schema correctly.
+        // Need some code to verify the above statement.
+        IV.renderDataSchema(data.schema);
+        IV.loadData(data);
+        data.onContentUpdate = function() {
+            IV.triggerRender("main,front,back");
+        };
+        data.onSchemaUpdate = function() {
+            IV.renderDataSchema(data.schema);
+        };
+        if(callback) callback();
     })
     .fail(function() {
-        IV.log("Failed to load data schema.");
+        IV.log("Failed to load data content.");
     });
 };
 
@@ -305,50 +425,45 @@ function browserTest() {
     return true;
 }
 
-$(function() {
-    if(!browserTest()) return;
-    // Remove the loading indicator.
-    $("#system-loading").remove();
-    // Default dataset: cardata.
-    IV.loadDataset("cardata");
-});
-
 IV.test = function() {
-    var track1 = new IV.objects.Track("days:min",
-        new IV.objects.Point(new IV.Vector(200,100)),
-        new IV.objects.Point(new IV.Vector(200,400)));
-    var track2 = new IV.objects.Track("days:day",
-        new IV.objects.Point(new IV.Vector(200,100)),
-        new IV.objects.Point(new IV.Vector(500,100)));
-    var track3 = new IV.objects.Track("days:max",
-        new IV.objects.Point(new IV.Vector(600,400)),
-        new IV.objects.Point(new IV.Vector(600,100)));
+    var L = new IV.objects.ForceLayout("vertices", "pt", "edges:A", "edges:B");
+    L._runStep(IV.data);
+    var track1 = new IV.objects.Track("vertices:pt:x",
+        new IV.objects.Point(new IV.Vector(-100,-100)),
+        new IV.objects.Point(new IV.Vector(-100,100)));
+    var track2 = new IV.objects.Track("vertices:pt:y",
+        new IV.objects.Point(new IV.Vector(-100,-100)),
+        new IV.objects.Point(new IV.Vector(100,-100)));
     var scatter = new IV.objects.Scatter(track1, track2);
-    var circle = new IV.objects.Circle("days", {
+    var circle = new IV.objects.Circle("vertices", {
         center: scatter,
         style: new IV.objects.Style({
             fill_style: new IV.Color(0, 0, 0, 0.2),
             radius: 5
         })
     });
-    var line = new IV.objects.LineThrough("", {
-        points: scatter,
-        point2: track3,
-        style: new IV.objects.Style({
-            stroke_style: new IV.Color(0, 0, 0, 0.2),
-            width: 1,
-            line_cap: "round",
-            line_join: "round"
-        })
-    });
-
     IV.vis.addObject(track1);
     IV.vis.addObject(track2);
-    IV.vis.addObject(track3);
     IV.vis.addObject(scatter);
-    IV.vis.addObject(line);
     IV.vis.addObject(circle);
+    IV.vis.addObject(L);
     IV.triggerRender("main,back");
     IV.render();
+    IV.generateObjectList();
 };
-//setTimeout(IV.test, 300);
+
+
+$(function() {
+    if(!browserTest()) return;
+    // Remove the loading indicator.
+    $("#system-loading").remove();
+    // Default dataset: cardata.
+    IV.loadDataset("graph", function() {
+        //IV.test();
+        //IV.vis.addObject(new IV.objects.GoogleMap("stations:lng", "stations:lat", new IV.Vector(0, 0), 116.37371, 39.86390, 9));
+        //IV.triggerRender();
+        //IV.render();
+        //IV.generateObjectList();
+    });
+});
+

@@ -34,3 +34,5 @@ IV.objects.BaseObject.prototype = {
 {{include: base.js}}
 {{include: track.js}}
 {{include: shapes.js}}
+{{include: layout.js}}
+{{include: map.js}}

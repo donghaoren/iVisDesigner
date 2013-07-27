@@ -70,7 +70,7 @@ Circle.prototype = new IV.objects.BaseObject({
             var style = $this.style.getStyle(context);
             var radius = style.radius || 0;
             var d = Math.abs(pt.distance(c) - radius);
-            if(d <= 4) {
+            if(d <= 4.0 / IV.viewarea.scale) {
                 if(!rslt || rslt.distance > d) {
                     rslt = { distance: d };
                     if(action == "move") {
@@ -99,6 +99,7 @@ Circle.prototype = new IV.objects.BaseObject({
 IV.objects.Circle = Circle;
 
 var Line = function(path, info) {
+    this.type = "Line";
     this.path = path;
     this.point1 = info.point1;
     this.point2 = info.point2;
@@ -153,7 +154,7 @@ Line.prototype = new IV.objects.BaseObject({
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
-            if(d <= 4) {
+            if(d <= 4.0 / IV.viewarea.scale) {
                 if(!rslt || rslt.distance > d)
                     rslt = { distance: d };
             }
@@ -237,7 +238,7 @@ LineThrough.prototype = new IV.objects.BaseObject({
             });
             for(var i = 0; i < pts.length - 1; i++) {
                 var d = IV.pointLineSegmentDistance(pt, pts[i], pts[i + 1]);
-                if(d <= 4) {
+                if(d <= 4.0 / IV.viewarea.scale) {
                     if(!rslt || rslt.distance > d)
                         rslt = { distance: d };
                 }

@@ -1,3 +1,5 @@
+// This file can be considered as a set of jQuery plugins, independent of IV's files.
+
 $.fn.IVInputNumeric = function(num) {
     var $this = this;
     var data = $this.data();
@@ -24,24 +26,29 @@ $.fn.IVInputNumeric = function(num) {
         $this.append(input);
         $this.append(btn_show_slider);
         var slider_context = null;
-        btn_show_slider.mousedown(function(e) {
-            slider_context = { y: e.pageY, val: data.get() };
-            if(slider_context.val === null) slider_context.val = 0;
-            return;
-        });
-        $(window).mousemove(function(e) {
-            if(slider_context) {
-                var dy = -e.pageY + slider_context.y;
-                var newval = slider_context.val + dy * 0.02 * data.delta_scale;
-                if(newval < data.min) newval = data.min;
-                if(newval > data.max) newval = data.max;
-                data.set(newval.toFixed(2));
-                fire();
+        btn_show_slider.mousedown();
+        IV.trackMouseEvents(btn_show_slider, {
+            down: function(e) {
+                slider_context = { y: e.pageY, val: data.get() };
+                if(slider_context.val === null) slider_context.val = 0;
+                return;
+            },
+            move: function(e) {
+                if(slider_context) {
+                    var dy = -e.pageY + slider_context.y;
+                    var newval = slider_context.val + dy * 0.02 * data.delta_scale;
+                    if(newval < data.min) newval = data.min;
+                    if(newval > data.max) newval = data.max;
+                    data.set(newval.toFixed(2));
+                    fire();
+                }
+            },
+            up: function() {
+                if(slider_context) {
+                    slider_context = null;
+                    fire();
+                }
             }
-        });
-        $(window).mouseup(function() {
-            slider_context = null;
-            fire();
         });
         input.focusout(fire);
         input.keydown(function(e) {
@@ -79,6 +86,81 @@ $.fn.IVInputNumeric = function(num) {
     }
 };
 
+$.fn.IVInputString = function(str) {
+    var $this = this;
+    var data = $this.data();
+    if(!data.is_created) {
+        var input = $('<input type="text" />');
+        var fire = function() {
+            if(data.changed) data.changed(data.get());
+        };
+        $this.append(input);
+        input.focusout(fire);
+        input.keydown(function(e) {
+            if(e.which == 13) {
+                fire();
+            }
+        });
+        data.get = function() {
+            return input.val();
+        };
+        data.set = function(str) {
+            input.val(str);
+        };
+        if($this.attr("data-default")) data.set($this.attr("data-default"));
+        else data.set("");
+        data.is_created = true;
+    }
+    var input = $this.children("input");
+    if(str !== undefined) {
+        if(typeof(str) == "function") {
+            data.changed = str;
+        } else {
+            data.set(str);
+        }
+        return this;
+    } else {
+        return data.get();
+    }
+};
+
+$.fn.IVInputPath = function(str) {
+    var $this = this;
+    var data = $this.data();
+    if(!data.is_created) {
+        var input = $('<span />');
+        data.path = null;
+        var fire = function() {
+            if(data.changed) data.changed(data.get());
+        };
+        $this.append(input);
+        input.click(function() {
+            data.set(IV.get("selected-path"));
+            fire();
+        });
+        data.get = function() {
+            return data.path;
+        };
+        data.set = function(str) {
+            data.path = str;
+            if(!data.path) input.text("[]");
+            else input.text("[" + data.path + "]");
+        };
+        data.set(null);
+        data.is_created = true;
+    }
+    if(str !== undefined) {
+        if(typeof(str) == "function") {
+            data.changed = str;
+        } else {
+            data.set(str);
+        }
+        return this;
+    } else {
+        return data.get();
+    }
+};
+
 // This control allows binding to specific data path.
 $.fn.IVNumericValue = function(obj) {
     var $this = this;
@@ -102,7 +184,7 @@ $.fn.IVNumericValue = function(obj) {
         var onchanged = function() {
             if(data.current_mode == "plain") {
             } else {
-                if(data.path === undefined || data.path == "")
+                if(data.path === undefined || data.path == "" || data.path === null)
                     data.btn_path.text("-[]-");
                 else data.btn_path.text("-[" + data.path + "]-");
             }
@@ -382,4 +464,73 @@ $.fn.IVSelectValue = function(obj) {
         data.changed = obj;
     else data.set(obj);
     return this;
+};
+
+$.fn.ScrollView = function() {
+    var container = this;
+    var $this = this;
+    var data = $this.data();
+
+    if(!data.is_created) {
+        data.is_created = true;
+
+        var view = container.children("div");
+        view.addClass("scrollview-content");
+        var scrollbar = $("<div />").addClass("scrollbar");
+        var guide = $("<div />").addClass("guide");
+        scrollbar.append(guide);
+        container.append(scrollbar);
+
+        var get_top = function() {
+            var top = view.css("top");
+            if(!top) top = 0;
+            else top = parseFloat(top.replace("px", ""));
+            if(isNaN(top)) top = 0;
+            return top;
+        };
+        var set_top = function(top) {
+            var view_h = view.outerHeight();
+            var cont_h = container.height();
+            if(view_h < cont_h || view_h == 0) {
+                top = 0;
+                scrollbar.addClass("hide");
+            } else {
+                if(top > 0) top = 0;
+                if(top < cont_h - view_h) top = cont_h - view_h;
+                scrollbar.removeClass("hide");
+                guide.css({
+                    height: (cont_h / view_h * cont_h) + "px",
+                    top: (-top / view_h * cont_h) + "px"
+                });
+            }
+            view.css("top", top + "px");
+        };
+        container.mousewheel(function(e, delta) {
+            set_top(get_top() + delta);
+        });
+
+        var check_size = function() {
+            set_top(get_top());
+        };
+        data.check_size_timer = setInterval(check_size, 200);
+
+        IV.trackMouseEvents(guide, {
+            down: function(e) {
+                this.top0 = parseFloat(guide.css("top").replace("px", ""));
+                this.mouse0 = e.pageY;
+                e.preventDefault();
+                scrollbar.addClass("dragging");
+            },
+            move: function(e) {
+                var new_top = this.top0 + e.pageY - this.mouse0;
+                var view_h = view.outerHeight();
+                var cont_h = container.height();
+                var rtop = -new_top * view_h / cont_h;
+                set_top(rtop);
+            },
+            up: function() {
+                scrollbar.removeClass("dragging");
+            }
+        });
+    }
 };

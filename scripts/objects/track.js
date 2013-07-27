@@ -83,7 +83,7 @@ Track.prototype = new IV.objects.BaseObject({
         var rslt = null;
         this.enumerateGuide(data, function(p1, p2) {
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
-            if(d < 4.0) {
+            if(d < 4.0 / IV.viewarea.scale) {
                 rslt = { distance: d };
                 if(action == "move") {
                     var move_targets = [];
@@ -108,7 +108,7 @@ Track.prototype = new IV.objects.BaseObject({
                                 return plain.offset;
                         });
                         rslt.onMove = function(p0, p1) {
-                            for(var i in move_targets) {
+                            for(var i = 0; i < move_targets.length; i++) {
                                 if(move_targets[i].type == "plain")
                                     move_targets[i].obj = p1.sub(p0).add(this.originals[i]);
                                 if(move_targets[i].type == "PointOffset")
@@ -214,7 +214,7 @@ Scatter.prototype = new IV.objects.BaseObject({
         $this.enumerateGuide(data, function(p1, p2, q1, q2) {
             $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
                 var d = IV.pointLineSegmentDistance(pt, l[0], l[1]);
-                if(d < 4.0) rslt = { distance: d };
+                if(d < 4.0 / IV.viewarea.scale) rslt = { distance: d };
             });
         });
         return rslt;

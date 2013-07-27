@@ -92,7 +92,6 @@
         overflow: hidden;
     }
     &.scroll .content-wrapper {
-        overflow-y: scroll;
     }
     .resize {
         position: absolute;
@@ -117,11 +116,6 @@
 }
 
 #data-schema {
-    position: absolute;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    left: 0; right: 0; top: 0; bottom: 0;
-
     line-height: 22px;
     font-size: 14px;
 
@@ -136,32 +130,40 @@
             .gradient_background(@active_color);
             color: white;
         }
-        &.active {
+        &.active, &:active {
             .gradient_background_inv(darken(@active_color, 5%));
             color: white;
         }
 
         & > span.type {
             margin-left: 3px;
+            border-radius: 2px;
+            padding: 0 3px;
             font-size: 10px;
+            line-height: 14px;
             display: inline-block;
-            line-height: 15px;
+            vertical-align: baseline;
             &:before { content: "-"; }
             &:after { content: "-"; }
         }
 
-        &:hover > span.ref, &.active > span.ref {
-            .gradient_background(#666);
+        &:hover > span.ref, &.active > span.ref, &:active > span.ref {
+            .gradient_background(lighten(@active_color, 10%));
         }
         & > span.ref {
-            border-radius: 2px;
-            padding: 0 3px;
+            float: left;
+            line-height: 14px;
+            height: 14px;
+            margin: 3px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            margin-left: 0;
+            .gradient_background(#BBB);
             &:hover {
-                .gradient_background(rgb(255,127,14));
-                color: black;
+                border: 1px solid rgba(255, 255, 255, 0.5);
             }
-            &.active {
-                .gradient_background_inv(rgb(255,127,14), 20%);
+            &.active, &:active {
+                .gradient_background_inv(@active_color_warm);
+                border: 1px solid rgba(0, 0, 0, 0.1);
                 color: black;
             }
         }
@@ -176,6 +178,72 @@
         ul {
             margin-left: 5px;
         }
+    }
+}
+
+#object-list {
+    line-height: 22px;
+    font-size: 14px;
+
+    & > div.item {
+        display: block;
+        position: relative;
+        cursor: pointer;
+        padding-left: 10px;
+        border-radius: 2px 0 0 2px;
+
+        span.type {
+            font-size: 10px;
+            line-height: 14px;
+            font-style: italic;
+            color: #999;
+        }
+
+        span.buttons {
+            float: right;
+            display: inline-block;
+
+            span {
+                float: left;
+                border-radius: 2px;
+                padding: 0 3px;
+                font-size: 10px;
+                line-height: 14px;
+                height: 14px;
+                margin: 3px;
+                border: 1px solid rgba(0, 0, 0, 0);
+                margin-left: 0;
+                .gradient_background(#BBB);
+                &:hover {
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+                }
+                &.active, &:active {
+                    .gradient_background_inv(@active_color_warm) !important;
+                    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+                    color: black !important;
+                }
+            }
+        }
+        &:hover, &:active, &.selected {
+            span.buttons span {
+                .gradient_background(lighten(@active_color, 10%));
+                color: white;
+            }
+        }
+
+        &:hover {
+            .gradient_background(@active_color);
+            color: white;
+        }
+        &:active, &.selected {
+            .gradient_background_inv(darken(@active_color, 5%));
+            color: white;
+        }
+    }
+
+    & > .divider {
+        height: 0px;
+        outline: 1px solid @active_color;
     }
 }
 
@@ -201,6 +269,18 @@
     }
 }
 
+#panel-property-container {
+    line-height: 23px;
+    font-size: 13px;
+    padding: 5px;
+
+    .property-item {
+        display: inline-block;
+        white-space: nowrap;
+        margin-right: 4px;
+    }
+}
+
 #popup-container {
     position: fixed;
     z-index: 10000;
@@ -215,6 +295,14 @@
     .drop_shadow();
     border-radius: 2px;
     border: 1px solid @panel_titlecolor;
+    padding-top: 5px;
+
+    .topbar {
+        background-color: @panel_titlecolor;
+        .gradient_background(@panel_titlecolor);
+        position: absolute;
+        left: 0; right: 0; top: 0; height: 5px;
+    }
 
     .actions {
         position: absolute;
@@ -224,7 +312,7 @@
         line-height: 19px;
         padding: 3px;
         text-align: right;
-        background-color: rgba(0, 0, 0, 0.2);
+        background-color: rgba(180, 180, 180, 0.8);
         .btn {
             font-size: 12px;
             line-height: 13px;
@@ -240,9 +328,6 @@
         height: 8px;
         background: url(imgs/corner.svg);
     }
-}
-
-.popup[data-popup="color-selector"] {
     h3 {
         font-size: 12px;
         margin: 5px 5px;
@@ -251,6 +336,9 @@
         margin: 2px 5px;
         line-height: 19px;
     }
+}
+
+.popup[data-popup="color-selector"] {
     .predefined {
         span {
             display: inline-block;
@@ -270,12 +358,20 @@
         }
     }
     .selected-color {
+        .selected-color-inner {
+            display: inline-block;
+            width: 17px;
+            height: 17px;
+        }
         display: inline-block;
+        overflow: hidden;
         width: 17px;
         height: 17px;
         border-radius: 2px;
         border: 1px solid #888;
         vertical-align: top;
+        background: @transparent_background;
+        background-size: 17px 17px;
     }
     .hcl-picker .picker {
         display: inline-block;

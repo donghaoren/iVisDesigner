@@ -1,6 +1,3 @@
-refs:
-  - a: { id: 123 }
-    b: { id: 124 }
 days:
   - day: 0
     _id: 123
