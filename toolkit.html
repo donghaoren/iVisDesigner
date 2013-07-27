@@ -202,7 +202,9 @@ IV_version = {
             <i class="xicon-tools-zoom"></i>
           </span>
         </span>
-        <span class="btn" data-popup="create-layout">Layout</span>
+        <span class="btn btn-icon" title="Create graph layout." data-popup="CreateLayout">
+          <i class="xicon-tools-graph-layout"></i>
+        </span>
       </div>
     </div>
   </div>
@@ -270,7 +272,7 @@ IV_version = {
 <div id="popup-container"></div>
 
 <!-- Color selector popup -->
-<div data-popup="color-selector" class="popup">
+<script id="popup-color-select" type="text/plain">
   <div class="tab" data-default="predefined">
     <div class="header">
       <span data-tab="predefined">Predefined</span>
@@ -313,11 +315,10 @@ IV_version = {
     <span class="btn" data-action="ok"><i class="xicon-mark"></i></span>
     <span class="btn" data-action="cancel"><i class="xicon-cross"></i></span>
   </div>
-  <div class="resize"></div>
-</div>
+</script>
 
 <!-- Create layout popup -->
-<div data-popup="create-layout" class="popup">
+<script id="popup-create-layout" type="text/plain">
   <p>Vertex Path: <span data-field="vertex-path" class="input-path"></span></p>
   <p>Point Field: <span data-field="point-field" class="input-string" data-default="pt"></span></p>
   <p>Edge: <span data-field="edge-a" class="input-path"></span> - <span data-field="edge-b" class="input-path"></span></p>
@@ -328,6 +329,7 @@ IV_version = {
   </div>
   <div class="resize"></div>
 </div>
+</script>
 
 <!-- System Loading Overlay -->
 <div id="system-loading"

@@ -534,3 +534,67 @@ $.fn.ScrollView = function() {
         });
     }
 };
+
+$.fn.IVTab = function() {
+    var $this = this;
+    var data = $this.data();
+    if(!data.is_created) {
+        var header = $this.children(".header");
+        var tabs = $this.children(".tabs");
+        var show_tab = function(name) {
+            tabs.children().each(function() {
+                if($(this).attr("data-tab") == name)
+                    $(this).show();
+                else $(this).hide();
+            });
+            header.children("[data-tab]").each(function() {
+                if($(this).attr("data-tab") == name)
+                    $(this).addClass("active");
+                else $(this).removeClass("active");
+            });
+        };
+        header.children("[data-tab]").each(function() {
+            $(this).click(function() {
+                var tabname = $(this).attr("data-tab");
+                show_tab(tabname);
+            });
+        });
+        if($this.attr("data-default"))
+            show_tab($this.attr("data-default"));
+        else
+            $(header.children("[data-tab]")[0]).click();
+    };
+};
+
+IVControlsInitialize = function(selector) {
+    selector.find(".control-numeric-value").each(function() {
+        $(this).IVNumericValue();
+    });
+    selector.find(".control-color-value").each(function() {
+        $(this).IVColorValue();
+    });
+    selector.find(".control-select-value").each(function() {
+        $(this).IVSelectValue();
+    });
+    // Controls.
+    selector.find(".input-numeric").each(function() {
+        $(this).IVInputNumeric();
+    });
+    selector.find(".input-path").each(function() {
+        $(this).IVInputPath();
+    });
+    selector.find(".input-string").each(function() {
+        $(this).IVInputString();
+    });
+    selector.find(".color-selector").each(function() {
+        $(this).IVColorPicker();
+    });
+
+    selector.find(".scrollview").each(function() {
+        $(this).ScrollView();
+    });
+
+    selector.find(".tab").each(function() {
+        $(this).IVTab();
+    });
+};
