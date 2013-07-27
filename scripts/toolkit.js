@@ -32,10 +32,10 @@ IV.viewarea = {
     set: function(g) {
         var dev_ratio = window.devicePixelRatio || 1;
         var backing_ratio = g.webkitBackingStorePixelRatio ||
-                                g.mozBackingStorePixelRatio ||
-                                g.msBackingStorePixelRatio ||
-                                g.oBackingStorePixelRatio ||
-                                g.backingStorePixelRatio || 1;
+                            g.mozBackingStorePixelRatio ||
+                            g.msBackingStorePixelRatio ||
+                            g.oBackingStorePixelRatio ||
+                            g.backingStorePixelRatio || 1;
         var ratio = dev_ratio / backing_ratio;
         g.scale(ratio, ratio);
         g.translate(this.location.x + this.width / 2, this.location.y + this.height / 2);
@@ -152,6 +152,7 @@ IV.timerTick = function() {
         IV.vis.timerTick();
     }
 };
+
 setInterval(function() {
     IV.timerTick();
     IV.render();
@@ -457,7 +458,7 @@ $(function() {
     // Remove the loading indicator.
     $("#system-loading").remove();
     // Default dataset: cardata.
-    IV.loadDataset("cardata", function() {
+    IV.loadDataset("graph", function() {
         //IV.test();
         //IV.vis.addObject(new IV.objects.GoogleMap("stations:lng", "stations:lat", new IV.Vector(0, 0), 116.37371, 39.86390, 9));
         //IV.triggerRender();
