@@ -98,7 +98,26 @@
 
             if(p.data().onShow) p.data().onShow(info);
             return p.data();
-        }
+        };
+
+        data.addActions = function(acts) {
+            var actions = $('<div class="actions"></div>');
+            popup.append(actions);
+            if(!acts) acts = [];
+            if(acts.indexOf("ok") != -1) {
+                actions.append($('<span class="btn"><i class="xicon-mark"></i></span>').click(function() {
+                    if(data.onOk) data.onOk();
+                }));
+            }
+            if(acts.indexOf("cancel") != -1) {
+                actions.append($('<span class="btn"><i class="xicon-cross"></i></span>').click(function() {
+                    if(data.onCancel) data.onCancel();
+                }));
+            }
+            popup.addClass("has-actions");
+            popup.append(resize_button);
+            return actions;
+        };
 
         return data;
     };
@@ -148,11 +167,14 @@
 (function() {
     IV.popups.ColorSelect = function() {
         var data = IV.popups.create();
+
         var p = data.selector;
         p.children(".content").html($("#popup-color-select").html());
         p.attr("data-popup", "color-selector");
 
-        p.find(".tab").IVTab();
+        data.addActions([ "ok", "cancel" ])
+            .prepend($('<span class="btn" data-action="remove">Remove</span>'))
+            .prepend($('<span class="selected-color"><span class="selected-color-inner"></span></span>'));
 
         var mycolor = null;
         var inp_r = p.find(".input-red");
@@ -181,13 +203,13 @@
                 inp_b.IVInputNumeric(mycolor.b);
             }
         };
-        p.find('[data-action="ok"]').click(function() {
+        data.onOk = function() {
             if(data.onSelectColor) data.onSelectColor(mycolor ? mycolor.clone() : null);
             data.hide();
-        });
-        p.find('[data-action="cancel"]').click(function() {
+        };
+        data.onCancel = function() {
             data.hide();
-        });
+        };
         p.find('[data-action="remove"]').click(function() {
             mycolor = null;
             refresh();
@@ -407,6 +429,8 @@
 (function() {
     IV.popups.CreateLayout = function() {
         var data = IV.popups.create();
+        data.addActions([ "ok", "cancel" ]);
+
         var p = data.selector;
         p.children(".content").html($("#popup-create-layout").html());
 
@@ -415,7 +439,7 @@
         p.default_width = 300;
         p.default_height = 120;
         var data = p.data();
-        p.find('[data-action="ok"]').click(function() {
+        data.onOk = function() {
             var vertex_path = p.find('[data-field="vertex-path"]').data().get();
             var field = p.find('[data-field="point-field"]').data().get();
             var edgeA = p.find('[data-field="edge-a"]').data().get();
@@ -427,9 +451,64 @@
             IV.triggerRender();
             data.hide();
             IV.render();
-        });
-        p.find('[data-action="cancel"]').click(function() {
+        };
+        data.onCancel = function() {
             data.hide();
+        };
+        return data;
+    };
+})();
+
+(function() {
+    IV.popups.PathSelect = function() {
+        var data = IV.popups.create();
+        data.addActions([ "cancel" ]);
+        var p = data.selector;
+        var content = p.children(".content");
+        var c = $("<div />").addClass("data-schema");
+        content.append(c);
+        content.addClass("scrollview").ScrollView();
+
+        var rootelem_span = $('<span class="key">ROOT</span>');
+        var rootelem = $("<li/>").append(rootelem_span);
+        var elem = IV.renderSchema(IV.data.schema.fields, "");
+        c.append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));
+        c.append(elem);
+
+        var selected_ref = null;
+
+        function onSelectPath(path, ref) {
+            if(data.onSelectPath) data.onSelectPath(path, ref);
+            data.hide();
+        };
+        data.onCancel = function() {
+            data.hide();
+        };
+
+        c.find("span.key").each(function() {
+            var $this = $(this);
+            $this.click(function() {
+                c.find("span.key").removeClass("active");
+                $this.addClass("active");
+                var data = $this.data();
+                onSelectPath(data.path, selected_ref);
+            });
+        });
+        c.find("span.ref").each(function() {
+            var $this = $(this);
+            var p = $this.parent();
+            $this.click(function(e) {
+                if($this.is(".active")) {
+                    c.find("span.ref").removeClass("active");
+                    selected_ref = null;
+                } else {
+                    c.find("span.ref").removeClass("active");
+                    $this.addClass("active");
+                    var data = p.data();
+                    selected_ref = data.path;
+                }
+                e.stopPropagation();
+            });
         });
         return data;
     };

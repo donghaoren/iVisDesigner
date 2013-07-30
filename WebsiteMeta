@@ -38,6 +38,8 @@ Javascript("toolkit.js", [
     "scripts/utils.js",
     "scripts/panel.js",
     "scripts/menu.js",
+    "scripts/core.js",
+    "scripts/objects/objects.js",
     "scripts/controls.js",
     "scripts/toolkit.js"
 ])
@@ -56,7 +58,7 @@ Binary("datasets/graph.schema", "datasets/graph.yaml");
 Binary("datasets/graph.data", "datasets/graph.data.yaml");
 
 HTML("toolkit.html", "toolkit.html")
-HTML("credits.html", "credits.html")
-HTML("license.html", "license.html")
+HTML("credits.html", "CREDITS.md")
+HTML("license.html", "LICENSE.md")
 
 WriteDeployList("deploy_list")

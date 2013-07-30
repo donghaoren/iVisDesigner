@@ -1,0 +1,3 @@
+{
+  "glob": [ "scripts/**/*.js", "*.py", "WebsiteMeta", "README.md", "LICENSE.md", "CREDITS.md" ]
+}

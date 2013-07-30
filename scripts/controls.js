@@ -1,4 +1,34 @@
-// This file can be considered as a set of jQuery plugins, independent of IV's files.
+// ## jQuery Controls
+
+// - scripts/controls.js
+// - Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+// - See LICENSE.txt for copyright information.
+
+// This file can be considered as a set of jQuery plugins.
+
+// ### Register Object Type
+// Simple mechanism to dynamically call initialization functions for new elements.
+(function() {
+    var object_types = { };
+
+    IV.registerObjectType = function(c, name) {
+        object_types[c] = name;
+        $("." + c).each(function() { $(this)[name]() });
+    }
+
+    document.body.addEventListener("DOMNodeInserted", function(event) {
+        var $new_element = $(event.target);
+        for(var c in object_types) {
+            $new_element.find("." + c).each(function() {
+                $(this)[object_types[c]]();
+            });
+        }
+    }, false);
+
+})();
+
+// ### IVInputNumeric
+// Numeric input box.
 
 $.fn.IVInputNumeric = function(num) {
     var $this = this;
@@ -85,6 +115,10 @@ $.fn.IVInputNumeric = function(num) {
         return data.get();
     }
 };
+IV.registerObjectType("input-numeric", "IVInputNumeric");
+
+// ### IVInputString
+// String input box.
 
 $.fn.IVInputString = function(str) {
     var $this = this;
@@ -123,6 +157,10 @@ $.fn.IVInputString = function(str) {
         return data.get();
     }
 };
+IV.registerObjectType("input-string", "IVInputString");
+
+// ### IVInputPath
+// Path select box.
 
 $.fn.IVInputPath = function(str) {
     var $this = this;
@@ -130,21 +168,31 @@ $.fn.IVInputPath = function(str) {
     if(!data.is_created) {
         var input = $('<span />');
         data.path = null;
+        data.ref = null;
         var fire = function() {
             if(data.changed) data.changed(data.get());
         };
         $this.append(input);
         input.click(function() {
-            data.set(IV.get("selected-path"));
-            fire();
+            var popup = IV.popups.PathSelect();
+            popup.onSelectPath = function(path, ref) {
+                data.set(path, ref);
+                fire();
+            };
+            popup.show($this, 200, 400);
         });
         data.get = function() {
             return data.path;
         };
-        data.set = function(str) {
-            data.path = str;
-            if(!data.path) input.text("[]");
-            else input.text("[" + data.path + "]");
+        data.set = function(path, ref) {
+            data.path = path;
+            data.ref = ref;
+            if(!data.path) input.text("[ none ]");
+            else if(!data.ref) {
+                input.text("[" + data.path + "]");
+            } else {
+                input.text("[" + data.path + "@" + data.ref + "]");
+            }
         };
         data.set(null);
         data.is_created = true;
@@ -160,8 +208,11 @@ $.fn.IVInputPath = function(str) {
         return data.get();
     }
 };
+IV.registerObjectType("input-path", "IVInputPath");
 
+// ### IVNumericValue
 // This control allows binding to specific data path.
+
 $.fn.IVNumericValue = function(obj) {
     var $this = this;
     var data = $this.data();
@@ -182,12 +233,6 @@ $.fn.IVNumericValue = function(obj) {
             data.delta_scale = parseFloat($this.attr("data-delta-scale"));
         }
         var onchanged = function() {
-            if(data.current_mode == "plain") {
-            } else {
-                if(data.path === undefined || data.path == "" || data.path === null)
-                    data.btn_path.text("-[]-");
-                else data.btn_path.text("-[" + data.path + "]-");
-            }
             var obj = data.get();
             if(obj && data.changed) {
                 data.changed(obj);
@@ -212,10 +257,9 @@ $.fn.IVNumericValue = function(obj) {
         data.num_max.data().max = data.max;
         data.num_max.data().delta_scale = data.delta_scale;
         data.btn_path = $("<span/>")
-            .addClass("path")
-            .text("-[]-")
-            .click(function() {
-                data.path = IV.get("selected-path");
+            .addClass("input-path")
+            .IVInputPath(function(path) {
+                data.path = path;
                 onchanged();
             });
         data.btn_toggle = $("<span/>")
@@ -265,7 +309,7 @@ $.fn.IVNumericValue = function(obj) {
                 data.path = obj.path;
                 data.val_min = obj.min;
                 data.val_max = obj.max;
-                data.btn_path.text("-[" + data.path + "]-");
+                data.btn_path.IVInputPath(data.path);
                 data.num_min.IVInputNumeric(data.val_min);
                 data.num_max.IVInputNumeric(data.val_max);
                 data.mode_bind();
@@ -282,8 +326,11 @@ $.fn.IVNumericValue = function(obj) {
     else data.set(obj);
     return this;
 };
+IV.registerObjectType("control-numeric-value", "IVNumericValue");
 
+// ### IVColorPicker
 // Color selectors.
+
 $.fn.IVColorPicker = function(obj) {
     var $this = $(this);
     var data = $this.data();
@@ -322,6 +369,10 @@ $.fn.IVColorPicker = function(obj) {
     }
     return this;
 };
+IV.registerObjectType("color-selector", "IVColorPicker");
+
+// ### IVColorValue
+// Color value, like numeric value, can be bound to specific path.
 
 $.fn.IVColorValue = function(obj) {
     var $this = this;
@@ -424,6 +475,10 @@ $.fn.IVColorValue = function(obj) {
     else data.set(obj);
     return this;
 };
+IV.registerObjectType("control-color-value", "IVColorValue");
+
+// ### IVSelectValue
+// Select a value from a list of options.
 
 $.fn.IVSelectValue = function(obj) {
     var $this = this;
@@ -465,6 +520,10 @@ $.fn.IVSelectValue = function(obj) {
     else data.set(obj);
     return this;
 };
+IV.registerObjectType("control-select-value", "IVSelectValue");
+
+// ### ScrollView
+// Scrollable view, automatically handle content and window resize.
 
 $.fn.ScrollView = function() {
     var container = this;
@@ -534,6 +593,10 @@ $.fn.ScrollView = function() {
         });
     }
 };
+IV.registerObjectType("scrollview", "ScrollView");
+
+// ### IVTab
+// Tab control.
 
 $.fn.IVTab = function() {
     var $this = this;
@@ -565,36 +628,9 @@ $.fn.IVTab = function() {
             $(header.children("[data-tab]")[0]).click();
     };
 };
+IV.registerObjectType("tab", "IVTab");
 
+// Initialize all controls inside an element.
 IVControlsInitialize = function(selector) {
-    selector.find(".control-numeric-value").each(function() {
-        $(this).IVNumericValue();
-    });
-    selector.find(".control-color-value").each(function() {
-        $(this).IVColorValue();
-    });
-    selector.find(".control-select-value").each(function() {
-        $(this).IVSelectValue();
-    });
-    // Controls.
-    selector.find(".input-numeric").each(function() {
-        $(this).IVInputNumeric();
-    });
-    selector.find(".input-path").each(function() {
-        $(this).IVInputPath();
-    });
-    selector.find(".input-string").each(function() {
-        $(this).IVInputString();
-    });
-    selector.find(".color-selector").each(function() {
-        $(this).IVColorPicker();
-    });
 
-    selector.find(".scrollview").each(function() {
-        $(this).ScrollView();
-    });
-
-    selector.find(".tab").each(function() {
-        $(this).IVTab();
-    });
 };

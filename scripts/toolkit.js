@@ -9,8 +9,6 @@
 // Include Core
 // ------------------------------------------------------------------------
 
-{{include: core.js}}
-
 // ------------------------------------------------------------------------
 // Process Configuration
 // ------------------------------------------------------------------------
@@ -307,7 +305,7 @@ IV.on("reset", function() {
 // ------------------------------------------------------------------------
 // Loading data schema and contents
 // ------------------------------------------------------------------------
-IV.renderSchema = function(schema, prev_path) {
+IV.renderSchema = function(schema, prev_path, set_active) {
     var elem = $("<ul></ul>");
     for(var key in schema) {
         var this_path = prev_path + ":" + key;
@@ -334,12 +332,14 @@ IV.renderSchema = function(schema, prev_path) {
         span.data().schema = schema;
         span.data().key = key;
         span.data().path = this_path;
-        if(this_path == IV.get("selected-path")) span.addClass("active");
-        if(this_path == IV.get("selected-reference")) span.children(".ref").addClass("active");
+        if(set_active) {
+            if(this_path == IV.get("selected-path")) span.addClass("active");
+            if(this_path == IV.get("selected-reference")) span.children(".ref").addClass("active");
+        }
         var li = $("<li></li>")
             .append(span);
         if(child.type == "collection" || child.type == "object" || child.type == "sequence")
-            li.append(IV.renderSchema(child.fields, this_path));
+            li.append(IV.renderSchema(child.fields, this_path, set_active));
         elem.append(li);
     }
     return elem;
@@ -351,7 +351,7 @@ IV.renderDataSchema = function(schema) {
     var rootelem = $("<li/>").append(rootelem_span);
     rootelem_span.data().path = "";
     $("#data-schema").append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));
-    $("#data-schema").append(IV.renderSchema(schema.fields, ""));
+    $("#data-schema").append(IV.renderSchema(schema.fields, "", true));
     $("#data-schema span.key").each(function() {
         var $this = $(this);
         $this.click(function() {

@@ -99,6 +99,7 @@
         width: 8px;
         height: 8px;
         background: url(imgs/corner.svg);
+        cursor: se-resize;
     }
 }
 
@@ -115,7 +116,7 @@
     }
 }
 
-#data-schema {
+#data-schema, .data-schema {
     line-height: 22px;
     font-size: 14px;
 
@@ -297,14 +298,15 @@
     border: 1px solid @panel_titlecolor;
     padding-top: 5px;
 
-    .topbar {
+    & > .topbar {
         background-color: @panel_titlecolor;
         .gradient_background(@panel_titlecolor);
         position: absolute;
         left: 0; right: 0; top: 0; height: 5px;
+        cursor: move;
     }
 
-    .actions {
+    & > .actions {
         position: absolute;
         white-space: nowrap;
         left: 0; right: 0; bottom: 0;
@@ -319,14 +321,26 @@
             height: 13px;
             padding: 3px 5px;
             margin: 0;
+            margin-left: 3px;
         }
     }
-    .resize {
+    & > .content {
+        position: absolute;
+        left: 0; right: 0;
+        top: 5px;
+        bottom: 0;
+    }
+
+    &.has-actions > .content {
+        bottom: 19px;
+    }
+    & > .resize {
         position: absolute;
         bottom: 0; right: 0;
         width: 8px;
         height: 8px;
         background: url(imgs/corner.svg);
+        cursor: se-resize;
     }
     h3 {
         font-size: 12px;

@@ -42,7 +42,7 @@
             IV.set(key, value);
         });
     });
-
+/*
     $(".control-numeric-value").each(function() {
         $(this).IVNumericValue();
     });
@@ -73,7 +73,7 @@
     $(".tab").each(function() {
         $(this).IVTab();
     });
-
+*/
     {{include: popups.js}}
 
     // Panels
