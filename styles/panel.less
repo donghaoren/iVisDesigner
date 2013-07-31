@@ -2,7 +2,7 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
-@panel_titlecolor: #555;
+@panel_titlecolor: #666;
 
 .tab {
     margin-bottom: 5px;
@@ -44,29 +44,37 @@
     .panel_background();
     .drop_shadow();
 
-    &.minimized {
-        height: 20px !important;
-        .resize {
-            display: none;
-        }
+    &.minimized:not(.full-title) {
+        height: 5px !important;
+        width: 60px !important;
+        .resize { display: none; }
+        .title-wrapper:hover .title { display: none; }
     }
 
     .title-wrapper {
         position: absolute;
         left: 0; right: 0; top: 0;
-        height: 20px;
+        height: 5px;
         line-height: 20px;
         color: white;
         font-size: 12px;
         cursor: pointer;
         box-shadow: 0 0 3px gray;
         .gradient_background(@panel_titlecolor);
+        &:hover {
+            .title { display: block; }
+        }
         .title {
-            display: block;
+            display: none;
             position: absolute;
-            left: 5px; right: 40px;
-            top: 0; bottom: 0;
+            left: 0px;
+            top: 0;
+            bottom: 5px;
+            height: 20px;
+            padding: 0 5px;
             overflow: hidden;
+            background: @panel_titlecolor;
+            border-radius: 2px;
         }
         .buttons {
             display: block;
@@ -74,23 +82,57 @@
             top: 0;
             right: 0;
             cursor: pointer;
-            span {
+            div {
+                vertical-align: top;
                 display: inline-block;
-                line-height: 20px;
-                height: 20px;
+                height: 5px;
                 width: 20px;
+                margin: 0; padding: 0;
                 text-align: center;
+                border-radius: 2px;
+                i { display: none; }
             }
-            span:hover {
+            div:hover {
                 .gradient_background_inv(darken(@panel_titlecolor, 10%));
             }
         }
     }
+
     .content-wrapper {
         position: absolute;
-        left: 0; right: 0; top: 20px; bottom: 0;
+        left: 0; right: 0; top: 5px; bottom: 0;
         overflow: hidden;
     }
+
+    &.full-title {
+        .content-wrapper { top: 20px; }
+        .title-wrapper {
+            height: 20px;
+            .title {
+                display: block;
+                position: absolute;
+                left: 0px;
+                right: 40px;
+                bottom: 5px;
+                height: 20px;
+                padding: 0 5px;
+                background: none;
+                overflow: hidden;
+                border-radius: 2px;
+            }
+            .buttons {
+                div {
+                    height: 20px;
+                    i { display: inline; }
+                }
+            }
+        }
+        &.minimized {
+            height: 20px !important;
+            .resize { display: none; }
+        }
+    }
+
     &.scroll .content-wrapper {
     }
     .resize {
@@ -332,7 +374,7 @@
     }
 
     &.has-actions > .content {
-        bottom: 19px;
+        bottom: 25px;
     }
     & > .resize {
         position: absolute;

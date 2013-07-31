@@ -78,13 +78,13 @@
 
     // Panels
     IV.addListener("command:panels.reset", function() {
-        $("#panel-schema").IVPanel({ right: 10, top: 10, width: 200, height: 400 }).IVPanel("show");
-        $("#panel-objects").IVPanel({ right: 10, top: 420, width: 200, bottom: 10 }).IVPanel("show");
-        $("#panel-tools").IVPanel({ left: 10, top: 10, width: 69, height: 400 }).IVPanel("show");
+        $("#panel-schema").IVPanel({ left: 10, top: 77, width: 180, height: 400 }).IVPanel("show");
+        $("#panel-objects").IVPanel({ right: 10, top: 10, width: 200, height: 300 }).IVPanel("show");
+        $("#panel-tools").IVPanel({ left: 10, top: 10, width: 400, height: 42 }).IVPanel("show");
         $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("hide");
         $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 50, width: 600 }).IVPanel("hide");
-        $("#panel-style").IVPanel({ right: 220, top: 10, left: 120, height: 50 }).IVPanel("show");
-        $("#panel-property").IVPanel({ left: 10, height: 54, width: 400, bottom: 10 }).IVPanel("show");
+        $("#panel-style").IVPanel({ right: 10, bottom: 10, left: 10, height: 35 }).IVPanel("show");
+        $("#panel-property").IVPanel({ left: 420, height: 57, width: 400, top: 10 }).IVPanel("show");
     });
     IV.raiseEvent("command:panels.reset");
 
