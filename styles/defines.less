@@ -11,8 +11,8 @@
 @menubar_height: 30px;
 @statusbar_height: 18px;
 
-@main_font: Arial;
-@mono_font: Menlo, monospace;
+@main_font: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+@mono_font: "Lucida Console", Monaco, monospace;
 
 .select_none {
     -webkit-user-select: none;
@@ -28,10 +28,11 @@
 }
 
 .panel_background {
-    background: url("imgs/panel.png");
+    //background: url("imgs/panel.png");
+    background: #F8F8F8;
 }
 .drop_shadow {
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
 .gradient_background(@color, @val: 10%) {

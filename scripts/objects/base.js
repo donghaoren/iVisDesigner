@@ -133,6 +133,11 @@ var ColorLinear = function(path, color1, color2) {
     this.path = path;
     this.color1 = color1;
     this.color2 = color2;
+
+    this.stops = [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 ].map(function(x) {
+        return color1.interpLab(color2, x);
+    });
+
     this.type = "ColorLinear";
 };
 ColorLinear.prototype = new IV.objects.BaseObject({
@@ -141,7 +146,13 @@ ColorLinear.prototype = new IV.objects.BaseObject({
         var s = context.getSchema(this.path);
         if(s.max !== undefined && s.min !== undefined)
             value = (value - s.min) / (s.max - s.min);
-        return this.color1.interpLab(this.color2, value);
+        var tp = this.stops.length - 1;
+        var idx1 = Math.floor(value * tp);
+        if(idx1 < 0) idx1 = 0;
+        if(idx1 >= tp) idx1 = tp - 1;
+        var idx2 = idx1 + 1;
+        var t = value * tp - idx1;
+        return this.stops[idx1].interp(this.stops[idx2], t);
     },
     clone: function() {
         return new ColorLinear(this.path, this.color1, this.color2);

@@ -38,7 +38,7 @@ select {
     margin: 0; padding: 0;
     font-family: @main_font;
     .btn();
-    .gradient_background_append(@icon_arrowdown, #CCC);
+    .gradient_background_append(@icon_arrowdown, #DDD);
     background-size: 12px 12px, auto;
     background-position: right center;
     background-repeat: no-repeat;
@@ -102,7 +102,7 @@ input {
         border: 1px solid gray;
         border-radius: 0 2px 2px 0;
         text-align: center;
-        cursor: pointer;
+        cursor: n-resize;
         vertical-align: top;
 
         &:hover {
@@ -124,7 +124,7 @@ input {
         line-height: 19px;
         margin: 0 2px;
         padding: 0 2px;
-        &:hover {
+        &:hover, &.active {
             background-color: @active_color;
             color: white;
         }
@@ -209,6 +209,20 @@ input {
         }
     }
     &:hover > .scrollbar, & > .scrollbar.dragging { display: block; }
+}
+
+.property-table {
+    td {
+        padding-top: 2px;
+        padding-bottom: 2px;
+        line-height: 19px;
+    }
+    td:first-child {
+        text-align: right;
+        padding-right: 5px;
+        padding-left: 5px;
+        white-space: nowrap;
+    }
 }
 
 .disp-active { display: none !important; }

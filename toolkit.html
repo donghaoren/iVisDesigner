@@ -31,7 +31,7 @@ IV_version = {
   <li>Affiliation: <a href="http://vis.pku.edu.cn/">PKU Visualization and Visual Analytics Group</a>,
                    <a href="http://www.pku.edu.cn/">Peking University</a></li>
 </ul>
-{{include:license.html}}
+{{include:deploy/license.html}}
 </script>
 
 <!-- Main View -->
@@ -55,7 +55,7 @@ IV_version = {
           <span class="icon"><i class="icon-info-sign"></i></span>
           About
         </span></li>
-        <li><span data-open-page="base64:{{base64:credits.html}}" data-open-page-title="Credits">
+        <li><span data-open-page="base64:{{base64:deploy/credits.html}}" data-open-page-title="Credits">
           <span class="icon"><i class="icon-bookmark"></i></span>
           Credits
         </span></li>
@@ -202,7 +202,9 @@ IV_version = {
             <i class="xicon-tools-zoom"></i>
           </span>
         </span>
-        <span class="btn" data-popup="create-layout">Layout</span>
+        <span class="btn btn-icon" title="Create graph layout." data-popup="CreateLayout">
+          <i class="xicon-tools-graph-layout"></i>
+        </span>
       </div>
     </div>
   </div>
@@ -259,7 +261,7 @@ IV_version = {
     </div>
   </div>
   <!-- Page Panel -->
-  <div id="panel-page" class="panel" data-title="Page">
+  <div id="panel-page" class="panel full-title" data-title="Page">
     <div class="scrollview">
       <div id="panel-page-container" class="basic"></div>
     </div>
@@ -270,64 +272,55 @@ IV_version = {
 <div id="popup-container"></div>
 
 <!-- Color selector popup -->
-<div data-popup="color-selector" class="popup">
-  <div class="tab" data-default="predefined">
-    <div class="header">
-      <span data-tab="predefined">Predefined</span>
-      <span data-tab="hcl">HCL</span>
-    </div>
-    <div class="tabs">
-      <div data-tab="predefined">
-<p><span class="predefined">000000,ffffff,888888,1f77b4,ff7f0e,2ca02c,d62728,9467bd,8c564b,e377c2,bcbd22,17becf</span></p>
-<p><span class="predefined">BD0026,F03B20,FD8D3C,FEB24C,FED976,FFFFB2,045A8D,2B8CBE,74A9CF,A6BDDB,D0D1E6,F1EEF6</span></p>
-<p><span class="predefined">252525,636363,969696,BDBDBD,D9D9D9,F7F7F7,B2182B,EF8A62,FDDBC7,D1E5F0,67A9CF,2166AC</span></p>
+<script id="popup-color-select" type="text/plain">
+    <div class="tab" data-default="predefined">
+      <div class="header">
+        <span data-tab="predefined">Predefined</span>
+        <span data-tab="hcl">HCL</span>
       </div>
-      <div data-tab="hcl" class="hcl-picker">
-        <p>Component: <select class="method">
-          <option value="L">Luminance - Hue, Chroma</option>
-          <option value="H">Hue - Chroma, Luminance</option>
-          <option value="C">Chroma - Hue, Luminance</option>
-        </select></p>
-        <p><span class="picker">
-          <span class="picker-canvas-w">
-            <canvas class="picker-canvas" width="100" height="40"></canvas>
-            <span class="xy-marker"></span>
-          </span>
-          <span class="picker-canvas-side-w">
-            <canvas class="picker-canvas-side" width="5" height="50"></canvas>
-            <span class="l-marker"></span>
-          </span>
-        </span></p>
+      <div class="tabs">
+        <div data-tab="predefined">
+  <p><span class="predefined">000000,ffffff,888888,1f77b4,ff7f0e,2ca02c,d62728,9467bd,8c564b,e377c2,bcbd22,17becf</span></p>
+  <p><span class="predefined">BD0026,F03B20,FD8D3C,FEB24C,FED976,FFFFB2,045A8D,2B8CBE,74A9CF,A6BDDB,D0D1E6,F1EEF6</span></p>
+  <p><span class="predefined">252525,636363,969696,BDBDBD,D9D9D9,F7F7F7,B2182B,EF8A62,FDDBC7,D1E5F0,67A9CF,2166AC</span></p>
+        </div>
+        <div data-tab="hcl" class="hcl-picker">
+          <p>Component: <select class="method">
+            <option value="L">Luminance - Hue, Chroma</option>
+            <option value="H">Hue - Chroma, Luminance</option>
+            <option value="C">Chroma - Hue, Luminance</option>
+          </select></p>
+          <p><span class="picker">
+            <span class="picker-canvas-w">
+              <canvas class="picker-canvas" width="100" height="40"></canvas>
+              <span class="xy-marker"></span>
+            </span>
+            <span class="picker-canvas-side-w">
+              <canvas class="picker-canvas-side" width="5" height="50"></canvas>
+              <span class="l-marker"></span>
+            </span>
+          </span></p>
+        </div>
       </div>
     </div>
-  </div>
-  <p>
-    R: <span class="input-red input-numeric" data-min="0" data-max="255" data-delta-scale="50"></span>
-    G: <span class="input-green input-numeric" data-min="0" data-max="255" data-delta-scale="50"></span>
-    B: <span class="input-blue input-numeric" data-min="0" data-max="255" data-delta-scale="50"></span>
-    Alpha: <span class="input-alpha input-numeric" data-min="0" data-max="1" data-delta-scale="0.2"></span>
-  </p>
-  <div class="actions">
-    <span class="selected-color"><span class="selected-color-inner"></span></span>
-    <span class="btn" data-action="remove">Remove</span>
-    <span class="btn" data-action="ok"><i class="xicon-mark"></i></span>
-    <span class="btn" data-action="cancel"><i class="xicon-cross"></i></span>
-  </div>
-  <div class="resize"></div>
-</div>
+    <p>
+      R: <span class="input-red input-numeric" data-min="0" data-max="255" data-delta-scale="50"></span>
+      G: <span class="input-green input-numeric" data-min="0" data-max="255" data-delta-scale="50"></span>
+      B: <span class="input-blue input-numeric" data-min="0" data-max="255" data-delta-scale="50"></span>
+      Alpha: <span class="input-alpha input-numeric" data-min="0" data-max="1" data-delta-scale="0.2"></span>
+    </p>
+</script>
 
 <!-- Create layout popup -->
-<div data-popup="create-layout" class="popup">
-  <p>Vertex Path: <span data-field="vertex-path" class="input-path"></span></p>
-  <p>Point Field: <span data-field="point-field" class="input-string" data-default="pt"></span></p>
-  <p>Edge: <span data-field="edge-a" class="input-path"></span> - <span data-field="edge-b" class="input-path"></span></p>
-  <p>Algorithm: <span data-field="algorithm" class="control-select-value" data-options="fr|Fruchterman Reingold" data-default="fr"></span></p>
-  <div class="actions">
-    <span class="btn" data-action="ok"><i class="xicon-mark"></i></span>
-    <span class="btn" data-action="cancel"><i class="xicon-cross"></i></span>
-  </div>
-  <div class="resize"></div>
+<script id="popup-create-layout" type="text/plain">
+ <table class="property-table">
+  <tr><td> Vertex Path:</td><td><span data-field="vertex-path" class="input-path"></span></td></tr>
+  <tr><td> Point Field:</td><td><span data-field="point-field" class="input-string" data-default="pt"></span></td></tr>
+  <tr><td>        Edge:</td><td><span data-field="edge-a" class="input-path"></span> - <span data-field="edge-b" class="input-path"></span></td></tr>
+  <tr><td>   Algorithm:</td><td><span data-field="algorithm" class="control-select-value" data-options="fr|Fruchterman Reingold" data-default="fr"></span></td></tr>
+ </table>
 </div>
+</script>
 
 <!-- System Loading Overlay -->
 <div id="system-loading"

@@ -12,17 +12,17 @@
 
     if(!data.is_created) {
         var container = $(
-            '<div class="title-wrapper">' +
-                '<span class="title">' + $this.attr("data-title") + '</span>' +
-                '<span class="buttons">' +
-                    '<span class="button-minimize"><i class="icon-angle-up"></i></span>' +
-                    '<span class="button-close"><i class="xicon-cross"></i></span>' +
-                '</span>' +
-            '</div>' +
             '<div class="content-wrapper"></div>' +
+            '<div class="title-wrapper">' +
+                '<div class="title">' + $this.attr("data-title") + '</div>' +
+                '<div class="buttons">' +
+                    '<div class="button-minimize" title="Minimize"><i class="icon-angle-up"></i></div>' +
+                    '<div class="button-close" title="Close"><i class="xicon-cross"></i></div>' +
+                '</div>' +
+            '</div>' +
             '<div class="resize"></div>'
         );
-        $(container[1]).append($this.children());
+        $(container[0]).append($this.children());
 
         $this.append(container);
 
