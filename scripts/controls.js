@@ -174,12 +174,19 @@ $.fn.IVInputPath = function(str) {
         };
         $this.append(input);
         input.click(function() {
+            var $this = $(this);
+            if($this.is(".active")) return;
             var popup = IV.popups.PathSelect();
             popup.onSelectPath = function(path, ref) {
                 data.set(path, ref);
                 fire();
+                $this.removeClass("active");
             };
-            popup.show($this, 200, 400);
+            popup.onHide = function() {
+                $this.removeClass("active");
+            };
+            popup.show($this, 200, 150);
+            $this.addClass("active");
         });
         data.get = function() {
             return data.path;
@@ -300,6 +307,7 @@ $.fn.IVNumericValue = function(obj) {
                 data.path = null;
                 data.val_min = null;
                 data.val_max = null;
+                data.btn_path.IVInputPath("");
                 data.num_min.IVInputNumeric(data.val_min);
                 data.num_max.IVInputNumeric(data.val_max);
                 data.mode_plain();
@@ -382,12 +390,6 @@ $.fn.IVColorValue = function(obj) {
         data.val_max = new IV.Color(0, 0, 0, 1);
         data.path = null;
         var onchanged = function() {
-            if(data.current_mode == "plain") {
-            } else {
-                if(data.path === undefined || data.path == "")
-                    data.btn_path.text("-[]-");
-                else data.btn_path.text("-[" + data.path + "]-");
-            }
             var obj = data.get();
             if(obj && data.changed) {
                 data.changed(obj);
@@ -406,10 +408,9 @@ $.fn.IVColorValue = function(obj) {
                 onchanged();
             });
         data.btn_path = $("<span/>")
-            .addClass("path")
-            .text("-[]-")
-            .click(function() {
-                data.path = IV.get("selected-path");
+            .addClass("input-path")
+            .IVInputPath(function(path) {
+                data.path = path;
                 onchanged();
             });
         data.btn_toggle = $("<span/>")
@@ -447,6 +448,7 @@ $.fn.IVColorValue = function(obj) {
         data.set = function(obj) {
             if(!obj) {
                 data.path = null;
+                data.btn_path.IVInputPath("");
                 data.val_min = null;
                 data.num_min.IVColorPicker(data.val_min);
                 data.val_max = null;
@@ -455,13 +457,15 @@ $.fn.IVColorValue = function(obj) {
             } else {
                 if(obj.type == "ColorLinear") {
                     data.path = obj.path;
+                    data.btn_path.IVInputPath(data.path);
                     data.val_min = obj.color1;
                     data.val_max = obj.color2;
-                    data.btn_path.text("-[" + data.path + "]-");
                     data.num_min.IVColorPicker(data.val_min);
                     data.num_max.IVColorPicker(data.val_max);
                     data.mode_bind();
                 } else {
+                    data.path = null;
+                    data.btn_path.IVInputPath("");
                     data.num_min.IVColorPicker(obj.obj);
                     data.mode_plain();
                 }

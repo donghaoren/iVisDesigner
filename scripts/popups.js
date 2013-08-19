@@ -74,6 +74,7 @@
 
         data.hide = function() {
             popup.remove();
+            if(data.onHide) data.onHide();
             return data;
         };
 
@@ -150,18 +151,19 @@
         return p.data();
     };
     */
-    /*
+
     $(window).mousedown(function() {
         if(!should_block_popup_hide) {
             $("#popup-container").children().each(function() {
                 var data = $(this).data();
+                data.hide();
                 if(data.finalize) data.finalize();
                 $(this).remove();
             });
         }
         should_block_popup_hide = false;
     });
-*/
+
 })();
 // Color select popup initialization.
 (function() {
