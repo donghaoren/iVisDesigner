@@ -8,18 +8,16 @@
 (function() {
 
 // Plain Object.
-var Plain = function(obj) {
+var Plain = IV.extend(IV.objects.Object, function(obj) {
     this.obj = obj;
     this.type = "plain";
-};
-var plain_get = function() { return this.obj; };
-Plain.prototype = new IV.objects.BaseObject({
+}, {
     can: function(cap) {
         if(cap == "get-point") return true;
         if(cap == "get-number") return true;
         if(cap == "get-style") return true;
     },
-    get: plain_get,
+    get: function() { return this.obj; },
     clone: function() {
         return new Plain(IV.deepClone(this.obj));
     }
@@ -31,7 +29,7 @@ IV.objects.Style = Plain;
 IV.objects.Point = Plain;
 
 // Composite Object.
-var Composite = function(obj, wrap) {
+var Composite = IV.extend(IV.objects.Object, function(obj, wrap) {
     // Copy all fields.
     var fields = { };
     for(var i in obj) {
@@ -42,8 +40,7 @@ var Composite = function(obj, wrap) {
     }
     this.fields = fields;
     this.type = "Composite";
-};
-Composite.prototype = new IV.objects.BaseObject({
+}, {
     get: function(context) {
         var obj = { };
         for(var i in this.fields) {
@@ -62,12 +59,11 @@ Composite.prototype = new IV.objects.BaseObject({
 IV.objects.Composite = Composite;
 
 // Composite Color and Alpha.
-var CompositeColorAlpha = function(color, alpha) {
+var CompositeColorAlpha = IV.extend(IV.objects.Object, function(color, alpha) {
     this.color = color;
     this.alpha = alpha;
     this.type = "CompositeColorAlpha";
-};
-CompositeColorAlpha.prototype = new IV.objects.BaseObject({
+}, {
     get: function(context) {
         var c = this.color.get(context);
         c.a = this.alpha.get(context);
@@ -80,13 +76,12 @@ CompositeColorAlpha.prototype = new IV.objects.BaseObject({
 IV.objects.CompositeColorAlpha = CompositeColorAlpha;
 
 // Point Offset.
-var PointOffset = function(point, offset) {
+var PointOffset = IV.extend(IV.objects.Object, function(point, offset) {
     this.offset = offset;
     this.point = point;
     this.path = point.path;
     this.type = "PointOffset";
-};
-PointOffset.prototype = new IV.objects.BaseObject({
+}, {
     get: function(context) {
         var pt = this.point.getPoint(context);
         return pt.add(this.offset);
@@ -108,13 +103,12 @@ PointOffset.prototype = new IV.objects.BaseObject({
 IV.objects.PointOffset = PointOffset;
 
 // Linear Mapping.
-var NumberLinear = function(path, min, max) {
+var NumberLinear = IV.extend(IV.objects.Object, function(path, min, max) {
     this.path = path;
     this.min = min;
     this.max = max;
     this.type = "NumberLinear";
-};
-NumberLinear.prototype = new IV.objects.BaseObject({
+}, {
     get: function(context) {
         var value = context.get(this.path);
         var s = context.getSchema(this.path);
@@ -129,7 +123,7 @@ NumberLinear.prototype = new IV.objects.BaseObject({
 IV.objects.NumberLinear = NumberLinear;
 
 // Color Linear Mapping.
-var ColorLinear = function(path, color1, color2) {
+var ColorLinear = IV.extend(IV.objects.Object, function(path, color1, color2) {
     this.path = path;
     this.color1 = color1;
     this.color2 = color2;
@@ -139,8 +133,7 @@ var ColorLinear = function(path, color1, color2) {
     });
 
     this.type = "ColorLinear";
-};
-ColorLinear.prototype = new IV.objects.BaseObject({
+}, {
     get: function(context) {
         var value = context.get(this.path);
         var s = context.getSchema(this.path);
@@ -160,11 +153,10 @@ ColorLinear.prototype = new IV.objects.BaseObject({
 });
 IV.objects.ColorLinear = ColorLinear;
 
-var ReferenceWrapper = function(ref_path, object) {
+var ReferenceWrapper = IV.extend(IV.objects.Object, function(ref_path, object) {
     this.obj = object;
     this.reference_path = ref_path;
-};
-ReferenceWrapper.prototype = new IV.objects.BaseObject({
+}, {
     get: function(context) {
         var ref_context = context.referenceContext(this.reference_path);
         return this.obj.get(ref_context);

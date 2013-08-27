@@ -7,7 +7,7 @@
 
 (function() {
 
-var Circle = function(path, info) {
+var Circle = IV.extend(IV.objects.Object, function(path, info) {
     this.type = "Circle";
     this.path = path;
     // Center
@@ -21,9 +21,7 @@ var Circle = function(path, info) {
             radius: 3
         });
     }
-};
-
-Circle.prototype = new IV.objects.BaseObject({
+}, {
     can: function(cap) {
         if(cap == "get-point") return true;
     },
@@ -98,7 +96,7 @@ Circle.prototype = new IV.objects.BaseObject({
 
 IV.objects.Circle = Circle;
 
-var Line = function(path, info) {
+var Line = IV.extend(IV.objects.Object, function(path, info) {
     this.type = "Line";
     this.path = path;
     this.point1 = info.point1;
@@ -112,9 +110,7 @@ var Line = function(path, info) {
             width: 1
         });
     }
-};
-
-Line.prototype = new IV.objects.BaseObject({
+}, {
     render: function(g, data) {
         var $this = this;
         data.enumeratePath($this.path, function(context) {
@@ -165,7 +161,7 @@ Line.prototype = new IV.objects.BaseObject({
 
 IV.objects.Line = Line;
 
-var LineThrough = function(path, info) {
+var LineThrough = IV.extend(IV.objects.Object, function(path, info) {
     this.path = path;
     this.points = info.points;
     this.type = "LineThrough";
@@ -178,9 +174,7 @@ var LineThrough = function(path, info) {
             width: 1
         });
     }
-};
-
-LineThrough.prototype = new IV.objects.BaseObject({
+}, {
     render: function(g, data) {
         var $this = this;
         var index = 0;

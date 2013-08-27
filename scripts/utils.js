@@ -1371,6 +1371,34 @@ Array.prototype.forEachReversed = function(f) {
     };
 };
 
+NS.extend = function(base, sub, funcs) {
+    function inheritance() { };
+    inheritance.prototype = base.prototype;
+    sub.prototype = new inheritance();
+    sub.prototype.constructor = sub;
+    sub._base_constructor = base;
+    if(funcs) {
+        for(var i in funcs) {
+            sub.prototype[i] = funcs[i];
+        }
+    }
+    return sub;
+};
+
+// ### Generate UUID
+
+// UUID is used for object id.
+NS.generateUUID = function(prefix) {
+    // Current format is like `prefix-xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
+    var r = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+    if(prefix) return prefix + r;
+    return r;
+};
+
+
 return NS;
 
 })(); // main nested function.

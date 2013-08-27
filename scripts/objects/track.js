@@ -7,15 +7,13 @@
 
 (function() {
 
-var Track = function(path, anchor1, anchor2) {
+var Track = IV.extend(IV.objects.Object, function(path, anchor1, anchor2) {
     this.type = "Track";
     this.anchor1 = anchor1;
     this.anchor2 = anchor2;
     this.path = path;
     this.guide_path = IV.path.deepest([ anchor1.getPath(), anchor2.getPath() ]);
-};
-
-Track.prototype = new IV.objects.BaseObject({
+}, {
     can: function(cap) {
         if(cap == "get-point") return true;
     },
@@ -124,15 +122,13 @@ Track.prototype = new IV.objects.BaseObject({
     }
 });
 
-var Scatter = function(track1, track2) {
+var Scatter = IV.extend(IV.objects.Object, function(track1, track2) {
     this.type = "Scatter";
     this.track1 = track1;
     this.track2 = track2;
     this.path = IV.path.deepest([ track1.getPath(), track2.getPath() ]);
     this.guide_path = IV.path.deepest([ track1.getGuidePath(), track2.getGuidePath() ]);
-};
-
-Scatter.prototype = new IV.objects.BaseObject({
+}, {
     can: function(cap) {
         if(cap == "get-point") return true;
     },

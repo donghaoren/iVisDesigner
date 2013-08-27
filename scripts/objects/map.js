@@ -58,7 +58,7 @@ GoogleMapStatic.prototype = {
     }
 };
 // IV.vis.addObject(new IV.objects.GoogleMap("stations:lng", "stations:lat", new IV.Vector(0, 0), 116.37371, 39.86390, 10));
-var GoogleMap = function(path_lng, path_lat, center_offset, lng, lat, zoom) {
+var GoogleMap = IV.extend(IV.objects.Object, function(path_lng, path_lat, center_offset, lng, lat, zoom) {
     var $this = this;
     this.type = "GoogleMap";
     this.map = new GoogleMapStatic(lng, lat, zoom, 640, 640, "street", 2);
@@ -73,9 +73,7 @@ var GoogleMap = function(path_lng, path_lat, center_offset, lng, lat, zoom) {
         IV.triggerRender();
         IV.render();
     };
-};
-
-GoogleMap.prototype = new IV.objects.BaseObject({
+}, {
     can: function(cap) {
         if(cap == "get-point") return true;
     },

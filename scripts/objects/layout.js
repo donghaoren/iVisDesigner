@@ -7,7 +7,7 @@
 
 (function() {
 
-var ForceLayout = function(path_item, cpath, path_edgeA, path_edgeB) {
+var ForceLayout = IV.extend(IV.objects.Object, function(path_item, cpath, path_edgeA, path_edgeB) {
     this.path_item = path_item;
     this.cpath = cpath;
     this.path_output = this.path_item + ":" + this.cpath;
@@ -17,9 +17,7 @@ var ForceLayout = function(path_item, cpath, path_edgeA, path_edgeB) {
     this.type = "ForceLayout";
     this.assigned_schema = null;
     this.enabled = false;
-};
-
-ForceLayout.prototype = new IV.objects.BaseObject({
+}, {
     onAttach: function(vis) {
         this._runStep(vis.data);
     },

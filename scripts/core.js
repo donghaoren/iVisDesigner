@@ -31,19 +31,6 @@ IV.path.deepest = function(paths) {
 IV.path.isDescendant = function(path_parent, path_child) {
 };
 
-// ### Generate UUID
-
-// UUID is used for object id.
-IV.generateUUID = function(prefix) {
-    // Current format is like `prefix-xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
-    var r = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-    if(prefix) return prefix + r;
-    return r;
-};
-
 // ### Visualization Object
 
 IV.Visualization = function(dataset) {

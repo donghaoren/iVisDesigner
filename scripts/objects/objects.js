@@ -8,12 +8,10 @@
 IV.objects = { };
 
 // The base class for objects.
-IV.objects.BaseObject = function(proto) {
-    for(var i in proto) {
-        this[i] = proto[i];
-    }
+IV.objects.Object = function() {
+    this.uuid = IV.generateUUID();
 };
-IV.objects.BaseObject.prototype = {
+IV.objects.Object.prototype = {
     can: function(cap) { return false; },
     get: function(context) { return null; },
     getStyle: function(context) { return this.get(context); },
