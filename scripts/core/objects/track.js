@@ -8,6 +8,7 @@
 (function() {
 
 var Track = IV.extend(IV.objects.Object, function(path, anchor1, anchor2) {
+    IV.objects.Object.call(this);
     this.type = "Track";
     this.anchor1 = anchor1;
     this.anchor2 = anchor2;
@@ -123,6 +124,7 @@ var Track = IV.extend(IV.objects.Object, function(path, anchor1, anchor2) {
 });
 
 var Scatter = IV.extend(IV.objects.Object, function(track1, track2) {
+    IV.objects.Object.call(this);
     this.type = "Scatter";
     this.track1 = track1;
     this.track2 = track2;

@@ -6,10 +6,6 @@
 // The main javascript file for the toolkit.
 
 // ------------------------------------------------------------------------
-// Include Core
-// ------------------------------------------------------------------------
-
-// ------------------------------------------------------------------------
 // Process Configuration
 // ------------------------------------------------------------------------
 
@@ -51,98 +47,6 @@ IV.canvas = {
     front: document.getElementById("canvas-front"),
     back: document.getElementById("canvas-back"),
     overlay: document.getElementById("canvas-overlay")
-};
-
-IV.needs_render = {
-    main: false, front: false, back: false, overlay: false
-};
-
-IV.triggerRender = function(name) {
-    if(!name) {
-        for(var i in IV.needs_render) IV.needs_render[i] = true;
-        return;
-    }
-    var map = {
-        "tools": "front",
-        "front": "front",
-        "back": "back",
-        "overlay": "overlay",
-        "main": "main"
-    };
-    var names = name.split(",").map(function(x) { return map[x]; }).join(",").split(",");
-
-    for(var i = 0; i < names.length; i++) {
-        IV.needs_render[names[i]] = true;
-    }
-};
-
-IV.render = function() {
-    if(IV.needs_render.main) {
-        IV.renderMain();
-        IV.needs_render.main = false;
-    }
-    if(IV.needs_render.front) {
-        IV.renderFront();
-        IV.needs_render.front = false;
-    }
-    if(IV.needs_render.back) {
-        IV.renderBack();
-        IV.needs_render.back = false;
-    }
-    if(IV.needs_render.overlay) {
-        IV.renderOverlay();
-        IV.needs_render.overlay = false;
-    }
-};
-
-// Render functions.
-IV.renderMain = function() {
-    var ctx = IV.canvas.main.getContext("2d");
-    ctx.clearRect(0, 0, IV.canvas.main.width, IV.canvas.main.height);
-    ctx.save();
-    IV.viewarea.set(ctx);
-
-    if(IV.vis) {
-        IV.vis.render(ctx);
-    }
-    ctx.restore();
-};
-
-IV.renderFront = function() {
-    var ctx = IV.canvas.front.getContext("2d");
-    ctx.clearRect(0, 0, IV.canvas.front.width, IV.canvas.front.height);
-    ctx.save();
-    IV.viewarea.set(ctx);
-
-    if(IV.current_tool && IV.current_tool.render) {
-        IV.current_tool.render(ctx, IV.data);
-    }
-    ctx.restore();
-};
-
-IV.renderBack = function() {
-    var ctx = IV.canvas.back.getContext("2d");
-    ctx.clearRect(0, 0, IV.canvas.back.width, IV.canvas.back.height);
-    ctx.save();
-    IV.viewarea.set(ctx);
-
-    if(IV.vis) {
-        if(IV.get("visible-guide"))
-            IV.vis.renderGuide(ctx);
-    }
-
-    ctx.restore();
-};
-
-IV.renderOverlay = function() {
-    var ctx = IV.canvas.overlay.getContext("2d");
-    ctx.clearRect(0, 0, IV.canvas.overlay.width, IV.canvas.overlay.height);
-    ctx.save();
-    IV.viewarea.set(ctx);
-
-    IV.tools.renderOverlay(ctx);
-
-    ctx.restore();
 };
 
 IV.timerTick = function() {
@@ -458,7 +362,7 @@ $(function() {
     // Remove the loading indicator.
     $("#system-loading").remove();
     // Default dataset: cardata.
-    IV.loadDataset("graph", function() {
+    IV.loadDataset("cardata", function() {
         //IV.test();
         //IV.vis.addObject(new IV.objects.GoogleMap("stations:lng", "stations:lat", new IV.Vector(0, 0), 116.37371, 39.86390, 9));
         //IV.triggerRender();

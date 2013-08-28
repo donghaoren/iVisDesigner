@@ -8,6 +8,7 @@
 (function() {
 
 var Circle = IV.extend(IV.objects.Object, function(path, info) {
+    IV.objects.Object.call(this);
     this.type = "Circle";
     this.path = path;
     // Center
@@ -97,6 +98,7 @@ var Circle = IV.extend(IV.objects.Object, function(path, info) {
 IV.objects.Circle = Circle;
 
 var Line = IV.extend(IV.objects.Object, function(path, info) {
+    IV.objects.Object.call(this);
     this.type = "Line";
     this.path = path;
     this.point1 = info.point1;
@@ -162,6 +164,7 @@ var Line = IV.extend(IV.objects.Object, function(path, info) {
 IV.objects.Line = Line;
 
 var LineThrough = IV.extend(IV.objects.Object, function(path, info) {
+    IV.objects.Object.call(this);
     this.path = path;
     this.points = info.points;
     this.type = "LineThrough";

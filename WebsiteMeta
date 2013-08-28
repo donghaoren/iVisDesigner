@@ -38,8 +38,7 @@ Javascript("toolkit.js", [
     "scripts/utils.js",
     "scripts/panel.js",
     "scripts/menu.js",
-    "scripts/core.js",
-    "scripts/objects/objects.js",
+    "scripts/core/core.js",
     "scripts/controls.js",
     "scripts/toolkit.js"
 ])

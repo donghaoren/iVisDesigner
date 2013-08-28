@@ -8,6 +8,7 @@
 (function() {
 
 var ForceLayout = IV.extend(IV.objects.Object, function(path_item, cpath, path_edgeA, path_edgeB) {
+    IV.objects.Object.call(this);
     this.path_item = path_item;
     this.cpath = cpath;
     this.path_output = this.path_item + ":" + this.cpath;

@@ -318,7 +318,8 @@ NS.addEvent = function(key) {
     return NS;
 };
 
-NS.raiseEvent = function(key, parameters) {
+NS.raiseEvent = function(key) {
+    var args = Array.prototype.slice.call(arguments, 1);
     var ev = NS_events[key];
     if(!ev) return NS;
     if(ev.running) return NS;
@@ -326,7 +327,7 @@ NS.raiseEvent = function(key, parameters) {
     ev.listeners.some(function(listener) {
         var r;
         try {
-            r = listener.f(parameters);
+            r = listener.f.apply(NS, args);
         } catch(e) {
             console.log(e);
         }
@@ -1383,6 +1384,41 @@ NS.extend = function(base, sub, funcs) {
         }
     }
     return sub;
+};
+
+NS.implement = function(base, sub) {
+    for(var k in base.prototype) {
+        sub.prototype[k] = base.prototype[k];
+    }
+};
+
+NS.EventSource = function() {
+    this._event_source_handlers = { };
+};
+
+NS.EventSource.prototype.raise = function(event) {
+    var $this = this;
+    var args = Array.prototype.slice.call(arguments, 1);
+    if(this._event_source_handlers[event]) {
+        this._event_source_handlers[event].forEach(function(f) {
+            f.apply($this, args);
+        });
+    }
+};
+
+NS.EventSource.prototype.bind = function(event, f) {
+    if(this._event_source_handlers[event]) {
+        this._event_source_handlers[event].push(f);
+    } else {
+        this._event_source_handlers[event] = [ f ];
+    }
+};
+
+NS.EventSource.prototype.unbind = function(event, f) {
+    if(this._event_source_handlers[event]) {
+        var idx = this._event_source_handlers[event].indexOf(f);
+        if(idx >= 0) this._event_source_handlers.splice(idx, 1);
+    }
 };
 
 // ### Generate UUID

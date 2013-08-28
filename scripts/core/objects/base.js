@@ -9,6 +9,7 @@
 
 // Plain Object.
 var Plain = IV.extend(IV.objects.Object, function(obj) {
+    IV.objects.Object.call(this);
     this.obj = obj;
     this.type = "plain";
 }, {
@@ -30,6 +31,7 @@ IV.objects.Point = Plain;
 
 // Composite Object.
 var Composite = IV.extend(IV.objects.Object, function(obj, wrap) {
+    IV.objects.Object.call(this);
     // Copy all fields.
     var fields = { };
     for(var i in obj) {
@@ -60,6 +62,7 @@ IV.objects.Composite = Composite;
 
 // Composite Color and Alpha.
 var CompositeColorAlpha = IV.extend(IV.objects.Object, function(color, alpha) {
+    IV.objects.Object.call(this);
     this.color = color;
     this.alpha = alpha;
     this.type = "CompositeColorAlpha";
@@ -77,6 +80,7 @@ IV.objects.CompositeColorAlpha = CompositeColorAlpha;
 
 // Point Offset.
 var PointOffset = IV.extend(IV.objects.Object, function(point, offset) {
+    IV.objects.Object.call(this);
     this.offset = offset;
     this.point = point;
     this.path = point.path;
@@ -104,6 +108,7 @@ IV.objects.PointOffset = PointOffset;
 
 // Linear Mapping.
 var NumberLinear = IV.extend(IV.objects.Object, function(path, min, max) {
+    IV.objects.Object.call(this);
     this.path = path;
     this.min = min;
     this.max = max;
@@ -124,6 +129,7 @@ IV.objects.NumberLinear = NumberLinear;
 
 // Color Linear Mapping.
 var ColorLinear = IV.extend(IV.objects.Object, function(path, color1, color2) {
+    IV.objects.Object.call(this);
     this.path = path;
     this.color1 = color1;
     this.color2 = color2;
@@ -154,6 +160,7 @@ var ColorLinear = IV.extend(IV.objects.Object, function(path, color1, color2) {
 IV.objects.ColorLinear = ColorLinear;
 
 var ReferenceWrapper = IV.extend(IV.objects.Object, function(ref_path, object) {
+    IV.objects.Object.call(this);
     this.obj = object;
     this.reference_path = ref_path;
 }, {
