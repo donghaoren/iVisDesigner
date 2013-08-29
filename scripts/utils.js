@@ -1394,6 +1394,7 @@ NS.implement = function(base, sub) {
 
 NS.EventSource = function() {
     this._event_source_handlers = { };
+    this._event_source_values = { };
 };
 
 NS.EventSource.prototype.raise = function(event) {
@@ -1419,6 +1420,30 @@ NS.EventSource.prototype.unbind = function(event, f) {
         var idx = this._event_source_handlers[event].indexOf(f);
         if(idx >= 0) this._event_source_handlers.splice(idx, 1);
     }
+};
+
+NS.EventSource.prototype.set = function(key, value) {
+    this._event_source_values[key] = value;
+    this.raise("_value_" + key, value);
+};
+
+NS.EventSource.prototype.get = function(key, value) {
+    return this._event_source_values[key];
+};
+
+NS.EventSource.prototype.listen = function(key, callback) {
+    this.bind("_value_" + key, callback);
+};
+
+NS.EventSource.prototype.unlisten = function(key, callback) {
+    this.unbind("_value_" + key, callback);
+};
+
+NS.makeEventSource = function(obj) {
+    for(var key in NS.EventSource.prototype) {
+        obj[key] = NS.EventSource.prototype[key];
+    }
+    NS.EventSource.call(obj);
 };
 
 // ### Generate UUID

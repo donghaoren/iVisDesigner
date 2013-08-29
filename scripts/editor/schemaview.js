@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // Loading data schema and contents
 // ------------------------------------------------------------------------
-IV.renderSchema = function(schema, prev_path, set_active) {
+IV.editor.renderSchema = function(schema, prev_path, set_active) {
     var elem = $("<ul></ul>");
     for(var key in schema) {
         var this_path = prev_path + ":" + key;
@@ -29,32 +29,32 @@ IV.renderSchema = function(schema, prev_path, set_active) {
         span.data().key = key;
         span.data().path = this_path;
         if(set_active) {
-            if(this_path == IV.get("selected-path")) span.addClass("active");
-            if(this_path == IV.get("selected-reference")) span.children(".ref").addClass("active");
+            //if(this_path == IV.get("selected-path")) span.addClass("active");
+            //if(this_path == IV.get("selected-reference")) span.children(".ref").addClass("active");
         }
         var li = $("<li></li>")
             .append(span);
         if(child.type == "collection" || child.type == "object" || child.type == "sequence")
-            li.append(IV.renderSchema(child.fields, this_path, set_active));
+            li.append(IV.editor.renderSchema(child.fields, this_path, set_active));
         elem.append(li);
     }
     return elem;
 };
 
-IV.renderDataSchema = function(schema) {
+IV.editor.renderDataSchema = function(schema) {
     $("#data-schema").children().remove();
     var rootelem_span = $('<span class="key">ROOT</span>');
     var rootelem = $("<li/>").append(rootelem_span);
     rootelem_span.data().path = "";
     $("#data-schema").append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));
-    $("#data-schema").append(IV.renderSchema(schema.fields, "", true));
+    $("#data-schema").append(IV.editor.renderSchema(schema.fields, "", true));
     $("#data-schema span.key").each(function() {
         var $this = $(this);
         $this.click(function() {
             $("#data-schema span.key").removeClass("active");
             $this.addClass("active");
             var data = $this.data();
-            IV.set("selected-path", data.path);
+            //IV.set("selected-path", data.path);
         });
     });
     $("#data-schema span.ref").each(function() {
@@ -63,12 +63,12 @@ IV.renderDataSchema = function(schema) {
         $this.click(function(e) {
             if($this.is(".active")) {
                 $("#data-schema span.ref").removeClass("active");
-                IV.set("selected-reference", null);
+                //IV.set("selected-reference", null);
             } else {
                 $("#data-schema span.ref").removeClass("active");
                 $this.addClass("active");
                 var data = p.data();
-                IV.set("selected-reference", data.path);
+                //IV.set("selected-reference", data.path);
             }
             e.stopPropagation();
         });

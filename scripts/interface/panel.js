@@ -176,3 +176,5 @@
     return $this;
   };
 })(jQuery);
+
+{{include: panels/panels.js}}

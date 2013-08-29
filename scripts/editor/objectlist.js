@@ -1,4 +1,4 @@
-IV.generateObjectList = function() {
+IV.editor.generateObjectList = function() {
     var olist = $("#object-list");
     olist.children().remove();
     if(!IV.vis) return;

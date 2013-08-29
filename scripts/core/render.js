@@ -85,9 +85,9 @@ IV.Renderer.prototype.setCanvasManager = function(manager) {
     this.manager = manager;
 };
 
-IV.Renderer.trigger = function(items) {
+IV.Renderer.prototype.trigger = function(items) {
     if(items === null || items === undefined) {
-        items = [ "front", "back" ];
+        items = [ "front", "back", "main", "overlay" ];
     }
     if(typeof(items) == "string") items = [ items ];
 

@@ -9,10 +9,9 @@
 
 {{include: utils.js}}
 {{include: controls.js}}
-{{include: panel.js}}
 {{include: menu.js}}
-{{include: popups.js}}
-{{include: panels/panels.js}}
+{{include: panel.js}}
+{{include: popup.js}}
 
 $(window).resize(function(){
     IV.raise("window:resize");

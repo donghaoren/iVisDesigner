@@ -137,6 +137,4 @@
 
 })();
 
-{{include: popups/colorselect.js}}
-{{include: popups/pathselect.js}}
-{{include: popups/createlayout.js}}
+{{include: popups/popups.js}}
