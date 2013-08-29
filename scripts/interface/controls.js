@@ -6,27 +6,6 @@
 
 // This file can be considered as a set of jQuery plugins.
 
-// ### Register Object Type
-// Simple mechanism to dynamically call initialization functions for new elements.
-(function() {
-    var object_types = { };
-
-    IV.registerObjectType = function(c, name) {
-        object_types[c] = name;
-        $("." + c).each(function() { $(this)[name]() });
-    }
-
-    document.body.addEventListener("DOMNodeInserted", function(event) {
-        var $new_element = $(event.target);
-        for(var c in object_types) {
-            $new_element.find("." + c).each(function() {
-                $(this)[object_types[c]]();
-            });
-        }
-    }, false);
-
-})();
-
 // ### IVInputNumeric
 // Numeric input box.
 
@@ -115,7 +94,7 @@ $.fn.IVInputNumeric = function(num) {
         return data.get();
     }
 };
-IV.registerObjectType("input-numeric", "IVInputNumeric");
+IV.registerObjectType(".input-numeric", $.fn.IVInputNumeric);
 
 // ### IVInputString
 // String input box.
@@ -157,7 +136,7 @@ $.fn.IVInputString = function(str) {
         return data.get();
     }
 };
-IV.registerObjectType("input-string", "IVInputString");
+IV.registerObjectType(".input-string", $.fn.IVInputString);
 
 // ### IVInputPath
 // Path select box.
@@ -215,7 +194,7 @@ $.fn.IVInputPath = function(str) {
         return data.get();
     }
 };
-IV.registerObjectType("input-path", "IVInputPath");
+IV.registerObjectType(".input-path", $.fn.IVInputPath);
 
 // ### IVNumericValue
 // This control allows binding to specific data path.
@@ -334,7 +313,7 @@ $.fn.IVNumericValue = function(obj) {
     else data.set(obj);
     return this;
 };
-IV.registerObjectType("control-numeric-value", "IVNumericValue");
+IV.registerObjectType(".control-numeric-value", $.fn.IVNumericValue);
 
 // ### IVColorPicker
 // Color selectors.
@@ -377,7 +356,7 @@ $.fn.IVColorPicker = function(obj) {
     }
     return this;
 };
-IV.registerObjectType("color-selector", "IVColorPicker");
+IV.registerObjectType(".color-selector", $.fn.IVColorPicker);
 
 // ### IVColorValue
 // Color value, like numeric value, can be bound to specific path.
@@ -479,7 +458,7 @@ $.fn.IVColorValue = function(obj) {
     else data.set(obj);
     return this;
 };
-IV.registerObjectType("control-color-value", "IVColorValue");
+IV.registerObjectType(".control-color-value", $.fn.IVColorValue);
 
 // ### IVSelectValue
 // Select a value from a list of options.
@@ -524,7 +503,7 @@ $.fn.IVSelectValue = function(obj) {
     else data.set(obj);
     return this;
 };
-IV.registerObjectType("control-select-value", "IVSelectValue");
+IV.registerObjectType(".control-select-value", $.fn.IVSelectValue);
 
 // ### ScrollView
 // Scrollable view, automatically handle content and window resize.
@@ -597,7 +576,7 @@ $.fn.ScrollView = function() {
         });
     }
 };
-IV.registerObjectType("scrollview", "ScrollView");
+IV.registerObjectType(".scrollview", $.fn.ScrollView);
 
 // ### IVTab
 // Tab control.
@@ -632,9 +611,4 @@ $.fn.IVTab = function() {
             $(header.children("[data-tab]")[0]).click();
     };
 };
-IV.registerObjectType("tab", "IVTab");
-
-// Initialize all controls inside an element.
-IVControlsInitialize = function(selector) {
-
-};
+IV.registerObjectType(".tab", $.fn.IVTab);

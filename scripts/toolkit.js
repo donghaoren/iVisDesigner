@@ -60,106 +60,7 @@ setInterval(function() {
     IV.render();
 }, 30);
 
-IV.generateObjectList = function() {
-    var olist = $("#object-list");
-    olist.children().remove();
-    if(!IV.vis) return;
-    IV.vis.objects.forEach(function(obj) {
-        var elem = $("<div />").addClass("group item");
-        var data = elem.data();
-        data.obj = obj;
-        elem.append($("<span >").addClass("name").text(obj.name));
-        elem.append($("<span >").addClass("type").text(" " + obj.type));
-        var buttons = $("<span >").addClass("buttons");
-        elem.append(buttons);
 
-        buttons.append($("<span >").append($('<i class="xicon-cross"></i>')).click(function(e) {
-            IV.vis.removeObject(obj);
-            IV.raise("vis:objects");
-            IV.triggerRender();
-            IV.render();
-            e.stopPropagation();
-        }));
-
-        elem.click(function(e) {
-            if(!e.shiftKey) IV.vis.clearSelection();
-            IV.vis.appendSelection({ obj: obj });
-            IV.raise("vis:objects:selection");
-        });
-
-        IV.trackMouseEvents(elem, {
-            offsets: [],
-            selected: null,
-            down: function(e) {
-                var $this = this;
-                $this.offsets = [];
-                $this.selected = null;
-                olist.children(".item").each(function() {
-                    $this.offsets.push({
-                        sel: $(this),
-                        dir: 0,
-                        y: $(this).offset().top
-                    });
-                    $this.offsets.push({
-                        sel: $(this),
-                        dir: 1,
-                        y: $(this).offset().top + $(this).height()
-                    });
-                });
-            },
-            move: function(e) {
-                olist.children(".divider").remove();
-                var n_item = null;
-                var n_dist = 1e10;
-                this.offsets.forEach(function(item) {
-                    var d = Math.abs(item.y - e.pageY);
-                    if(d < n_dist) {
-                        n_item = item;
-                        n_dist = d;
-                    }
-                });
-                if(n_item.dir == 0) {
-                    n_item.sel.before($('<div class="divider"></div>'));
-                } else {
-                    n_item.sel.after($('<div class="divider"></div>'));
-                }
-                if(n_item) this.selected = n_item;
-            },
-            up: function(e) {
-                if(!this.selected) return;
-                var idx = IV.vis.objects.indexOf(this.selected.sel.data().obj) + this.selected.dir;
-                var idx_me = IV.vis.objects.indexOf(obj);
-                if(idx >= 0 && idx_me >= 0) {
-                    if(idx <= idx_me) {
-                        for(var i = idx_me; i > idx; i--) {
-                            IV.vis.objects[i] = IV.vis.objects[i - 1];
-                        }
-                        IV.vis.objects[idx] = obj;
-                    } else {
-                        for(var i = idx_me; i < idx - 1; i++) {
-                            IV.vis.objects[i] = IV.vis.objects[i + 1];
-                        }
-                        IV.vis.objects[idx - 1] = obj;
-                    }
-                    IV.raise("vis:objects");
-                    IV.triggerRender();
-                    IV.render();
-                }
-            }
-        });
-
-        olist.append(elem);
-
-        data.update = function() {
-            if(obj.selected) {
-                elem.addClass("selected");
-            } else {
-                elem.removeClass("selected");
-            }
-        };
-        data.update();
-    });
-};
 IV.on("vis:objects", function() {
     IV.generateObjectList();
 });
@@ -206,82 +107,7 @@ IV.on("reset", function() {
     IV.selection = [];
 });
 
-// ------------------------------------------------------------------------
-// Loading data schema and contents
-// ------------------------------------------------------------------------
-IV.renderSchema = function(schema, prev_path, set_active) {
-    var elem = $("<ul></ul>");
-    for(var key in schema) {
-        var this_path = prev_path + ":" + key;
-        if(prev_path == "") this_path = key;
-        // Ignore all keys starting with _
-        if(key[0] == '_') continue;
-        // The child element.
-        var child = schema[key];
-        // Fix abbreviations.
-        if(typeof(child) == "string") child = { "type": child };
-        // The text for key.
-        var span = $("<span></span>").text(key).addClass("key");
-        // Types.
-        if(child.type == "number")
-            span.append($("<span />").addClass("type").text("num"));
-        if(child.type == "collection")
-            span.append($("<span />").addClass("type").text("set"));
-        if(child.type == "object")
-            span.append($("<span />").addClass("type").text("obj"));
-        if(child.type == "sequence")
-            span.append($("<span />").addClass("type").text("seq"));
-        if(child.type == "reference")
-            span.append($("<span />").addClass("type ref").text("ref"));
-        span.data().schema = schema;
-        span.data().key = key;
-        span.data().path = this_path;
-        if(set_active) {
-            if(this_path == IV.get("selected-path")) span.addClass("active");
-            if(this_path == IV.get("selected-reference")) span.children(".ref").addClass("active");
-        }
-        var li = $("<li></li>")
-            .append(span);
-        if(child.type == "collection" || child.type == "object" || child.type == "sequence")
-            li.append(IV.renderSchema(child.fields, this_path, set_active));
-        elem.append(li);
-    }
-    return elem;
-};
 
-IV.renderDataSchema = function(schema) {
-    $("#data-schema").children().remove();
-    var rootelem_span = $('<span class="key">ROOT</span>');
-    var rootelem = $("<li/>").append(rootelem_span);
-    rootelem_span.data().path = "";
-    $("#data-schema").append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));
-    $("#data-schema").append(IV.renderSchema(schema.fields, "", true));
-    $("#data-schema span.key").each(function() {
-        var $this = $(this);
-        $this.click(function() {
-            $("#data-schema span.key").removeClass("active");
-            $this.addClass("active");
-            var data = $this.data();
-            IV.set("selected-path", data.path);
-        });
-    });
-    $("#data-schema span.ref").each(function() {
-        var $this = $(this);
-        var p = $this.parent();
-        $this.click(function(e) {
-            if($this.is(".active")) {
-                $("#data-schema span.ref").removeClass("active");
-                IV.set("selected-reference", null);
-            } else {
-                $("#data-schema span.ref").removeClass("active");
-                $this.addClass("active");
-                var data = p.data();
-                IV.set("selected-reference", data.path);
-            }
-            e.stopPropagation();
-        });
-    });
-};
 
 IV.loadData = function(data) {
     IV.data = data;
@@ -317,7 +143,6 @@ IV.loadDataset = function(name, callback) {
 // Include Other Files
 // ------------------------------------------------------------------------
 
-{{include: interface.js}}
 {{include: dataprovider.js}}
 {{include: tools/tools.js}}
 

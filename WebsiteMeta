@@ -27,8 +27,7 @@ env.IconFont("images/iconfont/ivfont.css",
 
 
 Javascript("libraries.js", [
-    #"libraries/jquery-1.9.1.js"
-    "libraries/jquery-2.0.0-beta3.js",
+    "libraries/jquery-2.0.3.js",
     "libraries/jquery.mousewheel.js",
     "libraries/js-yaml.js",
     "libraries/chroma.js"
@@ -36,10 +35,9 @@ Javascript("libraries.js", [
 
 Javascript("toolkit.js", [
     "scripts/utils.js",
-    "scripts/panel.js",
-    "scripts/menu.js",
     "scripts/core/core.js",
-    "scripts/controls.js",
+    "scripts/interface/interface.js",
+    "scripts/editor/editor.js",
     "scripts/toolkit.js"
 ])
 
