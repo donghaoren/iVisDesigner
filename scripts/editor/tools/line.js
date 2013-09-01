@@ -20,8 +20,6 @@ IV.tools.Line = {
                     style: IV.panels.style.createStyle()
                 });
                 IV.vis.addObject(line);
-                IV.raise("vis:objects");
-                IV.triggerRender("main,back");
                 $this.loc1 = null;
                 $this.loc2 = null;
                 IV.set("status", "Line: Select point A.");

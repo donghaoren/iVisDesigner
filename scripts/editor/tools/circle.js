@@ -16,8 +16,6 @@ IV.tools.Circle = {
                     style: IV.panels.style.createStyle()
                 });
                 IV.vis.addObject(circle);
-                IV.raise("vis:objects");
-                IV.triggerRender("main");
             }
         }, "tools:Circle");
     },
