@@ -51,3 +51,15 @@
     background-image: @existing, -webkit-gradient(linear, left top, left bottom, from(lighten(@color, @val)), to(@color));
     background-image: @existing, -moz-linear-gradient(top, lighten(@color, @val), @color);
 }
+
+.solid_background(@color, @val: 10%) {
+    background: @color;
+}
+
+.solid_background_inv(@color, @val: 10%) {
+    background: @color;
+}
+.solid_background_append(@existing, @color, @val: 10%) {
+    background-color: @color;
+    background-image: @existing;
+}

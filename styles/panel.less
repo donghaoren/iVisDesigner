@@ -7,14 +7,12 @@
 .tab {
     margin-bottom: 5px;
     & > .header {
-        border-radius: 2px 2px 0 0;
         white-space: nowrap;
         & > [data-tab] {
             display: inline-block;
             line-height: 15px;
             height: 15px;
             padding: 2px 5px;
-            border-radius: 2px 2px 0 0;
             cursor: pointer;
             &.active {
                 background-color: rgba(0, 0, 0, 0.1);
@@ -22,14 +20,12 @@
             &:hover, &:active {
                 color: white;
                 background-color: @active_color;
-                border-radius: 2px;
             }
         }
     }
     & > .tabs {
         padding: 4px;
         background-color: rgba(0, 0, 0, 0.1);
-        border-radius: 0 0 2px 2px;
     }
 }
 
@@ -39,7 +35,6 @@
     border: 1px solid @panel_titlecolor;
     overflow: hidden;
     z-index: 10;
-    border-radius: 2px;
     .select_none();
     .panel_background();
     .drop_shadow();
@@ -76,7 +71,6 @@
             padding: 0 5px;
             overflow: hidden;
             background: @panel_titlecolor;
-            border-radius: 2px;
         }
         .buttons {
             display: block;
@@ -91,7 +85,6 @@
                 width: 20px;
                 margin: 0; padding: 0;
                 text-align: center;
-                border-radius: 2px;
                 i { display: none; }
             }
             div:hover {
@@ -120,7 +113,6 @@
                 padding: 0 5px;
                 background: none;
                 overflow: hidden;
-                border-radius: 2px;
             }
             .buttons {
                 div {
@@ -169,7 +161,6 @@
         position: relative;
         cursor: pointer;
         padding-left: 7px;
-        border-radius: 2px 0 0 2px;
         //border-top:1px solid @panel_titlecolor;
         border-bottom:1px solid white;
         .panel_background();
@@ -185,7 +176,6 @@
 
         & > span.type {
             margin-left: 3px;
-            border-radius: 2px;
             padding: 0 3px;
             font-size: 10px;
             line-height: 14px;
@@ -232,7 +222,6 @@
         position: relative;
         cursor: pointer;
         padding-left: 10px;
-        border-radius: 2px 0 0 2px;
 
         span.type {
             font-size: 10px;
@@ -247,7 +236,6 @@
 
             span {
                 float: left;
-                border-radius: 2px;
                 padding: 0 3px;
                 font-size: 10px;
                 line-height: 14px;
@@ -290,7 +278,7 @@
 }
 
 #tools-container {
-    .tool-icons { padding: 2px; }
+    .tool-icons { padding: 5px; }
 }
 
 #panel-page-container {
@@ -306,7 +294,6 @@
     .group {
         display: inline-block;
         white-space: nowrap;
-        border-radius: 2px;
         margin-right: 4px;
     }
 }

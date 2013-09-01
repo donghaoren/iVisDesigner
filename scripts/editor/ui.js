@@ -2,7 +2,7 @@
 IV.addListener("command:panels.reset", function() {
     $("#panel-schema").IVPanel({ left: 10, top: 77, width: 180, height: 400 }).IVPanel("show");
     $("#panel-objects").IVPanel({ right: 10, top: 10, width: 200, height: 300 }).IVPanel("show");
-    $("#panel-tools").IVPanel({ left: 10, top: 10, width: 400, height: 42 }).IVPanel("show");
+    $("#panel-tools").IVPanel({ left: 10, top: 10, width: 400, height: 35 }).IVPanel("show");
     $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("hide");
     $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 50, width: 600 }).IVPanel("hide");
     $("#panel-style").IVPanel({ right: 10, bottom: 10, left: 10, height: 35 }).IVPanel("show");

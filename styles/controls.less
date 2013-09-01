@@ -5,26 +5,15 @@
     font-size: 13px;
     padding: 0 5px;
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    border-radius: 2px;
     .select_none();
-    .gradient_background(#CCC);
-
+    box-shadow: 0 0 1px gray;
     &:hover {
-        .gradient_background(@active_color);
+        .solid_background(@active_color);
         color: white;
     }
     &.active, &:active {
-        .gradient_background_inv(darken(@active_color, 5%));
+        .solid_background_inv(darken(@active_color, 5%));
         color: white;
-    }
-    &.btn-icon {
-        font-size: 24px;
-        line-height: 24px;
-        height: 24px;
-        padding: 2px;
-        vertical-align: baseline;
-        margin: 2px;
     }
 }
 
@@ -38,7 +27,8 @@ select {
     margin: 0; padding: 0;
     font-family: @main_font;
     .btn();
-    .gradient_background_append(@icon_arrowdown, #DDD);
+    border-radius: 0;
+    .solid_background_append(@icon_arrowdown, #DDD);
     background-size: 12px 12px, auto;
     background-position: right center;
     background-repeat: no-repeat;
@@ -46,7 +36,7 @@ select {
     &:hover, &.active, &:active {
         @color: @active_color;
         @val: 10%;
-        .gradient_background_append(@icon_arrowdown_w, @active_color);
+        .solid_background_append(@icon_arrowdown_w, @active_color);
         background-size: 12px 12px, auto;
         background-position: right center;
         background-repeat: no-repeat;
@@ -64,7 +54,6 @@ input {
     height: 17px;
 
     border: 1px solid gray;
-    border-radius: 2px;
 
     width: 2.6em;
     padding: 0 2px;
@@ -86,7 +75,6 @@ input {
 
     input {
         border-right: none;
-        border-radius: 2px 0 0 2px;
         &:hover, &:active, &:focus {
             border: 1px solid @active_color;
             border-right: none;
@@ -100,7 +88,6 @@ input {
         height: 17px;
         width: 10px;
         border: 1px solid gray;
-        border-radius: 0 2px 2px 0;
         text-align: center;
         cursor: n-resize;
         vertical-align: top;
@@ -119,7 +106,6 @@ input {
     span {
         display: inline-block;
         cursor: pointer;
-        border-radius: 2px;
         height: 19px;
         line-height: 19px;
         margin: 0 2px;
@@ -135,7 +121,6 @@ input {
     line-height: 19px;
     display: inline-block;
     white-space: nowrap;
-    border-radius: 2px;
     background-color: rgba(0, 0, 0, 0.1);
     padding: 2px;
     margin: -2px;
@@ -143,7 +128,6 @@ input {
     .path {
         display: inline-block;
         cursor: pointer;
-        border-radius: 2px;
         height: 19px;
         line-height: 19px;
         margin: 0 2px;
@@ -158,7 +142,6 @@ input {
         line-height: 19px;
         height: 19px;
         width: 10px;
-        border-radius: 2px;
         text-align: center;
         cursor: pointer;
         vertical-align: top;
@@ -176,7 +159,6 @@ input {
     width: 17px; height: 17px;
     border: 1px solid rgba(0, 0, 0, 0.2);
     cursor: pointer;
-    border-radius: 2px;
     &.empty {
         background-color: transparent !important;
     }
@@ -202,7 +184,6 @@ input {
             width: 6px;
             background-color: rgba(0, 0, 0, 0.3);
             height: 10px;
-            border-radius: 3px;
         }
         &.hide {
             display: none !important;

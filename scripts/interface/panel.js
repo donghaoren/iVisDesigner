@@ -80,7 +80,7 @@
                 var nx = e.pageX - mouse_state[1] + mouse_state[3];
                 var ny = e.pageY - mouse_state[2] + mouse_state[4];
                 if(nx < 50) nx = 50;
-                if(ny < 40) ny = 40;
+                if(ny < 35) ny = 35;
                 $this.css("width", nx + "px");
                 $this.css("height", ny + "px");
             }

@@ -16,14 +16,6 @@ CSS("toolkit.css", ["styles/toolkit.less",
                     "styles/font-awesome.css",
                     "images/iconfont/ivfont.css"])
 
-from SwBuilder.iconfont import CreateIconFont
-
-def iconfont_build_function(target, source, env):
-    t = str(target[0])
-    s = [ str(x) for x in source ]
-    CreateIconFont(env["name"], s, t)
-env.Append(BUILDERS = { "IconFont": Builder(action = iconfont_build_function) })
-
 env.IconFont("images/iconfont/ivfont.css",
              FindFiles("*.svg", "images/iconfont"),
              name = "iVisDesignerIcons")
