@@ -1,0 +1,94 @@
+// The path style object.
+
+IV.objects.PathStyle = IV.extend(IV.objects.Object, function() {
+    IV.objects.Object.call(this);
+    // Default attributes.
+    this.actions = [
+        {
+            type: "stroke",
+            color: new IV.Plain(IV.Color(0, 0, 0, 1)),
+            width: new IV.Plain(1)
+        },
+        {
+            type: "fill",
+            color: new IV.Plain(IV.Color(0, 0, 0, 1))
+        }
+    ];
+}, {
+    // path should be an array:
+    // string: command, IV.Vector: location.
+    renderPath: function(context, g, path) {
+        var $this = this;
+        this.actions.forEach(function(act) {
+            $this["_perform_" + act.type](act, context, g, path);
+        });
+    },
+    _run_path: function(g, path) {
+        // See http://www.w3.org/TR/2013/CR-2dcontext-20130806
+        // for canvas's path specification.
+        var i = 0;
+        while(i < path.length) {
+            var cmd = path[i++];
+            // M pt: move to
+            if(cmd == "M") {
+                g.moveTo(path[i].x, path[i].y);
+                i += 1;
+            }
+            // L pt: line to
+            if(cmd == "L") {
+                g.lineTo(path[i].x, path[i].y);
+                i += 1;
+            }
+            // Z: close path
+            if(cmd == "Z") {
+                g.closePath();
+            }
+            // B c1 c2 pt: bezier curve
+            if(cmd == "B") {
+                g.bezierCurveTo(path[i].x, path[i].y,
+                                path[i + 1].x, path[i + 1].y,
+                                path[i + 2].x, path[i + 2].y);
+                i += 3;
+            }
+            // Q c pt: quadratic curve
+            if(cmd == "Q") {
+                g.quadraticCurveTo(path[i].x, path[i].y,
+                                path[i + 1].x, path[i + 1].y);
+                i += 2;
+            }
+            // A pt radius angle1 angle2: arc
+            // from angle1 to angle2, clockwise.
+            if(cmd == "A") {
+                q.arc(path[i].x, path[i].y, path[i + 1], path[i + 2], path[i + 3]);
+                i += 4;
+            }
+            // E pt radiusX radiusY rotation angle1 angle2: ellipse
+            if(cmd == "E") {
+                q.ellipse(path[i].x, path[i].y,
+                          path[i + 1], path[i + 2],
+                          path[i + 3],
+                          path[i + 4],  path[i + 5]);
+                i += 6;
+            }
+            // C pt radius: circle
+            if(cmd == "C") {
+                q.arc(path[i].x, path[i].y, path[i + 1], 0, Math.PI * 2);
+                i += 2;
+            }
+        }
+    },
+    _perform_stroke: function(act, context, g, path) {
+        var color = act.color.get(context).toRGBA();
+        g.beginPath();
+        this._run_path(g, path);
+        g.strokeStyle = color;
+        g.lineWidth = act.width.get(context);
+        g.stroke();
+    },
+    _perform_fill: function(act, context, g, path) {
+        g.beginPath();
+        this._run_path(g, path);
+        g.fillStyle = color;
+        g.stroke();
+    }
+});

@@ -49,7 +49,7 @@ Binary("datasets/bjairdata.data", "datasets/bjairdata.data.yaml");
 Binary("datasets/graph.schema", "datasets/graph.yaml");
 Binary("datasets/graph.data", "datasets/graph.data.yaml");
 
-HTML("toolkit.html", "toolkit.html")
+HTML("toolkit.html", "html/toolkit.html")
 HTML("credits.html", "CREDITS.md")
 HTML("license.html", "LICENSE.md")
 

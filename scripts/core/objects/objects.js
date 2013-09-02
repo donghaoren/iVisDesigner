@@ -33,6 +33,7 @@ IV.objects.Object.prototype = {
 };
 
 {{include: base.js}}
+{{include: style.js}}
 {{include: track.js}}
 {{include: shapes.js}}
 {{include: layout.js}}

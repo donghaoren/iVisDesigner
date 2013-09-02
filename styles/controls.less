@@ -6,7 +6,6 @@
     padding: 0 5px;
     cursor: pointer;
     .select_none();
-    box-shadow: 0 0 1px gray;
     &:hover {
         .solid_background(@active_color);
         color: white;
@@ -28,8 +27,9 @@ select {
     font-family: @main_font;
     .btn();
     border-radius: 0;
-    .solid_background_append(@icon_arrowdown, #DDD);
-    background-size: 12px 12px, auto;
+    background-color: transparent;
+    background-image: @icon_arrowdown;
+    background-size: 12px 12px;
     background-position: right center;
     background-repeat: no-repeat;
     padding-right: 15px;

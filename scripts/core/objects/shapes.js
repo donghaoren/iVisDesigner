@@ -7,59 +7,48 @@
 
 (function() {
 
-var Circle = IV.extend(IV.objects.Object, function(path, info) {
-    IV.objects.Object.call(this);
-    this.type = "Circle";
-    this.path = path;
-    // Center
-    this.center = info.center;
-    // Style
+IV.objects.Shape = IV.extend(IV.objects.Object,function(info) {
+    this.path = info.path;
     if(info.style)
         this.style = info.style;
-    else {
-        this.style = new IV.objects.Style({
-            fill_style: new IV.Color(0, 0, 0, 1),
-            radius: 3
+    else
+        this.style = new IV.objects.PathStyle();
+}, {
+    render: function(g, data) {
+        var $this = this;
+        $this.path.enumerate(data, function(context) {
+            $this.shapePaths(context, function(path) {
+                $this.style.renderPath(context, g, path);
+            });
+        });
+    },
+    renderSelected: function(g, data) {
+        var $this = this;
+        $this.path.enumerate(data, function(context) {
+            $this.shapePaths(context, function(path) {
+                $this.style.renderPath(context, g, path);
+            });
         });
     }
+});
+
+IV.objects.Circle = IV.extend(IV.objects.Shape, function(info) {
+    IV.objects.Shape.call(this);
+    this.type = "Circle";
+    // Center.
+    this.center = info.center ? info.center : new IV.objects.Plain(new IV.Vector(0, 0));
+    this.radius = info.radius ? info.center : new IV.objects.Plain(2);
 }, {
+    shapePaths: function(context, cb) {
+        cb([
+            "C", this.center.getPoint(context), this.radius.get(context)
+        ]);
+    },
     can: function(cap) {
         if(cap == "get-point") return true;
     },
     get: function(context) {
         return this.center.getPoint(context);
-    },
-    render: function(g, data) {
-        var $this = this;
-        data.enumeratePath($this.path, function(context) {
-            var pt = $this.center.getPoint(context);
-            var style = $this.style.getStyle(context);
-            var radius = style.radius;
-            g.beginPath();
-            g.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
-            if(style.fill_style) {
-                g.fillStyle = style.fill_style.toRGBA();
-                g.fill();
-            }
-            if(style.stroke_style) {
-                g.strokeStyle = style.stroke_style.toRGBA();
-                if(style.width) g.lineWidth = style.width;
-                g.stroke();
-            }
-        });
-    },
-    renderSelected: function(g, data) {
-        var $this = this;
-        data.enumeratePath($this.path, function(context) {
-            var pt = $this.center.getPoint(context);
-            var style = $this.style.getStyle(context);
-            var radius = style.radius;
-            g.beginPath();
-            g.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
-            g.strokeStyle = IV.colors.selection.toRGBA();
-            g.lineWidth = 1.0 / IV.viewarea.scale;
-            g.stroke();
-        });
     },
     select: function(pt, data, action) {
         var rslt = null;
@@ -95,55 +84,17 @@ var Circle = IV.extend(IV.objects.Object, function(path, info) {
     }
 });
 
-IV.objects.Circle = Circle;
-
-var Line = IV.extend(IV.objects.Object, function(path, info) {
-    IV.objects.Object.call(this);
+IV.objects.Line = IV.extend(IV.objects.Shape, function(info) {
+    IV.objects.Shape.call(this);
     this.type = "Line";
-    this.path = path;
     this.point1 = info.point1;
     this.point2 = info.point2;
-    // Style
-    if(info.style)
-        this.style = info.style;
-    else {
-        this.style = new IV.objects.Style({
-            stroke_style: new IV.Color(0, 0, 0, 1),
-            width: 1
-        });
-    }
 }, {
-    render: function(g, data) {
-        var $this = this;
-        data.enumeratePath($this.path, function(context) {
-            var p1 = $this.point1.getPoint(context);
-            var p2 = $this.point2.getPoint(context);
-            var style = $this.style.getStyle(context);
-            g.beginPath();
-            g.moveTo(p1.x, p1.y);
-            g.lineTo(p2.x, p2.y);
-            if(style.stroke_style) {
-                g.strokeStyle = style.stroke_style.toRGBA();
-                if(style.width) g.lineWidth = style.width;
-                if(style.line_cap) g.lineCap = style.line_cap;
-                if(style.line_join) g.lineJoin = style.line_join;
-                g.stroke();
-            }
-        });
-    },
-    renderSelected: function(g, data) {
-        var $this = this;
-        data.enumeratePath($this.path, function(context) {
-            var p1 = $this.point1.getPoint(context);
-            var p2 = $this.point2.getPoint(context);
-            var style = $this.style.getStyle(context);
-            g.beginPath();
-            g.moveTo(p1.x, p1.y);
-            g.lineTo(p2.x, p2.y);
-            g.strokeStyle = IV.colors.selection.toRGBA();
-            g.lineWidth = 1.0 / IV.viewarea.scale;
-            g.stroke();
-        });
+    shapePaths: function(context, cb) {
+        cb([
+            "M", this.point1.getPoint(context),
+            "L", this.point2.getPoint(context)
+        ]);
     },
     select: function(pt, data, action) {
         var rslt = null;
@@ -163,67 +114,23 @@ var Line = IV.extend(IV.objects.Object, function(path, info) {
 
 IV.objects.Line = Line;
 
-var LineThrough = IV.extend(IV.objects.Object, function(path, info) {
-    IV.objects.Object.call(this);
-    this.path = path;
+var LineThrough = IV.extend(IV.objects.Shape, function(info) {
+    IV.objects.Shape.call(this);
     this.points = info.points;
     this.type = "LineThrough";
-    // Style
-    if(info.style)
-        this.style = info.style;
-    else {
-        this.style = new IV.objects.Style({
-            stroke_style: new IV.Color(0, 0, 0, 1),
-            width: 1
-        });
-    }
 }, {
-    render: function(g, data) {
+    shapePaths: function(context, cb) {
         var $this = this;
-        var index = 0;
-        var style = null;
-        data.enumeratePath($this.path, function(fctx) {
-            g.beginPath();
-            fctx.enumeratePath($this.points.getPath(), function(context) {
-                var p = $this.points.getPoint(context);
-                if(!style) style = $this.style.getStyle(context);
-                if(index == 0) {
-                    g.moveTo(p.x, p.y);
-                } else {
-                    g.lineTo(p.x, p.y);
-                }
-                index++;
-            });
-            if(style && style.stroke_style) {
-                g.strokeStyle = style.stroke_style.toRGBA();
-                if(style.width) g.lineWidth = style.width;
-                if(style.line_cap) g.lineCap = style.line_cap;
-                if(style.line_join) g.lineJoin = style.line_join;
-                g.stroke();
+        var line = [];
+        $this.points.getPath().enumerate(context.val(), function(ctx) {
+            if(line.length == 0) {
+                line.push("M");
+            } else {
+                line.push("L");
             }
+            line.push($this.points.getPoint(ctx));
         });
-    },
-    renderSelected: function(g, data) {
-        var $this = this;
-        var index = 0;
-        var style = null;
-        data.enumeratePath($this.path, function(fctx) {
-            g.beginPath();
-            fctx.enumeratePath($this.points.getPath(), function(context) {
-                var p = $this.points.getPoint(context);
-                if(!style) style = $this.style.getStyle(context);
-                if(index == 0) {
-                    g.moveTo(p.x, p.y);
-                } else {
-                    g.lineTo(p.x, p.y);
-                }
-                index++;
-            });
-            g.lineJoin = "round";
-            g.strokeStyle = IV.colors.selection.toRGBA();
-            g.lineWidth = 1.0 / IV.viewarea.scale;
-            g.stroke();
-        });
+        cb(line);
     },
     select: function(pt, data, action) {
         var rslt = null;

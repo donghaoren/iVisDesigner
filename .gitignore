@@ -5,6 +5,7 @@ images/unused
 images/iconfont/*.svg
 images/iconfont/*.ttf
 images/iconfont/*.css
+images/iconfont/*.js
 *.sublime-workspace
 *.sublime-project
 *.dblite
