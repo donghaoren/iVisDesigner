@@ -8,7 +8,7 @@ Path
 : Specifies a particular location within the schema for iterating over data items.
 
 Object
-: Fundamentals of a visualization, including the following types.
+: Fundamentals of a visualization, including the following types. Should be serializable.
 
 Graphical Objects
 : Map data items from a path to a set of graphical elements (eg: line, circle).
@@ -19,3 +19,6 @@ Guide Objects
 Generator Objects
 : Generate values into the dataset, such as computing averages,
   running a force-directed layout algorithm, etc.
+
+Utilitary Objects
+: Facilitate other objects.

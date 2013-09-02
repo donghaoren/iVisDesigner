@@ -56,7 +56,7 @@ IV.Visualization.prototype.render = function(data, g) {
         try {
             obj.render(g, data);
         } catch(e) {
-            console.log("Render", obj, e);
+            console.log("Render", obj, e.stack);
         }
         g.restore();
     });

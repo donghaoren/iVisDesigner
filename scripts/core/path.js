@@ -4,21 +4,25 @@
 // Path = [key1]:key2:key3:value
 IV.Path = function(str) {
     if(!str) str = "";
-    var slices = str.split(":");
-    this.components = [];
-    for(var i = 0; i < slices.length; i++) {
-        var c = slices[i];
-        if(c[0] == "[" && c[c.length - 1] == "]") {
-            this.components.push({
-                type: "iterate",
-                name: c.substr(1, c.length - 2)
-            });
-        } else {
-            this.components.push({
-                type: "object",
-                name: c
-            });
+    if(typeof(str) == "string") {
+        var slices = str.split(":");
+        this.components = [];
+        for(var i = 0; i < slices.length; i++) {
+            var c = slices[i];
+            if(c[0] == "[" && c[c.length - 1] == "]") {
+                this.components.push({
+                    type: "iterate",
+                    name: c.substr(1, c.length - 2)
+                });
+            } else {
+                this.components.push({
+                    type: "object",
+                    name: c
+                });
+            }
         }
+    } else {
+        this.components = str;
     }
 };
 IV.Path.prototype.slice = function(start, length) {
@@ -106,3 +110,18 @@ IV.Path.prototype.toString = function() {
     }).join(":");
 };
 
+IV.Path.commonPrefix = function(paths) {
+    if(!paths || paths.length == 0) return new IV.Path();
+    var common = paths[0].components.slice();
+    for(var i = 1; i < paths.length; i++) {
+        var p = paths[i].components;
+        var t;
+        for(t = 0; t < common.length && t < p.length; t++) {
+            if(common[t].type != p[t] || common[t].name != p[t].name) {
+                break;
+            }
+        }
+        common = common.slice(0, t);
+    }
+    return new IV.Path(common);
+};

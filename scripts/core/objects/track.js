@@ -7,13 +7,13 @@
 
 (function() {
 
-var Track = IV.extend(IV.objects.Object, function(path, anchor1, anchor2) {
+var Track = IV.extend(IV.objects.Object, function(info) {
     IV.objects.Object.call(this);
+    this.path = info.path;
     this.type = "Track";
-    this.anchor1 = anchor1;
-    this.anchor2 = anchor2;
-    this.path = path;
-    this.guide_path = IV.path.deepest([ anchor1.getPath(), anchor2.getPath() ]);
+    this.anchor1 = info.anchor1;
+    this.anchor2 = info.anchor2;
+    this.guide_path = IV.Path.commonPrefix([ this.anchor1.getPath(), this.anchor2.getPath() ]);
 }, {
     can: function(cap) {
         if(cap == "get-point") return true;

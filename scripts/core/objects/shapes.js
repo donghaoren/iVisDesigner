@@ -5,8 +5,6 @@
 // scripts/objects/shapes.js
 // Define objects for various shapes.
 
-(function() {
-
 IV.objects.Shape = IV.extend(IV.objects.Object,function(info) {
     this.path = info.path;
     if(info.style)
@@ -33,7 +31,7 @@ IV.objects.Shape = IV.extend(IV.objects.Object,function(info) {
 });
 
 IV.objects.Circle = IV.extend(IV.objects.Shape, function(info) {
-    IV.objects.Shape.call(this);
+    IV.objects.Shape.call(this, info);
     this.type = "Circle";
     // Center.
     this.center = info.center ? info.center : new IV.objects.Plain(new IV.Vector(0, 0));
@@ -85,7 +83,7 @@ IV.objects.Circle = IV.extend(IV.objects.Shape, function(info) {
 });
 
 IV.objects.Line = IV.extend(IV.objects.Shape, function(info) {
-    IV.objects.Shape.call(this);
+    IV.objects.Shape.call(this, info);
     this.type = "Line";
     this.point1 = info.point1;
     this.point2 = info.point2;
@@ -112,10 +110,9 @@ IV.objects.Line = IV.extend(IV.objects.Shape, function(info) {
     }
 });
 
-IV.objects.Line = Line;
 
-var LineThrough = IV.extend(IV.objects.Shape, function(info) {
-    IV.objects.Shape.call(this);
+IV.objects.LineThrough = IV.extend(IV.objects.Shape, function(info) {
+    IV.objects.Shape.call(this, info);
     this.points = info.points;
     this.type = "LineThrough";
 }, {
@@ -151,7 +148,3 @@ var LineThrough = IV.extend(IV.objects.Shape, function(info) {
         return rslt;
     }
 });
-
-IV.objects.LineThrough = LineThrough;
-
-})();

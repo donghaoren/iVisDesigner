@@ -18,6 +18,12 @@ IV.config = $.extend({
 IV.newVisualization = function() {
     var vis = new IV.Visualization;
     IV.editor.setVisualization(vis);
+    var line1 = new IV.objects.Line({
+        path: new IV.Path(""),
+        point1: new IV.objects.Plain(new IV.Vector(10, 0)),
+        point2: new IV.objects.Plain(new IV.Vector(10, 100))
+    });
+    vis.addObject(line1);
 };
 
 IV.loadData = function(data, schema) {

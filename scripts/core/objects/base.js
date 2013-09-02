@@ -18,6 +18,7 @@ var Plain = IV.extend(IV.objects.Object, function(obj) {
         if(cap == "get-number") return true;
         if(cap == "get-style") return true;
     },
+    getPath: function() { return new IV.Path(""); },
     get: function() { return this.obj; },
     clone: function() {
         return new Plain(IV.deepClone(this.obj));

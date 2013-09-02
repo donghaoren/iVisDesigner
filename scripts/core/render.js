@@ -1,3 +1,6 @@
+// Function: IV.getOptimalRatio()
+// Get optimal resoultion ratio for canvas rendering.
+
 IV.getOptimalRatio = function() {
     var canvas = document.createElement("canvas");
     var g = canvas.getContext("2d");
@@ -10,6 +13,10 @@ IV.getOptimalRatio = function() {
     return dev_ratio / backing_ratio;
 };
 
+// Class: IV.CanvasManager
+// Class to manage canvases.
+// Helps adding canvas, and maintain heights.
+
 IV.CanvasManager = function(width, height) {
     this.width = width ? width : 600;
     this.height = height ? height : 400;
@@ -17,14 +24,17 @@ IV.CanvasManager = function(width, height) {
     this.canvas = { };
 };
 
-IV.CanvasManager.prototype.add = function(key, canvas) {
+// Add a canvas.
+IV.CanvasManager.prototype.add = function(key, canvas, set_css) {
     this.canvas[key] = canvas;
 };
 
+// Get a canvas by name.
 IV.CanvasManager.prototype.get = function(key) {
     return this.canvas[key];
 };
 
+// Resize the canvases.
 IV.CanvasManager.prototype.resize = function(width, height, set_css) {
     this.width = width;
     this.height = height;
@@ -41,6 +51,8 @@ IV.CanvasManager.prototype.resize = function(width, height, set_css) {
     }
 };
 
+// Class: IV.Renderer
+// Visualization renderer.
 
 IV.Renderer = function() {
     this.data = null;
@@ -49,7 +61,7 @@ IV.Renderer = function() {
     this.manager = null;
     this.center = new IV.Vector(0, 0);
     this.scale = 1;
-    this.needs_render_front = false;
+    this.needs_render = { };
     var $this = this;
 
     IV.EventSource.call(this);
@@ -68,30 +80,38 @@ IV.Renderer = function() {
 
 IV.implement(IV.EventSource, IV.Renderer);
 
+// Set dataset.
+// Note that the schema is only needed for editing, not rendering.
 IV.Renderer.prototype.setData = function(data) {
     this.data = data;
 };
 
-IV.Renderer.prototype.setVisualization = function(data) {
+// Set visualzation to render, attach event handlers.
+IV.Renderer.prototype.setVisualization = function(vis) {
     this.vis = vis;
 };
 
+// Set view transform, given center and scale.
 IV.Renderer.prototype.setView = function(center, scale) {
     this.center = center;
     this.scale = scale;
 };
 
+// Set the CanvasManager.
 IV.Renderer.prototype.setCanvasManager = function(manager) {
     this.manager = manager;
 };
 
+// Trigger render for layers.
 IV.Renderer.prototype.trigger = function(items) {
     if(items === null || items === undefined) {
         items = [ "front", "back", "main", "overlay" ];
     }
     if(typeof(items) == "string") items = [ items ];
-
+    for(var i = 0; i < items.length; i++)
+        this.needs_render[items[i]] = true;
 };
+
 IV.Renderer.prototype._set_transform = function(ctx) {
     ctx.translate(this.center.x + this.manager.width / 2, this.center.y + this.manager.height / 2);
     ctx.scale(this.scale, this.scale);
@@ -100,7 +120,7 @@ IV.Renderer.prototype._set_transform = function(ctx) {
 IV.Renderer.prototype._perform_render = function(key) {
     var canvas = this.manager.get(key);
     var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, this.view.width, this.view.height);
+    ctx.clearRect(0, 0, this.manager.width, this.manager.height);
     ctx.save();
     this._set_transform(ctx);
 
@@ -111,6 +131,7 @@ IV.Renderer.prototype._perform_render = function(key) {
     ctx.restore();
 };
 
+// Render the visualizaion.
 IV.Renderer.prototype.render = function() {
     for(var key in this.needs_render) {
         if(!this.needs_render[key]) continue;

@@ -6,12 +6,12 @@ IV.objects.PathStyle = IV.extend(IV.objects.Object, function() {
     this.actions = [
         {
             type: "stroke",
-            color: new IV.Plain(IV.Color(0, 0, 0, 1)),
-            width: new IV.Plain(1)
+            color: new IV.objects.Plain(new IV.Color(0, 0, 0, 1)),
+            width: new IV.objects.Plain(1)
         },
         {
             type: "fill",
-            color: new IV.Plain(IV.Color(0, 0, 0, 1))
+            color: new IV.objects.Plain(new IV.Color(0, 0, 0, 1))
         }
     ];
 }, {
@@ -59,12 +59,12 @@ IV.objects.PathStyle = IV.extend(IV.objects.Object, function() {
             // A pt radius angle1 angle2: arc
             // from angle1 to angle2, clockwise.
             if(cmd == "A") {
-                q.arc(path[i].x, path[i].y, path[i + 1], path[i + 2], path[i + 3]);
+                g.arc(path[i].x, path[i].y, path[i + 1], path[i + 2], path[i + 3]);
                 i += 4;
             }
             // E pt radiusX radiusY rotation angle1 angle2: ellipse
             if(cmd == "E") {
-                q.ellipse(path[i].x, path[i].y,
+                g.ellipse(path[i].x, path[i].y,
                           path[i + 1], path[i + 2],
                           path[i + 3],
                           path[i + 4],  path[i + 5]);
@@ -72,23 +72,24 @@ IV.objects.PathStyle = IV.extend(IV.objects.Object, function() {
             }
             // C pt radius: circle
             if(cmd == "C") {
-                q.arc(path[i].x, path[i].y, path[i + 1], 0, Math.PI * 2);
+                g.arc(path[i].x, path[i].y, path[i + 1], 0, Math.PI * 2);
                 i += 2;
             }
         }
     },
     _perform_stroke: function(act, context, g, path) {
         var color = act.color.get(context).toRGBA();
-        g.beginPath();
-        this._run_path(g, path);
         g.strokeStyle = color;
         g.lineWidth = act.width.get(context);
+        g.beginPath();
+        this._run_path(g, path);
         g.stroke();
     },
     _perform_fill: function(act, context, g, path) {
+        var color = act.color.get(context).toRGBA();
+        g.fillStyle = color;
         g.beginPath();
         this._run_path(g, path);
-        g.fillStyle = color;
-        g.stroke();
+        g.fill();
     }
 });
