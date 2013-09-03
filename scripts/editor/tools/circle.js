@@ -4,11 +4,11 @@
 
 (function() {
 
-IV.tools.Circle = {
+Tools.Circle = {
     onActive: function() {
         var $this = this;
         IV.set("status", "Circle: Select the center.");
-        IV.tools.beginSelectLocation(function(loc) {
+        Tools.beginSelectLocation(function(loc) {
             var path = IV.get("selected-path");
             if(IV.data.getSchema(path)) {
                 var circle = new IV.objects.Circle(path, {
@@ -20,7 +20,7 @@ IV.tools.Circle = {
         }, "tools:Circle");
     },
     onInactive: function() {
-        IV.tools.endSelectLocation("tools:Circle");
+        Tools.endSelectLocation("tools:Circle");
     }
 };
 

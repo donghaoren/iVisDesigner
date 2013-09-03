@@ -34,6 +34,10 @@ IV.CanvasManager.prototype.get = function(key) {
     return this.canvas[key];
 };
 
+IV.CanvasManager.prototype._init_transform = function(ctx) {
+    ctx.setTransform(this.ratio, 0, 0, this.ratio, 0, 0);
+};
+
 // Resize the canvases.
 IV.CanvasManager.prototype.resize = function(width, height, set_css) {
     this.width = width;
@@ -122,6 +126,7 @@ IV.Renderer.prototype._perform_render = function(key) {
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, this.manager.width, this.manager.height);
     ctx.save();
+    this.manager._init_transform(ctx);
     this._set_transform(ctx);
 
     this.raise(key + ":before", this.data, ctx);

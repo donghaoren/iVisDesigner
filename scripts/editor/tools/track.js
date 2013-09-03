@@ -1,12 +1,12 @@
 (function() {
 
-IV.tools.Track = {
+Tools.Track = {
     onActive: function() {
         var $this = this;
         $this.loc1 = null;
         $this.loc2 = null;
         IV.set("status", "Track: Select point A.");
-        IV.tools.beginSelectLocation(function(loc) {
+        Tools.beginSelectLocation(function(loc) {
             if(!$this.loc1) {
                 $this.loc1 = loc;
                 IV.set("status", "Track: Select point B.");
@@ -29,7 +29,7 @@ IV.tools.Track = {
         }, "tools:Track");
     },
     onInactive: function() {
-        IV.tools.endSelectLocation("tools:Track");
+        Tools.endSelectLocation("tools:Track");
     }
 };
 
@@ -37,7 +37,7 @@ IV.tools.Track = {
 
 (function() {
 
-IV.tools.Scatter = {
+Tools.Scatter = {
     onActive: function() {
         var obj1 = null;
         var obj2 = null;
@@ -46,7 +46,7 @@ IV.tools.Scatter = {
 
         IV.set("status", "Scatter: Select track A.");
 
-        IV.tools.beginSelectObject(function(context) {
+        Tools.beginSelectObject(function(context) {
             var path = IV.get("selected-path");
             if(!context) {
                 obj1 = null;
@@ -82,7 +82,7 @@ IV.tools.Scatter = {
         }, "tools:Line");
     },
     onInactive: function() {
-        IV.tools.endSelectObject("tools:Line");
+        Tools.endSelectObject("tools:Line");
     }
 };
 

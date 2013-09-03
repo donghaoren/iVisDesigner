@@ -26,25 +26,17 @@ IV.listen("status", function(s) {
         var offsetY = e.pageY - $("#view").offset().top;
         var pt = new IV.Vector(offsetX, offsetY);
         var o = { offset: pt,
-                  offsetX: pt.x,
-                  offsetY: pt.y,
-                  pageX: e.pageX,
-                  pageY: e.pageY,
                   page: new IV.Vector(e.pageX, e.pageY),
                   shift: e.shiftKey };
         mouse_state = true;
         IV.editor.raise("view:mousedown", o);
-        IV.render();
+        IV.editor.renderer.render();
     });
     $(window).mousemove(function(e) {
         var offsetX = e.pageX - $("#view").offset().left;
         var offsetY = e.pageY - $("#view").offset().top;
         var pt = new IV.Vector(offsetX, offsetY);
         var o = { offset: pt,
-                  offsetX: pt.x,
-                  offsetY: pt.y,
-                  pageX: e.pageX,
-                  pageY: e.pageY,
                   page: new IV.Vector(e.pageX, e.pageY),
                   shift: e.shiftKey };
         var w = $("#view").width();
@@ -52,7 +44,7 @@ IV.listen("status", function(s) {
         var insideView = offsetX >= 0 && offsetX < w && offsetY >= 0 && offsetY < h;
         if(mouse_state || insideView) {
             IV.editor.raise("view:mousemove", o);
-            IV.render();
+            IV.editor.renderer.render();
         }
         return true;
     });
@@ -61,15 +53,11 @@ IV.listen("status", function(s) {
         var offsetY = e.pageY - $("#view").offset().top;
         var pt = new IV.Vector(offsetX, offsetY);
         var o = { offset: pt,
-                  offsetX: pt.x,
-                  offsetY: pt.y,
-                  pageX: e.pageX,
-                  pageY: e.pageY,
                   page: new IV.Vector(e.pageX, e.pageY),
                   shift: e.shiftKey };
         mouse_state = false;
         IV.editor.raise("view:mouseup", o);
-        IV.render();
+        IV.editor.renderer.render();
         return true;
     });
     // For iPad like platforms:
@@ -83,40 +71,31 @@ IV.listen("status", function(s) {
         var offsetX = e.touches[0].pageX - $("#view").offset().left;
         var offsetY = e.touches[0].pageY - $("#view").offset().top;
         var pt = new IV.Vector(offsetX, offsetY);
-        var o = { offsetX: pt.x,
-                  offsetY: pt.y,
-                  pageX: e.pageX,
-                  pageY: e.pageY,
+        var o = { offset: pt,
                   page: new IV.Vector(e.pageX, e.pageY),
                   shift: false };
         IV.editor.raise("view:mousedown", o);
-        IV.render();
+        IV.editor.renderer.render();
     });
     view_elem.addEventListener('touchmove',function(e) {
         var offsetX = e.touches[0].pageX - $("#view").offset().left;
         var offsetY = e.touches[0].pageY - $("#view").offset().top;
         var pt = new IV.Vector(offsetX, offsetY);
-        var o = { offsetX: pt.x,
-                  offsetY: pt.y,
-                  pageX: e.pageX,
-                  pageY: e.pageY,
+        var o = { offset: pt,
                   page: new IV.Vector(e.pageX, e.pageY),
                   shift: false };
         IV.editor.raise("view:mousemove", o);
-        IV.render();
+        IV.editor.renderer.render();
     });
     view_elem.addEventListener('touchend', function(e) {
         var offsetX = e.changedTouches[0].pageX - $("#view").offset().left;
         var offsetY = e.changedTouches[0].pageY - $("#view").offset().top;
         var pt = new IV.Vector(offsetX, offsetY);
-        var o = { offsetX: pt.x,
-                  offsetY: pt.y,
-                  pageX: e.pageX,
-                  pageY: e.pageY,
+        var o = { offset: pt,
                   page: new IV.Vector(e.pageX, e.pageY),
                   shift: false };
         IV.editor.raise("view:mouseup", o);
-        IV.render();
+        IV.editor.renderer.render();
     });
 
     IV.log = function(str) {

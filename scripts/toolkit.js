@@ -18,15 +18,39 @@ IV.config = $.extend({
 IV.newVisualization = function() {
     var vis = new IV.Visualization;
     IV.editor.setVisualization(vis);
-    var line1 = new IV.objects.Line({
-        path: new IV.Path(""),
-        point1: new IV.objects.Plain(new IV.Vector(10, 0)),
-        point2: new IV.objects.Plain(new IV.Vector(10, 100))
+    var stat = IV.Path.computeBasicStatistics(new IV.Path("[cars]:mpg"), IV.data);
+    var axis1 = new IV.objects.Track({
+        path: new IV.Path("[cars]:mpg"),
+        anchor1: new IV.objects.Plain(new IV.Vector(-5, 0)),
+        anchor2: new IV.objects.Plain(new IV.Vector(-5, 100)),
+        min: stat.min - stat.range / 10,
+        max: stat.max + stat.range / 10
     });
-    vis.addObject(line1);
+    stat = IV.Path.computeBasicStatistics(new IV.Path("[cars]:horsepower"), IV.data);
+    var axis2 = new IV.objects.Track({
+        path: new IV.Path("[cars]:horsepower"),
+        anchor1: new IV.objects.Plain(new IV.Vector(100, -5)),
+        anchor2: new IV.objects.Plain(new IV.Vector(0, -5)),
+        min: stat.min - stat.range / 10,
+        max: stat.max + stat.range / 10
+    });
+    var scatter = new IV.objects.Scatter({
+        track1: axis1,
+        track2: axis2
+    });
+    var pt = new IV.objects.Circle({
+        path: new IV.Path("[cars]"),
+        center: scatter,
+        radius: new IV.objects.Plain(2)
+    });
+    vis.addObject(axis1);
+    vis.addObject(axis2);
+    vis.addObject(scatter);
+    vis.addObject(pt);
 };
 
 IV.loadData = function(data, schema) {
+    IV.data = data;
     IV.editor.setData(data, schema);
     IV.newVisualization();
 };

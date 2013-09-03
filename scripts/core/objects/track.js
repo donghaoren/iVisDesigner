@@ -13,24 +13,27 @@ var Track = IV.extend(IV.objects.Object, function(info) {
     this.type = "Track";
     this.anchor1 = info.anchor1;
     this.anchor2 = info.anchor2;
-    this.guide_path = IV.Path.commonPrefix([ this.anchor1.getPath(), this.anchor2.getPath() ]);
+    this.min = info.min !== undefined ? info.min : 0;
+    this.max = info.max !== undefined ? info.max : 100;
+    this.guide_path = IV.Path.commonPrefix([ this.anchor1.getGuidePath(), this.anchor2.getGuidePath() ]);
 }, {
     can: function(cap) {
         if(cap == "get-point") return true;
     },
+    getGuidePath: function() {
+        return this.guide_path;
+    },
     get: function(context) {
         var p1 = this.anchor1.getPoint(context);
         var p2 = this.anchor2.getPoint(context);
-        var value = context.get(this.path);
-        var s = context.getSchema(this.path);
-        if(s.max !== undefined && s.min !== undefined)
-            value = (value - s.min) / (s.max - s.min);
+        var value = context.get(this.path).val();
+        value = (value - this.min) / (this.max - this.min);
         return p1.interp(p2, value);
     },
     enumerateGuide: function(data, callback) {
         var $this = this;
         var count = 0;
-        data.enumeratePath(this.guide_path, function(context) {
+        this.guide_path.enumerate(data, function(context) {
             var p1 = $this.anchor1.getPoint(context);
             var p2 = $this.anchor2.getPoint(context);
             callback(p1, p2, context);
@@ -82,7 +85,7 @@ var Track = IV.extend(IV.objects.Object, function(info) {
         var rslt = null;
         this.enumerateGuide(data, function(p1, p2) {
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
-            if(d < 4.0 / IV.viewarea.scale) {
+            if(d < 4.0 / IV.editor.renderer.scale) {
                 rslt = { distance: d };
                 if(action == "move") {
                     var move_targets = [];
@@ -123,13 +126,12 @@ var Track = IV.extend(IV.objects.Object, function(info) {
     }
 });
 
-var Scatter = IV.extend(IV.objects.Object, function(track1, track2) {
+var Scatter = IV.extend(IV.objects.Object, function(info) {
     IV.objects.Object.call(this);
     this.type = "Scatter";
-    this.track1 = track1;
-    this.track2 = track2;
-    this.path = IV.path.deepest([ track1.getPath(), track2.getPath() ]);
-    this.guide_path = IV.path.deepest([ track1.getGuidePath(), track2.getGuidePath() ]);
+    this.track1 = info.track1;
+    this.track2 = info.track2;
+    this.guide_path = IV.Path.commonPrefix([ this.track1.getGuidePath(), this.track2.getGuidePath() ]);
 }, {
     can: function(cap) {
         if(cap == "get-point") return true;
@@ -137,7 +139,6 @@ var Scatter = IV.extend(IV.objects.Object, function(track1, track2) {
     get: function(context) {
         var p1 = this.track1.getPoint(context);
         var p2 = this.track2.getPoint(context);
-
 
         var d2 = this.track1.anchor2.getPoint(context)
                 .sub(this.track1.anchor1.getPoint(context)).rotate90();
@@ -150,7 +151,7 @@ var Scatter = IV.extend(IV.objects.Object, function(track1, track2) {
     enumerateGuide: function(data, callback) {
         var $this = this;
         var count = 0;
-        data.enumeratePath(this.guide_path, function(context) {
+        this.guide_path.enumerate(data, function(context) {
             var p1 = $this.track1.anchor1.getPoint(context);
             var p2 = $this.track1.anchor2.getPoint(context);
             var q1 = $this.track2.anchor1.getPoint(context);
@@ -169,14 +170,11 @@ var Scatter = IV.extend(IV.objects.Object, function(track1, track2) {
         var kscatter = function(k1, k2) {
             return scatter(p1.interp(p2, k1), q1.interp(q2, k2));
         };
-        var a11 = kscatter(0.1, 0.1);
-        var a12 = kscatter(0.1, 0.9);
-        var a21 = kscatter(0.9, 0.1);
-        var a22 = kscatter(0.9, 0.9);
-        var lines = [[kscatter(0.2, 0.1), a11], [a11, kscatter(0.1, 0.2)],
-                     [kscatter(0.2, 0.9), a12], [a12, kscatter(0.1, 0.8)],
-                     [kscatter(0.8, 0.1), a21], [a21, kscatter(0.9, 0.2)],
-                     [kscatter(0.8, 0.9), a22], [a22, kscatter(0.9, 0.8)]];
+        var s = 0.05;
+        var lines = [[kscatter(0, s), kscatter(0, 1 - s)],
+                     [kscatter(1, s), kscatter(1, 1 - s)],
+                     [kscatter(s, 0), kscatter(1 - s, 0)],
+                     [kscatter(s, 1), kscatter(1 - s, 1)]];
         return lines;
     },
     renderGuide: function(g, data) {

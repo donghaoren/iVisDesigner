@@ -14,9 +14,12 @@ IV.editor.canvas.add("main", document.getElementById("canvas-main"));
 IV.editor.canvas.add("front", document.getElementById("canvas-front"));
 IV.editor.canvas.add("back", document.getElementById("canvas-back"));
 IV.editor.canvas.add("overlay", document.getElementById("canvas-overlay"));
+
 $(window).resize(function() {
     var v = $("#view");
     IV.editor.canvas.resize(v.width(), v.height(), true);
+    IV.editor.renderer.trigger();
+    IV.editor.renderer.render();
 }).resize();
 
 IV.editor.bind("objects", function() {

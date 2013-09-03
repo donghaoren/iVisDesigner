@@ -329,7 +329,7 @@ NS.raiseEvent = function(key) {
         try {
             r = listener.f.apply(NS, args);
         } catch(e) {
-            console.log(e);
+            console.log(e.stack);
         }
         if(r) return true;
         return false;

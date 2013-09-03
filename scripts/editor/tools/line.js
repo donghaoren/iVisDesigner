@@ -1,12 +1,12 @@
 (function() {
 
-IV.tools.Line = {
+Tools.Line = {
     onActive: function() {
         var $this = this;
         $this.loc1 = null;
         $this.loc2 = null;
         IV.set("status", "Line: Select point A.");
-        IV.tools.beginSelectLocation(function(loc) {
+        Tools.beginSelectLocation(function(loc) {
             if(!$this.loc1) {
                 $this.loc1 = loc;
                 IV.set("status", "Line: Select point B.");
@@ -27,15 +27,15 @@ IV.tools.Line = {
         }, "tools:Line");
     },
     onInactive: function() {
-        IV.tools.endSelectLocation("tools:Line");
+        Tools.endSelectLocation("tools:Line");
     }
 };
 
-IV.tools.LineThrough = {
+Tools.LineThrough = {
     onActive: function() {
         var $this = this;
         IV.set("status", "LineThrough: Select location of anchors.");
-        IV.tools.beginSelectLocation(function(loc) {
+        Tools.beginSelectLocation(function(loc) {
             var path = IV.get("selected-path");
             if(IV.data.getSchema(path)) {
                 var line = new IV.objects.LineThrough(path, {
@@ -49,7 +49,7 @@ IV.tools.LineThrough = {
         }, "tools:LineThrough");
     },
     onInactive: function() {
-        IV.tools.endSelectLocation("tools:LineThrough");
+        Tools.endSelectLocation("tools:LineThrough");
     }
 };
 

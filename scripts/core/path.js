@@ -72,7 +72,7 @@ IV.PathContext.prototype.get = function(path) {
     for(; i < this.components.length && i < path.components.length; i++) {
         var tc = this.components[i];
         var pc = path.components[i];
-        if(tc.name != pc.name) {
+        if(tc.name != pc.name || tc.type != pc.type) {
             break;
         } else {
             rc.push(tc);
@@ -124,4 +124,20 @@ IV.Path.commonPrefix = function(paths) {
         common = common.slice(0, t);
     }
     return new IV.Path(common);
+};
+
+IV.Path.computeBasicStatistics = function(path, data) {
+    var min = null;
+    var max = null;
+    var sum = 0;
+    var count = 0;
+    path.enumerate(data, function(context) {
+        var val = context.val();
+        if(val === undefined || val === null) return;
+        if(min === null || min > val) min = val;
+        if(max === null || max < val) max = val;
+        sum += val;
+        count += 1;
+    });
+    return { min: min, max: max, range: max - min, sum: sum, count: count, avg: sum / count };
 };

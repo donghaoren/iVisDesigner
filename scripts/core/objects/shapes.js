@@ -35,7 +35,7 @@ IV.objects.Circle = IV.extend(IV.objects.Shape, function(info) {
     this.type = "Circle";
     // Center.
     this.center = info.center ? info.center : new IV.objects.Plain(new IV.Vector(0, 0));
-    this.radius = info.radius ? info.center : new IV.objects.Plain(2);
+    this.radius = info.radius ? info.radius : new IV.objects.Plain(2);
 }, {
     shapePaths: function(context, cb) {
         cb([
@@ -51,10 +51,9 @@ IV.objects.Circle = IV.extend(IV.objects.Shape, function(info) {
     select: function(pt, data, action) {
         var rslt = null;
         var $this = this;
-        data.enumeratePath(this.path, function(context) {
+        this.path.enumerate(data, function(context) {
             var c = $this.center.getPoint(context);
-            var style = $this.style.getStyle(context);
-            var radius = style.radius || 0;
+            var radius = $this.radius.get(context);
             var d = Math.abs(pt.distance(c) - radius);
             if(d <= 4.0 / IV.viewarea.scale) {
                 if(!rslt || rslt.distance > d) {
@@ -97,7 +96,7 @@ IV.objects.Line = IV.extend(IV.objects.Shape, function(info) {
     select: function(pt, data, action) {
         var rslt = null;
         var $this = this;
-        data.enumeratePath(this.path, function(context) {
+        this.path.enumerate(data, function(context) {
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
@@ -132,9 +131,9 @@ IV.objects.LineThrough = IV.extend(IV.objects.Shape, function(info) {
     select: function(pt, data, action) {
         var rslt = null;
         var $this = this;
-        data.enumeratePath($this.path, function(fctx) {
+        $this.path.enumerate(data, function(fctx) {
             var pts = [];
-            fctx.enumeratePath($this.points.getPath(), function(context) {
+            $this.points.getPath().enumerate(fctx.val(), function(context) {
                 pts.push($this.points.getPoint(context));
             });
             for(var i = 0; i < pts.length - 1; i++) {

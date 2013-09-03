@@ -1,46 +1,43 @@
 (function() {
 
-IV.tools.Move = {
+Tools.Move = {
     onActive: function() {
         var $this = this;
         IV.set("status", "Drag to move the canvas.");
-        IV.tools.beginTrackMouse(function(e_down) {
+        Tools.beginTrackMouse(function(e_down) {
             var p0 = e_down.page;
-            var l0 = IV.viewarea.location.clone();
+            var l0 = IV.editor.renderer.center.clone();
             e_down.move(function(e_move) {
                 var p1 = e_move.page;
-                IV.viewarea.location = l0.sub(p0).add(p1);
-                IV.triggerRender();
-                IV.render();
+                IV.editor.renderer.setView(l0.sub(p0).add(p1), IV.editor.renderer.scale);
+                Tools.triggerRender();
             });
         }, "tools:Move");
     },
     onInactive: function() {
-        IV.tools.endTrackMouse("tools:Move");
+        Tools.endTrackMouse("tools:Move");
     }
 };
 
-IV.tools.Zoom = {
+Tools.Zoom = {
     onActive: function() {
         var $this = this;
         IV.set("status", "Drag to zoom the canvas.");
-        IV.tools.beginTrackMouse(function(e_down) {
+        Tools.beginTrackMouse(function(e_down) {
             var y0 = e_down.page.y;
-            var l0 = IV.viewarea.location.clone();
-            var s0 = IV.viewarea.scale;
+            var l0 = IV.editor.renderer.center.clone();
+            var s0 = IV.editor.renderer.scale;
             var p0 = e_down.offset;
 
             e_down.move(function(e_move) {
-                var new_scale = s0 * Math.exp((e_move.pageY - y0) / -200.0);
-                IV.viewarea.scale = new_scale;
-                IV.viewarea.location = l0.add(p0.scale(s0 - new_scale));
-                IV.triggerRender();
-                IV.render();
+                var new_scale = s0 * Math.exp((e_move.page.y - y0) / -200.0);
+                IV.editor.renderer.setView(l0.add(p0.scale(s0 - new_scale)), new_scale);
+                Tools.triggerRender();
             });
-        }, "tools:Move");
+        }, "tools:Zoom");
     },
     onInactive: function() {
-        IV.tools.endTrackMouse("tools:Move");
+        Tools.endTrackMouse("tools:Zoom");
     }
 };
 

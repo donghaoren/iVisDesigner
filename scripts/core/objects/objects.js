@@ -18,7 +18,7 @@ IV.objects.Object.prototype = {
     getPoint: function(context) { return this.get(context); },
     getNumber: function(context) { return this.get(context); },
     getPath: function() { return this.path; },
-    getGuidePath: function() { return this.guide_path; },
+    getGuidePath: function() { return new IV.Path(); },
     render: function() { },
     renderSelected: function() { },
     renderGuide: function() { },

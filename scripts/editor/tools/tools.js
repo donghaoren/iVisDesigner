@@ -2,11 +2,13 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
-IV.tools = { };
+IV.editor.tools = { };
 
 
 // Mouse event dispatcher
 (function() {
+    var Tools = IV.editor.tools;
+
     var mouse_trackers = { };
     var mousemove_handlers = { };
 
@@ -36,51 +38,54 @@ IV.tools = { };
     };
     var current_context = null;
 
-    IV.on("view-mousedown", function(e) {
+    IV.editor.bind("view:mousedown", function(e) {
         current_context = new MouseContext();
         current_context.dispatchDown(e);
+        IV.editor.renderer.render();
     });
-    IV.on("view-mousemove", function(e) {
+    IV.editor.bind("view:mousemove", function(e) {
         if(current_context) current_context.dispatchMove(e);
         for(var i in mousemove_handlers) {
             mousemove_handlers[i](e, current_context != null);
         }
+        IV.editor.renderer.render();
     });
-    IV.on("view-mouseup", function(e) {
+    IV.editor.bind("view:mouseup", function(e) {
         var tc = current_context;
         current_context = null;
         if(tc) tc.dispatchRelease(e);
+        IV.editor.renderer.render();
     });
 
-    IV.tools.beginTrackMouse = function(f, key) {
+    Tools.beginTrackMouse = function(f, key) {
         mouse_trackers[key] = f;
     };
-    IV.tools.endTrackMouse = function(key) {
+    Tools.endTrackMouse = function(key) {
         delete mouse_trackers[key];
     };
-    IV.tools.beginTrackMouseMove = function(f, key) {
+    Tools.beginTrackMouseMove = function(f, key) {
         mousemove_handlers[key] = f;
     };
-    IV.tools.endTrackMouseMove = function(key) {
+    Tools.endTrackMouseMove = function(key) {
         delete mousemove_handlers[key];
     };
 
     var overlay_info = null;
 
-    IV.tools.beginSelectObject = function(f, key, action) {
+    Tools.beginSelectObject = function(f, key, action) {
         overlay_info = {
             action: "select-object",
             hover: null
         };
-        IV.tools.beginTrackMouse(function(e) {
-            var context = IV.vis.selectObject(new IV.Vector(e.offsetX, e.offsetY), action);
+        Tools.beginTrackMouse(function(e) {
+            var context = IV.editor.vis.selectObject(IV.editor.data, new IV.Vector(e.offsetX, e.offsetY), action);
             f(context, e);
         }, key);
-        IV.tools.beginTrackMouseMove(function(e, tracking) {
+        Tools.beginTrackMouseMove(function(e, tracking) {
             if(tracking) {
                 overlay_info.hover = null;
             } else {
-                var context = IV.vis.selectObject(new IV.Vector(e.offsetX, e.offsetY));
+                var context = IV.editor.vis.selectObject(IV.editor.data, new IV.Vector(e.offsetX, e.offsetY));
                 if(context && context.obj) {
                     overlay_info.hover = context.obj;
                 } else {
@@ -90,21 +95,21 @@ IV.tools = { };
             IV.triggerRender("overlay");
         }, key);
     };
-    IV.tools.endSelectObject = function(key) {
-        IV.tools.endTrackMouse(key);
-        IV.tools.endTrackMouseMove(key);
+    Tools.endSelectObject = function(key) {
+        Tools.endTrackMouse(key);
+        Tools.endTrackMouseMove(key);
         overlay_info = null;
     };
 
-    IV.tools.beginSelectLocation = function(f, key) {
+    Tools.beginSelectLocation = function(f, key) {
         overlay_info = {
             action: "select-location",
             hover: null
         };
 
-        IV.tools.beginTrackMouse(function(e) {
+        Tools.beginTrackMouse(function(e) {
             var p0 = new IV.Vector(e.offsetX, e.offsetY)
-            var context = IV.vis.selectObject(p0);
+            var context = IV.editor.vis.selectObject(IV.editor.data, p0);
 
             var captured_object = function(obj) {
                 var ref_path = IV.get("selected-reference");
@@ -133,11 +138,11 @@ IV.tools = { };
             }
         }, key);
 
-        IV.tools.beginTrackMouseMove(function(e, tracking) {
+        Tools.beginTrackMouseMove(function(e, tracking) {
             if(tracking) {
                 overlay_info.hover = null;
             } else {
-                var context = IV.vis.selectObject(new IV.Vector(e.offsetX, e.offsetY));
+                var context = IV.editor.vis.selectObject(IV.editor.data, new IV.Vector(e.offsetX, e.offsetY));
                 if(context && context.obj) {
                     overlay_info.hover = context.obj;
                 } else {
@@ -147,13 +152,13 @@ IV.tools = { };
             IV.triggerRender("overlay");
         }, key);
     };
-    IV.tools.endSelectLocation = function(key) {
-        IV.tools.endTrackMouse(key);
-        IV.tools.endTrackMouseMove(key);
+    Tools.endSelectLocation = function(key) {
+        Tools.endTrackMouse(key);
+        Tools.endTrackMouseMove(key);
         overlay_info = null;
     };
 
-    IV.tools.renderOverlay = function(g) {
+    Tools.renderOverlay = function(g) {
         if(overlay_info) {
             if(overlay_info.hover) {
                 var obj = overlay_info.hover;
@@ -171,14 +176,17 @@ IV.tools = { };
             }
         }
     };
-})();
+
+    Tools.triggerRender = function() {
+        IV.editor.renderer.trigger();
+    };
 
 IV.listen("tools:current", function(val) {
     if(IV.current_tool && IV.current_tool.onInactive)
         IV.current_tool.onInactive();
 
-    if(IV.tools[val]) {
-        IV.current_tool = IV.tools[val];
+    if(Tools[val]) {
+        IV.current_tool = Tools[val];
     } else {
         IV.current_tool = {
             onActive: function() {
@@ -199,3 +207,5 @@ IV.listen("tools:current", function(val) {
 {{include: viewarea.js}}
 
 IV.set("tools:current", "Select");
+
+})();
