@@ -42,8 +42,8 @@ IV.on("vis:objects:selection", function() {
     if(!IV.vis) return;
     var selected_objects = IV.vis.selection.map(function(x) { return x.obj; });
     IV.panels.beginEdit(selected_objects, function(edit) {
-        IV.triggerRender("main,back");
-        IV.render();
+        IV.editor.triggerRender("main,back");
+        IV.editor.renderer.render();
     });
 });
 

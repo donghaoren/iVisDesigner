@@ -1,32 +1,36 @@
+(function() {
+
 // Initialize editor.
-IV.editor = {
+var Editor = {
     data: null,
     vis: null,
     renderer: new IV.Renderer(),
     canvas: new IV.CanvasManager()
 };
 
-IV.makeEventSource(IV.editor);
+IV.editor = Editor;
 
-IV.editor.renderer.setCanvasManager(IV.editor.canvas);
+IV.makeEventSource(Editor);
 
-IV.editor.canvas.add("main", document.getElementById("canvas-main"));
-IV.editor.canvas.add("front", document.getElementById("canvas-front"));
-IV.editor.canvas.add("back", document.getElementById("canvas-back"));
-IV.editor.canvas.add("overlay", document.getElementById("canvas-overlay"));
+Editor.renderer.setCanvasManager(Editor.canvas);
+
+Editor.canvas.add("main", document.getElementById("canvas-main"));
+Editor.canvas.add("front", document.getElementById("canvas-front"));
+Editor.canvas.add("back", document.getElementById("canvas-back"));
+Editor.canvas.add("overlay", document.getElementById("canvas-overlay"));
 
 $(window).resize(function() {
     var v = $("#view");
-    IV.editor.canvas.resize(v.width(), v.height(), true);
-    IV.editor.renderer.trigger();
-    IV.editor.renderer.render();
+    Editor.canvas.resize(v.width(), v.height(), true);
+    Editor.renderer.trigger();
+    Editor.renderer.render();
 }).resize();
 
-IV.editor.bind("objects", function() {
+Editor.bind("objects", function() {
     IV.generateObjectList();
 });
 
-IV.editor.bind("selection", function() {
+Editor.bind("selection", function() {
     $("#object-list").children(".item").each(function() {
         $(this).data().update();
     });
@@ -39,35 +43,37 @@ IV.editor.bind("selection", function() {
 
 {{include: tools/tools.js}}
 
-IV.editor.setData = function(data, schema) {
-    IV.editor.data = data;
-    IV.editor.renderer.setData(data);
+Editor.setData = function(data, schema) {
+    Editor.data = data;
+    Editor.renderer.setData(data);
     if(schema) {
-        IV.editor.schema = schema;
-        IV.editor.renderDataSchema(IV.editor.schema);
+        Editor.schema = schema;
+        Editor.renderDataSchema(Editor.schema);
     }
 };
 
-IV.editor.setVisualization = function(vis) {
-    IV.editor.vis = vis;
-    IV.editor.raise("reset");
-    IV.editor.renderer.setVisualization(vis);
+Editor.setVisualization = function(vis) {
+    Editor.vis = vis;
+    Editor.raise("reset");
+    Editor.renderer.setVisualization(vis);
     this.vis_listener = {
         objects: function() {
-            IV.editor.renderer.trigger();
-            IV.editor.renderer.render();
+            Editor.renderer.trigger();
+            Editor.renderer.render();
         }
     };
     vis.bind("objects", this.vis_listener.objects);
 };
 
-IV.editor.unsetVisualization = function() {
-    IV.editor.vis.unbind("objects", this.vis_listener.objects);
-    IV.editor.vis = null;
-    IV.editor.raise("reset");
+Editor.unsetVisualization = function() {
+    Editor.vis.unbind("objects", this.vis_listener.objects);
+    Editor.vis = null;
+    Editor.raise("reset");
 };
 
-IV.editor.bind("reset", function() {
-    IV.editor.renderer.trigger();
-    IV.editor.renderer.render();
+Editor.bind("reset", function() {
+    Editor.renderer.trigger();
+    Editor.renderer.render();
 });
+
+})();

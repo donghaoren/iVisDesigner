@@ -2,12 +2,12 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
-IV.editor.tools = { };
+Editor.tools = { };
 
 
 // Mouse event dispatcher
 (function() {
-    var Tools = IV.editor.tools;
+    var Tools = Editor.tools;
 
     var mouse_trackers = { };
     var mousemove_handlers = { };
@@ -38,23 +38,23 @@ IV.editor.tools = { };
     };
     var current_context = null;
 
-    IV.editor.bind("view:mousedown", function(e) {
+    Editor.bind("view:mousedown", function(e) {
         current_context = new MouseContext();
         current_context.dispatchDown(e);
-        IV.editor.renderer.render();
+        Editor.renderer.render();
     });
-    IV.editor.bind("view:mousemove", function(e) {
+    Editor.bind("view:mousemove", function(e) {
         if(current_context) current_context.dispatchMove(e);
         for(var i in mousemove_handlers) {
             mousemove_handlers[i](e, current_context != null);
         }
-        IV.editor.renderer.render();
+        Editor.renderer.render();
     });
-    IV.editor.bind("view:mouseup", function(e) {
+    Editor.bind("view:mouseup", function(e) {
         var tc = current_context;
         current_context = null;
         if(tc) tc.dispatchRelease(e);
-        IV.editor.renderer.render();
+        Editor.renderer.render();
     });
 
     Tools.beginTrackMouse = function(f, key) {
@@ -78,21 +78,21 @@ IV.editor.tools = { };
             hover: null
         };
         Tools.beginTrackMouse(function(e) {
-            var context = IV.editor.vis.selectObject(IV.editor.data, new IV.Vector(e.offsetX, e.offsetY), action);
+            var context = Editor.vis.selectObject(Editor.data, new IV.Vector(e.offsetX, e.offsetY), action);
             f(context, e);
         }, key);
         Tools.beginTrackMouseMove(function(e, tracking) {
             if(tracking) {
                 overlay_info.hover = null;
             } else {
-                var context = IV.editor.vis.selectObject(IV.editor.data, new IV.Vector(e.offsetX, e.offsetY));
+                var context = Editor.vis.selectObject(Editor.data, new IV.Vector(e.offsetX, e.offsetY));
                 if(context && context.obj) {
                     overlay_info.hover = context.obj;
                 } else {
                     overlay_info.hover = null;
                 }
             }
-            IV.triggerRender("overlay");
+            Tools.triggerRender("overlay");
         }, key);
     };
     Tools.endSelectObject = function(key) {
@@ -109,7 +109,7 @@ IV.editor.tools = { };
 
         Tools.beginTrackMouse(function(e) {
             var p0 = new IV.Vector(e.offsetX, e.offsetY)
-            var context = IV.editor.vis.selectObject(IV.editor.data, p0);
+            var context = Editor.vis.selectObject(Editor.data, p0);
 
             var captured_object = function(obj) {
                 var ref_path = IV.get("selected-reference");
@@ -142,14 +142,14 @@ IV.editor.tools = { };
             if(tracking) {
                 overlay_info.hover = null;
             } else {
-                var context = IV.editor.vis.selectObject(IV.editor.data, new IV.Vector(e.offsetX, e.offsetY));
+                var context = Editor.vis.selectObject(Editor.data, new IV.Vector(e.offsetX, e.offsetY));
                 if(context && context.obj) {
                     overlay_info.hover = context.obj;
                 } else {
                     overlay_info.hover = null;
                 }
             }
-            IV.triggerRender("overlay");
+            Tools.triggerRender("overlay");
         }, key);
     };
     Tools.endSelectLocation = function(key) {
@@ -178,7 +178,7 @@ IV.editor.tools = { };
     };
 
     Tools.triggerRender = function() {
-        IV.editor.renderer.trigger();
+        Editor.renderer.trigger();
     };
 
 IV.listen("tools:current", function(val) {

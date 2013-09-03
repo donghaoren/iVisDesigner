@@ -3,26 +3,26 @@
 Tools.Select = {
     onActive: function() {
         var $this = this;
-        if(IV.editor.vis) IV.editor.vis.clearSelection();
+        if(Editor.vis) Editor.vis.clearSelection();
         Tools.triggerRender(["main", "back"]);
         IV.set("status", "Select object.");
 
         Tools.beginSelectObject(function(context, e_down) {
             if(context) {
-                if(!e_down.shift) IV.editor.vis.clearSelection();
-                IV.editor.vis.appendSelection(context);
-                IV.triggerRender("main,back");
+                if(!e_down.shift) Editor.vis.clearSelection();
+                Editor.vis.appendSelection(context);
+                Tools.triggerRender("main,back");
                 IV.raise("vis:objects:selection");
             } else {
-                IV.editor.vis.clearSelection();
-                IV.triggerRender("main,back");
+                Editor.vis.clearSelection();
+                Tools.triggerRender("main,back");
                 IV.raise("vis:objects:selection");
                 return;
             }
             if(context.onMove) {
                 var handle_r = function(r) {
                     if(!r) return;
-                    if(r.trigger_render) IV.triggerRender(r.trigger_render);
+                    if(r.trigger_render) Tools.triggerRender(r.trigger_render);
                 };
                 e_down.move(function(e_move) {
                     var p0 = new IV.Vector(e_down.offsetX, e_down.offsetY);

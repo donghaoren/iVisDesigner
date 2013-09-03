@@ -44,7 +44,7 @@ Tools.LineThrough = {
                 });
                 IV.vis.addObject(line);
                 IV.raise("vis:objects");
-                IV.triggerRender("main");
+                Tools.triggerRender("main");
             }
         }, "tools:LineThrough");
     },

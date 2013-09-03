@@ -71,8 +71,7 @@ var GoogleMap = IV.extend(IV.objects.Object, function(path_lng, path_lat, center
 
     this.image.onload = function() {
         $this.loaded = true;
-        IV.triggerRender();
-        IV.render();
+        $this.vis.raise("objects:update", $this);
     };
 }, {
     can: function(cap) {
@@ -102,7 +101,7 @@ var GoogleMap = IV.extend(IV.objects.Object, function(path_lng, path_lat, center
         var c4 = rect.corner4();
         g.beginPath();
         g.strokeStyle = IV.colors.selection.toRGBA();
-        g.lineWidth = 1.0 / IV.viewarea.scale;
+        g.lineWidth = 1.0; // TODO: get transform.
         g.moveTo(c1.x, c1.y);
         g.lineTo(c2.x, c2.y);
         g.lineTo(c3.x, c3.y);

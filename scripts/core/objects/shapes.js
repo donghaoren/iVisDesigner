@@ -55,7 +55,7 @@ IV.objects.Circle = IV.extend(IV.objects.Shape, function(info) {
             var c = $this.center.getPoint(context);
             var radius = $this.radius.get(context);
             var d = Math.abs(pt.distance(c) - radius);
-            if(d <= 4.0 / IV.viewarea.scale) {
+            if(d <= 4.0 / pt.scale) {
                 if(!rslt || rslt.distance > d) {
                     rslt = { distance: d };
                     if(action == "move") {
@@ -100,7 +100,7 @@ IV.objects.Line = IV.extend(IV.objects.Shape, function(info) {
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
-            if(d <= 4.0 / IV.viewarea.scale) {
+            if(d <= 4.0 / pt.scale) {
                 if(!rslt || rslt.distance > d)
                     rslt = { distance: d };
             }
@@ -138,7 +138,7 @@ IV.objects.LineThrough = IV.extend(IV.objects.Shape, function(info) {
             });
             for(var i = 0; i < pts.length - 1; i++) {
                 var d = IV.pointLineSegmentDistance(pt, pts[i], pts[i + 1]);
-                if(d <= 4.0 / IV.viewarea.scale) {
+                if(d <= 4.0 / pt.scale) {
                     if(!rslt || rslt.distance > d)
                         rslt = { distance: d };
                 }

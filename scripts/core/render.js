@@ -101,6 +101,14 @@ IV.Renderer.prototype.setView = function(center, scale) {
     this.scale = scale;
 };
 
+IV.Renderer.prototype.getOffsetFromScreen = function(pt) {
+    var x = (pt.x - this.manager.width / 2) / this.scale;
+    var y = (pt.y - this.manager.height / 2) / this.scale;
+    var r = new IV.Vector(x, y);
+    r.det = [ this.scale, 0, 0, this.scale ];
+    return r;
+};
+
 // Set the CanvasManager.
 IV.Renderer.prototype.setCanvasManager = function(manager) {
     this.manager = manager;
@@ -116,23 +124,30 @@ IV.Renderer.prototype.trigger = function(items) {
         this.needs_render[items[i]] = true;
 };
 
+// Extend canvas render context.
+CanvasRenderingContext2D.prototype.iv_setTransform = function(tr) {
+    this.setTransform(tr.m[0], tr.m[1], tr.m[3], tr.m[4], tr.m[2], tr.m[5]);
+    this.iv_transform = tr;
+};
+
 IV.Renderer.prototype._set_transform = function(ctx) {
+    this.manager._init_transform(ctx);
     ctx.translate(this.center.x + this.manager.width / 2, this.center.y + this.manager.height / 2);
     ctx.scale(this.scale, this.scale);
+    ctx.iv_scale = this.scale;
 };
 
 IV.Renderer.prototype._perform_render = function(key) {
     var canvas = this.manager.get(key);
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, this.manager.width, this.manager.height);
+
     ctx.save();
-    this.manager._init_transform(ctx);
     this._set_transform(ctx);
 
     this.raise(key + ":before", this.data, ctx);
     this.raise(key, this.data, ctx);
     this.raise(key + ":after", this.data, ctx);
-
     ctx.restore();
 };
 

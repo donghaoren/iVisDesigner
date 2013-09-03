@@ -20,7 +20,7 @@ Tools.Track = {
                     );
                     IV.vis.addObject(track);
                     IV.raise("vis:objects");
-                    IV.triggerRender("main,back");
+                    Tools.triggerRender("main,back");
                 }
                 $this.loc1 = null;
                 $this.loc2 = null;
@@ -42,7 +42,7 @@ Tools.Scatter = {
         var obj1 = null;
         var obj2 = null;
         IV.vis.clearSelection();
-        IV.triggerRender("main,back");
+        Tools.triggerRender("main,back");
 
         IV.set("status", "Scatter: Select track A.");
 
@@ -53,7 +53,7 @@ Tools.Scatter = {
                 obj2 = null;
                 IV.vis.clearSelection();
                 IV.raise("vis:objects:selection");
-                IV.triggerRender("main,back");
+                Tools.triggerRender("main,back");
                 IV.set("status", "Scatter: Select track A.");
                 return;
             }
@@ -61,7 +61,7 @@ Tools.Scatter = {
                 obj1 = context.obj;
                 IV.vis.appendSelection(context);
                 IV.raise("vis:objects:selection");
-                IV.triggerRender("main,back");
+                Tools.triggerRender("main,back");
                 IV.set("status", "Scatter: Select track B.");
             } else if(!obj2) {
                 obj2 = context.obj;
@@ -76,7 +76,7 @@ Tools.Scatter = {
                 obj2 = null;
                 IV.vis.clearSelection();
                 IV.raise("vis:objects:selection");
-                IV.triggerRender("main,back");
+                Tools.triggerRender("main,back");
                 IV.set("status", "Scatter: Select track A.");
             }
         }, "tools:Line");

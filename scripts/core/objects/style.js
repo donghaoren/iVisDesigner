@@ -11,7 +11,7 @@ IV.objects.PathStyle = IV.extend(IV.objects.Object, function() {
         },
         {
             type: "fill",
-            color: new IV.objects.Plain(new IV.Color(0, 0, 0, 1))
+            color: new IV.objects.Plain(new IV.Color(128, 128, 128, 1))
         }
     ];
 }, {

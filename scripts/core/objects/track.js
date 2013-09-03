@@ -210,7 +210,7 @@ var Scatter = IV.extend(IV.objects.Object, function(info) {
         $this.enumerateGuide(data, function(p1, p2, q1, q2) {
             $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
                 var d = IV.pointLineSegmentDistance(pt, l[0], l[1]);
-                if(d < 4.0 / IV.viewarea.scale) rslt = { distance: d };
+                if(d < 4.0 / pt.scale) rslt = { distance: d };
             });
         });
         return rslt;

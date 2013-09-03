@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // Loading data schema and contents
 // ------------------------------------------------------------------------
-IV.editor.renderSchema = function(schema, prev_path, set_active) {
+Editor.renderSchema = function(schema, prev_path, set_active) {
     var elem = $("<ul></ul>");
     for(var key in schema) {
         var this_path = prev_path + ":" + key;
@@ -35,19 +35,19 @@ IV.editor.renderSchema = function(schema, prev_path, set_active) {
         var li = $("<li></li>")
             .append(span);
         if(child.type == "collection" || child.type == "object" || child.type == "sequence")
-            li.append(IV.editor.renderSchema(child.fields, this_path, set_active));
+            li.append(Editor.renderSchema(child.fields, this_path, set_active));
         elem.append(li);
     }
     return elem;
 };
 
-IV.editor.renderDataSchema = function(schema) {
+Editor.renderDataSchema = function(schema) {
     $("#data-schema").children().remove();
     var rootelem_span = $('<span class="key">ROOT</span>');
     var rootelem = $("<li/>").append(rootelem_span);
     rootelem_span.data().path = "";
     $("#data-schema").append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));
-    $("#data-schema").append(IV.editor.renderSchema(schema.fields, "", true));
+    $("#data-schema").append(Editor.renderSchema(schema.fields, "", true));
     $("#data-schema span.key").each(function() {
         var $this = $(this);
         $this.click(function() {
