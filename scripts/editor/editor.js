@@ -39,6 +39,8 @@ Editor.bind("selection", function() {
 {{include: objectlist.js}}
 {{include: schemaview.js}}
 
+{{include: style/style.js}}
+
 {{include: ui.js}}
 
 {{include: tools/tools.js}}

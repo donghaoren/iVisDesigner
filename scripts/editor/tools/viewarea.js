@@ -28,7 +28,6 @@ Tools.Zoom = {
             var l0 = Editor.renderer.center.clone();
             var s0 = Editor.renderer.scale;
             var p0 = e_down.offset;
-
             e_down.move(function(e_move) {
                 var new_scale = s0 * Math.exp((e_move.page.y - y0) / -200.0);
                 Editor.renderer.setView(l0.add(p0.scale(s0 - new_scale)), new_scale);

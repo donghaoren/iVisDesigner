@@ -5,13 +5,17 @@
 // scripts/objects/objects.js
 // Objects in iVisDesigner.
 
-IV.objects = { };
+(function() {
+
+var Objects = { };
+
+IV.objects = Objects;
 
 // The base class for objects.
-IV.objects.Object = function() {
+Objects.Object = function() {
     this.uuid = IV.generateUUID();
 };
-IV.objects.Object.prototype = {
+Objects.Object.prototype = {
     can: function(cap) { return false; },
     get: function(context) { return null; },
     getStyle: function(context) { return this.get(context); },
@@ -38,3 +42,5 @@ IV.objects.Object.prototype = {
 {{include: shapes.js}}
 {{include: layout.js}}
 {{include: map.js}}
+
+})();

@@ -5,12 +5,12 @@
 // scripts/objects/shapes.js
 // Define objects for various shapes.
 
-IV.objects.Shape = IV.extend(IV.objects.Object,function(info) {
+Objects.Shape = IV.extend(Objects.Object,function(info) {
     this.path = info.path;
     if(info.style)
         this.style = info.style;
     else
-        this.style = new IV.objects.PathStyle();
+        this.style = new Objects.PathStyle();
 }, {
     render: function(g, data) {
         var $this = this;
@@ -24,18 +24,18 @@ IV.objects.Shape = IV.extend(IV.objects.Object,function(info) {
         var $this = this;
         $this.path.enumerate(data, function(context) {
             $this.shapePaths(context, function(path) {
-                $this.style.renderPath(context, g, path);
+                $this.style.renderSelection(context, g, path);
             });
         });
     }
 });
 
-IV.objects.Circle = IV.extend(IV.objects.Shape, function(info) {
-    IV.objects.Shape.call(this, info);
+Objects.Circle = IV.extend(Objects.Shape, function(info) {
+    Objects.Shape.call(this, info);
     this.type = "Circle";
     // Center.
-    this.center = info.center ? info.center : new IV.objects.Plain(new IV.Vector(0, 0));
-    this.radius = info.radius ? info.radius : new IV.objects.Plain(2);
+    this.center = info.center ? info.center : new Objects.Plain(new IV.Vector(0, 0));
+    this.radius = info.radius ? info.radius : new Objects.Plain(2);
 }, {
     shapePaths: function(context, cb) {
         cb([
@@ -55,7 +55,7 @@ IV.objects.Circle = IV.extend(IV.objects.Shape, function(info) {
             var c = $this.center.getPoint(context);
             var radius = $this.radius.get(context);
             var d = Math.abs(pt.distance(c) - radius);
-            if(d <= 4.0 / pt.scale) {
+            if(d <= 4.0 / pt.view_scale) {
                 if(!rslt || rslt.distance > d) {
                     rslt = { distance: d };
                     if(action == "move") {
@@ -81,8 +81,8 @@ IV.objects.Circle = IV.extend(IV.objects.Shape, function(info) {
     }
 });
 
-IV.objects.Line = IV.extend(IV.objects.Shape, function(info) {
-    IV.objects.Shape.call(this, info);
+Objects.Line = IV.extend(Objects.Shape, function(info) {
+    Objects.Shape.call(this, info);
     this.type = "Line";
     this.point1 = info.point1;
     this.point2 = info.point2;
@@ -100,7 +100,7 @@ IV.objects.Line = IV.extend(IV.objects.Shape, function(info) {
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
-            if(d <= 4.0 / pt.scale) {
+            if(d <= 4.0 / pt.view_scale) {
                 if(!rslt || rslt.distance > d)
                     rslt = { distance: d };
             }
@@ -110,8 +110,8 @@ IV.objects.Line = IV.extend(IV.objects.Shape, function(info) {
 });
 
 
-IV.objects.LineThrough = IV.extend(IV.objects.Shape, function(info) {
-    IV.objects.Shape.call(this, info);
+Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
+    Objects.Shape.call(this, info);
     this.points = info.points;
     this.type = "LineThrough";
 }, {
@@ -138,7 +138,7 @@ IV.objects.LineThrough = IV.extend(IV.objects.Shape, function(info) {
             });
             for(var i = 0; i < pts.length - 1; i++) {
                 var d = IV.pointLineSegmentDistance(pt, pts[i], pts[i + 1]);
-                if(d <= 4.0 / pt.scale) {
+                if(d <= 4.0 / pt.view_scale) {
                     if(!rslt || rslt.distance > d)
                         rslt = { distance: d };
                 }

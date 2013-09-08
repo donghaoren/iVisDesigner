@@ -156,6 +156,7 @@ IV_version = {
 </div>
 <div id="statusbar">
   <span class="status-text">Ready.</span>
+  <span style="float: right">Copyright 2013, <a href="http://donghaoren.org/">Donghao Ren</a>, Peking University.</span>
 </div>
 
 <!-- Panels -->
@@ -221,7 +222,9 @@ IV_version = {
   </div>
   <!-- Style Panel -->
   <div id="panel-style" class="panel" data-title="Style">
-    <div id="panel-style-container">
+    <div class="scrollview">
+      <div id="panel-style-display"></div>
+      <!--
       <span class="group">
         <span class="text">Stroke: </span>
         <span class="control-color-value" data-bind="stroke_style"></span>
@@ -252,6 +255,7 @@ IV_version = {
               data-default="round"
               data-bind="line_join"></span>
       </span>
+    -->
     </div>
   </div>
   <!-- Log Panel -->

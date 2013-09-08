@@ -51,24 +51,24 @@ IV.Visualization.prototype.render = function(data, g) {
     // First we draw the objects.
     this.objects.forEachReversed(function(obj) {
         // Save the graphics state before calling render().
-        g.save();
+        g.ivSave();
         // Try-catch block to prevent exceptions.
         try {
             obj.render(g, data);
         } catch(e) {
             console.log("Render", obj, e.stack);
         }
-        g.restore();
+        g.ivRestore();
     });
     // Then we draw the selections.
     this.selection.forEachReversed(function(c) {
-        g.save();
+        g.ivSave();
         try {
             c.obj.renderSelected(g, data);
         } catch(e) {
             console.log("Render Selected", c, e);
         }
-        g.restore();
+        g.ivRestore();
     });
 };
 // Render the visualization's guides to graphics context.
@@ -76,23 +76,23 @@ IV.Visualization.prototype.render = function(data, g) {
 IV.Visualization.prototype.renderGuide = function(data, g) {
     // Same way as render().
     this.objects.forEachReversed(function(obj) {
-        g.save();
+        g.ivSave();
         try {
             obj.renderGuide(g, data);
         } catch(e) {
             console.log("RenderG", obj, e);
         }
-        g.restore();
+        g.ivRestore();
     });
     this.selection.forEachReversed(function(c) {
         var obj = c.obj;
-        g.save();
+        g.ivSave();
         try {
             obj.renderGuideSelected(g, data);
         } catch(e) {
             console.log("RenderG Selected", c, e);
         }
-        g.restore();
+        g.ivRestore();
     });
 };
 // Select an object from the visualization, given the `location` and `action`.

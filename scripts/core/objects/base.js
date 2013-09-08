@@ -8,10 +8,10 @@
 (function() {
 
 // Plain Object.
-var Plain = IV.extend(IV.objects.Object, function(obj) {
-    IV.objects.Object.call(this);
+var Plain = IV.extend(Objects.Object, function(obj) {
+    Objects.Object.call(this);
     this.obj = obj;
-    this.type = "plain";
+    this.type = "Plain";
 }, {
     can: function(cap) {
         if(cap == "get-point") return true;
@@ -25,20 +25,20 @@ var Plain = IV.extend(IV.objects.Object, function(obj) {
     }
 });
 
-IV.objects.Plain = Plain;
-IV.objects.Number = Plain;
-IV.objects.Style = Plain;
-IV.objects.Point = Plain;
+Objects.Plain = Plain;
+Objects.Number = Plain;
+Objects.Style = Plain;
+Objects.Point = Plain;
 
 // Composite Object.
-var Composite = IV.extend(IV.objects.Object, function(obj, wrap) {
-    IV.objects.Object.call(this);
+var Composite = IV.extend(Objects.Object, function(obj, wrap) {
+    Objects.Object.call(this);
     // Copy all fields.
     var fields = { };
     for(var i in obj) {
         if(i[0] != "_") {
             fields[i] = obj[i];
-            if(wrap) { fields[i] = new IV.objects.Plain(fields[i]); }
+            if(wrap) { fields[i] = new Objects.Plain(fields[i]); }
         }
     }
     this.fields = fields;
@@ -59,11 +59,11 @@ var Composite = IV.extend(IV.objects.Object, function(obj, wrap) {
         return new Composite(obj);
     }
 });
-IV.objects.Composite = Composite;
+Objects.Composite = Composite;
 
 // Composite Color and Alpha.
-var CompositeColorAlpha = IV.extend(IV.objects.Object, function(color, alpha) {
-    IV.objects.Object.call(this);
+var CompositeColorAlpha = IV.extend(Objects.Object, function(color, alpha) {
+    Objects.Object.call(this);
     this.color = color;
     this.alpha = alpha;
     this.type = "CompositeColorAlpha";
@@ -77,11 +77,11 @@ var CompositeColorAlpha = IV.extend(IV.objects.Object, function(color, alpha) {
         return new CompositeColorAlpha(this.color.clone(), this.alpha.clone());
     }
 });
-IV.objects.CompositeColorAlpha = CompositeColorAlpha;
+Objects.CompositeColorAlpha = CompositeColorAlpha;
 
 // Point Offset.
-var PointOffset = IV.extend(IV.objects.Object, function(point, offset) {
-    IV.objects.Object.call(this);
+var PointOffset = IV.extend(Objects.Object, function(point, offset) {
+    Objects.Object.call(this);
     this.offset = offset;
     this.point = point;
     this.path = point.path;
@@ -105,11 +105,11 @@ var PointOffset = IV.extend(IV.objects.Object, function(point, offset) {
         return new PointOffset(this.point, this.offset);
     }
 });
-IV.objects.PointOffset = PointOffset;
+Objects.PointOffset = PointOffset;
 
 // Linear Mapping.
-var NumberLinear = IV.extend(IV.objects.Object, function(path, min, max) {
-    IV.objects.Object.call(this);
+var NumberLinear = IV.extend(Objects.Object, function(path, min, max) {
+    Objects.Object.call(this);
     this.path = path;
     this.min = min;
     this.max = max;
@@ -126,11 +126,11 @@ var NumberLinear = IV.extend(IV.objects.Object, function(path, min, max) {
         return new NumberLinear(this.path, this.min, this.max);
     }
 });
-IV.objects.NumberLinear = NumberLinear;
+Objects.NumberLinear = NumberLinear;
 
 // Color Linear Mapping.
-var ColorLinear = IV.extend(IV.objects.Object, function(path, color1, color2) {
-    IV.objects.Object.call(this);
+var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2) {
+    Objects.Object.call(this);
     this.path = path;
     this.color1 = color1;
     this.color2 = color2;
@@ -158,10 +158,10 @@ var ColorLinear = IV.extend(IV.objects.Object, function(path, color1, color2) {
         return new ColorLinear(this.path, this.color1, this.color2);
     }
 });
-IV.objects.ColorLinear = ColorLinear;
+Objects.ColorLinear = ColorLinear;
 
-var ReferenceWrapper = IV.extend(IV.objects.Object, function(ref_path, object) {
-    IV.objects.Object.call(this);
+var ReferenceWrapper = IV.extend(Objects.Object, function(ref_path, object) {
+    Objects.Object.call(this);
     this.obj = object;
     this.reference_path = ref_path;
 }, {
@@ -173,6 +173,6 @@ var ReferenceWrapper = IV.extend(IV.objects.Object, function(ref_path, object) {
         return new ReferenceWrapper(this.reference_path, this.obj);
     }
 });
-IV.objects.ReferenceWrapper = ReferenceWrapper;
+Objects.ReferenceWrapper = ReferenceWrapper;
 
 })();

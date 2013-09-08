@@ -25,7 +25,8 @@ Javascript("libraries.js", [
     "libraries/jquery-2.0.3.js",
     "libraries/jquery.mousewheel.js",
     "libraries/js-yaml.js",
-    "libraries/chroma.js"
+    "libraries/chroma.js",
+    "libraries/numeric-1.2.6.js"
 ])
 
 Javascript("toolkit.js", [

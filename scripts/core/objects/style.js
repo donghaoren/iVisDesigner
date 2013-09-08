@@ -1,17 +1,17 @@
 // The path style object.
 
-IV.objects.PathStyle = IV.extend(IV.objects.Object, function() {
-    IV.objects.Object.call(this);
+Objects.PathStyle = IV.extend(Objects.Object, function() {
+    Objects.Object.call(this);
     // Default attributes.
     this.actions = [
         {
             type: "stroke",
-            color: new IV.objects.Plain(new IV.Color(0, 0, 0, 1)),
-            width: new IV.objects.Plain(1)
+            color: new Objects.Plain(new IV.Color(0, 0, 0, 1)),
+            width: new Objects.Plain(1)
         },
         {
             type: "fill",
-            color: new IV.objects.Plain(new IV.Color(128, 128, 128, 1))
+            color: new Objects.Plain(new IV.Color(128, 128, 128, 1))
         }
     ];
 }, {
@@ -20,8 +20,25 @@ IV.objects.PathStyle = IV.extend(IV.objects.Object, function() {
     renderPath: function(context, g, path) {
         var $this = this;
         this.actions.forEach(function(act) {
+            if(act.enabled) {
+                if(!act.enabled.get(context)) return;
+            }
             $this["_perform_" + act.type](act, context, g, path);
         });
+    },
+    renderGuide: function(context, g, path) {
+        g.strokeStyle = "#888";
+        g.lineWidth = 1.0 / g.ivGetTransform().det();
+        g.beginPath();
+        this._run_path(g, path);
+        g.stroke();
+    },
+    renderSelection: function(context, g, path) {
+        g.strokeStyle = IV.colors.selection.toRGBA();
+        g.ivGuideLineWidth();
+        g.beginPath();
+        this._run_path(g, path);
+        g.stroke();
     },
     _run_path: function(g, path) {
         // See http://www.w3.org/TR/2013/CR-2dcontext-20130806

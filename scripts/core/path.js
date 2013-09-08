@@ -31,18 +31,20 @@ IV.Path.prototype.slice = function(start, length) {
 };
 IV.Path.prototype._enumerate_internal = function(ctx, subdata, index, cb) {
     if(index >= this.components.length) {
-        cb(ctx);
+        return cb(ctx);
     } else {
         var c = this.components[index];
         if(c.type == "iterate") {
             var array = subdata[c.name];
             for(var i = 0; i < array.length; i++) {
                 ctx.components[index].obj = array[i];
-                this._enumerate_internal(ctx, array[i], index + 1, cb);
+                var r = this._enumerate_internal(ctx, array[i], index + 1, cb);
+                if(r === false) return false;
             }
         } else {
             ctx.components[index].obj = subdata[c.name];
-            this._enumerate_internal(ctx, subdata[c.name], index + 1, cb);
+            var r = this._enumerate_internal(ctx, subdata[c.name], index + 1, cb);
+            if(r === false) return false;
         }
     }
 };

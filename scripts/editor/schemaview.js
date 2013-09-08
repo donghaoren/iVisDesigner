@@ -18,7 +18,7 @@ Editor.renderSchema = function(schema, prev_path, set_active) {
         if(child.type == "number")
             span.append($("<span />").addClass("type").text("num"));
         if(child.type == "collection")
-            span.append($("<span />").addClass("type").text("set"));
+            span.append($("<span />1").addClass("type").text("set"));
         if(child.type == "object")
             span.append($("<span />").addClass("type").text("obj"));
         if(child.type == "sequence")

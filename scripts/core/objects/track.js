@@ -7,8 +7,8 @@
 
 (function() {
 
-var Track = IV.extend(IV.objects.Object, function(info) {
-    IV.objects.Object.call(this);
+var Track = IV.extend(Objects.Object, function(info) {
+    Objects.Object.call(this);
     this.path = info.path;
     this.type = "Track";
     this.anchor1 = info.anchor1;
@@ -46,17 +46,19 @@ var Track = IV.extend(IV.objects.Object, function(info) {
             g.strokeStyle = "rgba(128,128,128,0.5)";
             g.fillStyle = "rgba(128,128,128,1)";
 
+            var r = g.ivGuideLineWidth() * 2
+
             g.beginPath();
             g.moveTo(p1.x, p1.y);
             g.lineTo(p2.x, p2.y);
             g.stroke();
 
             g.beginPath();
-            g.arc(p1.x, p1.y, 1.5, 0, Math.PI * 2);
+            g.arc(p1.x, p1.y, r, 0, Math.PI * 2);
             g.fill();
 
             g.beginPath();
-            g.arc(p2.x, p2.y, 1.5, 0, Math.PI * 2);
+            g.arc(p2.x, p2.y, r, 0, Math.PI * 2);
             g.fill();
         });
     },
@@ -65,36 +67,38 @@ var Track = IV.extend(IV.objects.Object, function(info) {
             g.strokeStyle = IV.colors.selection.toRGBA();
             g.fillStyle = IV.colors.selection.toRGBA();
 
+            var r = g.ivGuideLineWidth() * 3;
+
             g.beginPath();
             g.moveTo(p1.x, p1.y);
             g.lineTo(p2.x, p2.y);
             g.stroke();
 
             g.beginPath();
-            g.arc(p1.x, p1.y, 2, 0, Math.PI * 2);
+            g.arc(p1.x, p1.y, r, 0, Math.PI * 2);
             g.fill();
 
             g.beginPath();
-            g.arc(p2.x, p2.y, 2, 0, Math.PI * 2);
+            g.arc(p2.x, p2.y, r, 0, Math.PI * 2);
             g.fill();
         });
     },
     select: function(pt, data, action) {
-        if(!IV.get("visible-guide")) return null;
         var $this = this;
         var rslt = null;
         this.enumerateGuide(data, function(p1, p2) {
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
-            if(d < 4.0 / IV.editor.renderer.scale) {
+            var threshold = 4.0 / pt.view_scale;
+            if(d < threshold) {
                 rslt = { distance: d };
                 if(action == "move") {
                     var move_targets = [];
                     var can_move = function(a) { return a.type == "plain" || a.type == "PointOffset"; };
-                    if(p1.distance(pt) < 4.0) {
+                    if(p1.distance(pt) < threshold) {
                         if(can_move($this.anchor1)) {
                             move_targets.push($this.anchor1);
                         }
-                    } else if(p2.distance(pt) < 4.0) {
+                    } else if(p2.distance(pt) < threshold) {
                         if(can_move($this.anchor2)) {
                             move_targets.push($this.anchor2);
                         }
@@ -126,8 +130,8 @@ var Track = IV.extend(IV.objects.Object, function(info) {
     }
 });
 
-var Scatter = IV.extend(IV.objects.Object, function(info) {
-    IV.objects.Object.call(this);
+var Scatter = IV.extend(Objects.Object, function(info) {
+    Objects.Object.call(this);
     this.type = "Scatter";
     this.track1 = info.track1;
     this.track2 = info.track2;
@@ -182,6 +186,7 @@ var Scatter = IV.extend(IV.objects.Object, function(info) {
         $this.enumerateGuide(data, function(p1, p2, q1, q2) {
             g.strokeStyle = "rgba(128,128,128,0.5)";
             g.fillStyle = "rgba(128,128,128,1)";
+            g.ivGuideLineWidth();
             $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
                 g.beginPath();
                 l[0].callMoveTo(g);
@@ -195,6 +200,7 @@ var Scatter = IV.extend(IV.objects.Object, function(info) {
         $this.enumerateGuide(data, function(p1, p2, q1, q2) {
             g.strokeStyle = IV.colors.selection.toRGBA();
             g.fillStyle = IV.colors.selection.toRGBA();
+            g.ivGuideLineWidth();
             $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
                 g.beginPath();
                 l[0].callMoveTo(g);
@@ -204,20 +210,19 @@ var Scatter = IV.extend(IV.objects.Object, function(info) {
         });
     },
     select: function(pt, data, action) {
-        if(!IV.get("visible-guide")) return null;
         var $this = this;
         var rslt = null;
         $this.enumerateGuide(data, function(p1, p2, q1, q2) {
             $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
                 var d = IV.pointLineSegmentDistance(pt, l[0], l[1]);
-                if(d < 4.0 / pt.scale) rslt = { distance: d };
+                if(d < 4.0 / pt.view_scale) rslt = { distance: d };
             });
         });
         return rslt;
     }
 });
 
-IV.objects.Track = Track;
-IV.objects.Scatter = Scatter;
+Objects.Track = Track;
+Objects.Scatter = Scatter;
 
 })();

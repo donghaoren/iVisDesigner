@@ -78,14 +78,18 @@ Editor.tools = { };
             hover: null
         };
         Tools.beginTrackMouse(function(e) {
-            var context = Editor.vis.selectObject(Editor.data, new IV.Vector(e.offsetX, e.offsetY), action);
+            var context;
+            if(Editor.vis && Editor.data)
+                context = Editor.vis.selectObject(Editor.data, e.offset, action);
             f(context, e);
         }, key);
         Tools.beginTrackMouseMove(function(e, tracking) {
             if(tracking) {
                 overlay_info.hover = null;
             } else {
-                var context = Editor.vis.selectObject(Editor.data, new IV.Vector(e.offsetX, e.offsetY));
+                var context;
+                if(Editor.vis && Editor.data)
+                    context = Editor.vis.selectObject(Editor.data, e.offset);
                 if(context && context.obj) {
                     overlay_info.hover = context.obj;
                 } else {
@@ -108,7 +112,7 @@ Editor.tools = { };
         };
 
         Tools.beginTrackMouse(function(e) {
-            var p0 = new IV.Vector(e.offsetX, e.offsetY)
+            var p0 = e.offset;
             var context = Editor.vis.selectObject(Editor.data, p0);
 
             var captured_object = function(obj) {
@@ -120,8 +124,8 @@ Editor.tools = { };
             if(context && context.obj.can("get-point")) {
                 var diff = null;
                 e.move(function(e_move) {
-                    diff = new IV.Vector(e_move.offsetX - p0.x, e_move.offsetY - p0.y);
-                    overlay_info.line = [ p0, new IV.Vector(e_move.offsetX, e_move.offsetY) ];
+                    diff = new IV.Vector(e_move.offset.x - p0.x, e_move.offset.y - p0.y);
+                    overlay_info.line = [ p0, new IV.Vector(e_move.offset.x, e_move.offset.y) ];
                 });
                 e.release(function() {
                     overlay_info.line = null;
@@ -133,7 +137,7 @@ Editor.tools = { };
                 });
             } else {
                 e.release(function() {
-                    captured_object(new IV.objects.Plain(new IV.Vector(e.offsetX, e.offsetY)));
+                    captured_object(new IV.objects.Plain(e.offset));
                 });
             }
         }, key);
@@ -142,7 +146,7 @@ Editor.tools = { };
             if(tracking) {
                 overlay_info.hover = null;
             } else {
-                var context = Editor.vis.selectObject(Editor.data, new IV.Vector(e.offsetX, e.offsetY));
+                var context = Editor.vis.selectObject(Editor.data, e.offset);
                 if(context && context.obj) {
                     overlay_info.hover = context.obj;
                 } else {
@@ -162,10 +166,10 @@ Editor.tools = { };
         if(overlay_info) {
             if(overlay_info.hover) {
                 var obj = overlay_info.hover;
-                g.save();
+                g.ivSave();
                 if(obj.renderSelected) obj.renderSelected(g, IV.data);
                 if(obj.renderGuideSelected) obj.renderGuideSelected(g, IV.data);
-                g.restore();
+                g.ivRestore();
             }
             if(overlay_info.line) {
                 g.beginPath();

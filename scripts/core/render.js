@@ -34,10 +34,6 @@ IV.CanvasManager.prototype.get = function(key) {
     return this.canvas[key];
 };
 
-IV.CanvasManager.prototype._init_transform = function(ctx) {
-    ctx.setTransform(this.ratio, 0, 0, this.ratio, 0, 0);
-};
-
 // Resize the canvases.
 IV.CanvasManager.prototype.resize = function(width, height, set_css) {
     this.width = width;
@@ -102,10 +98,11 @@ IV.Renderer.prototype.setView = function(center, scale) {
 };
 
 IV.Renderer.prototype.getOffsetFromScreen = function(pt) {
-    var x = (pt.x - this.manager.width / 2) / this.scale;
-    var y = (pt.y - this.manager.height / 2) / this.scale;
+    var x = (pt.x - this.manager.width / 2 - this.center.x) / this.scale;
+    var y = (pt.y - this.manager.height / 2 - this.center.y) / this.scale;
     var r = new IV.Vector(x, y);
-    r.det = [ this.scale, 0, 0, this.scale ];
+    r.view_det = [ this.scale, 0, 0, this.scale ];
+    r.view_scale = this.scale;
     return r;
 };
 
@@ -125,16 +122,56 @@ IV.Renderer.prototype.trigger = function(items) {
 };
 
 // Extend canvas render context.
-CanvasRenderingContext2D.prototype.iv_setTransform = function(tr) {
-    this.setTransform(tr.m[0], tr.m[1], tr.m[3], tr.m[4], tr.m[2], tr.m[5]);
+
+CanvasRenderingContext2D.prototype.ivSave = function() {
+    this.save();
+    if(!this.iv_transform_stack) this.iv_transform_stack = [];
+    this.iv_transform_stack.push(this.iv_transform);
+};
+
+CanvasRenderingContext2D.prototype.ivRestore = function() {
+    this.restore();
+    if(!this.iv_transform_stack) this.iv_transform_stack = [];
+    this.ivSetTransform(this.iv_transform_stack.pop());
+
+};
+
+CanvasRenderingContext2D.prototype.ivSetTransform = function(tr) {
+    if(!tr) tr = new IV.affineTransform();
+    var r = this.iv_pre_ratio;
+    this.setTransform(r * tr.m[0], r * tr.m[1], r * tr.m[3], r * tr.m[4], r * tr.m[2], r * tr.m[5]);
     this.iv_transform = tr;
 };
 
+CanvasRenderingContext2D.prototype.ivAppendTransform = function(tr) {
+    if(this.iv_transform)
+        tr = this.iv_transform.concat(tr);
+    this.ivSetTransform(tr);
+};
+
+CanvasRenderingContext2D.prototype.ivGetTransform = function(tr) {
+    if(this.iv_transform)
+        return this.iv_transform;
+    return new IV.affineTransform();
+};
+
+CanvasRenderingContext2D.prototype.ivGetGuideWidth = function() {
+    return 1.0 / Math.sqrt(Math.abs(this.ivGetTransform().det()));
+};
+
+CanvasRenderingContext2D.prototype.ivGuideLineWidth = function() {
+    return this.lineWidth = this.ivGetGuideWidth();
+};
+
+
+
 IV.Renderer.prototype._set_transform = function(ctx) {
-    this.manager._init_transform(ctx);
-    ctx.translate(this.center.x + this.manager.width / 2, this.center.y + this.manager.height / 2);
-    ctx.scale(this.scale, this.scale);
-    ctx.iv_scale = this.scale;
+    ctx.iv_pre_ratio = this.manager.ratio;
+    ctx.ivAppendTransform(new IV.affineTransform([
+        this.scale, 0, this.center.x + this.manager.width / 2,
+        0, this.scale, this.center.y + this.manager.height / 2,
+        0, 0, 1
+    ]));
 };
 
 IV.Renderer.prototype._perform_render = function(key) {
@@ -142,13 +179,13 @@ IV.Renderer.prototype._perform_render = function(key) {
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, this.manager.width, this.manager.height);
 
-    ctx.save();
+    ctx.ivSave();
     this._set_transform(ctx);
 
     this.raise(key + ":before", this.data, ctx);
     this.raise(key, this.data, ctx);
     this.raise(key + ":after", this.data, ctx);
-    ctx.restore();
+    ctx.ivRestore();
 };
 
 // Render the visualizaion.

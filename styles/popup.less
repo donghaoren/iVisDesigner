@@ -9,12 +9,12 @@
     position: absolute;
     overflow: hidden;
     .panel_background();
-    .drop_shadow();
-    border: 1px solid @panel_titlecolor;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+    border: 1px solid lighten(@panel_titlecolor, 10%);
     padding-top: 5px;
 
     & > .topbar {
-        .gradient_background(lighten(@panel_titlecolor, 20%));
+        .gradient_background(lighten(@panel_titlecolor, 10%));
         position: absolute;
         left: 0; right: 0; top: 0; height: 5px;
         cursor: move;

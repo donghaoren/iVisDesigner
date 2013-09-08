@@ -55,12 +55,8 @@
         font-size: 12px;
         cursor: pointer;
         box-shadow: 0 0 3px gray;
-        .gradient_background(@panel_titlecolor);
-        /*
-        &:hover {
-            .title { display: block; }
-        }
-        */
+        background: @panel_titlecolor;
+         .gradient_background(@panel_titlecolor);
         .title {
             display: none;
             position: absolute;
@@ -286,15 +282,66 @@
     background-color: rgba(255, 255, 255, 0.6);
 }
 
-#panel-style-container {
+#panel-style-display {
     font-size: 13px;
-    padding: 5px;
     line-height: 19px;
 
-    .group {
+    .item-caption {
+        background-color: rgba(0, 0, 0, 0.02);
+        padding-left: 5px;
+        font-size: 11px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        i {
+            text-align: center;
+            width: 10px;
+            display: inline-block;
+        }
+    }
+
+    .item-action {
+        .field {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            white-space: nowrap;
+            .name {
+                float: left;
+                width: 30%;
+                font-size: 11px;
+                line-height: 19px;
+                text-align: right;
+                span {
+                    padding-right: 4px;
+                    margin-right: 3px;
+                }
+                background-color: rgba(0, 0, 0, 0.01);
+                cursor: pointer;
+            }
+            .val {
+                float: left;
+                width: 70%;
+            }
+        }
+    }
+    .plain-color {
         display: inline-block;
-        white-space: nowrap;
-        margin-right: 4px;
+        width: 1em;
+        position: relative;
+        outline: 1px solid white;
+        box-shadow: 0 0 2px black;
+        top: 2px;
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+    }
+    input {
+        border: none;
+        margin: 0;
+        padding: 0;
+        background: none;
+        width: 100%;
+        &.dirty {
+            color: @active_color;
+        }
     }
 }
 

@@ -1029,6 +1029,7 @@ NS.convexHull = function(points) {
 })();
 
 NS.affineTransform = function(matrix) {
+    if(!matrix) matrix = [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ];
     this.m = matrix;
     /*
      0 1 2
@@ -1065,13 +1066,13 @@ NS.makeTransform = {
 NS.affineTransform.prototype = {
     point: function(p) {
         var m = this.m;
-        return [m[0] * p[0] + m[1] * p[1] + m[2],
-                m[3] * p[0] + m[4] * p[1] + m[5]];
+        return [m[0] * p.x + m[1] * p.y + m[2],
+                m[3] * p.x + m[4] * p.y + m[5]];
     },
-    vector: function(p) {
+    vector: function(v) {
         var m = this.m;
-        return [m[0] * p[0] + m[1] * p[1],
-                m[3] * p[0] + m[4] * p[1]];
+        return [m[0] * v.x + m[1] * v.y,
+                m[3] * v.x + m[4] * v.y];
     },
     point_h: function(p) {
         var m = this.m;
@@ -1113,6 +1114,10 @@ NS.affineTransform.prototype = {
             S * U[1][0] * V[0][1] + S * U[1][1] * V[1][1], m[5],
             0, 0, 1
         ]);
+    },
+    det: function() {
+        var m = this.m;
+        return m[0] * m[4] - m[1] * m[3];
     }
 };
 

@@ -57,9 +57,9 @@ GoogleMapStatic.prototype = {
         return baseurl + "?" + params_array.join("&");
     }
 };
-// IV.vis.addObject(new IV.objects.GoogleMap("stations:lng", "stations:lat", new IV.Vector(0, 0), 116.37371, 39.86390, 10));
-var GoogleMap = IV.extend(IV.objects.Object, function(path_lng, path_lat, center_offset, lng, lat, zoom) {
-    IV.objects.Object.call(this);
+// IV.vis.addObject(new Objects.GoogleMap("stations:lng", "stations:lat", new IV.Vector(0, 0), 116.37371, 39.86390, 10));
+Objects.GoogleMap = IV.extend(Objects.Object, function(path_lng, path_lat, center_offset, lng, lat, zoom) {
+    Objects.Object.call(this);
     var $this = this;
     this.type = "GoogleMap";
     this.map = new GoogleMapStatic(lng, lat, zoom, 640, 640, "street", 2);
@@ -101,7 +101,7 @@ var GoogleMap = IV.extend(IV.objects.Object, function(path_lng, path_lat, center
         var c4 = rect.corner4();
         g.beginPath();
         g.strokeStyle = IV.colors.selection.toRGBA();
-        g.lineWidth = 1.0; // TODO: get transform.
+        g.lineWidth = 1.0 / g.ivGetTransform().det();
         g.moveTo(c1.x, c1.y);
         g.lineTo(c2.x, c2.y);
         g.lineTo(c3.x, c3.y);
@@ -126,7 +126,5 @@ var GoogleMap = IV.extend(IV.objects.Object, function(path_lng, path_lat, center
         return null;
     }
 });
-
-IV.objects.GoogleMap = GoogleMap;
 
 })();
