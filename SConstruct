@@ -4,10 +4,12 @@
 # Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 # See LICENSE.txt for copyright information.
 
-import SwBuilder.initialize
-execfile(SwBuilder.initialize.execpath)
+from SwBuilder import *
 
-execfile("version.py")
+import commands
+
+IV_version = "0.01alpha"
+IV_rev = commands.getoutput("git rev-parse --short HEAD")
 
 Meta("version", IV_version)
 Meta("revision", IV_rev.upper())
@@ -41,14 +43,9 @@ Image("imgs/panel.png", "images/panel.png")
 Image("imgs/corner.svg", "images/corner.svg")
 Image("imgs/logo.svg", "images/logo.svg")
 
-Binary("datasets/cardata.schema", "datasets/cardata.yaml");
-Binary("datasets/cardata.data", "datasets/cardata.data.yaml");
-Binary("datasets/temperature.schema", "datasets/temperature.yaml");
-Binary("datasets/temperature.data", "datasets/temperature.data.yaml");
-Binary("datasets/bjairdata.schema", "datasets/bjairdata.yaml");
-Binary("datasets/bjairdata.data", "datasets/bjairdata.data.yaml");
-Binary("datasets/graph.schema", "datasets/graph.yaml");
-Binary("datasets/graph.data", "datasets/graph.data.yaml");
+# All-in-one test data.
+Binary("datasets/test.schema", "datasets/test.yaml");
+Binary("datasets/test.data", "datasets/test.data.yaml");
 
 HTML("toolkit.html", "html/toolkit.html")
 HTML("credits.html", "CREDITS.md")

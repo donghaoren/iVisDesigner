@@ -85,7 +85,7 @@ $(function() {
     IV.raise("initialize:before");
     IV.raise("initialize");
     IV.raise("initialize:after");
-    IV.loadDataset("cardata", function() {
+    IV.loadDataset("test", function() {
 
     });
 });

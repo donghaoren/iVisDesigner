@@ -10,4 +10,6 @@ images/iconfont/*.js
 *.sublime-project
 *.dblite
 *.pyc
+linecount.sh
+update_swbuilder.sh
 deploy_list
