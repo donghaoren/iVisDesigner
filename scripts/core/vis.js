@@ -121,11 +121,13 @@ IV.Visualization.prototype.selectObject = function(data, location, action) {
 IV.Visualization.prototype.appendSelection = function(ctx) {
     this.selection.push(ctx);
     ctx.obj.selected = true;
+    this.raise("selection");
 };
 // Clear selected objects.
 IV.Visualization.prototype.clearSelection = function() {
     this.selection.forEach(function(c) { c.obj.selected = false; });
     this.selection = [];
+    this.raise("selection");
 };
 // Handle tick event, pass them to the objects.
 IV.Visualization.prototype.timerTick = function(data) {

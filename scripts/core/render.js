@@ -116,7 +116,7 @@ IV.Renderer.prototype.trigger = function(items) {
     if(items === null || items === undefined) {
         items = [ "front", "back", "main", "overlay" ];
     }
-    if(typeof(items) == "string") items = [ items ];
+    if(typeof(items) == "string") items = items.split(",");
     for(var i = 0; i < items.length; i++)
         this.needs_render[items[i]] = true;
 };

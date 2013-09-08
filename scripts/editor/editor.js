@@ -27,19 +27,32 @@ $(window).resize(function() {
 }).resize();
 
 Editor.bind("objects", function() {
-    IV.generateObjectList();
+    Editor.generateObjectList();
 });
 
 Editor.bind("selection", function() {
     $("#object-list").children(".item").each(function() {
         $(this).data().update();
     });
+    if(Editor.vis.selection.length == 1) {
+        var selobj = Editor.vis.selection[0].obj;
+        if(selobj.style) {
+            Editor.Style.beginEditStyle(selobj.style);
+        } else {
+            Editor.Style.endEditStyle();
+        }
+    } else {
+        Editor.Style.endEditStyle();
+    }
 });
+
 
 {{include: objectlist.js}}
 {{include: schemaview.js}}
 
-{{include: style/style.js}}
+{{include: popups/popups.js}}
+
+{{include: property/property.js}}
 
 {{include: ui.js}}
 
@@ -62,13 +75,19 @@ Editor.setVisualization = function(vis) {
         objects: function() {
             Editor.renderer.trigger();
             Editor.renderer.render();
+            Editor.raise("objects");
+        },
+        selection: function() {
+            Editor.raise("selection");
         }
     };
     vis.bind("objects", this.vis_listener.objects);
+    vis.bind("selection", this.vis_listener.selection);
 };
 
 Editor.unsetVisualization = function() {
     Editor.vis.unbind("objects", this.vis_listener.objects);
+    Editor.vis.unbind("selection", this.vis_listener.selection);
     Editor.vis = null;
     Editor.raise("reset");
 };

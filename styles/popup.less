@@ -64,6 +64,17 @@
         margin: 2px 5px;
         line-height: 19px;
     }
+
+    .context-menu {
+        li {
+            padding: 3px 5px;
+            &:hover {
+                .gradient_background(@active_color);
+                color: white;
+            }
+            cursor: pointer;
+        }
+    }
 }
 
 .popup[data-popup="color-selector"] {

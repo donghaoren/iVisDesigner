@@ -59,7 +59,7 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
                 if(!rslt || rslt.distance > d) {
                     rslt = { distance: d };
                     if(action == "move") {
-                        if($this.center.type == "plain") {
+                        if($this.center.type == "Plain") {
                             rslt.original = $this.center.obj;
                             rslt.onMove = function(p0, p1) {
                                 $this.center.obj = rslt.original.sub(p0).add(p1);

@@ -9,7 +9,7 @@ IV.popups.PathSelect = function() {
 
     var rootelem_span = $('<span class="key">ROOT</span>');
     var rootelem = $("<li/>").append(rootelem_span);
-    var elem = IV.renderSchema(IV.data.schema.fields, "");
+    var elem = IV.editor.renderSchema(IV.editor.schema.fields, "");
     c.append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));
     c.append(elem);
 

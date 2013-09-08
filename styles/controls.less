@@ -7,11 +7,11 @@
     cursor: pointer;
     .select_none();
     &:hover {
-        .solid_background(@active_color);
+        .gradient_background(@active_color);
         color: white;
     }
     &.active, &:active {
-        .solid_background_inv(darken(@active_color, 5%));
+        .gradient_background_inv(darken(@active_color, 5%));
         color: white;
     }
 }

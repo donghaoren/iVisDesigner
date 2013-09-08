@@ -5,13 +5,13 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
     // Default attributes.
     this.actions = [
         {
+            type: "fill",
+            color: new Objects.Plain(new IV.Color(128, 128, 128, 1))
+        },
+        {
             type: "stroke",
             color: new Objects.Plain(new IV.Color(0, 0, 0, 1)),
             width: new Objects.Plain(1)
-        },
-        {
-            type: "fill",
-            color: new Objects.Plain(new IV.Color(128, 128, 128, 1))
         }
     ];
 }, {
@@ -39,6 +39,15 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
         g.beginPath();
         this._run_path(g, path);
         g.stroke();
+    },
+    clone: function() {
+        var r = new Objects.PathStyle();
+        r.actions = this.actions.map(function(act) {
+            var c = { type: act.type };
+            if(act.color) c.color = act.color.clone();
+            if(act.width) c.width = act.width.clone();
+            return c;
+        });
     },
     _run_path: function(g, path) {
         // See http://www.w3.org/TR/2013/CR-2dcontext-20130806

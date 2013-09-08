@@ -28,7 +28,7 @@
     IV.panels.style = {
         listener: function() { },
         loadStyle: function(style) {
-            if(style.type == "plain") {
+            if(style.type == "Plain") {
                 currentStyle = new IV.objects.Composite(style.obj, true);
             } else {
                 currentStyle = style.clone();

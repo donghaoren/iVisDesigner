@@ -318,7 +318,10 @@
             }
             .val {
                 float: left;
-                width: 70%;
+                position: relative;
+            }
+            .multi {
+                float: right;
             }
         }
     }
@@ -326,6 +329,7 @@
         display: inline-block;
         width: 1em;
         position: relative;
+        vertical-align: top;
         outline: 1px solid white;
         box-shadow: 0 0 2px black;
         top: 2px;
@@ -333,12 +337,15 @@
         height: 15px;
         cursor: pointer;
     }
+    .plain-path {
+        font-size: 11px;
+    }
     input {
         border: none;
         margin: 0;
         padding: 0;
         background: none;
-        width: 100%;
+        width: 70px;
         &.dirty {
             color: @active_color;
         }

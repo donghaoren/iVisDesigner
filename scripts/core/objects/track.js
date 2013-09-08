@@ -93,7 +93,7 @@ var Track = IV.extend(Objects.Object, function(info) {
                 rslt = { distance: d };
                 if(action == "move") {
                     var move_targets = [];
-                    var can_move = function(a) { return a.type == "plain" || a.type == "PointOffset"; };
+                    var can_move = function(a) { return a.type == "Plain" || a.type == "PointOffset"; };
                     if(p1.distance(pt) < threshold) {
                         if(can_move($this.anchor1)) {
                             move_targets.push($this.anchor1);
@@ -108,14 +108,14 @@ var Track = IV.extend(Objects.Object, function(info) {
                     }
                     if(move_targets.length > 0) {
                         rslt.originals = move_targets.map(function(plain) {
-                            if(plain.type == "plain")
+                            if(plain.type == "Plain")
                                 return plain.obj;
                             if(plain.type == "PointOffset")
                                 return plain.offset;
                         });
                         rslt.onMove = function(p0, p1) {
                             for(var i = 0; i < move_targets.length; i++) {
-                                if(move_targets[i].type == "plain")
+                                if(move_targets[i].type == "Plain")
                                     move_targets[i].obj = p1.sub(p0).add(this.originals[i]);
                                 if(move_targets[i].type == "PointOffset")
                                     move_targets[i].offset = p1.sub(p0).add(this.originals[i]);

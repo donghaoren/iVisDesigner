@@ -4,12 +4,18 @@
 Editor.renderSchema = function(schema, prev_path, set_active) {
     var elem = $("<ul></ul>");
     for(var key in schema) {
-        var this_path = prev_path + ":" + key;
-        if(prev_path == "") this_path = key;
         // Ignore all keys starting with _
         if(key[0] == '_') continue;
         // The child element.
         var child = schema[key];
+        var this_path;
+        if(child.type == "collection" || child.type == "sequence") {
+            this_path = prev_path + ":[" + key + "]";
+            if(prev_path == "") this_path = "[" + key + "]";
+        } else {
+            this_path = prev_path + ":" + key;
+            if(prev_path == "") this_path = key;
+        }
         // Fix abbreviations.
         if(typeof(child) == "string") child = { "type": child };
         // The text for key.

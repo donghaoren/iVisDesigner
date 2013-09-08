@@ -116,7 +116,8 @@ var NumberLinear = IV.extend(Objects.Object, function(path, min, max) {
     this.type = "NumberLinear";
 }, {
     get: function(context) {
-        var value = context.get(this.path);
+        if(!this.path) return 0;
+        var value = context.get(this.path).val();
         var s = context.getSchema(this.path);
         if(s.max !== undefined && s.min !== undefined)
             value = (value - s.min) / (s.max - s.min);
@@ -135,14 +136,13 @@ var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2) {
     this.color1 = color1;
     this.color2 = color2;
 
-    this.stops = [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 ].map(function(x) {
-        return color1.interpLab(color2, x);
-    });
+    this.propertyUpdate();
 
     this.type = "ColorLinear";
 }, {
     get: function(context) {
-        var value = context.get(this.path);
+        if(!this.path) return new IV.Color(0, 0, 0, 0);
+        var value = context.get(this.path).val();
         var s = context.getSchema(this.path);
         if(s.max !== undefined && s.min !== undefined)
             value = (value - s.min) / (s.max - s.min);
@@ -153,6 +153,12 @@ var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2) {
         var idx2 = idx1 + 1;
         var t = value * tp - idx1;
         return this.stops[idx1].interp(this.stops[idx2], t);
+    },
+    propertyUpdate: function() {
+        var $this = this;
+        this.stops = [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 ].map(function(x) {
+            return $this.color1.interpLab($this.color2, x);
+        });
     },
     clone: function() {
         return new ColorLinear(this.path, this.color1, this.color2);
