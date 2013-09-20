@@ -13,13 +13,13 @@ Tools.Line = {
                 return;
             } else {
                 $this.loc2 = loc;
-                var path = IV.get("selected-path");
-                var line = new IV.objects.Line(path, {
+                var path = Editor.get("selected-path");
+                var line = new IV.objects.Line({
+                    path: path,
                     point1: $this.loc1,
-                    point2: $this.loc2,
-                    style: IV.panels.style.createStyle()
+                    point2: $this.loc2
                 });
-                IV.vis.addObject(line);
+                Editor.doAddObject(line);
                 $this.loc1 = null;
                 $this.loc2 = null;
                 IV.set("status", "Line: Select point A.");
@@ -42,7 +42,7 @@ Tools.LineThrough = {
                     points: loc,
                     style: IV.panels.style.createStyle()
                 });
-                IV.vis.addObject(line);
+                Editor.doAddObject(line);
                 IV.raise("vis:objects");
                 Tools.triggerRender("main");
             }

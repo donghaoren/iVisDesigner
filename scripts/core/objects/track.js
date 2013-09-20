@@ -136,6 +136,7 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     this.track1 = info.track1;
     this.track2 = info.track2;
     this.guide_path = IV.Path.commonPrefix([ this.track1.getGuidePath(), this.track2.getGuidePath() ]);
+    this.path = IV.Path.commonPrefix([ this.track1.getPath(), this.track2.getPath() ]);
 }, {
     can: function(cap) {
         if(cap == "get-point") return true;

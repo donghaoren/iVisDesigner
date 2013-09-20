@@ -246,7 +246,7 @@ function make_async(obj, done, fail) {
 IV.dataprovider.listDatasets = function(done, fail) {
     var r = make_async(done, fail);
     setTimeout(function() {
-        r.ondone([ "cardata", "temperature" ]);
+        r.ondone([ "test" ]);
     }, 1);
     return r;
 };
@@ -258,7 +258,7 @@ IV.dataprovider.loadData = function(name, done, fail) {
             var schema = doc;
             $.get("datasets/" + name + ".data", function(data) {
                 jsyaml.loadAll(data, function(doc) {
-                    console.log(doc, schema);
+                    //console.log(doc, schema);
                     var x = new PlainDataset(doc, schema);
                     r.ondone(x);
                 });

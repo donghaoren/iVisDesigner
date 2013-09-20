@@ -26,7 +26,7 @@ IV.newVisualization = function() {
         min: stat.min - stat.range / 10,
         max: stat.max + stat.range / 10
     });
-    stat = IV.Path.computeBasicStatistics(new IV.Path("[cars]:horsepower"), IV.data);
+    var stat = IV.Path.computeBasicStatistics(new IV.Path("[cars]:horsepower"), IV.data);
     var axis2 = new IV.objects.Track({
         path: new IV.Path("[cars]:horsepower"),
         anchor1: new IV.objects.Plain(new IV.Vector(100, -5)),
@@ -42,6 +42,40 @@ IV.newVisualization = function() {
         path: new IV.Path("[cars]"),
         center: scatter,
         radius: new IV.objects.Plain(2)
+    });
+    vis.addObject(axis1);
+    vis.addObject(axis2);
+    vis.addObject(scatter);
+    vis.addObject(pt);
+
+    var stat = IV.Path.computeBasicStatistics(new IV.Path("[days]:day"), IV.data);
+    var axis1 = new IV.objects.Track({
+        path: new IV.Path("[days]:day"),
+        anchor1: new IV.objects.Plain(new IV.Vector(-300 - 20, -5)),
+        anchor2: new IV.objects.Plain(new IV.Vector(-20, -5)),
+        min: stat.min - stat.range / 10,
+        max: stat.max + stat.range / 10
+    });
+    var stat = IV.Path.computeBasicStatistics(new IV.Path("[days]:min"), IV.data);
+    var axis2 = new IV.objects.Track({
+        path: new IV.Path("[days]:min"),
+        anchor1: new IV.objects.Plain(new IV.Vector(-15, 0)),
+        anchor2: new IV.objects.Plain(new IV.Vector(-15, 100)),
+        min: stat.min - stat.range / 10,
+        max: stat.max + stat.range / 10
+    });
+    var scatter = new IV.objects.Scatter({
+        track1: axis1,
+        track2: axis2
+    });
+    var cc = new IV.objects.Circle({
+        path: new IV.Path("[days]"),
+        center: scatter,
+        radius: new IV.objects.Plain(2)
+    });
+    var pt = new IV.objects.LineThrough({
+        path: new IV.Path(),
+        points: scatter
     });
     vis.addObject(axis1);
     vis.addObject(axis2);

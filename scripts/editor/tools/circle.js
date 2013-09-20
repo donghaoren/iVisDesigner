@@ -9,13 +9,13 @@ Tools.Circle = {
         var $this = this;
         IV.set("status", "Circle: Select the center.");
         Tools.beginSelectLocation(function(loc) {
-            var path = IV.get("selected-path");
-            if(IV.data.getSchema(path)) {
-                var circle = new IV.objects.Circle(path, {
-                    center: loc,
-                    style: IV.panels.style.createStyle()
+            var path = Editor.get("selected-path");
+            if(path) {
+                var circle = new IV.objects.Circle({
+                    path: path,
+                    center: loc
                 });
-                IV.vis.addObject(circle);
+                Editor.doAddObject(circle);
             }
         }, "tools:Circle");
     },

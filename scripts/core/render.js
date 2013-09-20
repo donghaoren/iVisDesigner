@@ -46,8 +46,6 @@ IV.CanvasManager.prototype.resize = function(width, height, set_css) {
             $(c).css("width", this.width + "px");
             $(c).css("height", this.height + "px");
         }
-        var ctx = c.getContext("2d");
-        ctx.setTransform(this.ratio, 0, 0, this.ratio, 0, 0);
     }
 };
 
@@ -69,6 +67,11 @@ IV.Renderer = function() {
     this.bind("main", function(data, g) {
         if($this.vis) {
             $this.vis.render(data, g);
+        }
+    });
+    this.bind("overlay", function(data, g) {
+        if($this.vis) {
+            $this.vis.renderSelection(data, g);
         }
     });
     this.bind("back", function(data, g) {
@@ -99,7 +102,7 @@ IV.Renderer.prototype.setView = function(center, scale) {
 
 IV.Renderer.prototype.getOffsetFromScreen = function(pt) {
     var x = (pt.x - this.manager.width / 2 - this.center.x) / this.scale;
-    var y = (pt.y - this.manager.height / 2 - this.center.y) / this.scale;
+    var y = -(pt.y - this.manager.height / 2 + this.center.y) / this.scale;
     var r = new IV.Vector(x, y);
     r.view_det = [ this.scale, 0, 0, this.scale ];
     r.view_scale = this.scale;
@@ -163,13 +166,11 @@ CanvasRenderingContext2D.prototype.ivGuideLineWidth = function() {
     return this.lineWidth = this.ivGetGuideWidth();
 };
 
-
-
 IV.Renderer.prototype._set_transform = function(ctx) {
     ctx.iv_pre_ratio = this.manager.ratio;
     ctx.ivAppendTransform(new IV.affineTransform([
         this.scale, 0, this.center.x + this.manager.width / 2,
-        0, this.scale, this.center.y + this.manager.height / 2,
+        0, -this.scale, -this.center.y + this.manager.height / 2,
         0, 0, 1
     ]));
 };
@@ -185,6 +186,7 @@ IV.Renderer.prototype._perform_render = function(key) {
     this.raise(key + ":before", this.data, ctx);
     this.raise(key, this.data, ctx);
     this.raise(key + ":after", this.data, ctx);
+
     ctx.ivRestore();
 };
 

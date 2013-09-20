@@ -9,7 +9,7 @@ Tools.Move = {
             var l0 = Editor.renderer.center.clone();
             e_down.move(function(e_move) {
                 var p1 = e_move.page;
-                Editor.renderer.setView(l0.sub(p0).add(p1), Editor.renderer.scale);
+                Editor.renderer.setView(l0.add(new IV.Vector(p1.x - p0.x, p0.y - p1.y)), Editor.renderer.scale);
                 Tools.triggerRender();
             });
         }, "tools:Move");

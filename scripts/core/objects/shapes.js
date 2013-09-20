@@ -20,13 +20,27 @@ Objects.Shape = IV.extend(Objects.Object,function(info) {
             });
         });
     },
-    renderSelected: function(g, data) {
+    renderSelected: function(g, data, context) {
         var $this = this;
-        $this.path.enumerate(data, function(context) {
+        var draw_with_context = function(context) {
             $this.shapePaths(context, function(path) {
                 $this.style.renderSelection(context, g, path);
             });
-        });
+        };
+        if(context) draw_with_context(context);
+        else $this.path.enumerate(data, draw_with_context);
+    },
+    getPropertyContext: function() {
+        var $this = this;
+        return [
+            {
+                name: "Path",
+                group: "Shape",
+                type: "path",
+                get: function() { return $this.path; },
+                set: function(val) { return $this.path = val; }
+            }
+        ];
     }
 });
 
@@ -48,6 +62,27 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
     get: function(context) {
         return this.center.getPoint(context);
     },
+    getPropertyContext: function() {
+        var $this = this;
+        return Objects.Shape.getPropertyContext().concat([
+            {
+                name: "Center",
+                group: "Shape",
+                type: "point",
+                get: function() { return $this.center; },
+                set: function(val) { return $this.center = val; }
+            },
+            {
+                name: "Radius",
+                group: "Shape",
+                type: "number",
+                get: function() { return $this.radius; },
+                set: function(val) { return $this.radius = val; }
+            },
+            {
+            }
+        ]);
+    },
     select: function(pt, data, action) {
         var rslt = null;
         var $this = this;
@@ -57,7 +92,7 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
             var d = Math.abs(pt.distance(c) - radius);
             if(d <= 4.0 / pt.view_scale) {
                 if(!rslt || rslt.distance > d) {
-                    rslt = { distance: d };
+                    rslt = { distance: d, context: context.clone() };
                     if(action == "move") {
                         if($this.center.type == "Plain") {
                             rslt.original = $this.center.obj;
@@ -100,15 +135,15 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
-            if(d <= 4.0 / pt.view_scale) {
+            var threshold = 4.0 / pt.view_scale;
+            if(d < threshold) {
                 if(!rslt || rslt.distance > d)
-                    rslt = { distance: d };
+                    rslt = { distance: d, context: context.clone() };
             }
         });
         return rslt;
     }
 });
-
 
 Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
     Objects.Shape.call(this, info);
@@ -140,7 +175,7 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
                 var d = IV.pointLineSegmentDistance(pt, pts[i], pts[i + 1]);
                 if(d <= 4.0 / pt.view_scale) {
                     if(!rslt || rslt.distance > d)
-                        rslt = { distance: d };
+                        rslt = { distance: d, context: fctx.clone() };
                 }
             }
         });

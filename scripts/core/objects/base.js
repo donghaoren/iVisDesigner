@@ -130,22 +130,23 @@ var NumberLinear = IV.extend(Objects.Object, function(path, min, max) {
 Objects.NumberLinear = NumberLinear;
 
 // Color Linear Mapping.
-var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2) {
+var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2, min, max) {
     Objects.Object.call(this);
     this.path = path;
     this.color1 = color1;
     this.color2 = color2;
+    this.min = min;
+    this.max = max;
 
     this.propertyUpdate();
 
     this.type = "ColorLinear";
 }, {
     get: function(context) {
-        if(!this.path) return new IV.Color(0, 0, 0, 0);
+        if(!this.path || this.min === undefined || this.max === undefined)
+            return new IV.Color(0, 0, 0, 0);
         var value = context.get(this.path).val();
-        var s = context.getSchema(this.path);
-        if(s.max !== undefined && s.min !== undefined)
-            value = (value - s.min) / (s.max - s.min);
+        value = (value - this.min) / (this.max - this.min);
         var tp = this.stops.length - 1;
         var idx1 = Math.floor(value * tp);
         if(idx1 < 0) idx1 = 0;
@@ -161,7 +162,7 @@ var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2) {
         });
     },
     clone: function() {
-        return new ColorLinear(this.path, this.color1, this.color2);
+        return new ColorLinear(this.path, this.color1, this.color2, this.min, this.max);
     }
 });
 Objects.ColorLinear = ColorLinear;

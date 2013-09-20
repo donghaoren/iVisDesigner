@@ -1313,13 +1313,22 @@ NS.parseCSV = function(string) {
     };
 };
 
-NS.deepClone = function(myObj)
-{
+NS.deepClone = function(myObj) {
+    if(myObj == null || myObj == undefined) return myObj;
+    // If we have clone method, call it.
+    if(myObj.clone) return myObj.clone();
+    // Not object type, return itself.
     if(typeof(myObj) != 'object') return myObj;
-    if(myObj == null) return myObj;
-    var myNewObj = new Object();
-    for(var i in myObj) myNewObj[i] = NS.deepClone(myObj[i]);
-    return myNewObj;
+    if(myObj instanceof Array) {
+        var r = [];
+        for(var i = 0; i < myObj.length; i++)
+            r[i] = NS.deepClone(myObj[i]);
+        return r;
+    } else {
+        var myNewObj = new Object();
+        for(var i in myObj) myNewObj[i] = NS.deepClone(myObj[i]);
+        return myNewObj;
+    }
 };
 
 NS.wrapText = function(context, text, x, y, maxWidth, lineHeight) {

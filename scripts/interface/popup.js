@@ -15,8 +15,10 @@
         var resize_button = popup.children(".resize");
         var topbar_move = popup.children(".topbar");
 
-        popup.mousedown(function() {
-            should_block_popup_hide = true;
+        popup.mousedown(function(e) {
+            if(data.shown) {
+                should_block_popup_hide = true;
+            }
         });
 
         resize_button.mousedown(function(e) {
@@ -75,6 +77,7 @@
         data.hide = function() {
             popup.remove();
             if(data.onHide) data.onHide();
+            if(data.finalize) data.finalize();
             return data;
         };
 
@@ -84,11 +87,11 @@
             if(!height) height = p.default_height;
             $("#popup-container").append(p);
             var margin = 5;
-            var x = anchor.offset().left - width - margin;
+            var x = anchor.offset().left - width - 2 + anchor.outerWidth();
             var y = anchor.offset().top - height - margin;
             var cx = anchor.offset().left + anchor.width() / 2;
             var cy = anchor.offset().top + anchor.height() / 2;
-            if(cx < $(window).width() / 2) x = anchor.offset().left + anchor.width() + margin;
+            if(cx < $(window).width() / 2) x = anchor.offset().left;
             if(cy < $(window).height() / 2) y = anchor.offset().top + anchor.height() + margin;
             p.css({
                 width: width + "px",
@@ -98,6 +101,7 @@
             });
 
             if(p.data().onShow) p.data().onShow(info);
+            data.shown = true;
             return p.data();
         };
 
@@ -128,8 +132,6 @@
             $("#popup-container").children().each(function() {
                 var data = $(this).data();
                 data.hide();
-                if(data.finalize) data.finalize();
-                $(this).remove();
             });
         }
         should_block_popup_hide = false;

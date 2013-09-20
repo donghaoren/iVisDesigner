@@ -116,7 +116,7 @@ Editor.tools = { };
             var context = Editor.vis.selectObject(Editor.data, p0);
 
             var captured_object = function(obj) {
-                var ref_path = IV.get("selected-reference");
+                var ref_path;// = IV.get("selected-reference");
                 if(ref_path) f(new IV.objects.ReferenceWrapper(ref_path, obj));
                 else f(obj);
             };

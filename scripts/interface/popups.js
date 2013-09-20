@@ -16,7 +16,10 @@
         var topbar_move = popup.children(".topbar");
 
         popup.mousedown(function() {
-            should_block_popup_hide = true;
+            if(data.shown) {
+                should_block_popup_hide = true;
+                console.log
+            }
         });
 
         resize_button.mousedown(function(e) {
@@ -71,6 +74,7 @@
         };
 
         data.selector = popup;
+        data.shown = false;
 
         data.hide = function() {
             popup.remove();
@@ -98,6 +102,7 @@
             });
 
             if(p.data().onShow) p.data().onShow(info);
+            data.shown = true;
             return p.data();
         };
 

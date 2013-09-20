@@ -11,7 +11,9 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
         {
             type: "stroke",
             color: new Objects.Plain(new IV.Color(0, 0, 0, 1)),
-            width: new Objects.Plain(1)
+            width: new Objects.Plain(1),
+            join: new Objects.Plain("round"),
+            cap: new Objects.Plain("round")
         }
     ];
 }, {
@@ -46,8 +48,11 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
             var c = { type: act.type };
             if(act.color) c.color = act.color.clone();
             if(act.width) c.width = act.width.clone();
+            if(act.join) c.join = act.join.clone();
+            if(act.cap) c.cap = act.cap.clone();
             return c;
         });
+        return r;
     },
     _run_path: function(g, path) {
         // See http://www.w3.org/TR/2013/CR-2dcontext-20130806
@@ -107,6 +112,9 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
         var color = act.color.get(context).toRGBA();
         g.strokeStyle = color;
         g.lineWidth = act.width.get(context);
+        g.lineCap = act.cap.get(context);
+        g.lineJoin = act.join.get(context);
+        g.miterLimit = 10 * g.iv_pre_ratio; // adapt with pre-scale ratio.
         g.beginPath();
         this._run_path(g, path);
         g.stroke();

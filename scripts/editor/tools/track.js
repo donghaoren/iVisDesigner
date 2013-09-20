@@ -18,9 +18,7 @@ Tools.Track = {
                     var track = new IV.objects.Track(
                         path, $this.loc1, $this.loc2
                     );
-                    IV.vis.addObject(track);
-                    IV.raise("vis:objects");
-                    Tools.triggerRender("main,back");
+                    Editor.doAddObject(track);
                 }
                 $this.loc1 = null;
                 $this.loc2 = null;
@@ -68,8 +66,7 @@ Tools.Scatter = {
                 if(IV.data.getSchema(path)) {
                     if(obj1.type == "Track" && obj2.type == "Track") {
                         var scatter = new IV.objects.Scatter(obj1, obj2);
-                        IV.vis.addObject(scatter);
-                        IV.raise("vis:objects");
+                        Editor.doAddObject(scatter);
                     }
                 }
                 obj1 = null;

@@ -60,7 +60,7 @@ Editor.renderDataSchema = function(schema) {
             $("#data-schema span.key").removeClass("active");
             $this.addClass("active");
             var data = $this.data();
-            //IV.set("selected-path", data.path);
+            Editor.set("selected-path", new IV.Path(data.path));
         });
     });
     $("#data-schema span.ref").each(function() {
@@ -69,12 +69,12 @@ Editor.renderDataSchema = function(schema) {
         $this.click(function(e) {
             if($this.is(".active")) {
                 $("#data-schema span.ref").removeClass("active");
-                //IV.set("selected-reference", null);
+                Editor.set("selected-reference", null);
             } else {
                 $("#data-schema span.ref").removeClass("active");
                 $this.addClass("active");
                 var data = p.data();
-                //IV.set("selected-reference", data.path);
+                Editor.set("selected-reference", new IV.Path(data.path));
             }
             e.stopPropagation();
         });

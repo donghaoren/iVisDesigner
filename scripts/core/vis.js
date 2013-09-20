@@ -60,11 +60,14 @@ IV.Visualization.prototype.render = function(data, g) {
         }
         g.ivRestore();
     });
+};
+
+IV.Visualization.prototype.renderSelection = function(data, g) {
     // Then we draw the selections.
     this.selection.forEachReversed(function(c) {
         g.ivSave();
         try {
-            c.obj.renderSelected(g, data);
+            c.obj.renderSelected(g, data, c.context);
         } catch(e) {
             console.log("Render Selected", c, e);
         }

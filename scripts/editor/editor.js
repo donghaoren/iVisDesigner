@@ -34,18 +34,15 @@ Editor.bind("selection", function() {
     $("#object-list").children(".item").each(function() {
         $(this).data().update();
     });
-    if(Editor.vis.selection.length == 1) {
-        var selobj = Editor.vis.selection[0].obj;
-        if(selobj.style) {
-            Editor.Style.beginEditStyle(selobj.style);
-        } else {
-            Editor.Style.endEditStyle();
-        }
-    } else {
-        Editor.Style.endEditStyle();
-    }
 });
 
+Editor.set("selected-path", new IV.Path());
+
+Editor.doAddObject = function(obj) {
+    if(Editor.vis) {
+        Editor.vis.addObject(obj);
+    }
+};
 
 {{include: objectlist.js}}
 {{include: schemaview.js}}
@@ -73,12 +70,14 @@ Editor.setVisualization = function(vis) {
     Editor.renderer.setVisualization(vis);
     this.vis_listener = {
         objects: function() {
+            Editor.raise("objects");
             Editor.renderer.trigger();
             Editor.renderer.render();
-            Editor.raise("objects");
         },
         selection: function() {
             Editor.raise("selection");
+            Editor.renderer.trigger();
+            Editor.renderer.render();
         }
     };
     vis.bind("objects", this.vis_listener.objects);

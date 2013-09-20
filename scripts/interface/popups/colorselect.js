@@ -254,4 +254,5 @@ IV.popups.beginColorSelect = function(anchor, cur_color, callback) {
     ref.onSelectColor = function(color) {
         callback(color);
     };
+    return d;
 };

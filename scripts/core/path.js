@@ -5,8 +5,8 @@
 IV.Path = function(str) {
     if(!str) str = "";
     if(typeof(str) == "string") {
-        var slices = str.split(":");
         this.components = [];
+        var slices = str == "" ? [] : str.split(":");
         for(var i = 0; i < slices.length; i++) {
             var c = slices[i];
             if(c[0] == "[" && c[c.length - 1] == "]") {
@@ -119,7 +119,7 @@ IV.Path.commonPrefix = function(paths) {
         var p = paths[i].components;
         var t;
         for(t = 0; t < common.length && t < p.length; t++) {
-            if(common[t].type != p[t] || common[t].name != p[t].name) {
+            if(common[t].type != p[t].type || common[t].name != p[t].name) {
                 break;
             }
         }

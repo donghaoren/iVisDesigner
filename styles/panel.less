@@ -282,7 +282,7 @@
     background-color: rgba(255, 255, 255, 0.6);
 }
 
-#panel-style-display {
+#panel-style-display, #panel-property-display {
     font-size: 13px;
     line-height: 19px;
 
@@ -315,26 +315,34 @@
                 }
                 background-color: rgba(0, 0, 0, 0.01);
                 cursor: pointer;
+                overflow: hidden;
             }
             .val {
                 float: left;
                 position: relative;
+                width: 70%;
+                overflow: hidden;
             }
             .multi {
-                float: right;
+                right: 0;
+                position: absolute;
             }
         }
     }
     .plain-color {
-        display: inline-block;
-        width: 1em;
-        position: relative;
-        vertical-align: top;
+        &, & span {
+            display: inline-block;
+            width: 1em;
+            position: relative;
+            vertical-align: top;
+            width: 15px;
+            height: 15px;
+        }
+        top: 2px;
         outline: 1px solid white;
         box-shadow: 0 0 2px black;
-        top: 2px;
-        width: 15px;
-        height: 15px;
+        background: @transparent_background;
+        background-size: 17px 17px;
         cursor: pointer;
     }
     .plain-path {
@@ -349,17 +357,5 @@
         &.dirty {
             color: @active_color;
         }
-    }
-}
-
-#panel-property-container {
-    line-height: 23px;
-    font-size: 13px;
-    padding: 5px;
-
-    .property-item {
-        display: inline-block;
-        white-space: nowrap;
-        margin-right: 4px;
     }
 }
