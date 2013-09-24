@@ -111,3 +111,24 @@ IV.listen("status", function(s) {
         $("#log-container > ul").prepend($("<li></li>").append($("<pre></pre>").text(s)));
     };
 })();
+
+Editor.status = {
+    start: function() {
+        this.end();
+        return this;
+    },
+    add: function(info) {
+        this.append(info);
+        return this;
+    },
+    append: function() { // append will return a descriptor, while add return the obj.
+        var ctx = {
+            set: function(info) {
+            }
+        };
+        return ctx;
+    },
+    end: function() {
+        return this;
+    }
+};

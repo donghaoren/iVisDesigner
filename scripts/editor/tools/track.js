@@ -5,24 +5,33 @@ Tools.Track = {
         var $this = this;
         $this.loc1 = null;
         $this.loc2 = null;
-        IV.set("status", "Track: Select point A.");
+        var sA = Editor.status.start()
+            .add("Track: ")
+            .append("A: [please select]");
+
         Tools.beginSelectLocation(function(loc) {
             if(!$this.loc1) {
                 $this.loc1 = loc;
-                IV.set("status", "Track: Select point B.");
+                sA.set("A: " + loc.type);
+                Editor.status.append("B: [please select]");
                 return;
             } else {
                 $this.loc2 = loc;
-                var path = IV.get("selected-path");
-                if(IV.data.getSchema(path) && IV.data.getSchema(path).type == "number") {
-                    var track = new IV.objects.Track(
-                        path, $this.loc1, $this.loc2
-                    );
+                var path = Editor.get("selected-path");
+                if(true) {
+                    var stat = IV.Path.computeBasicStatistics(path, IV.editor.data);
+                    var track = new IV.objects.Track({
+                        path: path,
+                        anchor1: $this.loc1,
+                        anchor2: $this.loc2,
+                        min: stat.min,
+                        max: stat.max
+                    });
                     Editor.doAddObject(track);
                 }
                 $this.loc1 = null;
                 $this.loc2 = null;
-                IV.set("status", "Track: Select point A.");
+                Editor.status.end();
             }
         }, "tools:Track");
     },

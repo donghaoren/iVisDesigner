@@ -17,6 +17,7 @@ primitives.Color = function(curr, args, callback) {
             });
         });
 };
+
 primitives.String = function(curr, args, callback) {
     if(!args) {
         var val0 = curr;
@@ -48,6 +49,7 @@ primitives.String = function(curr, args, callback) {
             });
     }
 };
+
 primitives.Number = function(curr, args, callback) {
     var val0 = curr;
     return primitives.String(curr.toString(), null, function(val) {
@@ -59,10 +61,12 @@ primitives.Number = function(curr, args, callback) {
         }
     });
 };
+
 primitives.Select = function(curr, args, callback) {
     var s = $("<select />");
 
 };
+
 primitives.Path = function(curr, args, callback) {
     return $("<span />")
         .addClass("btn plain-path")
@@ -115,7 +119,7 @@ var render_plain_value = function(item, args, callback) {
             return new_val;
         });
     }
-}
+};
 
 // Plain/Object value.
 var render_object_value = function(item, args, callback) {
@@ -131,6 +135,35 @@ var render_object_value = function(item, args, callback) {
         });
         var c2 = primitives.Color(item.color2, null, function(new_val) {
             item.color2 = new_val;
+            item.propertyUpdate();
+            callback();
+            return new_val;
+        });
+        var path = primitives.Path(item.path, null, function(new_val) {
+            var stat = IV.Path.computeBasicStatistics(new_val, IV.editor.data);
+            item.path = new_val;
+            item.min = stat.min;
+            item.max = stat.max;
+            callback();
+            return new_val;
+        });
+        var r = $("<span />");
+        r.append(c1)
+         .append("<span> - </span>")
+         .append(c2)
+         .append("<br />")
+         .append(path);
+        return r;
+    }
+    if(item.type == "NumberLinear") {
+        var c1 = primitives.Number(item.num1, null, function(new_val) {
+            item.num1 = new_val;
+            item.propertyUpdate();
+            callback();
+            return new_val;
+        });
+        var c2 = primitives.Number(item.num2, null, function(new_val) {
+            item.num2 = new_val;
             item.propertyUpdate();
             callback();
             return new_val;
@@ -180,6 +213,16 @@ var render_field = function(name, item, type, callback, args) {
             }
             if(val == "Linear") {
                 callback(new IV.objects.ColorLinear(new IV.Path(), new IV.Color(0, 0, 0, 1), new IV.Color(255, 255, 255, 1)));
+            }
+        });
+    }
+    if(type == "number") {
+        make_switch_button([ "Plain", "Linear" ], function(val) {
+            if(val == "Plain") {
+                callback(new IV.objects.Plain(0));
+            }
+            if(val == "Linear") {
+                callback(new IV.objects.NumberLinear(new IV.Path(), 0, 1, 0, 1));
             }
         });
     }

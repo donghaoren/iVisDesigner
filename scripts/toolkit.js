@@ -16,6 +16,7 @@ IV.config = $.extend({
 {{include: dataprovider.js}}
 
 IV.newVisualization = function() {
+    // Just construct one for testing.
     var vis = new IV.Visualization;
     IV.editor.setVisualization(vis);
     var stat = IV.Path.computeBasicStatistics(new IV.Path("[cars]:mpg"), IV.data);

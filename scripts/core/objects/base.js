@@ -108,9 +108,11 @@ var PointOffset = IV.extend(Objects.Object, function(point, offset) {
 Objects.PointOffset = PointOffset;
 
 // Linear Mapping.
-var NumberLinear = IV.extend(Objects.Object, function(path, min, max) {
+var NumberLinear = IV.extend(Objects.Object, function(path, num1, num2, min, max) {
     Objects.Object.call(this);
     this.path = path;
+    this.num1 = num1;
+    this.num2 = num2;
     this.min = min;
     this.max = max;
     this.type = "NumberLinear";
@@ -118,13 +120,12 @@ var NumberLinear = IV.extend(Objects.Object, function(path, min, max) {
     get: function(context) {
         if(!this.path) return 0;
         var value = context.get(this.path).val();
-        var s = context.getSchema(this.path);
-        if(s.max !== undefined && s.min !== undefined)
-            value = (value - s.min) / (s.max - s.min);
-        return this.min + value * (this.max - this.min);
+        if(this.max !== undefined && this.min !== undefined)
+            value = (value - this.min) / (this.max - this.min);
+        return this.num1 + value * (this.num2 - this.num1);
     },
     clone: function() {
-        return new NumberLinear(this.path, this.min, this.max);
+        return new NumberLinear(this.path, this.num1, this.num2, this.min, this.max);
     }
 });
 Objects.NumberLinear = NumberLinear;
