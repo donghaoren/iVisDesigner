@@ -2,32 +2,7 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
-@panel_titlecolor: #666;
-
-.tab {
-    margin-bottom: 5px;
-    & > .header {
-        white-space: nowrap;
-        & > [data-tab] {
-            display: inline-block;
-            line-height: 15px;
-            height: 15px;
-            padding: 2px 5px;
-            cursor: pointer;
-            &.active {
-                background-color: rgba(0, 0, 0, 0.1);
-            }
-            &:hover, &:active {
-                color: white;
-                background-color: @active_color;
-            }
-        }
-    }
-    & > .tabs {
-        padding: 4px;
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-}
+@import "tab.less";
 
 .panel {
     position: fixed;
@@ -147,131 +122,9 @@
     }
 }
 
-#data-schema, .data-schema {
-    line-height: 20px;
-    font-size: 12px;
-    background: white;
+@import "dataschema.less";
 
-    li > span {
-        display: block;
-        position: relative;
-        cursor: pointer;
-        padding-left: 7px;
-        //border-top:1px solid @panel_titlecolor;
-        border-bottom:1px solid white;
-        .panel_background();
-
-        &:hover {
-            .gradient_background(@active_color);
-            color: white;
-        }
-        &.active, &:active {
-            .gradient_background_inv(darken(@active_color, 5%));
-            color: white;
-        }
-
-        & > span.type {
-            margin-left: 3px;
-            padding: 0 3px;
-            font-size: 10px;
-            line-height: 14px;
-            display: inline-block;
-            vertical-align: baseline;
-            &:before { content: "-"; }
-            &:after { content: "-"; }
-        }
-
-        &:hover > span.ref, &.active > span.ref, &:active > span.ref {
-            .gradient_background(lighten(@active_color, 10%));
-        }
-        & > span.ref {
-            float: left;
-            line-height: 12px;
-            height: 12px;
-            margin: 3px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            margin-left: 0;
-            .gradient_background(#BBB);
-            &:hover {
-                border: 1px solid rgba(255, 255, 255, 0.5);
-            }
-            &.active, &:active {
-                .gradient_background_inv(@active_color_warm);
-                border: 1px solid rgba(0, 0, 0, 0.1);
-                color: black;
-            }
-        }
-    }
-    ul {
-        ul {
-            margin-left: 10px;
-        }
-    }
-}
-
-#object-list {
-    line-height: 22px;
-    font-size: 14px;
-
-    & > div.item {
-        display: block;
-        position: relative;
-        cursor: pointer;
-        padding-left: 10px;
-
-        span.type {
-            font-size: 10px;
-            line-height: 14px;
-            font-style: italic;
-            color: #999;
-        }
-
-        span.buttons {
-            float: right;
-            display: inline-block;
-
-            span {
-                float: left;
-                padding: 0 3px;
-                font-size: 10px;
-                line-height: 14px;
-                height: 14px;
-                margin: 3px;
-                border: 1px solid rgba(0, 0, 0, 0);
-                margin-left: 0;
-                .gradient_background(#BBB);
-                &:hover {
-                    border: 1px solid rgba(255, 255, 255, 0.5);
-                }
-                &.active, &:active {
-                    .gradient_background_inv(@active_color_warm) !important;
-                    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-                    color: black !important;
-                }
-            }
-        }
-        &:hover, &:active, &.selected {
-            span.buttons span {
-                .gradient_background(lighten(@active_color, 10%));
-                color: white;
-            }
-        }
-
-        &:hover {
-            .gradient_background(@active_color);
-            color: white;
-        }
-        &:active, &.selected {
-            .gradient_background_inv(darken(@active_color, 5%));
-            color: white;
-        }
-    }
-
-    & > .divider {
-        height: 0px;
-        outline: 1px solid @active_color;
-    }
-}
+@import "objectlist.less";
 
 #tools-container {
     .tool-icons { padding: 5px; }
@@ -320,7 +173,7 @@
             .val {
                 float: left;
                 position: relative;
-                width: 70%;
+                width: calc(~"70% - 23px");
                 overflow: hidden;
             }
             .multi {
@@ -348,15 +201,41 @@
     .plain-path {
         font-size: 11px;
     }
+
     input {
         border: none;
         margin: 0;
         padding: 0;
         background: none;
-        width: 40px;
+        width: 100%;
+        height: 19px;
         background-color: rgba(255, 255, 255, 0.5);
         &.dirty {
             color: @active_color;
+        }
+    }
+    .input-group {
+        .btn {
+            width: 10px;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        input {
+            width: calc(~"100% - 10px");
+        }
+    }
+    table.linear-ftf {
+        td:nth-child(1) {
+            width: calc(~"50% - 5px");
+        }
+        td:nth-child(2) {
+            width: 10px;
+            text-align: center;
+        }
+        td:nth-child(3) {
+            width: calc(~"50% - 5px");
         }
     }
 }

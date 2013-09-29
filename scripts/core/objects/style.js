@@ -109,9 +109,11 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
         }
     },
     _perform_stroke: function(act, context, g, path) {
+        var w = act.width.get(context);
+        if(w <= 0) return;
         var color = act.color.get(context).toRGBA();
         g.strokeStyle = color;
-        g.lineWidth = act.width.get(context);
+        g.lineWidth = w;
         g.lineCap = act.cap.get(context);
         g.lineJoin = act.join.get(context);
         g.miterLimit = 10 * g.iv_pre_ratio; // adapt with pre-scale ratio.

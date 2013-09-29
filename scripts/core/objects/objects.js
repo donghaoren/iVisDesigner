@@ -24,6 +24,7 @@ Objects.Object.prototype = {
     getPath: function() { return this.path; },
     getGuidePath: function() { return new IV.Path(); },
     render: function() { },
+    propertyUpdate: function() { },
     renderSelected: function() { },
     renderGuide: function() { },
     renderGuideSelected: function() { },

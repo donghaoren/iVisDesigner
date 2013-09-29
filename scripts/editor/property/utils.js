@@ -52,6 +52,52 @@ primitives.String = function(curr, args, callback) {
 
 primitives.Number = function(curr, args, callback) {
     var val0 = curr;
+    var inp = $("<input />")
+        .addClass("plain-string")
+        .val(curr)
+        .bind("keydown focusout", function(e) {
+            if(e.type == "focusout" || e.which == 13) {
+                $(this).removeClass("dirty");
+                val0 = $(this).val();
+                val0 = +callback(val0);
+                $(this).val(val0);
+            } else if($(this).val() != val0) {
+                $(this).addClass("dirty");
+            }
+        });
+    var btn = $("<span />")
+        .addClass("btn")
+        .text("↕")
+        .bind("mousedown", function(e) {
+            var v0 = val0;
+            var vmin = 0;
+            var vmax = 10;
+            if(args) {
+                if(args.min !== undefined) vmin = args.min;
+                if(args.max !== undefined) vmax = args.max;
+            }
+            var vs = (Math.abs(v0) + 0.01) / 100;
+            var mousemove = function(e2) {
+                var dy = e.pageY - e2.pageY;
+                var v = v0 + dy * vs;
+                v = +v.toFixed(3);
+                if(v < vmin) v = vmin;
+                if(v > vmax) v = vmax;
+                val0 = +callback(v);
+                inp.val(val0);
+            };
+            var mouseup = function(e2) {
+                $(window).unbind("mousemove", mousemove);
+                $(window).unbind("mouseup", mouseup);
+            };
+            $(window).bind("mousemove", mousemove);
+            $(window).bind("mouseup", mouseup);
+        });
+    return $("<span />").addClass("input-group").append(inp).append(btn);
+};
+/*
+primitives.Number = function(curr, args, callback) {
+    var val0 = curr;
     return primitives.String(curr.toString(), null, function(val) {
         if(val == val) {
             val0 = callback(val);
@@ -61,7 +107,7 @@ primitives.Number = function(curr, args, callback) {
         }
     });
 };
-
+*/
 primitives.Select = function(curr, args, callback) {
     var s = $("<select />");
 
@@ -176,11 +222,12 @@ var render_object_value = function(item, args, callback) {
             callback();
             return new_val;
         });
+        var t = $("<tr />");
+        t.append($("<td />").append(c1))
+         .append($("<td />").text(" - "))
+         .append($("<td />").append(c2));
         var r = $("<span />");
-        r.append(c1)
-         .append("<span> - </span>")
-         .append(c2)
-         .append("<br />")
+        r.append($("<table />").addClass("linear-ftf").append(t))
          .append(path);
         return r;
     }

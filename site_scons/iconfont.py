@@ -18,7 +18,7 @@ def CreateIconFont(name, files, target):
         if os.path.splitext(svg)[1] == ".svg":
             key = os.path.splitext(os.path.basename(svg))[0].replace("_", "-")
             mapping[key] = char
-            print "%04x - %s" % (char, key)
+            #print "%04x - %s" % (char, key)
             glyph = font.createChar(char)
             glyph.importOutlines(svg)
             # Rest on the baseline.

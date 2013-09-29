@@ -1,0 +1,24 @@
+.tab {
+    margin-bottom: 5px;
+    & > .header {
+        white-space: nowrap;
+        & > [data-tab] {
+            display: inline-block;
+            line-height: 15px;
+            height: 15px;
+            padding: 2px 5px;
+            cursor: pointer;
+            &.active {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+            &:hover, &:active {
+                color: white;
+                background-color: @active_color;
+            }
+        }
+    }
+    & > .tabs {
+        padding: 4px;
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+}
