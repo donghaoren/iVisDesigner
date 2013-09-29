@@ -6,10 +6,7 @@
 
 from SwBuilder import *
 
-import commands
-
-IV_version = "0.10alpha"
-IV_rev = commands.getoutput("git rev-parse --short HEAD")
+from version import IV_version, IV_rev
 
 Meta("version", IV_version)
 Meta("revision", IV_rev.upper())
