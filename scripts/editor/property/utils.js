@@ -58,7 +58,7 @@ primitives.Number = function(curr, args, callback) {
         .bind("keydown focusout", function(e) {
             if(e.type == "focusout" || e.which == 13) {
                 $(this).removeClass("dirty");
-                val0 = $(this).val();
+                val0 = +$(this).val();
                 val0 = +callback(val0);
                 $(this).val(val0);
             } else if($(this).val() != val0) {
@@ -69,7 +69,7 @@ primitives.Number = function(curr, args, callback) {
         .addClass("btn")
         .text("↕")
         .bind("mousedown", function(e) {
-            var v0 = val0;
+            var v0 = +val0;
             var vmin = 0;
             var vmax = 10;
             if(args) {

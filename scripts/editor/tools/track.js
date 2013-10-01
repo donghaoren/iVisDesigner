@@ -31,7 +31,9 @@ Tools.Track = {
                 }
                 $this.loc1 = null;
                 $this.loc2 = null;
-                Editor.status.end();
+                sA = Editor.status.start()
+                    .add("Track: ")
+                    .append("A: [please select]");
             }
         }, "tools:Track");
     },
@@ -48,42 +50,45 @@ Tools.Scatter = {
     onActive: function() {
         var obj1 = null;
         var obj2 = null;
-        IV.vis.clearSelection();
-        Tools.triggerRender("main,back");
+        Editor.vis.clearSelection();
+        //Tools.triggerRender("main,back");
 
-        IV.set("status", "Scatter: Select track A.");
+        var sA = Editor.status.start()
+            .add("Scatter: ")
+            .append("A: [please select]");
 
         Tools.beginSelectObject(function(context) {
-            var path = IV.get("selected-path");
+            var path = Editor.get("selected-path");
             if(!context) {
                 obj1 = null;
                 obj2 = null;
-                IV.vis.clearSelection();
-                IV.raise("vis:objects:selection");
-                Tools.triggerRender("main,back");
-                IV.set("status", "Scatter: Select track A.");
+                Editor.vis.clearSelection();
+                sA = Editor.status.start()
+                    .add("Scatter: ")
+                    .append("A: [please select]");
                 return;
             }
             if(!obj1) {
                 obj1 = context.obj;
-                IV.vis.appendSelection(context);
-                IV.raise("vis:objects:selection");
-                Tools.triggerRender("main,back");
-                IV.set("status", "Scatter: Select track B.");
+                Editor.vis.appendSelection(context);
+                sA.set("A: " + obj1.type);
+                Editor.status.append("B: [please select]");
             } else if(!obj2) {
                 obj2 = context.obj;
-                if(IV.data.getSchema(path)) {
+                if(true) {
                     if(obj1.type == "Track" && obj2.type == "Track") {
-                        var scatter = new IV.objects.Scatter(obj1, obj2);
+                        var scatter = new IV.objects.Scatter({
+                            track1: obj1, track2: obj2
+                        });
                         Editor.doAddObject(scatter);
                     }
                 }
                 obj1 = null;
                 obj2 = null;
-                IV.vis.clearSelection();
-                IV.raise("vis:objects:selection");
-                Tools.triggerRender("main,back");
-                IV.set("status", "Scatter: Select track A.");
+                Editor.vis.clearSelection();
+                sA = Editor.status.start()
+                    .add("Track: ")
+                    .append("A: [please select]");
             }
         }, "tools:Line");
     },

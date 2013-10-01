@@ -5,11 +5,15 @@ Tools.Line = {
         var $this = this;
         $this.loc1 = null;
         $this.loc2 = null;
-        IV.set("status", "Line: Select point A.");
+        var sA = Editor.status.start()
+            .add("Line: ")
+            .append("A: [please select]");
+
         Tools.beginSelectLocation(function(loc) {
             if(!$this.loc1) {
                 $this.loc1 = loc;
-                IV.set("status", "Line: Select point B.");
+                sA.set("A: " + loc.type);
+                Editor.status.append("B: [please select]");
                 return;
             } else {
                 $this.loc2 = loc;
@@ -22,7 +26,9 @@ Tools.Line = {
                 Editor.doAddObject(line);
                 $this.loc1 = null;
                 $this.loc2 = null;
-                IV.set("status", "Line: Select point A.");
+                sA = Editor.status.start()
+                    .add("Line: ")
+                    .append("A: [please select]");
             }
         }, "tools:Line");
     },
@@ -31,20 +37,59 @@ Tools.Line = {
     }
 };
 
+Tools.Bar = {
+    onActive: function() {
+        var $this = this;
+        $this.loc1 = null;
+        $this.loc2 = null;
+        var sA = Editor.status.start()
+            .add("Bar: ")
+            .append("A: [please select]");
+
+        Tools.beginSelectLocation(function(loc) {
+            if(!$this.loc1) {
+                $this.loc1 = loc;
+                sA.set("A: " + loc.type);
+                Editor.status.append("B: [please select]");
+                return;
+            } else {
+                $this.loc2 = loc;
+                var path = Editor.get("selected-path");
+                var line = new IV.objects.Bar({
+                    path: path,
+                    point1: $this.loc1,
+                    point2: $this.loc2,
+                    width: new IV.objects.Plain(1)
+                });
+                Editor.doAddObject(line);
+                $this.loc1 = null;
+                $this.loc2 = null;
+                sA = Editor.status.start()
+                    .add("Bar: ")
+                    .append("A: [please select]");
+            }
+        }, "tools:Bar");
+    },
+    onInactive: function() {
+        Tools.endSelectLocation("tools:Bar");
+    }
+};
+
+
 Tools.LineThrough = {
     onActive: function() {
         var $this = this;
-        IV.set("status", "LineThrough: Select location of anchors.");
+        sA = Editor.status.start()
+                .add("LinkThrough: ")
+                .append("Points: [please select]");
         Tools.beginSelectLocation(function(loc) {
-            var path = IV.get("selected-path");
-            if(IV.data.getSchema(path)) {
-                var line = new IV.objects.LineThrough(path, {
-                    points: loc,
-                    style: IV.panels.style.createStyle()
+            var path = Editor.get("selected-path");
+            if(true) {
+                var line = new IV.objects.LineThrough({
+                    path: path,
+                    points: loc
                 });
                 Editor.doAddObject(line);
-                IV.raise("vis:objects");
-                Tools.triggerRender("main");
             }
         }, "tools:LineThrough");
     },

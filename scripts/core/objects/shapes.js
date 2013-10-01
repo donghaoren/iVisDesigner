@@ -64,7 +64,7 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
     },
     getPropertyContext: function() {
         var $this = this;
-        return Objects.Shape.getPropertyContext().concat([
+        return Objects.Shape.prototype.getPropertyContext.call(this).concat([
             {
                 name: "Center",
                 group: "Shape",
@@ -78,8 +78,6 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
                 type: "number",
                 get: function() { return $this.radius; },
                 set: function(val) { return $this.radius = val; }
-            },
-            {
             }
         ]);
     },
@@ -126,6 +124,54 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
         cb([
             "M", this.point1.getPoint(context),
             "L", this.point2.getPoint(context)
+        ]);
+    },
+    select: function(pt, data, action) {
+        var rslt = null;
+        var $this = this;
+        this.path.enumerate(data, function(context) {
+            var p1 = $this.point1.getPoint(context);
+            var p2 = $this.point2.getPoint(context);
+            var d = IV.pointLineSegmentDistance(pt, p1, p2);
+            var threshold = 4.0 / pt.view_scale;
+            if(d < threshold) {
+                if(!rslt || rslt.distance > d)
+                    rslt = { distance: d, context: context.clone() };
+            }
+        });
+        return rslt;
+    }
+});
+
+Objects.Bar = IV.extend(Objects.Shape, function(info) {
+    Objects.Shape.call(this, info);
+    this.type = "Bar";
+    this.point1 = info.point1;
+    this.point2 = info.point2;
+    this.width = info.width;
+}, {
+    shapePaths: function(context, cb) {
+        var p1 = this.point1.getPoint(context);
+        var p2 = this.point2.getPoint(context);
+        var d = p1.sub(p2).normalize().rotate90().scale(0.5 * this.width.get(context));
+        cb([
+            "M", p1.add(d),
+            "L", p1.sub(d),
+            "L", p2.sub(d),
+            "L", p2.add(d),
+            "Z"
+        ]);
+    },
+    getPropertyContext: function() {
+        var $this = this;
+        return Objects.Shape.prototype.getPropertyContext.call(this).concat([
+            {
+                name: "Width",
+                group: "Shape",
+                type: "number",
+                get: function() { return $this.width; },
+                set: function(val) { return $this.width = val; }
+            }
         ]);
     },
     select: function(pt, data, action) {

@@ -1386,6 +1386,12 @@ Array.prototype.forEachReversed = function(f) {
     };
 };
 
+NS.forEachInObject = function(obj, f) {
+    for(var i in obj) {
+        f(i, obj[i]);
+    }
+};
+
 NS.extend = function(base, sub, funcs) {
     function inheritance() { };
     inheritance.prototype = base.prototype;
