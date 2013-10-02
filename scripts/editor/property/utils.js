@@ -70,8 +70,8 @@ primitives.Number = function(curr, args, callback) {
         .text("↕")
         .bind("mousedown", function(e) {
             var v0 = +val0;
-            var vmin = 0;
-            var vmax = 10;
+            var vmin = -1e100;
+            var vmax = 1e100;
             if(args) {
                 if(args.min !== undefined) vmin = args.min;
                 if(args.max !== undefined) vmax = args.max;
@@ -95,19 +95,6 @@ primitives.Number = function(curr, args, callback) {
         });
     return $("<span />").addClass("input-group").append(inp).append(btn);
 };
-/*
-primitives.Number = function(curr, args, callback) {
-    var val0 = curr;
-    return primitives.String(curr.toString(), null, function(val) {
-        if(val == val) {
-            val0 = callback(val);
-            return val;
-        } else {
-            return val0;
-        }
-    });
-};
-*/
 primitives.Select = function(curr, args, callback) {
     var s = $("<select />");
 
@@ -156,7 +143,7 @@ var render_plain_value = function(item, args, callback) {
         });
     }
     if(obj instanceof IV.Vector) {
-        return $("<span />").addClass("plain-vector").text(obj.x + ", " + obj.y);
+        return $("<span />").addClass("plain-vector").text("(" + obj.x + ", " + obj.y + ")");
     }
     if(obj instanceof IV.Color) {
         return primitives.Color(item.obj, args, function(new_val) {
@@ -169,6 +156,12 @@ var render_plain_value = function(item, args, callback) {
 
 // Plain/Object value.
 var render_object_value = function(item, args, callback) {
+    if(item instanceof IV.Path) {
+        return primitives.Path(item, args, function(new_val) {
+            callback(new_val);
+            return new_val;
+        });
+    }
     if(item.type == "Plain") {
         return render_plain_value(item, args, callback);
     }
@@ -231,15 +224,15 @@ var render_object_value = function(item, args, callback) {
          .append(path);
         return r;
     }
+    var r = $("<span />").text("[" + item.type + "]");
+    return r;
 };
 
 // Render a property field's value part.
 var render_field = function(name, item, type, callback, args) {
     var target = $("<div />").addClass("field group");
     var iName = $("<span />").addClass("name").append($("<span />").text(name));
-    var iVal = $("<span />").addClass("val").append(render_object_value(item, args, function() {
-        callback();
-    }));
+    var iVal = $("<span />").addClass("val").append(render_object_value(item, args, callback));
     target.append(iName);
     target.append(iVal);
 

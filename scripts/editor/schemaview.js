@@ -30,7 +30,7 @@ Editor.renderSchema = function(schema, prev_path, set_active) {
         if(child.type == "sequence")
             span.append($("<span />").addClass("type").text("seq"));
         if(child.type == "reference")
-            span.append($("<span />").addClass("type ref").text("ref"));
+            span.append($("<span />").addClass("ref").text("ref"));
         span.data().schema = schema;
         span.data().key = key;
         span.data().path = this_path;

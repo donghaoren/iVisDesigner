@@ -138,7 +138,7 @@ def Delimiter(L, R):
                                + r"(.*?)"
                                + r"\}\-\-[\-]*\>", re.DOTALL)
 
-    regex_math = re.compile(htcomment_start + r" *(math|lmath)\: *(.*?)" + htcomment_end, re.DOTALL)
+    regex_math = re.compile(htcomment_start + r" *(math|lmath|latex)\: *(.*?)" + htcomment_end, re.DOTALL)
 
     regex_lessimport = re.compile(r'\@import +\"([0-9a-zA-Z\.\-\_\/]+\.less)\"')
 
@@ -435,6 +435,7 @@ def html_build_function(target, source, env):
     def math_image_element(math, tag):
         if tag == "math": opt = ""
         if tag == "lmath": opt = "display"
+        if tag == "latex": opt = "plain"
         rendered = LaTeXPNGDataURL(math, opt)
         dataurl, size = rendered
         return '<img class="math" src="%s" style="width:%dpx" />' % (dataurl, size[0] / 2.0)
@@ -974,6 +975,16 @@ def LaTeXPNGDataURL(latex_input, env):
           r"\begin{displaymath}",
           latex_input,
           r"\end{displaymath}",
+          r"\end{document}"])
+    elif env == "plain":
+        latex = "\n".join([
+          r"\nonstopmode",
+          r"\documentclass{article}",
+          r"\usepackage{cancel}",
+          r"\usepackage{amsmath,amsthm}",
+          r"\pagestyle{empty}",
+          r"\begin{document}",
+          latex_input,
           r"\end{document}"])
     params = env
     code = sha1(latex + "-" + params).hexdigest()

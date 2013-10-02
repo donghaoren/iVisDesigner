@@ -28,20 +28,28 @@
             line-height: 14px;
             display: inline-block;
             vertical-align: baseline;
-            &:before { content: "-"; }
-            &:after { content: "-"; }
+            color: #999;
+            font-style: italic;
         }
 
         &:hover > span.ref, &.active > span.ref, &:active > span.ref {
             .gradient_background(lighten(@active_color, 10%));
         }
         & > span.ref {
+            margin-left: 3px;
+            padding: 0 3px;
+            font-size: 10px;
+            line-height: 14px;
+            display: inline-block;
+            vertical-align: baseline;
             float: left;
             line-height: 12px;
             height: 12px;
             margin: 3px;
             border: 1px solid rgba(0, 0, 0, 0.1);
             margin-left: 0;
+            &:before { content: "-"; }
+            &:after { content: "-"; }
             .gradient_background(#BBB);
             &:hover {
                 border: 1px solid rgba(255, 255, 255, 0.5);

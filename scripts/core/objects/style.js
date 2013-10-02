@@ -30,13 +30,17 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
     },
     renderGuide: function(context, g, path) {
         g.strokeStyle = "#888";
-        g.lineWidth = 1.0 / g.ivGetTransform().det();
+        g.lineCap = "round";
+        g.lineJoin = "round";
+        g.ivGuideLineWidth();
         g.beginPath();
         this._run_path(g, path);
         g.stroke();
     },
     renderSelection: function(context, g, path) {
         g.strokeStyle = IV.colors.selection.toRGBA();
+        g.lineCap = "round";
+        g.lineJoin = "round";
         g.ivGuideLineWidth();
         g.beginPath();
         this._run_path(g, path);

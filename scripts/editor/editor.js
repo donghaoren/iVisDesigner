@@ -34,6 +34,7 @@ Editor.bind("selection", function() {
     $("#object-list").children(".item").each(function() {
         $(this).data().update();
     });
+    Editor.generateObjectList();
 });
 
 Editor.set("selected-path", new IV.Path());

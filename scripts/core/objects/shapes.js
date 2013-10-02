@@ -199,7 +199,7 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
     shapePaths: function(context, cb) {
         var $this = this;
         var line = [];
-        $this.points.getPath().enumerate(context.val(), function(ctx) {
+        $this.points.getPath().enumerateAtContext(context, function(ctx) {
             if(line.length == 0) {
                 line.push("M");
             } else {
@@ -214,7 +214,7 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
         var $this = this;
         $this.path.enumerate(data, function(fctx) {
             var pts = [];
-            $this.points.getPath().enumerate(fctx.val(), function(context) {
+            $this.points.getPath().enumerateAtContext(fctx, function(context) {
                 pts.push($this.points.getPoint(context));
             });
             for(var i = 0; i < pts.length - 1; i++) {

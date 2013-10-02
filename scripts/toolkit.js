@@ -24,16 +24,16 @@ IV.newVisualization = function() {
         path: new IV.Path("[cars]:mpg"),
         anchor1: new IV.objects.Plain(new IV.Vector(-5, 0)),
         anchor2: new IV.objects.Plain(new IV.Vector(-5, 100)),
-        min: stat.min - stat.range / 10,
-        max: stat.max + stat.range / 10
+        min: new IV.objects.Plain(stat.min - stat.range / 10),
+        max: new IV.objects.Plain(stat.max + stat.range / 10)
     });
     var stat = IV.Path.computeBasicStatistics(new IV.Path("[cars]:horsepower"), IV.data);
     var axis2 = new IV.objects.Track({
         path: new IV.Path("[cars]:horsepower"),
         anchor1: new IV.objects.Plain(new IV.Vector(100, -5)),
         anchor2: new IV.objects.Plain(new IV.Vector(0, -5)),
-        min: stat.min - stat.range / 10,
-        max: stat.max + stat.range / 10
+        min: new IV.objects.Plain(stat.min - stat.range / 10),
+        max: new IV.objects.Plain(stat.max + stat.range / 10)
     });
     var scatter = new IV.objects.Scatter({
         track1: axis1,
@@ -54,16 +54,16 @@ IV.newVisualization = function() {
         path: new IV.Path("[days]:day"),
         anchor1: new IV.objects.Plain(new IV.Vector(-300 - 20, -5)),
         anchor2: new IV.objects.Plain(new IV.Vector(-20, -5)),
-        min: stat.min - stat.range / 10,
-        max: stat.max + stat.range / 10
+        min: new IV.objects.Plain(stat.min - stat.range / 10),
+        max: new IV.objects.Plain(stat.max + stat.range / 10)
     });
     var stat = IV.Path.computeBasicStatistics(new IV.Path("[days]:min"), IV.data);
     var axis2 = new IV.objects.Track({
         path: new IV.Path("[days]:min"),
         anchor1: new IV.objects.Plain(new IV.Vector(-15, 0)),
         anchor2: new IV.objects.Plain(new IV.Vector(-15, 100)),
-        min: stat.min - stat.range / 10,
-        max: stat.max + stat.range / 10
+        min: new IV.objects.Plain(stat.min - stat.range / 10),
+        max: new IV.objects.Plain(stat.max + stat.range / 10)
     });
     var scatter = new IV.objects.Scatter({
         track1: axis1,

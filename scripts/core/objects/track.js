@@ -13,12 +13,15 @@ var Track = IV.extend(Objects.Object, function(info) {
     this.type = "Track";
     this.anchor1 = info.anchor1;
     this.anchor2 = info.anchor2;
-    this.min = info.min !== undefined ? info.min : 0;
-    this.max = info.max !== undefined ? info.max : 100;
+    this.min = info.min !== undefined ? info.min : new IV.objects.Plain(0);
+    this.max = info.max !== undefined ? info.max : new IV.objects.Plain(100);
     this.guide_path = IV.Path.commonPrefix([ this.anchor1.getGuidePath(), this.anchor2.getGuidePath() ]);
 }, {
     can: function(cap) {
         if(cap == "get-point") return true;
+    },
+    getPath: function() {
+        return this.path;
     },
     getGuidePath: function() {
         return this.guide_path;
@@ -26,19 +29,65 @@ var Track = IV.extend(Objects.Object, function(info) {
     get: function(context) {
         var p1 = this.anchor1.getPoint(context);
         var p2 = this.anchor2.getPoint(context);
+        var min = this.min.get(context);
+        var max = this.max.get(context);
         var value = context.get(this.path).val();
-        value = (value - this.min) / (this.max - this.min);
+        value = (value - min) / (max - min);
         return p1.interp(p2, value);
+    },
+    getPropertyContext: function() {
+        var $this = this;
+        return [
+            {
+                name: "Path",
+                group: "Track",
+                type: "path",
+                get: function() { return $this.guide_path; },
+                set: function(val) { return $this.guide_path = val; }
+            },
+            {
+                name: "Value",
+                group: "Track",
+                type: "path",
+                get: function() { return $this.path; },
+                set: function(val) { return $this.path = val; }
+            },
+            {
+                name: "Min",
+                group: "Track",
+                type: "number",
+                get: function() { return $this.min; },
+                set: function(val) { return $this.min = val; }
+            },
+            {
+                name: "Max",
+                group: "Track",
+                type: "number",
+                get: function() { return $this.max; },
+                set: function(val) { return $this.max = val; }
+            },
+            {
+                name: "Anchor1",
+                group: "Track",
+                type: "point",
+                get: function() { return $this.anchor1; },
+                set: function(val) { return $this.anchor1 = val; }
+            },
+            {
+                name: "Anchor2",
+                group: "Track",
+                type: "point",
+                get: function() { return $this.anchor2; },
+                set: function(val) { return $this.anchor2 = val; }
+            }
+        ];
     },
     enumerateGuide: function(data, callback) {
         var $this = this;
-        var count = 0;
         this.guide_path.enumerate(data, function(context) {
             var p1 = $this.anchor1.getPoint(context);
             var p2 = $this.anchor2.getPoint(context);
             callback(p1, p2, context);
-            count++;
-            if(count >= 3) return false;
         });
     },
     renderGuide: function(g, data) {
@@ -46,7 +95,7 @@ var Track = IV.extend(Objects.Object, function(info) {
             g.strokeStyle = "rgba(128,128,128,0.5)";
             g.fillStyle = "rgba(128,128,128,1)";
 
-            var r = g.ivGuideLineWidth() * 2
+            var r = g.ivGuideLineWidth() * 2;
 
             g.beginPath();
             g.moveTo(p1.x, p1.y);

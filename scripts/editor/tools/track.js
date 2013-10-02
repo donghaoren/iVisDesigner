@@ -24,8 +24,8 @@ Tools.Track = {
                         path: path,
                         anchor1: $this.loc1,
                         anchor2: $this.loc2,
-                        min: stat.min,
-                        max: stat.max
+                        min: new IV.objects.Plain(stat.min),
+                        max: new IV.objects.Plain(stat.max)
                     });
                     Editor.doAddObject(track);
                 }

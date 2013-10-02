@@ -95,7 +95,7 @@ var PointOffset = IV.extend(Objects.Object, function(point, offset) {
         return this.point.getPath();
     },
     getGuidePath: function() {
-        return this.point.getGuidePath();
+        return this.point.getPath();
     },
     can: function(cap) {
         if(cap == "get-point") return true;

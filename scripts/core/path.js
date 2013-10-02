@@ -105,6 +105,31 @@ IV.Path.prototype.enumerate = function(data, callback) {
     var ctx = new IV.PathContext(data, components);
     this._enumerate_internal(ctx, data, 0, callback);
 };
+IV.Path.prototype.enumerateAtContext = function(context, callback) {
+    var ctx = context.clone();
+    var i = 0;
+    var obj = ctx.root;
+    for(; i < ctx.components.length && i < this.components.length; i++) {
+        var tc = ctx.components[i];
+        var pc = this.components[i];
+        if(tc.name != pc.name || tc.type != pc.type) {
+            break;
+        } else {
+            obj = tc.obj;
+        }
+    }
+    var pi = i;
+    for(; i < this.components.length; i++) {
+        var c = this.components[i];
+        ctx.components[i] = {
+            type: c.type,
+            name: c.name,
+            obj: null
+        };
+    }
+    this._enumerate_internal(ctx, obj, pi, callback);
+};
+
 IV.Path.prototype.toString = function() {
     return this.components.map(function(c) {
         if(c.type == "iterate") return "[" + c.name + "]";

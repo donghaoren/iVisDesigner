@@ -1,8 +1,8 @@
 Editor.generateObjectList = function() {
     var olist = $("#object-list");
     olist.children().remove();
-    if(!IV.vis) return;
-    IV.vis.objects.forEach(function(obj) {
+    var vis = Editor.vis;
+    vis.objects.forEach(function(obj) {
         var elem = $("<div />").addClass("group item");
         var data = elem.data();
         data.obj = obj;
@@ -12,17 +12,13 @@ Editor.generateObjectList = function() {
         elem.append(buttons);
 
         buttons.append($("<span >").append($('<i class="xicon-cross"></i>')).click(function(e) {
-            IV.vis.removeObject(obj);
-            IV.raise("vis:objects");
-            IV.triggerRender();
-            IV.render();
+            vis.removeObject(obj);
             e.stopPropagation();
         }));
 
         elem.click(function(e) {
-            if(!e.shiftKey) IV.vis.clearSelection();
-            IV.vis.appendSelection({ obj: obj });
-            IV.raise("vis:objects:selection");
+            if(!e.shiftKey) vis.clearSelection();
+            vis.appendSelection({ obj: obj });
         });
 
         IV.trackMouseEvents(elem, {
@@ -65,23 +61,20 @@ Editor.generateObjectList = function() {
             },
             up: function(e) {
                 if(!this.selected) return;
-                var idx = IV.vis.objects.indexOf(this.selected.sel.data().obj) + this.selected.dir;
-                var idx_me = IV.vis.objects.indexOf(obj);
+                var idx = vis.objects.indexOf(this.selected.sel.data().obj) + this.selected.dir;
+                var idx_me = vis.objects.indexOf(obj);
                 if(idx >= 0 && idx_me >= 0) {
                     if(idx <= idx_me) {
                         for(var i = idx_me; i > idx; i--) {
-                            IV.vis.objects[i] = IV.vis.objects[i - 1];
+                            vis.objects[i] = vis.objects[i - 1];
                         }
-                        IV.vis.objects[idx] = obj;
+                        vis.objects[idx] = obj;
                     } else {
                         for(var i = idx_me; i < idx - 1; i++) {
-                            IV.vis.objects[i] = IV.vis.objects[i + 1];
+                            vis.objects[i] = vis.objects[i + 1];
                         }
-                        IV.vis.objects[idx - 1] = obj;
+                        vis.objects[idx - 1] = obj;
                     }
-                    IV.raise("vis:objects");
-                    IV.triggerRender();
-                    IV.render();
                 }
             }
         });
