@@ -3,7 +3,7 @@
 // Basic path.
 // Path = [key1]:key2:key3:value
 IV.Path = function(str) {
-    if(!str) str = "";
+    if(!str || str == "[ROOT]") str = "";
     if(typeof(str) == "string") {
         this.components = [];
         var slices = str == "" ? [] : str.split(":");
@@ -131,6 +131,7 @@ IV.Path.prototype.enumerateAtContext = function(context, callback) {
 };
 
 IV.Path.prototype.toString = function() {
+    if(this.components.length == 0) return "[ROOT]"
     return this.components.map(function(c) {
         if(c.type == "iterate") return "[" + c.name + "]";
         return c.name;

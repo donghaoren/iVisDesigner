@@ -19,6 +19,7 @@ var Plain = IV.extend(Objects.Object, function(obj) {
         if(cap == "get-style") return true;
     },
     getPath: function() { return new IV.Path(""); },
+    getGuidePath: function() { return new IV.Path(""); },
     get: function() { return this.obj; },
     clone: function() {
         return new Plain(IV.deepClone(this.obj));
@@ -92,9 +93,6 @@ var PointOffset = IV.extend(Objects.Object, function(point, offset) {
         return pt.add(this.offset);
     },
     getPath: function() {
-        return this.point.getPath();
-    },
-    getGuidePath: function() {
         return this.point.getPath();
     },
     can: function(cap) {

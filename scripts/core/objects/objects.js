@@ -22,7 +22,7 @@ Objects.Object.prototype = {
     getPoint: function(context) { return this.get(context); },
     getNumber: function(context) { return this.get(context); },
     getPath: function() { return this.path; },
-    getGuidePath: function() { return new IV.Path(); },
+    getGuidePath: function() { return new IV.Path(""); },
     render: function() { },
     propertyUpdate: function() { },
     renderSelected: function() { },

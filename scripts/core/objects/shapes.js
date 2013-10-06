@@ -209,6 +209,12 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
         });
         cb(line);
     },
+    can: function(cap) {
+        if(cap == "get-point") return true;
+    },
+    get: function(context) {
+        return this.points.getPoint(context);
+    },
     select: function(pt, data, action) {
         var rslt = null;
         var $this = this;

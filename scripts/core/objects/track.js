@@ -15,7 +15,7 @@ var Track = IV.extend(Objects.Object, function(info) {
     this.anchor2 = info.anchor2;
     this.min = info.min !== undefined ? info.min : new IV.objects.Plain(0);
     this.max = info.max !== undefined ? info.max : new IV.objects.Plain(100);
-    this.guide_path = IV.Path.commonPrefix([ this.anchor1.getGuidePath(), this.anchor2.getGuidePath() ]);
+    this.guide_path = IV.Path.commonPrefix([ this.anchor1.getPath(), this.anchor2.getPath() ]);
 }, {
     can: function(cap) {
         if(cap == "get-point") return true;
@@ -88,6 +88,7 @@ var Track = IV.extend(Objects.Object, function(info) {
             var p1 = $this.anchor1.getPoint(context);
             var p2 = $this.anchor2.getPoint(context);
             callback(p1, p2, context);
+            return false;
         });
     },
     renderGuide: function(g, data) {
@@ -184,11 +185,17 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     this.type = "Scatter";
     this.track1 = info.track1;
     this.track2 = info.track2;
-    this.guide_path = IV.Path.commonPrefix([ this.track1.getGuidePath(), this.track2.getGuidePath() ]);
     this.path = IV.Path.commonPrefix([ this.track1.getPath(), this.track2.getPath() ]);
+    this.guide_path = IV.Path.commonPrefix([ this.track1.getGuidePath(), this.track2.getGuidePath() ]);
 }, {
     can: function(cap) {
         if(cap == "get-point") return true;
+    },
+    getPath: function() {
+        return this.path;
+    },
+    getGuidePath: function() {
+        return this.guide_path;
     },
     get: function(context) {
         var p1 = this.track1.getPoint(context);
@@ -204,15 +211,13 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     },
     enumerateGuide: function(data, callback) {
         var $this = this;
-        var count = 0;
         this.guide_path.enumerate(data, function(context) {
             var p1 = $this.track1.anchor1.getPoint(context);
             var p2 = $this.track1.anchor2.getPoint(context);
             var q1 = $this.track2.anchor1.getPoint(context);
             var q2 = $this.track2.anchor2.getPoint(context);
             callback(p1, p2, q1, q2, context);
-            count++;
-            if(count >= 3) return false;
+            return false;
         });
     },
     _getmarkers: function(p1, p2, q1, q2) {
