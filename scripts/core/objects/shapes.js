@@ -32,7 +32,7 @@ Objects.Shape = IV.extend(Objects.Object,function(info) {
     },
     getPropertyContext: function() {
         var $this = this;
-        return [
+        return Objects.Object.prototype.getPropertyContext.call(this).concat([
             {
                 name: "Path",
                 group: "Shape",
@@ -40,7 +40,7 @@ Objects.Shape = IV.extend(Objects.Object,function(info) {
                 get: function() { return $this.path; },
                 set: function(val) { return $this.path = val; }
             }
-        ];
+        ]);
     }
 });
 

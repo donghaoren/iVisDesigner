@@ -156,6 +156,20 @@ var render_plain_value = function(item, args, callback) {
 
 // Plain/Object value.
 var render_object_value = function(item, args, callback) {
+    if(item.constructor == Number) {
+        return primitives.Number(item, args, function(new_val) {
+            item.obj = new_val;
+            callback(new_val);
+            return new_val;
+        });
+    }
+    if(item.constructor == String) {
+        return primitives.String(item, args, function(new_val) {
+            item.obj = new_val;
+            callback(new_val);
+            return new_val;
+        });
+    }
     if(item instanceof IV.Path) {
         return primitives.Path(item, args, function(new_val) {
             callback(new_val);

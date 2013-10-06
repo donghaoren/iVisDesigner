@@ -12,6 +12,7 @@ Editor.generateObjectList = function() {
         elem.append(buttons);
 
         buttons.append($("<span >").append($('<i class="xicon-cross"></i>')).click(function(e) {
+            vis.clearSelection();
             vis.removeObject(obj);
             e.stopPropagation();
         }));

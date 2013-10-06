@@ -1479,6 +1479,39 @@ NS.generateUUID = function(prefix) {
     return r;
 };
 
+// ### Object event passing system.
+
+var object_event_listeners = {};
+
+NS.bindObjectEvent = function(obj, event_key, listener) {
+    if(!obj._euid) obj._euid = NS.generateUUID();
+    var ll = object_event_listeners[obj._euid];
+    if(!ll) ll = object_event_listeners[obj._euid] = {};
+    if(!ll[event_key]) ll[event_key] = [];
+    ll[event_key].push(listener);
+    return {
+        unbind: function() {
+            var idx = ll[event_key].indexOf(listener);
+            if(idx >= 0) {
+                ll[event_key].splice(idx, 1);
+            }
+            if(ll[event_key].length == 0) delete ll[event_key];
+        }
+    };
+};
+
+NS.raiseObjectEvent = function(obj, event_key) {
+    if(!obj._euid) return;
+    if(!object_event_listeners[obj._euid]) return;
+    if(!object_event_listeners[obj._euid][event_key]) return;
+    var args = [];
+    for(var i = 2; i < arguments.length; i++) {
+        args.push(arguments[i]);
+    }
+    object_event_listeners[obj._euid][event_key].forEach(function(f) {
+        f.apply(obj, args);
+    });
+};
 
 return NS;
 
