@@ -15,5 +15,5 @@
 // Global Colors
 // ------------------------------------------------------------------------
 IV.colors = {
-    selection: IV.parseColorHEX("1F77B4")
+    selection: IV.parseColorHEX("1754AD")
 };

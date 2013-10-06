@@ -129,7 +129,12 @@
 @import "objectlist.less";
 
 #tools-container {
-    .tool-icons { padding: 5px; }
+    .tool-icons {
+        padding: 5px;
+        .btn {
+            padding: 2px 5px;
+        }
+    }
 }
 
 #panel-page-container {
@@ -202,6 +207,14 @@
     }
     .plain-path {
         font-size: 11px;
+    }
+    .small {
+        font-size: 11px;
+    }
+    .gray {
+        font-size: 11px;
+        color: #888;
+        font-style: italic;
     }
 
     input {

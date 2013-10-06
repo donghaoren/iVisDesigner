@@ -224,7 +224,13 @@ var render_object_value = function(item, args, callback) {
          .append(path);
         return r;
     }
-    var r = $("<span />").text("[" + item.type + "]");
+    if(!item.name) {
+        return $("<span />").addClass("small").text("[" + item.type + "]");
+    } else {
+        return $("<span />").addClass("small").text(item.name).append(
+            $("<span />").addClass("gray").text(" " + item.type)
+        );
+    }
     return r;
 };
 
