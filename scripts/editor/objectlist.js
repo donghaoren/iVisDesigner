@@ -77,6 +77,7 @@ Editor.generateObjectList = function() {
                         vis.objects[idx - 1] = obj;
                     }
                 }
+                vis.raise("objects");
             }
         });
 
