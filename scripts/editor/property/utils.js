@@ -11,6 +11,7 @@ primitives.Color = function(get, set, args) {
             var $this = $(this);
             var cc = get();
             IV.popups.beginColorSelect($this, cc, function(new_color) {
+                if(!new_color) new_color = new IV.Color(0, 0, 0, 0);
                 set(new_color);
                 reload();
             });
