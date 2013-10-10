@@ -6,7 +6,7 @@ var Style = Editor.Style = { };
 
 IV.makeEventSource(Style);
 
-var current = new IV.objects.PathStyle;
+var current = null; //new IV.objects.PathStyle;
 
 Style.beginEditStyle = function(style) {
     current = style;
@@ -14,7 +14,8 @@ Style.beginEditStyle = function(style) {
 };
 
 Style.endEditStyle = function() {
-    if(current) current = current.clone();
+    current = null;
+    //if(current) current = current.clone();
     render();
 };
 
@@ -31,35 +32,41 @@ Editor.bind("selection", function() {
     }
 });
 
-var style_changed = function(obj, key) {
-    return function(replace_val) {
-        if(replace_val !== undefined) {
-            obj[key] = replace_val;
-            render();
+var build_style_property_item = function(name, act, key, type, args) {
+    return render_property_field({
+        name: name,
+        args: args,
+        type: type,
+        get: function() {
+            return act[key];
+        },
+        set: function(val) {
+            act[key] = val;
         }
-        Editor.renderer.trigger();
-        Editor.renderer.render();
-    };
+    });
 };
 
 var render = function() {
     var container = $("#panel-style-display");
     container.children().remove();
-    if(!current) return;
+    if(!current) {
+        container.append(render_info("Nothing Selected"));
+        return;
+    }
 
     current.actions.forEach(function(act) {
         var target = $("<div />").addClass("item-action");
         var cap = "Unknown";
         if(act.type == "stroke") {
             container.append(render_caption("Stroke"));
-            target.append(render_field("Color", act.color, "color", style_changed(act, "color")));
-            target.append(render_field("Width", act.width, "number", style_changed(act, "width")));
-            target.append(render_field("Join", act.join, "list", style_changed(act, "join"), [ "bevel", "round", "miter" ]));
-            target.append(render_field("Cap", act.cap, "list", style_changed(act, "cap"), [ "butt", "round", "square" ]));
+            target.append(build_style_property_item("Color", act, "color", "color"));
+            target.append(build_style_property_item("Width", act, "width", "number"));
+            target.append(build_style_property_item("Join", act, "join", "list", [ "bevel", "round", "miter" ]));
+            target.append(build_style_property_item("Cap", act, "cap", "list", [ "butt", "round", "square" ]));
         }
         if(act.type == "fill") {
             container.append(render_caption("Fill"));
-            target.append(render_field("Color", act.color, "color", style_changed(act, "color")));
+            target.append(build_style_property_item("Color", act, "color", "color"));
         }
         container.append(target);
     });

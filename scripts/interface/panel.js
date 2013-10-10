@@ -11,6 +11,10 @@
     var data = this.data();
 
     if(!data.is_created) {
+        var min_width = 50;
+        var min_height = 38;
+        if(params.min_width !== undefined) min_width = params.min_width;
+        if(params.min_height !== undefined) min_height = params.min_height;
         var container = $(
             '<div class="content-wrapper"></div>' +
             '<div class="title-wrapper">' +
@@ -79,8 +83,8 @@
             if(mouse_state && mouse_state[0] == "resize") {
                 var nx = e.pageX - mouse_state[1] + mouse_state[3];
                 var ny = e.pageY - mouse_state[2] + mouse_state[4];
-                if(nx < 50) nx = 50;
-                if(ny < 35) ny = 35;
+                if(nx < min_width) nx = min_width;
+                if(ny < min_height) ny = min_height;
                 $this.css("width", nx + "px");
                 $this.css("height", ny + "px");
             }

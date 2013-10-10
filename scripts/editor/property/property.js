@@ -36,7 +36,10 @@ Editor.bind("selection", function() {
 var render = function() {
     var container = $("#panel-property-display");
     container.children().remove();
-    if(!current || !current.getPropertyContext) return;
+    if(!current || !current.getPropertyContext) {
+        container.append(render_info("Nothing Selected"));
+        return;
+    }
     var context = current.getPropertyContext();
 
     var groups = {};
@@ -48,14 +51,7 @@ var render = function() {
         container.append(render_caption(g));
         var target = $("<div />").addClass("item-action");
         group.forEach(function(item) {
-            target.append(render_field(item.name, item.get(), item.type, function(val) {
-                if(val !== undefined) {
-                    item.set(val);
-                    render();
-                    Editor.renderer.trigger();
-                    Editor.renderer.render();
-                }
-            }));
+            target.append(render_property_field(item));
         });
 
         container.append(target);

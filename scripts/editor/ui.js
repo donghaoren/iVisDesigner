@@ -2,9 +2,9 @@
 IV.addListener("command:panels.reset", function() {
     $("#panel-schema").IVPanel({ left: 10, top: 10, width: 180, height: 400 }).IVPanel("show");
     $("#panel-objects").IVPanel({ right: 10, top: 430, width: 200, bottom: 10 }).IVPanel("show");
-    $("#panel-tools").IVPanel({ left: 200, top: 10, width: 400, height: 38 }).IVPanel("show");
+    $("#panel-tools").IVPanel({ left: 200, top: 10, width: 400, height: 38, min_height: 38 }).IVPanel("show");
     $("#panel-log").IVPanel({ left: 10, bottom: 10, right: 10, height: 100 }).IVPanel("hide");
-    $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 50, width: 600 }).IVPanel("hide");
+    $("#panel-page").IVPanel({ vcenter: 0, bottom: 200, top: 60, width: 600 }).IVPanel("hide");
     $("#panel-style").IVPanel({ right: 10, top: 10, width: 200, height: 200 }).IVPanel("show");
     $("#panel-property").IVPanel({ right: 10, top: 220, width: 200, height: 200 }).IVPanel("show");
 });

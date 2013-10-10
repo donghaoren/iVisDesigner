@@ -37,7 +37,7 @@ var Track = IV.extend(Objects.Object, function(info) {
     },
     getPropertyContext: function() {
         var $this = this;
-        return [
+        return Objects.Object.prototype.getPropertyContext.call(this).concat([
             {
                 name: "Path",
                 group: "Track",
@@ -80,7 +80,7 @@ var Track = IV.extend(Objects.Object, function(info) {
                 get: function() { return $this.anchor2; },
                 set: function(val) { return $this.anchor2 = val; }
             }
-        ];
+        ]);
     },
     enumerateGuide: function(data, callback) {
         var $this = this;
