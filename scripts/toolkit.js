@@ -78,6 +78,7 @@ IV.newVisualization = function() {
         path: new IV.Path(),
         points: scatter
     });
+    pt.style.actions.splice(0, 1);
     vis.addObject(axis1);
     vis.addObject(axis2);
     vis.addObject(scatter);
