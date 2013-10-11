@@ -65,7 +65,50 @@ var render = function() {
                 Editor.renderer.trigger();
                 Editor.renderer.render();
             }
-        }))
+        }));
+        var tracking_idx = null;
+        IV.trackMouseEvents(r, {
+            down: function() { tracking_idx = null; },
+            move: function(e) {
+                var items = container.children(".item-caption");
+                var min_diff = 1e100;
+                var cidx = -1;
+                items.each(function(idx) {
+                    var t = $(this).offset().top;
+                    var h = $(this).height() + $(this).next().height();
+                    t += h / 2;
+                    var diff = Math.abs(e.pageY - t);
+                    if(diff < min_diff) {
+                        cidx = e.pageY > t ? idx + 1 : idx;
+                        min_diff = diff;
+                    }
+                });
+                container.children(".item-divider").remove();
+                var myidx = actions.indexOf(act);
+                if(cidx >= 0 && cidx != myidx && cidx != myidx + 1) {
+                    var pl = $("<div />").addClass("item-divider");
+                    if(cidx == items.length) items.eq(cidx - 1).next().after(pl);
+                    else items.eq(cidx).before(pl);
+                    tracking_idx = cidx;
+                }
+            },
+            up: function(e) {
+                container.children(".item-divider").remove();
+                if(tracking_idx !== null) {
+                    var myidx = actions.indexOf(act);
+                    if(myidx < 0) return;
+                    if(myidx > tracking_idx) {
+                        actions.splice(tracking_idx, 0, act);
+                        actions.splice(myidx + 1, 1);
+                        render();
+                    } else if(myidx < tracking_idx) {
+                        actions.splice(tracking_idx, 0, act);
+                        actions.splice(myidx, 1);
+                        render();
+                    }
+                }
+            }
+        });
         return r;
     };
 

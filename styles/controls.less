@@ -170,31 +170,36 @@ input {
 }
 
 .scrollview {
+    @width: 4px;
     position: absolute;
     left: 0; right: 0; top: 0; bottom: 0;
     & > div.scrollview-content {
         position: absolute;
-        left: 0; right: 0;
+        left: 0; right: @width;
         top: 0;
     }
+    &.hide > div.scrollview-content {
+        right: 0px;
+    }
     & > .scrollbar {
-        display: none;
+        //display: none;
         position: absolute;
         right: 0; top: 0; bottom: 0;
-        width: 6px;
+        width: @width;
         background-color: rgba(0, 0, 0, 0.1);
         .guide {
             position: absolute;
             right: 0;
-            width: 6px;
-            background-color: rgba(0, 0, 0, 0.3);
+            width: @width;
+            background-color: rgba(0, 0, 0, 0.2);
             height: 10px;
+            display: none;
         }
         &.hide {
             display: none !important;
         }
     }
-    &:hover > .scrollbar, & > .scrollbar.dragging { display: block; }
+    &:hover > .scrollbar .guide, & > .scrollbar.dragging .guide { display: block; }
 }
 
 .property-table {

@@ -536,10 +536,12 @@ $.fn.ScrollView = function() {
             if(view_h < cont_h || view_h == 0) {
                 top = 0;
                 scrollbar.addClass("hide");
+                container.addClass("hide");
             } else {
                 if(top > 0) top = 0;
                 if(top < cont_h - view_h) top = cont_h - view_h;
                 scrollbar.removeClass("hide");
+                container.removeClass("hide");
                 guide.css({
                     height: (cont_h / view_h * cont_h) + "px",
                     top: (-top / view_h * cont_h) + "px"

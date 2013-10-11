@@ -172,6 +172,11 @@
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     }
 
+    .item-divider {
+        height: 0px;
+        outline: 1px solid @active_color;
+    }
+
     .item-action {
         .field {
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -197,12 +202,14 @@
                 overflow: hidden;
             }
             .multi {
+                font-size: 11px;
                 right: 0;
                 position: absolute;
             }
         }
     }
     .rightmost {
+        font-size: 11px;
         right: 0;
         position: absolute;
     }
