@@ -171,13 +171,13 @@ $.fn.IVInputPath = function(str) {
             return data.path;
         };
         data.set = function(path, ref) {
-            data.path = path;
+            data.path = new IV.Path(path);
             data.ref = ref;
-            if(!data.path) input.text("[ none ]");
+            if(!data.path) input.text("¶ " + "[ROOT]");
             else if(!data.ref) {
-                input.text("[" + data.path + "]");
+                input.text("¶ " + data.path.toString());
             } else {
-                input.text("[" + data.path + "@" + data.ref + "]");
+                input.text("¶ " + data.path.toString() + "@" + data.ref.toString());
             }
         };
         data.set(null);

@@ -3,9 +3,7 @@ IV.popups.CreateLayout = function() {
     data.addActions([ "ok", "cancel" ]);
 
     var p = data.selector;
-    p.children(".content").html($("#popup-create-layout").html());
-
-    IVControlsInitialize(p);
+    p.children(".content").html(IV.strings("popup_create_layout"));
 
     p.default_width = 300;
     p.default_height = 120;
@@ -17,11 +15,8 @@ IV.popups.CreateLayout = function() {
         var edgeB = p.find('[data-field="edge-b"]').data().get();
         var algo = p.find('[data-field="algorithm"]').data().get();
         var obj = new IV.objects.ForceLayout(vertex_path, field, edgeA, edgeB);
-        IV.vis.addObject(obj);
-        IV.raise("vis:objects");
-        IV.triggerRender();
+        Editor.doAddObject(obj);
         data.hide();
-        IV.render();
     };
     data.onCancel = function() {
         data.hide();

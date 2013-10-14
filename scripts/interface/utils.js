@@ -3,16 +3,28 @@
 (function() {
     var object_types = { };
 
-    IV.registerObjectType = function(c, func) {
+    IV.registerObjectType = function(c, func, args) {
         object_types[c] = func;
-        $(c).each(function() { func.call($(this)); });
-    }
+        var keys = args ? args.split(",") : [];
+        if(keys.indexOf("unique") >= 0)
+            func._is_unique = true;
+        $(c).each(function() {
+            var d = $(this).data();
+            if(func._is_unique && d["__objtype_" + c]) return;
+            d["__objtype_" + c] = true;
+            func.call($(this));
+        });
+    };
 
     document.body.addEventListener("DOMNodeInserted", function(event) {
         var $new_element = $(event.target);
         for(var c in object_types) {
             $new_element.find(c).each(function() {
-                object_types[c].call($(this));
+                var func = object_types[c];
+                var d = $(this).data();
+                if(func._is_unique && d["__objtype_" + c]) return;
+                d["__objtype_" + c] = true;
+                func.call($(this));
             });
         }
     }, false);
@@ -31,11 +43,11 @@ IV.registerObjectType("[data-apply-children]", function() {
             $this.attr(t.key, t.value);
         });
     });
-});
+}, "unique");
 // data-remove-text-nodes
 IV.registerObjectType("[data-remove-text-nodes]", function() {
     $(this).contents().filter(function() { return this.nodeType === 3; }).remove();
-});
+}, "unique");
 // data-switch
 IV.registerObjectType("span[data-switch]", function() {
     var key = $(this).attr("data-switch");
@@ -52,7 +64,7 @@ IV.registerObjectType("span[data-switch]", function() {
     $(this).click(function() {
         IV.set(key, value);
     });
-});
+}, "unique");
 // data-toggle
 IV.registerObjectType("span[data-toggle]", function() {
     var id = $(this).attr("data-toggle");
@@ -79,7 +91,7 @@ IV.registerObjectType("span[data-toggle]", function() {
             $(this).toggleClass("toggle-on");
         });
     }
-});
+}, "unique");
 // data-popup
 IV.registerObjectType("span[data-popup]", function() {
     var key = $(this).attr("data-popup");
@@ -87,7 +99,7 @@ IV.registerObjectType("span[data-popup]", function() {
         var data = IV.popups[key]();
         data.show($(this));
     });
-});
+}, "unique");
 // data-href
 IV.registerObjectType("span[data-open-page]", function() {
     var href = $(this).attr("data-open-page");
@@ -109,11 +121,11 @@ IV.registerObjectType("span[data-open-page]", function() {
             }
         }
     });
-});
+}, "unique");
 // data-command
 IV.registerObjectType("span[data-command]", function() {
     var command = $(this).attr("data-command");
     $(this).click(function() {
         IV.raiseEvent("command:" + command);
     });
-});
+}, "unique");

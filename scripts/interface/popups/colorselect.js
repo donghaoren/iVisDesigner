@@ -2,7 +2,7 @@ IV.popups.ColorSelect = function() {
     var data = IV.popups.create();
 
     var p = data.selector;
-    p.children(".content").html($("#popup-color-select").html());
+    p.children(".content").html(IV.strings("popup_color_select"));
     p.attr("data-popup", "color-selector");
 
     data.addActions([ "ok", "cancel" ])
@@ -13,7 +13,7 @@ IV.popups.ColorSelect = function() {
     var inp_r = p.find(".input-red");
     var inp_g = p.find(".input-green");
     var inp_b = p.find(".input-blue");
-    var refresh = function() {
+    var refresh = function(fire) {
         p.find(".selected-color-inner").css({
             "background-color": mycolor ? mycolor.toRGBA() : "transparent"
         });
@@ -34,6 +34,9 @@ IV.popups.ColorSelect = function() {
             inp_r.IVInputNumeric(mycolor.r);
             inp_g.IVInputNumeric(mycolor.g);
             inp_b.IVInputNumeric(mycolor.b);
+        }
+        if(fire) {
+            if(data.onSelectColor) data.onSelectColor(mycolor ? mycolor.clone() : null, true);
         }
     };
     data.onOk = function() {
@@ -66,20 +69,20 @@ IV.popups.ColorSelect = function() {
             mycolor.g = color.g;
             mycolor.b = color.b;
             if(mycolor) hclpicker_load(mycolor);
-            refresh();
+            refresh(true);
         });
     });
     p.find(".input-alpha").IVInputNumeric(function(val) {
         if(!mycolor) mycolor = new IV.Color(0, 0, 0, 1);
         mycolor.a = val;
-        refresh();
+        refresh(true);
     });
     inp_r.IVInputNumeric(function(val) {
         if(!mycolor) mycolor = new IV.Color(0, 0, 0, 1);
         val = Math.floor(val);
         if(val < 0) val = 0; if(val > 255) val = 255;
         mycolor.r = val;
-        refresh();
+        refresh(true);
         if(mycolor) hclpicker_load(mycolor);
     });
     inp_g.IVInputNumeric(function(val) {
@@ -87,7 +90,7 @@ IV.popups.ColorSelect = function() {
         val = Math.floor(val);
         if(val < 0) val = 0; if(val > 255) val = 255;
         mycolor.g = val;
-        refresh();
+        refresh(true);
         if(mycolor) hclpicker_load(mycolor);
     });
     inp_b.IVInputNumeric(function(val) {
@@ -95,7 +98,7 @@ IV.popups.ColorSelect = function() {
         val = Math.floor(val);
         if(val < 0) val = 0; if(val > 255) val = 255;
         mycolor.b = val;
-        refresh();
+        refresh(true);
         if(mycolor) hclpicker_load(mycolor);
     });
     data.onShow = function(color) {
@@ -193,7 +196,7 @@ IV.popups.ColorSelect = function() {
                 if(py < 0) py = 0; if(py > 1) py = 1;
                 draw_hcl_picker();
                 mycolor = IV.parseColorChroma(get_color(px, py, pl));
-                refresh();
+                refresh(true);
             }
             if(picker_mouse_mode == "l") {
                 var y = e.pageY - $(cside).offset().top;
@@ -201,7 +204,7 @@ IV.popups.ColorSelect = function() {
                 if(pl < 0) pl = 0; if(pl > 1) pl = 1;
                 draw_hcl_picker();
                 mycolor = IV.parseColorChroma(get_color(px, py, pl));
-                refresh();
+                refresh(true);
             }
         };
         $(cpicker).parent().mousedown(function(e) {

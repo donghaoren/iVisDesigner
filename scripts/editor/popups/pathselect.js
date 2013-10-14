@@ -8,6 +8,7 @@ IV.popups.PathSelect = function() {
     content.addClass("scrollview").ScrollView();
 
     var rootelem_span = $('<span class="key">ROOT</span>');
+    rootelem_span.data().path = new IV.Path();
     var rootelem = $("<li/>").append(rootelem_span);
     var elem = IV.editor.renderSchema(IV.editor.schema.fields, "");
     c.append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));

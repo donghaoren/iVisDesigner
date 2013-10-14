@@ -1513,6 +1513,10 @@ NS.raiseObjectEvent = function(obj, event_key) {
     });
 };
 
+NS.strings = function(key) {
+    return DATA_Strings[key];
+};
+
 return NS;
 
 })(); // main nested function.

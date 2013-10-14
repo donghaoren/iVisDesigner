@@ -324,6 +324,24 @@ def yaml2json_build_function(target, source, env):
 
 yaml2json_builder = Builder(action = yaml2json_build_function)
 
+# YAML to Data Javascript builder
+def yaml2datajs_build_function(target, source, env):
+    data = "";
+    for s in source:
+        data += ensure_unicode(s.get_text_contents(), 'utf-8') + u"\n"
+
+    obj = yaml.load(data)
+
+    data = env['variable'] + " = " + json.dumps(obj) + ";"
+
+    for t in target:
+        f = open(str(t), 'w')
+        f.write(data.encode('utf-8'))
+        f.close()
+    return None
+
+yaml2datajs_builder = Builder(action = yaml2datajs_build_function)
+
 # Scan for partials, make them dependencies.
 def partial_scanner(node, env, path):
     files = [];
@@ -500,6 +518,7 @@ env = Environment(
         'ResolveIncludes' : include_builder,
         'BibTex2YAML': BibTex2YAML_builder,
         'YAML2JSON' : yaml2json_builder,
+        'YAML2DATAJS' : yaml2datajs_builder,
         'LessCSS' : lesscss_builder
     },
     ENV = {'PATH' : os.environ['PATH']}
@@ -703,6 +722,11 @@ def ImageMagick(url, source, args = ""):
 def YAML2JSON(url, source):
     output = "%s/%s" % (output_directory, url)
     env.YAML2JSON(output, source)
+    append_target(output)
+
+def YAML2DataJavascript(url, source, variable = "DATA"):
+    output = "%s/%s" % (output_directory, url)
+    env.YAML2DATAJS(output, source, variable = variable)
     append_target(output)
 
 def Images(url_path, list):

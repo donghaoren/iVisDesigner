@@ -28,6 +28,8 @@ Javascript("libraries.js", [
     "libraries/numeric-1.2.6.js"
 ])
 
+YAML2DataJavascript("strings.js", ["scripts/strings.yaml"], variable = "DATA_Strings")
+
 Javascript("toolkit.js", [
     "scripts/utils.js",
     "scripts/core/core.js",
