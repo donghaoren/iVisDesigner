@@ -6,7 +6,7 @@ IV.popups.CreateLayout = function() {
     p.children(".content").html(IV.strings("popup_create_layout"));
 
     p.default_width = 300;
-    p.default_height = 120;
+    p.default_height = 130;
     var data = p.data();
     data.onOk = function() {
         var vertex_path = p.find('[data-field="vertex-path"]').data().get();

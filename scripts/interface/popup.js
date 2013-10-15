@@ -110,12 +110,12 @@
             popup.append(actions);
             if(!acts) acts = [];
             if(acts.indexOf("ok") != -1) {
-                actions.append($('<span class="btn"><i class="xicon-mark"></i></span>').click(function() {
+                actions.append($('<span class="btn btn-s"><i class="xicon-mark"></i></span>').click(function() {
                     if(data.onOk) data.onOk();
                 }));
             }
             if(acts.indexOf("cancel") != -1) {
-                actions.append($('<span class="btn"><i class="xicon-cross"></i></span>').click(function() {
+                actions.append($('<span class="btn btn-s"><i class="xicon-cross"></i></span>').click(function() {
                     if(data.onCancel) data.onCancel();
                 }));
             }
