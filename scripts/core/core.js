@@ -5,6 +5,7 @@
 // - See LICENSE.txt for copyright information.
 
 {{include: path.js}}
+{{include: data.js}}
 {{include: vis.js}}
 
 {{include: objects/objects.js}}

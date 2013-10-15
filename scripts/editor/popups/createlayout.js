@@ -10,11 +10,14 @@ IV.popups.CreateLayout = function() {
     var data = p.data();
     data.onOk = function() {
         var vertex_path = p.find('[data-field="vertex-path"]').data().get();
-        var field = p.find('[data-field="point-field"]').data().get();
         var edgeA = p.find('[data-field="edge-a"]').data().get();
         var edgeB = p.find('[data-field="edge-b"]').data().get();
         var algo = p.find('[data-field="algorithm"]').data().get();
-        var obj = new IV.objects.ForceLayout(vertex_path, field, edgeA, edgeB);
+        var obj = new IV.objects.ForceLayout({
+            path_nodes: vertex_path,
+            page_edgeA: edgeA,
+            path_edgeB: edgeB
+        });
         Editor.doAddObject(obj);
         data.hide();
     };

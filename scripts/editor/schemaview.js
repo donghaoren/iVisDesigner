@@ -1,7 +1,27 @@
 // ------------------------------------------------------------------------
 // Loading data schema and contents
 // ------------------------------------------------------------------------
-Editor.renderSchema = function(schema, prev_path, set_active) {
+Editor.renderSchema = function(schema, prev_path, set_active, attached_paths) {
+    if(!attached_paths) {
+        attached_paths = { };
+        if(Editor.vis) {
+            Editor.vis.objects.forEach(function(obj) {
+                if(obj.getAttachedSchemas) {
+                    obj.getAttachedSchemas().forEach(function(item) {
+                        var key = item.path.toString();
+                        var info = {
+                            schema: item.schema,
+                            path: item.path,
+                            ns: obj.uuid,
+                            name: obj.name
+                        };
+                        if(!attached_paths[key]) attached_paths[key] = [ info ];
+                        else attached_paths[key].push(info);
+                    });
+                }
+            });
+        }
+    }
     var elem = $("<ul></ul>");
     for(var key in schema) {
         // Ignore all keys starting with _
@@ -12,6 +32,9 @@ Editor.renderSchema = function(schema, prev_path, set_active) {
         if(child.type == "collection" || child.type == "sequence") {
             this_path = prev_path + ":[" + key + "]";
             if(prev_path == "") this_path = "[" + key + "]";
+        } else if(child.type == "reference") {
+            this_path = prev_path + ":" + key + ":&";
+            if(prev_path == "") this_path = key;
         } else {
             this_path = prev_path + ":" + key;
             if(prev_path == "") this_path = key;
@@ -41,7 +64,17 @@ Editor.renderSchema = function(schema, prev_path, set_active) {
         var li = $("<li></li>")
             .append(span);
         if(child.type == "collection" || child.type == "object" || child.type == "sequence")
-            li.append(Editor.renderSchema(child.fields, this_path, set_active));
+            li.append(Editor.renderSchema(child.fields, this_path, set_active, attached_paths));
+        if(attached_paths[this_path]) {
+            attached_paths[this_path].forEach(function(item) {
+                var iul = $("<ul />");
+                var ili = $("<li />").append($("<span />").text(item.name));
+                ili.append(Editor.renderSchema(item.schema.fields, this_path + ":{" + item.name + "@" + item.ns + "}", set_active, {}));
+                iul.append(ili);
+                li.append(iul);
+                //console.log(item);
+            });
+        }
         elem.append(li);
     }
     return elem;

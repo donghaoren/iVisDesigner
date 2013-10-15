@@ -28,6 +28,9 @@ $(window).resize(function() {
 
 Editor.bind("objects", function() {
     Editor.generateObjectList();
+    if(Editor.schema) {
+        Editor.renderDataSchema(Editor.schema);
+    }
 });
 
 Editor.bind("selection", function() {
@@ -56,13 +59,11 @@ Editor.doAddObject = function(obj) {
 
 {{include: tools/tools.js}}
 
-Editor.setData = function(data, schema) {
+Editor.setData = function(data) {
     Editor.data = data;
-    Editor.renderer.setData(data);
-    if(schema) {
-        Editor.schema = schema;
-        Editor.renderDataSchema(Editor.schema);
-    }
+    Editor.renderer.setData(Editor.data);
+    Editor.schema = data.getSchema();
+    Editor.renderDataSchema(Editor.schema);
 };
 
 Editor.setVisualization = function(vis) {

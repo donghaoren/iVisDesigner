@@ -49,7 +49,7 @@ var PlainDataset = function(obj, schema) {
     });
     process_subtree(obj, schema, null, function(obj, schema, parent) {
         if(schema.type == "reference") {
-            obj._target = id_map[obj.id];
+            obj._target = id_map[obj.ref_id];
         }
     });
     this.id_map = id_map;

@@ -7,30 +7,36 @@
 
 (function() {
 
-Objects.ForceLayout = IV.extend(Objects.Object, function(path_item, cpath, path_edgeA, path_edgeB) {
+Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
     Objects.Object.call(this);
-    this.path_item = path_item;
-    this.cpath = cpath;
-    this.path_output = this.path_item + ":" + this.cpath;
-    this.path_edgeA = path_edgeA;
-    this.path_edgeB = path_edgeB;
+    this.path_nodes = info.path_nodes;
+    this.path_edgeA = info.path_edgeA;
+    this.path_edgeB = info.path_edgeB;
     this.points = { };
     this.type = "ForceLayout";
-    this.assigned_schema = null;
     this.enabled = false;
 }, {
     onAttach: function(vis) {
-        this._runStep(vis.data);
     },
     onDetach: function(vis) {
-        if(this.assigned_schema) {
-            // this.assigned_schema.detach();
-            this.assigned_schema = null;
-        }
     },
     timerTick: function(data) {
         if(this.enabled)
             this._runStep(data);
+    },
+    getAttachedSchemas: function() {
+        return [
+            {
+                path: this.path_nodes,
+                schema: {
+                    type: "object",
+                    fields: {
+                        x: { type: "number", min: -1, max: 1 },
+                        y: { type: "number", min: -1, max: 1 }
+                    }
+                }
+            }
+        ];
     },
     getPropertyContext: function(data) {
         // This function is for IV editing.
@@ -55,22 +61,22 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(path_item, cpath, path_
         var $this = this;
         var objs = { };
         var edges = [];
-        data.enumeratePath($this.path_edgeA, function(context) {
-            var refA = context.referenceItem($this.path_edgeA);
-            var refB = context.referenceItem($this.path_edgeB);
-            edges.push([ refA.__id, refB.__id ]);
+        $this.path_edgeA.enumerate(data, function(context) {
+            var idA = data.getObjectID(context.get($this.path_edgeA).val());
+            var idB = data.getObjectID(context.get($this.path_edgeB).val());
+            edges.push([ idA, idB ]);
         });
         var count = 0;
-        data.enumeratePath($this.path_item, function(context) {
-            var item = context.get($this.path_item);
-            if($this.points[item.__id]) {
-                var pt = $this.points[item.__id];
-                objs[item.__id] = {
+        $this.path_nodes.enumerate(data, function(context) {
+            var id = data.getObjectID(context.val());
+            if($this.points[id]) {
+                var pt = $this.points[id];
+                objs[id] = {
                     x: pt.x, y: pt.y,
                     dx: 0, dy: 0
                 };
             } else {
-                objs[item.__id] = {
+                objs[id] = {
                     x: Math.random() - 0.5, y: Math.random() - 0.5,
                     dx: 0, dy: 0
                 };
@@ -142,19 +148,7 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(path_item, cpath, path_
             }
         }
 
-        if(!this.assigned_schema) {
-            this.assigned_schema = data.assignSchema($this.path_output, {
-                type: "object",
-                fields: {
-                    x: { type: "number", min: -1, max: 1 },
-                    y: { type: "number", min: -1, max: 1 }
-                },
-                get: function(item, context) {
-                    return $this.points[item.__id];
-                }
-            });
-        }
-        this.assigned_schema.update();
+        data.setAttached($this.uuid, $this.points);
     }
 });
 

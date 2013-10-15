@@ -19,6 +19,7 @@ IV.newVisualization = function() {
     // Just construct one for testing.
     var vis = new IV.Visualization;
     IV.editor.setVisualization(vis);
+
     var stat = IV.Path.computeBasicStatistics(new IV.Path("[cars]:mpg"), IV.data);
     var axis1 = new IV.objects.Track({
         path: new IV.Path("[cars]:mpg"),
@@ -78,16 +79,27 @@ IV.newVisualization = function() {
         path: new IV.Path(),
         points: scatter
     });
+
+    var layout = new IV.objects.ForceLayout({
+        path_nodes: new IV.Path("[nodes]"),
+        path_edgeA: new IV.Path("[links]:source:&"),
+        path_edgeB: new IV.Path("[links]:target:&")
+    });
+
     pt.style.actions.splice(0, 1);
     vis.addObject(axis1);
     vis.addObject(axis2);
     vis.addObject(scatter);
     vis.addObject(pt);
+    vis.addObject(layout);
+
+    layout.enabled = true;
+    layout.timerTick(IV.data);
 };
 
 IV.loadData = function(data, schema) {
-    IV.data = data;
-    IV.editor.setData(data, schema);
+    IV.data = new IV.DataObject(data, schema);
+    IV.editor.setData(IV.data);
     IV.newVisualization();
 };
 
