@@ -1,9 +1,34 @@
 popup_create_layout: |
-  <table class="property-table">
-    <tr><td> Vertex Path:</td><td><span data-field="vertex-path" class="input-path"></span></td></tr>
-    <tr><td>        Edge:</td><td><span data-field="edge-a" class="input-path"></span> - <span data-field="edge-b" class="input-path"></span></td></tr>
-    <tr><td>   Algorithm:</td><td><span data-field="algorithm" class="control-select-value" data-options="fr|Fruchterman Reingold" data-default="fr"></span></td></tr>
-  </table>
+  <div class="property-list">
+    <div class="item-caption">Force Layout</div>
+    <div class="item-action">
+      <div class="field group">
+        <span class="name"><span>Node</span></span>
+        <span class="val">
+          <span data-field="vertex-path" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Edge A</span></span>
+        <span class="val">
+          <span data-field="edge-a" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Edge B</span></span>
+        <span class="val">
+          <span data-field="edge-b" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Algorithm</span></span>
+        <span class="val">
+          <span data-field="algorithm" class="control-select-value btn" data-options="fr|Fruchterman Reingold" data-default="fr"></span>
+        </span>
+      </div>
+
+    </div>
+  </div>
 
 popup_color_select: |
   <div class="tab" data-default="predefined">

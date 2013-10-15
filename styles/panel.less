@@ -144,7 +144,7 @@
     background-color: rgba(255, 255, 255, 0.6);
 }
 
-#panel-style-display, #panel-property-display {
+#panel-style-display, #panel-property-display, .property-list {
     font-size: 13px;
     line-height: 19px;
 
@@ -184,7 +184,7 @@
             white-space: nowrap;
             .name {
                 float: left;
-                width: 30%;
+                width: 70px;
                 font-size: 11px;
                 line-height: 19px;
                 text-align: right;
@@ -199,7 +199,7 @@
             .val {
                 float: left;
                 position: relative;
-                width: calc(~"70% - 23px");
+                width: calc(~"100% - 23px - 70px");
                 overflow: hidden;
             }
             .multi {
@@ -245,9 +245,9 @@
     input {
         border: none;
         margin: 0;
-        padding: 0;
+        padding: 0 3px;
         background: none;
-        width: 100%;
+        width: calc(~"100% - 6px");
         height: 19px;
         background-color: rgba(255, 255, 255, 0.5);
         &.dirty {
@@ -263,7 +263,7 @@
             background-color: rgba(255, 255, 255, 0.5);
         }
         input {
-            width: calc(~"100% - 10px");
+            width: calc(~"100% - 16px");
         }
     }
     table.linear-ftf {

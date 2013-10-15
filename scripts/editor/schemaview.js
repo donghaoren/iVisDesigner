@@ -60,8 +60,10 @@ Editor.renderSchema = function(schema, prev_path, set_active, attached_paths) {
         if(child.type == "reference")
             span.data().ref_target = child.of;
         if(set_active) {
-            //if(this_path == IV.get("selected-path")) span.addClass("active");
-            //if(this_path == IV.get("selected-reference")) span.children(".ref").addClass("active");
+            if(Editor.get("selected-path") && this_path == Editor.get("selected-path").toString())
+                span.addClass("active");
+            if(Editor.get("selected-reference") && this_path == Editor.get("selected-reference").toString())
+                span.children(".ref").addClass("active");
         }
         var li = $("<li></li>")
             .append(span);

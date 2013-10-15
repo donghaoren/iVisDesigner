@@ -468,33 +468,36 @@ $.fn.IVSelectValue = function(obj) {
     var data = $this.data();
     if(!data.is_created) {
 
-        data.select = $("<select />");
+        data.select = $("<span />");
+        data.optmap = { };
+        data.val = null;
         data.options = $this.attr("data-options").split(",").map(function(s) {
             var sp = s.split("|");
             if(sp.length == 1) return { name: s, display: s };
+            data.optmap[sp[0]] = sp[1];
             return { name: sp[0], display: sp[1] };
         });
-        data.options.forEach(function(o) {
-            data.select.append($("<option />").text(o.display).attr("value", o.name));
-        });
-        $this.append(data.select);
+        $this.append(data.select)
+             .append($('<i class="icon-caret-down" /></i>'));
 
-        data.select.change(function() {
-            if(data.changed) data.changed(data.get());
+        data.select.click(function() {
+            IV.popups.beginContextMenu($this, data.options, function(val) {
+                data.set(val);
+                if(data.changed) data.changed(data.get());
+            });
         });
-
-        if($this.attr("data-default")) data.select.val($this.attr("data-default"));
 
         data.get = function() {
-            return new IV.objects.Plain(data.select.val());
+            return data.val;
         };
         data.set = function(v) {
-            if(v) data.select.val(v.obj);
-            else {
-                if($this.attr("data-default"))
-                    data.select.val($this.attr("data-default"));
-            }
+            data.select.text(data.optmap[v] + " ");
+            data.val = v;
         };
+
+        if($this.attr("data-default")) data.set($this.attr("data-default"));
+        else data.set(data.options[0].name);
+
         data.is_created = true;
     }
     if(obj === undefined) return data.get();

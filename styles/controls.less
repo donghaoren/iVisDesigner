@@ -41,7 +41,7 @@ select {
     &:hover, &.active, &:active {
         @color: @active_color;
         @val: 10%;
-        .solid_background_append(@icon_arrowdown_w, @active_color);
+        .gradient_background_append(@icon_arrowdown_w, @active_color);
         background-size: 12px 12px, auto;
         background-position: right center;
         background-repeat: no-repeat;
@@ -104,6 +104,7 @@ input {
         }
     }
 }
+/*
 .input-path {
     display: inline-block;
     white-space: nowrap;
@@ -121,6 +122,7 @@ input {
         }
     }
 }
+*/
 
 .control-numeric-value, .control-color-value {
     line-height: 19px;

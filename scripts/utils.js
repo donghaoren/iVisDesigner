@@ -1353,6 +1353,13 @@ NS.wrapText = function(context, text, x, y, maxWidth, lineHeight) {
 	return y;
 };
 
+var tmp_canvas = document.createElement("canvas");
+NS.measureText = function(text, font) {
+    var tc = tmp_canvas.getContext("2d");
+    tc.font = font;
+    return tc.measureText(text);
+};
+
 NS.longestString = function(strs) {
     var slong = null;
     for(var i = 0; i < strs.length; i++) {
