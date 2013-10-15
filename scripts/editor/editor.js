@@ -64,10 +64,16 @@ Editor.setData = function(data) {
     Editor.renderer.setData(Editor.data);
     Editor.schema = data.getSchema();
     Editor.renderDataSchema(Editor.schema);
+    if(Editor.vis) {
+        Editor.vis.data = Editor.data;
+    }
 };
 
 Editor.setVisualization = function(vis) {
     Editor.vis = vis;
+    if(Editor.data) {
+        Editor.vis.data = Editor.data;
+    }
     Editor.raise("reset");
     Editor.renderer.setVisualization(vis);
     this.vis_listener = {
@@ -97,5 +103,13 @@ Editor.bind("reset", function() {
     Editor.renderer.trigger();
     Editor.renderer.render();
 });
+
+setInterval(function() {
+    if(Editor.vis && Editor.data) {
+        Editor.vis.timerTick(Editor.data);
+        Editor.vis.triggerRenderer(Editor.renderer);
+        Editor.renderer.render();
+    }
+}, 30);
 
 })();

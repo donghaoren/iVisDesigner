@@ -15,7 +15,7 @@ IV.popups.CreateLayout = function() {
         var algo = p.find('[data-field="algorithm"]').data().get();
         var obj = new IV.objects.ForceLayout({
             path_nodes: vertex_path,
-            page_edgeA: edgeA,
+            path_edgeA: edgeA,
             path_edgeB: edgeB
         });
         Editor.doAddObject(obj);

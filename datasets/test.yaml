@@ -37,10 +37,10 @@ fields:
     fields:
       source:
         type: reference
-        of: nodes
+        of: "[nodes]"
       target:
         type: reference
-        of: nodes
+        of: "[nodes]"
       value: { type: number, min: 0, max: 10 }
   days:
     type: collection

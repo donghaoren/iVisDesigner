@@ -36,6 +36,7 @@ IV.DataObject.prototype.setAttached = function(ns, map) {
 };
 
 IV.DataObject.prototype.getAttached = function(ns, id) {
+    if(!this.namespaces[ns]) return null;
     return this.namespaces[ns][id];
 };
 

@@ -92,9 +92,6 @@ IV.newVisualization = function() {
     vis.addObject(scatter);
     vis.addObject(pt);
     vis.addObject(layout);
-
-    layout.enabled = true;
-    layout.timerTick(IV.data);
 };
 
 IV.loadData = function(data, schema) {

@@ -5,6 +5,7 @@ IV.Visualization = function() {
     this.objects = [];
     // Selected objects.
     this.selection = [];
+    this.needs_render = true;
     IV.EventSource.call(this);
 };
 
@@ -45,6 +46,15 @@ IV.Visualization.prototype.removeObject = function(obj) {
     }
     // Remove object event.
     this.raise("objects");
+};
+IV.Visualization.prototype.setNeedsRender = function() {
+    this.needs_render = true;
+};
+IV.Visualization.prototype.triggerRenderer = function(renderer) {
+    if(this.needs_render) {
+        renderer.trigger();
+        this.needs_render = false;
+    }
 };
 // Render the visualization to graphics context.
 IV.Visualization.prototype.render = function(data, g) {

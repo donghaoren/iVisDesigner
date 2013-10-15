@@ -166,13 +166,15 @@ var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2, min, 
 });
 Objects.ColorLinear = ColorLinear;
 
-var ReferenceWrapper = IV.extend(Objects.Object, function(ref_path, object) {
+var ReferenceWrapper = IV.extend(Objects.Object, function(ref_path, refd_path, object) {
     Objects.Object.call(this);
+    this.type = "ReferenceWrapper";
     this.obj = object;
     this.reference_path = ref_path;
+    this.referenced_path = refd_path;
 }, {
     get: function(context) {
-        var ref_context = context.referenceContext(this.reference_path);
+        var ref_context = context.get(this.reference_path).getReference(this.referenced_path);
         return this.obj.get(ref_context);
     },
     clone: function() {

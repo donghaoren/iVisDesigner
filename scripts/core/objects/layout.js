@@ -17,12 +17,16 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
     this.enabled = false;
 }, {
     onAttach: function(vis) {
+        this._runStep(vis.data);
+        this.vis = vis;
     },
     onDetach: function(vis) {
     },
     timerTick: function(data) {
-        if(this.enabled)
+        if(this.enabled) {
             this._runStep(data);
+            if(this.vis) this.vis.setNeedsRender();
+        }
     },
     getAttachedSchemas: function() {
         return [
@@ -39,23 +43,16 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
         ];
     },
     getPropertyContext: function(data) {
-        // This function is for IV editing.
         var $this = this;
-        return { items: [
-            { name: "Enabled", type: "bool",
-              value: $this.enabled,
-              set: function(val) {
-                $this.enabled = val;
-              }
-            },
-            { name: "Reset", type: "button",
-              set: function(val) {
-                $this.points = [];
-                this._runStep(data);
-                return { "render": "all" };
-              }
+        return Objects.Object.prototype.getPropertyContext.call(this).concat([
+            {
+                name: "Enabled",
+                group: "ForceLayout",
+                type: "plain-bool",
+                get: function() { return $this.enabled; },
+                set: function(val) { return $this.enabled = val; }
             }
-        ] };
+        ]);
     },
     _runStep: function(data) {
         var $this = this;

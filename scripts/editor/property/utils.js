@@ -196,6 +196,13 @@ var render_object_value = function(item, args, callback) {
             return new_val;
         }, args);
     }
+    if(item.constructor == Boolean) {
+        return primitives.String(function() { return item ? "true" : "false"; }, function(new_val) {
+            new_val = new_val == "true" ? true : false
+            callback(new_val);
+            return new_val;
+        }, ["true", "false"]);
+    }
     if(item instanceof IV.Path) {
         return primitives.Path(function() { return item; }, function(new_val) {
             callback(new_val);

@@ -57,6 +57,8 @@ Editor.renderSchema = function(schema, prev_path, set_active, attached_paths) {
         span.data().schema = schema;
         span.data().key = key;
         span.data().path = this_path;
+        if(child.type == "reference")
+            span.data().ref_target = child.of;
         if(set_active) {
             //if(this_path == IV.get("selected-path")) span.addClass("active");
             //if(this_path == IV.get("selected-reference")) span.children(".ref").addClass("active");
@@ -108,6 +110,7 @@ Editor.renderDataSchema = function(schema) {
                 $this.addClass("active");
                 var data = p.data();
                 Editor.set("selected-reference", new IV.Path(data.path));
+                Editor.set("selected-reference-target", new IV.Path(data.ref_target));
             }
             e.stopPropagation();
         });

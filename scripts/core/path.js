@@ -130,6 +130,23 @@ IV.PathContext.prototype.get = function(path) {
     return new IV.PathContext(this.data, this.root, rc);
 };
 
+IV.PathContext.prototype.getReference = function(referenced_path) {
+    var o = this.val();
+    var objs = [];
+    while(o) {
+        objs.push(o);
+        o = o._parent;
+    }
+    var rc = referenced_path.components.map(function(item, idx) {
+        return {
+            type: item.type,
+            name: item.name,
+            obj: objs[objs.length - 2 - idx]
+        };
+    });
+    return new IV.PathContext(this.data, this.root, rc);
+};
+
 IV.Path.prototype.enumerate = function(data, callback) {
     var data_root = data.getRoot();
     if(!callback) return;
@@ -218,5 +235,10 @@ IV.Path.computeBasicStatistics = function(path, data) {
         sum += val;
         count += 1;
     });
+    if(count == 0) {
+        count = 1;
+        if(min === null) min = -1;
+        if(max === null) max = 1;
+    }
     return { min: min, max: max, range: max - min, sum: sum, count: count, avg: sum / count };
 };

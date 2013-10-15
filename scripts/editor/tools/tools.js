@@ -116,8 +116,9 @@ Editor.tools = { };
             var context = Editor.vis.selectObject(Editor.data, p0);
 
             var captured_object = function(obj) {
-                var ref_path;// = IV.get("selected-reference");
-                if(ref_path) f(new IV.objects.ReferenceWrapper(ref_path, obj));
+                var ref_path = Editor.get("selected-reference");
+                var refd_path = Editor.get("selected-reference-target");
+                if(ref_path) f(new IV.objects.ReferenceWrapper(ref_path, refd_path, obj));
                 else f(obj);
             };
 
@@ -181,8 +182,8 @@ Editor.tools = { };
         }
     };
 
-    Tools.triggerRender = function() {
-        Editor.renderer.trigger();
+    Tools.triggerRender = function(items) {
+        Editor.renderer.trigger(items);
     };
 
 IV.listen("tools:current", function(val) {
