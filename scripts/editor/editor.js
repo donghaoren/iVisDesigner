@@ -70,6 +70,7 @@ Editor.setData = function(data) {
 };
 
 Editor.setVisualization = function(vis) {
+    Editor.unsetVisualization();
     Editor.vis = vis;
     if(Editor.data) {
         Editor.vis.data = Editor.data;
@@ -93,10 +94,33 @@ Editor.setVisualization = function(vis) {
 };
 
 Editor.unsetVisualization = function() {
-    Editor.vis.unbind("objects", this.vis_listener.objects);
-    Editor.vis.unbind("selection", this.vis_listener.selection);
-    Editor.vis = null;
+    if(Editor.vis) {
+        Editor.vis.unbind("objects", this.vis_listener.objects);
+        Editor.vis.unbind("selection", this.vis_listener.selection);
+        Editor.vis = null;
+        Editor.raise("reset");
+    }
+};
+
+Editor.component_stack = [];
+Editor.beginEditingComponent = function(path, context, component_vis) {
+    Editor.component_stack.push({
+        data: Editor.data,
+        vis: Editor.vis,
+        view: Editor.renderer.getView()
+    });
+    Editor.setData(Editor.data.createSubset(path, context));
+    Editor.setVisualization(component_vis);
     Editor.raise("reset");
+};
+Editor.endEditingComponent = function() {
+    var item = Editor.component_stack.pop();
+    if(item) {
+        Editor.setData(item.data);
+        Editor.setVisualization(item.vis);
+        Editor.renderer.setView(item.view.center, item.view.scale);
+        Editor.raise("reset");
+    }
 };
 
 Editor.bind("reset", function() {

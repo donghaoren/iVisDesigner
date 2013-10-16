@@ -24,6 +24,15 @@ IV.CanvasManager = function(width, height) {
     this.canvas = { };
 };
 
+IV.CanvasManager.prototype.getResolutionRatio = function() {
+    return this.ratio;
+};
+
+IV.CanvasManager.prototype.setResolutionRatio = function(ratio) {
+    this.ratio = ratio;
+    this.resize(this.width, this.height, false);
+};
+
 // Add a canvas.
 IV.CanvasManager.prototype.add = function(key, canvas, set_css) {
     this.canvas[key] = canvas;
@@ -98,6 +107,13 @@ IV.Renderer.prototype.setVisualization = function(vis) {
 IV.Renderer.prototype.setView = function(center, scale) {
     this.center = center;
     this.scale = scale;
+};
+
+IV.Renderer.prototype.getView = function(center, scale) {
+    return {
+        center: this.center,
+        scale: this.scale
+    };
 };
 
 IV.Renderer.prototype.getOffsetFromScreen = function(pt) {
