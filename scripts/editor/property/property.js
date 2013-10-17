@@ -13,6 +13,7 @@ var Property = Editor.Property = { };
 IV.makeEventSource(Property);
 
 var current = null;
+var current_context = null;
 
 Property.beginEditProperty = function(obj) {
     current = obj;
@@ -25,8 +26,9 @@ Property.endEditProperty = function() {
 };
 
 Editor.bind("selection", function() {
-    if(Editor.vis.selection.length == 1) {
+    if(Editor.vis && Editor.vis.selection.length == 1) {
         current = Editor.vis.selection[0].obj;
+        current_context = Editor.vis.selection[0].context;
         Property.beginEditProperty(current);
     } else {
         Property.endEditProperty();
@@ -56,6 +58,14 @@ var render = function() {
 
         container.append(target);
     });
+
+    if(current.type == "Component" && context) {
+        var toolbar = $("<div />").addClass("item-tools");
+        toolbar.append($("<span />").addClass("btn").text("INTO").click(function() {
+            Editor.beginEditingComponent(current.path, current_context, current.vis);
+        }));
+        container.append(toolbar);
+    }
 };
 
 render();

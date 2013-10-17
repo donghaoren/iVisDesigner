@@ -262,12 +262,29 @@ var render_object_value = function(item, args, callback) {
             callback();
             return new_val;
         });
-        var t = $("<tr />");
-        t.append($("<td />").append(c1))
-         .append($("<td />").text(" - "))
-         .append($("<td />").append(c2));
+        var vmin = primitives.Number(function() { return item.min; }, function(new_val) {
+            item.min = new_val;
+            item.propertyUpdate();
+            callback();
+            return new_val;
+        });
+        var vmax = primitives.Number(function() { return item.max; }, function(new_val) {
+            item.max = new_val;
+            item.propertyUpdate();
+            callback();
+            return new_val;
+        });
+        var t1 = $("<tr />");
+        t1.append($("<td />").append(c1))
+          .append($("<td />").text(" - "))
+          .append($("<td />").append(c2));
+        var t2 = $("<tr />");
+        t2.append($("<td />").append(vmin))
+          .append($("<td />").text(" - "))
+          .append($("<td />").append(vmax));
         var r = $("<span />");
-        r.append($("<table />").addClass("linear-ftf").append(t))
+        r.append($("<table />").addClass("linear-ftf").append(t1))
+         .append($("<table />").addClass("linear-ftf").append(t2))
          .append(path);
         return r;
     }

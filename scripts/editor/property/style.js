@@ -20,7 +20,7 @@ Style.endEditStyle = function() {
 };
 
 Editor.bind("selection", function() {
-    if(Editor.vis.selection.length == 1) {
+    if(Editor.vis && Editor.vis.selection.length == 1) {
         var selobj = Editor.vis.selection[0].obj;
         if(selobj.style) {
             Editor.Style.beginEditStyle(selobj.style);

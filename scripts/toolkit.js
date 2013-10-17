@@ -94,10 +94,50 @@ IV.newVisualization = function() {
     vis.addObject(layout);
 };
 
+IV.newVisualization2 = function() {
+    // Just construct one for testing.
+    var vis = new IV.Visualization;
+    IV.editor.setVisualization(vis);
+
+    var stat = IV.Path.computeBasicStatistics(new IV.Path("[cars]:mpg"), IV.data);
+    var axis1 = new IV.objects.Track({
+        path: new IV.Path("[cars]:mpg"),
+        anchor1: new IV.objects.Plain(new IV.Vector(-205, -200)),
+        anchor2: new IV.objects.Plain(new IV.Vector(-205, 200)),
+        min: new IV.objects.Plain(stat.min - stat.range / 10),
+        max: new IV.objects.Plain(stat.max + stat.range / 10)
+    });
+    var stat = IV.Path.computeBasicStatistics(new IV.Path("[cars]:horsepower"), IV.data);
+    var axis2 = new IV.objects.Track({
+        path: new IV.Path("[cars]:horsepower"),
+        anchor1: new IV.objects.Plain(new IV.Vector(200, -205)),
+        anchor2: new IV.objects.Plain(new IV.Vector(-200, -205)),
+        min: new IV.objects.Plain(stat.min - stat.range / 10),
+        max: new IV.objects.Plain(stat.max + stat.range / 10)
+    });
+    var scatter = new IV.objects.Scatter({
+        track1: axis1,
+        track2: axis2
+    });
+    var pt = new IV.objects.Component({
+        path: new IV.Path("[cars]"),
+        center: scatter
+    });
+    var circle = new IV.objects.Circle({
+        path: new IV.Path(""),
+        radius: new IV.objects.NumberLinear(new IV.Path("acceleration"), 2, 5, 7, 25)
+    });
+    pt.vis.addObject(circle);
+    vis.addObject(axis1);
+    vis.addObject(axis2);
+    vis.addObject(scatter);
+    vis.addObject(pt);
+};
+
 IV.loadData = function(data, schema) {
     IV.data = new IV.DataObject(data, schema);
     IV.editor.setData(IV.data);
-    IV.newVisualization();
+    IV.newVisualization2();
 };
 
 IV.loadDataset = function(name, callback) {

@@ -61,5 +61,5 @@ Objects.Object.prototype = {
 {{include: shapes.js}}
 {{include: layout.js}}
 {{include: map.js}}
-
+{{include: component.js}}
 })();

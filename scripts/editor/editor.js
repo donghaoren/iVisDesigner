@@ -75,7 +75,6 @@ Editor.setVisualization = function(vis) {
     if(Editor.data) {
         Editor.vis.data = Editor.data;
     }
-    Editor.raise("reset");
     Editor.renderer.setVisualization(vis);
     this.vis_listener = {
         objects: function() {
@@ -91,12 +90,15 @@ Editor.setVisualization = function(vis) {
     };
     vis.bind("objects", this.vis_listener.objects);
     vis.bind("selection", this.vis_listener.selection);
+
+    Editor.raise("reset");
 };
 
 Editor.unsetVisualization = function() {
     if(Editor.vis) {
         Editor.vis.unbind("objects", this.vis_listener.objects);
         Editor.vis.unbind("selection", this.vis_listener.selection);
+        Editor.renderer.setVisualization(null);
         Editor.vis = null;
         Editor.raise("reset");
     }
@@ -109,6 +111,7 @@ Editor.beginEditingComponent = function(path, context, component_vis) {
         vis: Editor.vis,
         view: Editor.renderer.getView()
     });
+    Editor.component_path = path;
     Editor.setData(Editor.data.createSubset(path, context));
     Editor.setVisualization(component_vis);
     Editor.raise("reset");
@@ -124,6 +127,8 @@ Editor.endEditingComponent = function() {
 };
 
 Editor.bind("reset", function() {
+    Editor.raise("selection");
+    Editor.raise("objects");
     Editor.renderer.trigger();
     Editor.renderer.render();
 });

@@ -7,7 +7,7 @@
 Tools.Component = {
     onActive: function() {
         var $this = this;
-        IV.set("status", "Circle: Select the center.");
+        IV.set("status", "Component: Select the center.");
         Tools.beginSelectLocation(function(loc) {
             var path = Editor.get("selected-path");
             if(path) {
@@ -17,10 +17,10 @@ Tools.Component = {
                 });
                 Editor.doAddObject(circle);
             }
-        }, "tools:Circle");
+        }, "tools:Component");
     },
     onInactive: function() {
-        Tools.endSelectLocation("tools:Circle");
+        Tools.endSelectLocation("tools:Component");
     }
 };
 

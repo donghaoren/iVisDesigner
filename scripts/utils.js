@@ -1445,7 +1445,7 @@ NS.EventSource.prototype.bind = function(event, f) {
 NS.EventSource.prototype.unbind = function(event, f) {
     if(this._event_source_handlers[event]) {
         var idx = this._event_source_handlers[event].indexOf(f);
-        if(idx >= 0) this._event_source_handlers.splice(idx, 1);
+        if(idx >= 0) this._event_source_handlers[event].splice(idx, 1);
     }
 };
 

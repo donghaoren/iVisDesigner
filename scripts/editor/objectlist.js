@@ -2,6 +2,7 @@ Editor.generateObjectList = function() {
     var olist = $("#object-list");
     olist.children().remove();
     var vis = Editor.vis;
+    if(!vis) return;
     vis.objects.forEach(function(obj) {
         var elem = $("<div />").addClass("group item");
         var data = elem.data();

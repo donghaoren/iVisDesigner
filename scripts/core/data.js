@@ -40,4 +40,13 @@ IV.DataObject.prototype.getAttached = function(ns, id) {
     return this.namespaces[ns][id];
 };
 
+IV.DataObject.prototype.createSubset = function(path, context) {
+    var new_root = context.get(path).val();
+    var s = this.schema;
+    for(var i = 0; i < path.components.length; i++) {
+        s = s.fields[path.components[i].name];
+    }
+    return new IV.DataObject(new_root, s);
+};
+
 })();
