@@ -69,6 +69,9 @@ IV.Renderer = function() {
     this.center = new IV.Vector(0, 0);
     this.scale = 1;
     this.needs_render = { };
+    this.frame_origin = true;
+    this.frame_grid = true;
+    this.grid_size = 10;
     var $this = this;
 
     IV.EventSource.call(this);
@@ -84,6 +87,47 @@ IV.Renderer = function() {
         }
     });
     this.bind("back", function(data, g) {
+        if($this.frame_grid) {
+            var gs = this.grid_size;
+            while(gs * this.scale < 5) {
+                gs *= 10;
+            }
+            while(gs * this.scale > 50) {
+                gs /= 10;
+            }
+            var render_grid = function(gs) {
+                var w = g.ivGuideLineWidth();
+                var nx = Math.ceil($this.manager.width / $this.scale / 2 / gs);
+                var kx = Math.round(-$this.center.x / gs / $this.scale);
+                var ny = Math.ceil($this.manager.height / $this.scale / 2 / gs);
+                var ky = Math.round(-$this.center.y / gs / $this.scale);
+                g.beginPath();
+                for(var i = -nx; i<= nx; i++) {
+                    g.moveTo((i + kx) * gs, (ny + ky) * gs);
+                    g.lineTo((i + kx) * gs, (ky - ny) * gs);
+                }
+                for(var i = -ny; i<= ny; i++) {
+                    g.moveTo((nx + kx) * gs, (i + ky) * gs);
+                    g.lineTo((kx - nx) * gs, (i + ky) * gs);
+                }
+                g.strokeStyle = IV.colors.guide.toRGBA();
+                g.lineCap = "butt";
+                g.stroke();
+            };
+            render_grid(gs);
+            render_grid(gs * 10);
+        }
+        if($this.frame_origin) {
+            var w = g.ivGuideLineWidth();
+            var l = 10 * w;
+            g.beginPath();
+            g.moveTo(-l, 0);
+            g.lineTo(l, 0);
+            g.moveTo(0, -l);
+            g.lineTo(0, l);
+            g.strokeStyle = "gray";
+            g.stroke();
+        }
         if($this.vis) {
             $this.vis.renderGuide(data, g);
         }
@@ -109,12 +153,30 @@ IV.Renderer.prototype.setView = function(center, scale) {
     this.scale = scale;
 };
 
-IV.Renderer.prototype.getView = function(center, scale) {
+IV.Renderer.prototype.getView = function() {
     return {
         center: this.center,
         scale: this.scale
     };
 };
+
+IV.Renderer.prototype.getConfig = function() {
+    return {
+        view: this.getView(),
+        frame_origin: this.frame_origin,
+        frame_grid: this.frame_grid,
+        grid_size: this.grid_size
+    };
+};
+
+IV.Renderer.prototype.setConfig = function(config) {
+    this.setView(config.view.center, config.view.scale);
+    this.frame_origin = config.frame_origin;
+    this.frame_grid = config.frame_grid;
+    this.grid_size = config.grid_size;
+};
+
+
 
 IV.Renderer.prototype.getOffsetFromScreen = function(pt) {
     var x = (pt.x - this.manager.width / 2 - this.center.x) / this.scale;

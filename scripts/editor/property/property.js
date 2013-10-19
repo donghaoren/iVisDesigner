@@ -59,12 +59,24 @@ var render = function() {
         container.append(target);
     });
 
-    if(current.type == "Component" && context) {
-        var toolbar = $("<div />").addClass("item-tools");
-        toolbar.append($("<span />").addClass("btn").text("INTO").click(function() {
-            Editor.beginEditingComponent(current.path, current_context, current.vis);
-        }));
-        container.append(toolbar);
+    if(current.type == "Component") {
+        if(!current_context) {
+            current.path.enumerate(Editor.data, function(ctx) {
+                current_context = ctx.clone();
+                return false;
+            });
+        }
+        (function(current, current_context) {
+            var toolbar = $("<div />").addClass("item-tools");
+            toolbar.append(
+                $("<span />").addClass("btn")
+                  .append($('<i class="xicon-tools-component"></i>'))
+                  .click(function() {
+                      Editor.beginEditingComponent(current.path, current_context, current.vis);
+                  })
+            );
+            container.append(toolbar);
+        })(current, current_context);
     }
 };
 

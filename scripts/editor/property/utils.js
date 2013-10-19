@@ -226,7 +226,7 @@ var render_object_value = function(item, args, callback) {
             return new_val;
         });
         var path = primitives.Path(function() { return item.path; }, function(new_val) {
-            var stat = IV.Path.computeBasicStatistics(new_val, IV.editor.data);
+            var stat = Editor.computePathStatistics(new_val);
             item.path = new_val;
             item.min = stat.min;
             item.max = stat.max;
@@ -255,7 +255,7 @@ var render_object_value = function(item, args, callback) {
             return new_val;
         });
         var path = primitives.Path(function() { return item.path; }, function(new_val) {
-            var stat = IV.Path.computeBasicStatistics(new_val, IV.editor.data);
+            var stat = Editor.computePathStatistics(new_val);
             item.path = new_val;
             item.min = stat.min;
             item.max = stat.max;

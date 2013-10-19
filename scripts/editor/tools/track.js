@@ -19,7 +19,7 @@ Tools.Track = {
                 $this.loc2 = loc;
                 var path = Editor.get("selected-path");
                 if(true) {
-                    var stat = IV.Path.computeBasicStatistics(path, IV.editor.data);
+                    var stat = Editor.computePathStatistics(path);
                     var track = new IV.objects.Track({
                         path: path,
                         anchor1: $this.loc1,

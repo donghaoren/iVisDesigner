@@ -109,7 +109,7 @@ Editor.beginEditingComponent = function(path, context, component_vis) {
     Editor.component_stack.push({
         data: Editor.data,
         vis: Editor.vis,
-        view: Editor.renderer.getView()
+        render_config: Editor.renderer.getConfig()
     });
     Editor.component_path = path;
     Editor.setData(Editor.data.createSubset(path, context));
@@ -121,9 +121,13 @@ Editor.endEditingComponent = function() {
     if(item) {
         Editor.setData(item.data);
         Editor.setVisualization(item.vis);
-        Editor.renderer.setView(item.view.center, item.view.scale);
+        Editor.renderer.setConfig(item.render_config);
         Editor.raise("reset");
     }
+};
+
+Editor.computePathStatistics = function(path) {
+    return Editor.data.computeFullStatistics(path);
 };
 
 Editor.bind("reset", function() {
@@ -131,6 +135,11 @@ Editor.bind("reset", function() {
     Editor.raise("objects");
     Editor.renderer.trigger();
     Editor.renderer.render();
+    if(Editor.component_stack.length > 0) {
+        $('[data-for="component-view"]').show();
+    } else {
+        $('[data-for="component-view"]').hide();
+    }
 });
 
 setInterval(function() {

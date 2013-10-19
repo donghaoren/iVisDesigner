@@ -12,8 +12,8 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
             type: "stroke",
             color: new Objects.Plain(new IV.Color(0, 0, 0, 1)),
             width: new Objects.Plain(1),
-            join: new Objects.Plain("round"),
-            cap: new Objects.Plain("round")
+            join: new Objects.Plain("bevel"),
+            cap: new Objects.Plain("butt")
         }
     ];
 }, {
@@ -30,8 +30,8 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
     },
     renderGuide: function(context, g, path) {
         g.strokeStyle = "#888";
-        g.lineCap = "round";
-        g.lineJoin = "round";
+        g.lineCap = "butt";
+        g.lineJoin = "bevel";
         g.ivGuideLineWidth();
         g.beginPath();
         this._run_path(g, path);
@@ -39,8 +39,8 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
     },
     renderSelection: function(context, g, path) {
         g.strokeStyle = IV.colors.selection.toRGBA();
-        g.lineCap = "round";
-        g.lineJoin = "round";
+        g.lineCap = "butt";
+        g.lineJoin = "bevel";
         g.ivGuideLineWidth();
         g.beginPath();
         this._run_path(g, path);
