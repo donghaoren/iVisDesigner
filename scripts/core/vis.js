@@ -6,10 +6,22 @@ IV.Visualization = function() {
     // Selected objects.
     this.selection = [];
     this.needs_render = true;
+    this.type = "Visualization";
     IV.EventSource.call(this);
 };
 
+
+IV.serializer.registerObjectType("Visualization", IV.Visualization);
+
 IV.implement(IV.EventSource, IV.Visualization);
+
+IV.Visualization.prototype.serializeFields = function() {
+    return [ "objects" ];
+};
+IV.Visualization.prototype.postDeserialize = function() {
+    this.selection = [];
+    IV.EventSource.call(this);
+};
 
 // Add an object to the visualization.
 IV.Visualization.prototype.addObject = function(obj) {

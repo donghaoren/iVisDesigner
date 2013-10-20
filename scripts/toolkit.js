@@ -137,7 +137,7 @@ IV.newVisualization2 = function() {
 IV.loadData = function(data, schema) {
     IV.data = new IV.DataObject(data, schema);
     IV.editor.setData(IV.data);
-    IV.newVisualization2();
+    IV.newVisualization();
 };
 
 IV.loadDataset = function(name, callback) {

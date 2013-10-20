@@ -4,6 +4,8 @@
 // - Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // - See LICENSE.txt for copyright information.
 
+{{include: serializer.js}}
+
 {{include: path.js}}
 {{include: data.js}}
 {{include: vis.js}}

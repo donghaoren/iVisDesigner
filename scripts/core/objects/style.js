@@ -16,6 +16,7 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
             cap: new Objects.Plain("butt")
         }
     ];
+    this.type = "PathStyle";
 }, {
     // path should be an array:
     // string: command, IV.Vector: location.
@@ -133,3 +134,5 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
         g.fill();
     }
 });
+
+IV.serializer.registerObjectType("PathStyle", Objects.PathStyle);

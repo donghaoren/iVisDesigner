@@ -12,7 +12,7 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
     this.path_nodes = info.path_nodes;
     this.path_edgeA = info.path_edgeA;
     this.path_edgeB = info.path_edgeB;
-    this.points = { };
+    this._points = { };
     this.type = "ForceLayout";
     this.enabled = false;
 }, {
@@ -66,8 +66,8 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
         var count = 0;
         $this.path_nodes.enumerate(data, function(context) {
             var id = data.getObjectID(context.val());
-            if($this.points[id]) {
-                var pt = $this.points[id];
+            if($this._points[id]) {
+                var pt = $this._points[id];
                 objs[id] = {
                     x: pt.x, y: pt.y,
                     dx: 0, dy: 0
@@ -137,16 +137,17 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
             }
         }
         for(var i in objs) {
-            if(!$this.points[i]) {
-                $this.points[i] = { x: objs[i].x, y: objs[i].y };
+            if(!$this._points[i]) {
+                $this._points[i] = { x: objs[i].x, y: objs[i].y };
             } else {
-                $this.points[i].x = objs[i].x;
-                $this.points[i].y = objs[i].y;
+                $this._points[i].x = objs[i].x;
+                $this._points[i].y = objs[i].y;
             }
         }
 
-        data.setAttached($this.uuid, $this.points);
+        data.setAttached($this.uuid, $this._points);
     }
 });
+IV.serializer.registerObjectType("ForceLayout", Objects.ForceLayout);
 
 })();

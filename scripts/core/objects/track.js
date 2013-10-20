@@ -280,4 +280,6 @@ var Scatter = IV.extend(Objects.Object, function(info) {
 Objects.Track = Track;
 Objects.Scatter = Scatter;
 
+IV.serializer.registerObjectType("Track", Track);
+IV.serializer.registerObjectType("Scatter", Scatter);
 })();

@@ -854,7 +854,10 @@ NS.Vector.prototype = {
                              this.y + (v.y - this.y) * t);
     },
     callMoveTo: function(g) { g.moveTo(this.x, this.y); },
-    callLineTo: function(g) { g.lineTo(this.x, this.y); }
+    callLineTo: function(g) { g.lineTo(this.x, this.y); },
+    serialize: function() {
+        return { de: "Vector", x: this.x, y: this.y };
+    }
 };
 
 NS.array_unique = function(array) {
@@ -1289,6 +1292,9 @@ NS.Color.prototype = {
     },
     clone: function() {
         return new NS.Color(this.r, this.g, this.b, this.a);
+    },
+    serialize: function() {
+        return { de: "Color", r: this.r, g: this.g, b: this.b, a: this.a };
     }
 };
 
@@ -1476,11 +1482,12 @@ NS.makeEventSource = function(obj) {
 // ### Generate UUID
 
 // UUID is used for object id.
+var guid_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz~!@#$%^&*()_+=-{}][:;?><,./|";
 NS.generateUUID = function(prefix) {
     // Current format is like `prefix-xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
-    var r = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
+    var r = 'xxxxxxxxxx'.replace(/x/g, function(c) {
+        var r = Math.random() * guid_chars.length | 0;
+        return guid_chars[r];
     });
     if(prefix) return prefix + r;
     return r;

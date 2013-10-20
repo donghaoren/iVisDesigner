@@ -26,6 +26,8 @@ var Plain = IV.extend(Objects.Object, function(obj) {
     }
 });
 
+IV.serializer.registerObjectType("Plain", Plain);
+
 Objects.Plain = Plain;
 Objects.Number = Plain;
 Objects.Style = Plain;
@@ -104,6 +106,7 @@ var PointOffset = IV.extend(Objects.Object, function(point, offset) {
     }
 });
 Objects.PointOffset = PointOffset;
+IV.serializer.registerObjectType("PointOffset", PointOffset);
 
 // Linear Mapping.
 var NumberLinear = IV.extend(Objects.Object, function(path, num1, num2, min, max) {
@@ -127,6 +130,7 @@ var NumberLinear = IV.extend(Objects.Object, function(path, num1, num2, min, max
     }
 });
 Objects.NumberLinear = NumberLinear;
+IV.serializer.registerObjectType("NumberLinear", NumberLinear);
 
 // Color Linear Mapping.
 var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2, min, max) {
@@ -165,6 +169,7 @@ var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2, min, 
     }
 });
 Objects.ColorLinear = ColorLinear;
+IV.serializer.registerObjectType("ColorLinear", ColorLinear);
 
 var ReferenceWrapper = IV.extend(Objects.Object, function(ref_path, refd_path, object) {
     Objects.Object.call(this);
@@ -182,5 +187,6 @@ var ReferenceWrapper = IV.extend(Objects.Object, function(ref_path, refd_path, o
     }
 });
 Objects.ReferenceWrapper = ReferenceWrapper;
+IV.serializer.registerObjectType("ReferenceWrapper", ReferenceWrapper);
 
 })();

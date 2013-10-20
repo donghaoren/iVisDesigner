@@ -38,9 +38,6 @@ Objects.Object.prototype = {
     clone: function() {
         throw new Error("Clone not implemented: " + this.type);
     },
-    serialize: function() {
-        throw new Error("Serialize not implemented: " + this.type);
-    },
     getPropertyContext: function() {
         var $this = this;
         return [

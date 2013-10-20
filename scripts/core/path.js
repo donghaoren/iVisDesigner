@@ -196,6 +196,13 @@ IV.Path.prototype.toString = function() {
     }).join(":");
 };
 
+IV.Path.prototype.serialize = function() {
+    return { de: "Path", str: this.toString() };
+};
+IV.serializer.registerDeserializer("Path", function(item) {
+    return new IV.Path(item.str);
+});
+
 IV.Path.prototype.toStringDisplay = function() {
     if(this.components.length == 0) return "[ROOT]"
     return this.components.map(function(c) {

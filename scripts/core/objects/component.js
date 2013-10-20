@@ -71,3 +71,4 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
         return rslt;
     }
 });
+IV.serializer.registerObjectType("Component", Objects.Component);

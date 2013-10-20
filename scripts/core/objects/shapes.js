@@ -234,3 +234,8 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
         return rslt;
     }
 });
+
+IV.serializer.registerObjectType("Circle", Objects.Circle);
+IV.serializer.registerObjectType("Line", Objects.Line);
+IV.serializer.registerObjectType("Bar", Objects.Bar);
+IV.serializer.registerObjectType("LineThrough", Objects.LineThrough);
