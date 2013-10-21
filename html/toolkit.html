@@ -210,7 +210,10 @@ IV_version = {
         <span class="btn btn-icon btn-s" title="Create graph layout." data-popup="CreateLayout">
           <i class="xicon-tools-graph-layout"></i>
         </span>
-        <span class="btn btn-icon btn-s" data-for="component-view" onclick="IV.editor.endEditingComponent();" title="Back to previous component.">
+        <span class="btn btn-icon btn-s"
+           data-for="component-view"
+            onclick="IV.editor.endEditingComponent();"
+              title="Back to previous component.">
           <i class="xicon-tools-back-arrow"></i>
         </span>
       </div>
@@ -246,19 +249,26 @@ IV_version = {
       <div id="panel-page-container" class="basic"></div>
     </div>
   </div>
+  <!-- Load Panel -->
+  <div id="panel-page" class="panel full-title" data-title="Page">
+    <div class="scrollview">
+      <div id="panel-page-container" class="basic"></div>
+    </div>
+  </div>
+  <!-- Save Panel -->
+  <div id="panel-page" class="panel full-title" data-title="Page">
+    <div class="scrollview">
+      <div id="panel-page-container" class="basic"></div>
+    </div>
+  </div>
 </div>
 
 <!-- Popups -->
 <div id="popup-container"></div>
 
-<!-- Color selector popup -->
-<script id="popup-color-select" type="text/plain">
-
-</script>
-
 <!-- System Loading Overlay -->
 <div id="system-loading"
-     style="position:fixed;z-index:100000;left:0;right:0;top:0;bottom:0;padding-top:100px;text-align:center;font-size:16px;background-color:white;">
+  style="position:fixed;z-index:100000;left:0;right:0;top:0;bottom:0;padding-top:100px;text-align:center;font-size:16px;background-color:white;">
   <div style="text-align:left;display:inline-block;">
     <h3 style="margin-bottom:10px;font-size:20px;">iVisDesigner is Loading...</h3>
     <p style="margin: 0.3em 0; padding: 0">Browser requirements: HTML5 support (Javascript, Canvas, SVG).</p>
