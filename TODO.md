@@ -9,3 +9,10 @@ To experiment:
 
 - Guide object for line cross.
 - Spline track and scatter.
+
+
+Ideas
+----
+
+For components, need to pass stuff(such as locations, numbers, etc) into the component.
+-> Define properties for passing arguments.

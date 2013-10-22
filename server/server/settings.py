@@ -121,7 +121,7 @@ INSTALLED_APPS = (
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
-    'PAGINATE_BY': 30
+    'PAGINATE_BY': 3
 }
 
 CORS_ORIGIN_ALLOW_ALL = False

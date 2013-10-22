@@ -113,6 +113,11 @@ modal_register: |
     </div>
   </form>
 
-model_load_dataset: |
-  <ul data-for="datasets">
-  </ul>
+modal_load_dataset: |
+  <div class="scrollview"><div>
+    <div class="datasets">
+      <div class="pagination group"></div>
+      <ul data-for="datasets"></ul>
+      <div class="pagination group"></div>
+    </div>
+  </div></div>

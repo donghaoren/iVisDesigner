@@ -5,3 +5,38 @@
     background-color: rgba(255, 255, 255, 0.9);
     left: 0; right: 0; top: 0; bottom: 0;
 }
+
+
+.datasets {
+    margin: 5px;
+
+    .pagination {
+        margin: 5px 0;
+    }
+
+    li {
+        margin: 5px 0;
+        padding: 5px;
+        background-color: white;
+
+        .name {
+            font-size: 13px;
+            font-weight: bold;
+            display: block;
+            margin: 5px 0;
+        }
+        .description { font-size: 11px;
+            font-style: italic;
+            display: block;
+            margin: 5px 0;
+            color: @gray;
+        }
+        .actions {
+            float: right;
+            margin: 3px 3px;
+        }
+        &:hover {
+            box-shadow: 0 0 2px @gray;
+        }
+    }
+}

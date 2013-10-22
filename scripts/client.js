@@ -105,4 +105,45 @@ IV.on("command:account.register", function() {
     });
 });
 
+IV.on("command:datasets.load", function() {
+    var ctx = IV.modals.constructModal({
+        html: IV.strings("modal_load_dataset"),
+        title: "Load Dataset",
+        width: $(window).width() * 0.6,
+        height: $(window).height() * 0.6
+    });
+    var load_page = function(page_index) {
+        IV.server.get("datasets/?page=" + page_index, function(err, data) {
+            ctx.datasets.children().remove();
+            ctx.item.find(".pagination").each(function() {
+                var c = $(this);
+                c.children().remove();
+                if(data.next) {
+                    c.append($("<span />").addClass("next btn btn-s pull-right").text("Next").click(function() {
+                        load_page(page_index + 1);
+                    }));
+                }
+                if(data.previous) {
+                    c.append($("<span />").addClass("next btn btn-s pull-left").text("Previous").click(function() {
+                        load_page(page_index - 1);
+                    }));
+                }
+            });
+            data.results.forEach(function(item) {
+                var li = $("<li>");
+                li.append($("<span />").addClass("actions")
+                    .append($("<span />").addClass("btn btn-s").text("New"))
+                    .append($("<span />").text(" "))
+                    .append($("<span />").addClass("btn btn-s").text("+"))
+                );
+                li.append($("<span />").addClass("name").text(item.name));
+                li.append($("<span />").addClass("description").text(item.description));
+
+                ctx.datasets.append(li);
+            });
+        });
+    };
+    load_page(1);
+});
+
 })();
