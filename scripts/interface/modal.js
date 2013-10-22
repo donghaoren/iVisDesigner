@@ -38,7 +38,7 @@ IV.modals.constructModal = function(info) {
 
     ctx.close = function() {
         $("#modal-container").hide();
-        ctx.remove();
+        ctx.item.remove();
     };
     return ctx;
 };

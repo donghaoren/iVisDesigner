@@ -40,6 +40,7 @@ class VisualizationViewSet(ListDetailViewSet):
     queryset = Visualization.objects.all()
     serializer_class = VisualizationSerializer
     serializer_list_class = VisualizationSerializer_List
+    filter_fields = ('user', 'dataset')
 
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly, )

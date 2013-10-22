@@ -12,9 +12,15 @@
 
     .pagination {
         margin: 5px 0;
+        .prev, .next, .number {
+            .btn();
+            .btn-s();
+        }
     }
 
-    li {
+    li .dataset-info {
+        cursor: pointer;
+
         margin: 5px 0;
         padding: 5px;
         background-color: white;
@@ -35,8 +41,43 @@
             float: right;
             margin: 3px 3px;
         }
+
+        border-bottom: 1px solid #CCC;
+        border-top: 1px solid #CCC;
         &:hover {
-            box-shadow: 0 0 2px @gray;
+            background-color: mix(@active_color, white, 2%);
+            border-bottom: 1px solid @active_color;
+            border-top: 1px solid @active_color;
+        }
+    }
+
+    ul.visualizations {
+        li {
+            border-left: 2px solid #CCC;
+            margin: 5px 0;
+            margin-left: 10px;
+            background-color: white;
+            padding: 3px;
+            cursor: pointer;
+            .description {
+                display: block;
+                margin: 5px 0;
+            }
+            .user {
+                font-style: italic;
+                font-size: 11px;
+                color: @gray;
+                margin: 5px 0;
+                display: block;
+            }
+
+            .actions {
+                margin: 3px 3px;
+            }
+            &:hover {
+                background-color: mix(@active_color, white, 2%);
+                border-left: 2px solid @active_color;
+            }
         }
     }
 }
