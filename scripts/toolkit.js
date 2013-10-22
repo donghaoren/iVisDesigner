@@ -14,6 +14,7 @@ IV.config = $.extend({
 // Data provider
 
 {{include: dataprovider.js}}
+{{include: client.js}}
 
 IV.newVisualization = function() {
     // Just construct one for testing.
@@ -154,7 +155,6 @@ IV.loadDataset = function(name, callback) {
     });
 };
 
-
 // ------------------------------------------------------------------------
 // System Initialization
 // ------------------------------------------------------------------------
@@ -162,6 +162,8 @@ function browserTest() {
     if(!document.createElement("canvas").getContext) return false;
     return true;
 }
+
+IV.user = null;
 
 $(function() {
     if(!browserTest()) return;
@@ -172,6 +174,13 @@ $(function() {
     IV.raise("initialize:after");
     IV.loadDataset("test", function() {
 
+    });
+
+    IV.server.get("account", function(err, data) {
+        if(err) {
+        } else {
+            IV.set("user", data);
+        }
     });
 });
 

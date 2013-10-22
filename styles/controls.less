@@ -21,7 +21,6 @@
     box-shadow: 0 0 1px #AAA;
 }
 
-
 select {
     outline: none;
     -webkit-appearance: none;
@@ -49,114 +48,43 @@ select {
     }
 }
 
-input {
-    border: none;
-    margin: 0; padding: 0;
-    outline: none;
-
-    font-size: 12px;
-    line-height: 17px;
-    height: 17px;
-
-    border: 1px solid gray;
-
-    width: 2.6em;
-    padding: 0 2px;
-
-    &:hover, &:active, &:focus {
-        border: 1px solid @active_color;
-        outline: none;
-    }
-    &:focus {
-        background-color: lighten(@active_color, 60%);
-    }
-}
-.input-string input {
-    width: 6em;
-}
 .input-numeric {
     display: inline-block;
     white-space: nowrap;
 
     input {
-        border-right: none;
-        &:hover, &:active, &:focus {
-            border: 1px solid @active_color;
-            border-right: none;
-            outline: none;
-        }
-    }
-    span {
-        display: inline-block;
+        border: none;
+        margin: 0; padding: 0;
+        outline: none;
+
         font-size: 12px;
         line-height: 17px;
         height: 17px;
-        width: 10px;
-        border: 1px solid gray;
-        text-align: center;
-        cursor: n-resize;
+
+        width: 2.6em;
+        padding: 1px 3px;
+
+        &:hover, &:active, &:focus {
+            outline: none;
+        }
+        border-right: none;
+        &:hover, &:active, &:focus {
+            border-right: none;
+            outline: none;
+        }
         vertical-align: top;
-
-        &:hover {
-            border: 1px solid @active_color;
-            background-color: @active_color;
-            color: white;
-        }
     }
-}
-/*
-.input-path {
-    display: inline-block;
-    white-space: nowrap;
-
     span {
-        display: inline-block;
-        cursor: pointer;
-        height: 19px;
-        line-height: 19px;
-        margin: 0 2px;
-        padding: 0 2px;
-        &:hover, &.active {
-            background-color: @active_color;
-            color: white;
-        }
-    }
-}
-*/
-
-.control-numeric-value, .control-color-value {
-    line-height: 19px;
-    display: inline-block;
-    white-space: nowrap;
-    background-color: rgba(0, 0, 0, 0.1);
-    padding: 2px;
-    margin: -2px;
-
-    .path {
-        display: inline-block;
-        cursor: pointer;
-        height: 19px;
-        line-height: 19px;
-        margin: 0 2px;
-        &:hover {
-            background-color: @active_color;
-            color: white;
-        }
-    }
-    .toggle {
+        .btn();
+        background-color: white;
+        padding: 0px 2px;
         display: inline-block;
         font-size: 12px;
         line-height: 19px;
         height: 19px;
-        width: 10px;
         text-align: center;
-        cursor: pointer;
+        cursor: n-resize;
         vertical-align: top;
-        background-color: rgba(255,255,255,0.3);
-        &:hover {
-            background-color: @active_color;
-            color: white;
-        }
     }
 }
 
@@ -237,3 +165,33 @@ input {
 .xicon-cross:before { .xicon_content("✕"); }
 .xicon-mark:before { .xicon_content("✓"); }
 
+input { font-size: 12px; }
+
+form {
+    .input-group {
+        margin: 5px 10px;
+        label {
+            display: block;
+            margin-top: 8px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        div {
+            display: block;
+            input {
+                background-color: white;
+                &:hover, &:active, &:focus {
+                    margin: 0;
+                    padding: 3px 6px;
+                    box-shadow: 0 0 2px @gray;
+                }
+                width: calc(~"100% - 12px");
+                height: 17px;
+                border: 0;
+                margin: 0;
+                padding: 3px 6px;
+            }
+        }
+    }
+}

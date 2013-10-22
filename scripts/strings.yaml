@@ -72,3 +72,47 @@ popup_color_select: |
     B: <span class="input-blue input-numeric" data-min="0" data-max="255" data-delta-scale="50"></span>
     Alpha: <span class="input-alpha input-numeric" data-min="0" data-max="1" data-delta-scale="0.2"></span>
   </p>
+
+modal_login: |
+  <form>
+    <div class="input-group group">
+      <label>Username</label>
+      <div><input type="text" data-for="username" /></div>
+    </div>
+    <div class="input-group group">
+      <label>Password</label>
+      <div><input type="password" data-for="password" /></div>
+    </div>
+    <div class="input-group group">
+      <label></label>
+      <div><span class="btn btn-s" data-for="submit">Submit</span> <span data-for="status"></span></div>
+    </div>
+  </form>
+
+modal_register: |
+  <form>
+    <div class="input-group group">
+      <label>Username</label>
+      <div><input type="text" data-for="username" /></div>
+    </div>
+    <div class="input-group group">
+      <label>Email</label>
+      <div><input type="text" data-for="email" /></div>
+    </div>
+    <div class="input-group group">
+      <label>Password</label>
+      <div><input type="password" data-for="password1" /></div>
+    </div>
+    <div class="input-group group">
+      <label>Repeat Password</label>
+      <div><input type="password" data-for="password2" /></div>
+    </div>
+    <div class="input-group group">
+      <label></label>
+      <div><span class="btn btn-s" data-for="submit">Submit</span> <span data-for="status"></span></div>
+    </div>
+  </form>
+
+model_load_dataset: |
+  <ul data-for="datasets">
+  </ul>

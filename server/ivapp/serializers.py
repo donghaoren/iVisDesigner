@@ -18,8 +18,8 @@ class DatasetSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'schema', 'created_at', 'data')
 
 class VisualizationSerializer(serializers.ModelSerializer):
-    user_info = UserSerializer(source = 'user')
-    dataset_info = DatasetSerializer(source = 'dataset')
+    user_info = UserSerializer(source = 'user', read_only = True)
+    dataset_info = DatasetSerializer(source = 'dataset', read_only = True)
     class Meta:
         model = Visualization
         fields = ('id', 'user', 'description', 'created_at', 'dataset',
@@ -27,8 +27,8 @@ class VisualizationSerializer(serializers.ModelSerializer):
                   'content')
 
 class VisualizationSerializer_List(serializers.ModelSerializer):
-    user_info = UserSerializer(source = 'user')
-    dataset_info = DatasetSerializer_List(source = 'dataset')
+    user_info = UserSerializer(source = 'user', read_only = True)
+    dataset_info = DatasetSerializer_List(source = 'dataset', read_only = True)
     class Meta:
         model = Visualization
         fields = ('id', 'user', 'description', 'created_at', 'dataset',

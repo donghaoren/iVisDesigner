@@ -87,6 +87,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -114,6 +115,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'rest_framework',
+    'corsheaders',
     'ivapp'
 )
 
@@ -121,6 +123,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
     'PAGINATE_BY': 30
 }
+
+CORS_ORIGIN_ALLOW_ALL = False
+if DEBUG:
+    CORS_ORIGIN_WHITELIST = ( 'localhost' )
+CORS_ALLOW_CREDENTIALS = True
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

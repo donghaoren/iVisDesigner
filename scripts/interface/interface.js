@@ -12,6 +12,7 @@
 {{include: menu.js}}
 {{include: panel.js}}
 {{include: popup.js}}
+{{include: modal.js}}
 
 $(window).resize(function(){
     IV.raise("window:resize");
