@@ -91,4 +91,53 @@ IV.DataObject.prototype.computeFullStatistics = function(path, context) {
     return { min: min, max: max, range: max - min, sum: sum, count: count, avg: sum / count };
 }
 
+IV.PlainDataset = function(obj, schema) {
+        // Preprocess object.
+    var process_subtree = function(obj, schema, parent, onobject) {
+        onobject(obj, schema, parent);
+        if(schema.type == "object") {
+            if(schema.fields) {
+                for(var f in schema.fields) {
+                    var ss = schema.fields[f];
+                    var so = obj[f];
+                    process_subtree(so, ss, obj, onobject);
+                }
+            }
+        }
+        if(schema.type == "collection" || schema.type == "sequence") {
+            if(schema.fields) {
+                obj.forEach(function(o) {
+                    onobject(o, schema, parent, "item");
+                    for(var f in schema.fields) {
+                        var ss = schema.fields[f];
+                        var so = o[f];
+                        process_subtree(so, ss, o, onobject);
+                    }
+                });
+            }
+        }
+    };
+    var id_map = { };
+    process_subtree(obj, schema, null, function(obj, schema, parent, rtype) {
+        if(schema.type == "object" || rtype == "item")
+            obj._parent = parent;
+        if(obj._id) {
+            id_map[obj._id] = obj;
+            obj.__id = obj._id;
+        } else {
+            if(schema.type == "object" || rtype == "item")
+                obj.__id = IV.generateUUID("::");
+        }
+    });
+    process_subtree(obj, schema, null, function(obj, schema, parent) {
+        if(schema.type == "reference") {
+            obj._target = id_map[obj.ref_id];
+        }
+    });
+    this.id_map = id_map;
+    this.obj = obj;
+    this.schema = schema;
+    this.schema_cache = { };
+};
+
 })();

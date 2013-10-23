@@ -175,7 +175,14 @@ IV.on("command:toolkit.start", function() {
                                 ul.children().remove();
                                 ul.append(IV._E("li", "group").append(
                                     IV._E("div", "actions").append(
-                                        IV._E("span", "btn btn-s").text("+ New")
+                                        IV._E("span", "btn btn-s").text("+ New").click(function() {
+                                            IV.server.get("datasets/" + dataset.id, function(err, data) {
+                                                data.data = jsyaml.load(data.data);
+                                                data.schema = jsyaml.load(data.schema);
+                                                var ds = new IV.PlainDataset(data.data, data.schema);
+                                                IV.loadData(ds.obj, ds.schema);
+                                            });
+                                        })
                                     ).append(
                                         IV._E("span").text(" ")
                                     ).append(

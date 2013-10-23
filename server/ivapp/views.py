@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
-from rest_framework.permissions import IsAuthenticated, DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissionsOrAnonReadOnly
 from ivapp.serializers import DatasetSerializer, DatasetSerializer_List
 from ivapp.serializers import VisualizationSerializer, VisualizationSerializer_List
 from ivapp.serializers import UserSerializer
@@ -14,6 +14,20 @@ from django.contrib.auth import authenticate, login, logout
 
 from helpers import ListDetailViewSet
 
+class IsAdminUserOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow owners of an object to edit it.
+    """
+    def has_permission(self, request, view, obj = None):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if request.user.is_staff: return True
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return False
+
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow owners of an object to edit it.
@@ -21,7 +35,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
         # so we'll always allow GET, HEAD or OPTIONS requests.
-        if request.user.is_superuser: return True
+        if request.user.is_staff: return True
 
         if request.method in permissions.SAFE_METHODS:
             return True
@@ -30,7 +44,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         return obj.user == request.user
 
 class DatasetViewSet(ListDetailViewSet):
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (IsAdminUserOrReadOnly, )
     queryset = Dataset.objects.all()
     serializer_class = DatasetSerializer
     serializer_list_class = DatasetSerializer_List
