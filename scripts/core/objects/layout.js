@@ -12,13 +12,19 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
     this.path_nodes = info.path_nodes;
     this.path_edgeA = info.path_edgeA;
     this.path_edgeB = info.path_edgeB;
-    this._points = { };
+    this.points = null;
+    this._validated = false;
     this.type = "ForceLayout";
     this.enabled = false;
 }, {
     onAttach: function(vis) {
-        this._runStep(vis.data);
         this.vis = vis;
+    },
+    validate: function(data) {
+        if(!this._validated) {
+            this._runStep(data);
+            this._validated = true;
+        }
     },
     onDetach: function(vis) {
     },
@@ -58,6 +64,7 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
         var $this = this;
         var objs = { };
         var edges = [];
+        if(!this.points) this.points = { };
         $this.path_edgeA.enumerate(data, function(context) {
             var idA = data.getObjectID(context.get($this.path_edgeA).val());
             var idB = data.getObjectID(context.get($this.path_edgeB).val());
@@ -66,8 +73,8 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
         var count = 0;
         $this.path_nodes.enumerate(data, function(context) {
             var id = data.getObjectID(context.val());
-            if($this._points[id]) {
-                var pt = $this._points[id];
+            if($this.points[id]) {
+                var pt = $this.points[id];
                 objs[id] = {
                     x: pt.x, y: pt.y,
                     dx: 0, dy: 0
@@ -137,15 +144,15 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
             }
         }
         for(var i in objs) {
-            if(!$this._points[i]) {
-                $this._points[i] = { x: objs[i].x, y: objs[i].y };
+            if(!$this.points[i]) {
+                $this.points[i] = { x: objs[i].x, y: objs[i].y };
             } else {
-                $this._points[i].x = objs[i].x;
-                $this._points[i].y = objs[i].y;
+                $this.points[i].x = objs[i].x;
+                $this.points[i].y = objs[i].y;
             }
         }
 
-        data.setAttached($this.uuid, $this._points);
+        data.setAttached($this.uuid, $this.points);
     }
 });
 IV.serializer.registerObjectType("ForceLayout", Objects.ForceLayout);

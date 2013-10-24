@@ -85,7 +85,11 @@ modal_login: |
     </div>
     <div class="input-group group">
       <label></label>
-      <div><span class="btn btn-s" data-for="submit">Submit</span> <span data-for="status"></span></div>
+      <div>
+        <span class="btn btn-s" data-for="submit">Submit</span>
+        <span class="btn btn-s" data-for="register">Register</span>
+        <span data-for="status"></span>
+      </div>
     </div>
   </form>
 
@@ -109,7 +113,10 @@ modal_register: |
     </div>
     <div class="input-group group">
       <label></label>
-      <div><span class="btn btn-s" data-for="submit">Submit</span> <span data-for="status"></span></div>
+      <div>
+        <span class="btn btn-s" data-for="submit">Submit</span>
+        <span data-for="status"></span>
+      </div>
     </div>
   </form>
 
@@ -121,3 +128,15 @@ modal_load_dataset: |
       <div class="pagination group"></div>
     </div>
   </div></div>
+
+modal_save_visualization: |
+  <form>
+    <div class="input-group group">
+      <label>Description</label>
+      <div><textarea data-for="description"></textarea></div>
+    </div>
+    <div class="input-group group">
+      <label></label>
+      <div><span class="btn btn-s" data-for="submit">Submit</span> <span data-for="status"></span></div>
+    </div>
+  </form>

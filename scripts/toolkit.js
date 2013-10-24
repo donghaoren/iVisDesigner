@@ -16,8 +16,17 @@ IV.config = $.extend({
 {{include: dataprovider.js}}
 {{include: client.js}}
 
+IV.loadVisualization = function(vis) {
+    IV.editor.setVisualization(vis);
+};
+
 IV.newVisualization = function() {
     // Just construct one for testing.
+    var vis = new IV.Visualization;
+    IV.editor.setVisualization(vis);
+};
+
+IV.newVisualization1 = function() {
     var vis = new IV.Visualization;
     IV.editor.setVisualization(vis);
 
@@ -93,6 +102,7 @@ IV.newVisualization = function() {
     vis.addObject(scatter);
     vis.addObject(pt);
     vis.addObject(layout);
+
 };
 
 IV.newVisualization2 = function() {
@@ -138,7 +148,6 @@ IV.newVisualization2 = function() {
 IV.loadData = function(data, schema) {
     IV.data = new IV.DataObject(data, schema);
     IV.editor.setData(IV.data);
-    IV.newVisualization();
 };
 
 IV.loadDataset = function(name, callback) {
@@ -148,6 +157,7 @@ IV.loadDataset = function(name, callback) {
         // We assume that the data follows the schema correctly.
         // Need some code to verify the above statement.
         IV.loadData(data.obj, data.schema);
+        IV.newVisualization();
         if(callback) callback();
     })
     .fail(function() {
@@ -172,15 +182,10 @@ $(function() {
     IV.raise("initialize:before");
     IV.raise("initialize");
     IV.raise("initialize:after");
-    IV.loadDataset("test", function() {
+    /*IV.loadDataset("test", function() {
 
-    });
-
-    IV.server.get("account", function(err, data) {
-        if(err) {
-        } else {
-            IV.set("user", data);
-        }
-    });
+    });*/
+    IV.raise("command:toolkit.start");
+    IV.server.reload_account();
 });
 

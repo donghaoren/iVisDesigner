@@ -168,7 +168,7 @@ select {
 .xicon-cross:before { .xicon_content("✕"); }
 .xicon-mark:before { .xicon_content("✓"); }
 
-input { font-size: 12px; }
+input, textarea { font-size: 12px; }
 
 form {
     .input-group {
@@ -184,6 +184,8 @@ form {
             display: block;
             input {
                 background-color: white;
+                font-family: @main_font;
+                font-size: 12px;
                 &:hover, &:active, &:focus {
                     margin: 0;
                     padding: 3px 6px;
@@ -191,6 +193,22 @@ form {
                 }
                 width: calc(~"100% - 14px");
                 height: 17px;
+                border: 0;
+                border-left: 2px solid #CCC;
+                margin: 0;
+                padding: 3px 6px;
+            }
+            textarea {
+                background-color: white;
+                font-family: @main_font;
+                font-size: 12px;
+                &:hover, &:active, &:focus {
+                    margin: 0;
+                    padding: 3px 6px;
+                    border-left: 2px solid @active_color;
+                }
+                width: calc(~"100% - 14px");
+                height: 80px;
                 border: 0;
                 border-left: 2px solid #CCC;
                 margin: 0;

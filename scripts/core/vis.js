@@ -68,8 +68,14 @@ IV.Visualization.prototype.triggerRenderer = function(renderer) {
         this.needs_render = false;
     }
 };
+IV.Visualization.prototype.validate = function(data) {
+    this.objects.forEach(function(obj) {
+        if(obj.validate) obj.validate(data);
+    });
+};
 // Render the visualization to graphics context.
 IV.Visualization.prototype.render = function(data, g) {
+    this.validate(data);
     // First we draw the objects.
     this.objects.forEachReversed(function(obj) {
         // Save the graphics state before calling render().
@@ -85,6 +91,7 @@ IV.Visualization.prototype.render = function(data, g) {
 };
 
 IV.Visualization.prototype.renderSelection = function(data, g) {
+    this.validate(data);
     // Then we draw the selections.
     this.selection.forEachReversed(function(c) {
         g.ivSave();
@@ -99,6 +106,7 @@ IV.Visualization.prototype.renderSelection = function(data, g) {
 // Render the visualization's guides to graphics context.
 // Guides including the axis of the track object, the frame of the scatterplot, etc.
 IV.Visualization.prototype.renderGuide = function(data, g) {
+    this.validate(data);
     // Same way as render().
     this.objects.forEachReversed(function(obj) {
         g.ivSave();
@@ -122,6 +130,7 @@ IV.Visualization.prototype.renderGuide = function(data, g) {
 };
 // Select an object from the visualization, given the `location` and `action`.
 IV.Visualization.prototype.selectObject = function(data, location, action) {
+    this.validate(data);
     // We find the most close match by iterate over all objects.
     var best_context = null;
     var mind = 1e10;

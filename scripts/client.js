@@ -9,8 +9,12 @@ var ajaxCall = function(url, method, params, callback) {
         crossDomain: true,
         xhrFields: {
             withCredentials: true
+        },
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie("csrftoken"));
         }
     }).done(function(data) {
+        if(!data) callback(false, null);
         if(data.detail)
             callback(data.detail, null);
         if(data.status && data.status != "success")
@@ -41,7 +45,7 @@ IV.listen("user", function(data) {
 });
 IV.set("user", null);
 var reload_account = function(callback) {
-    IV.server.get("account", function(err, data) {
+    IV.server.accounts("get", function(err, data) {
         if(!err) {
             IV.set("user", data);
             if(callback) callback(true);
@@ -50,6 +54,7 @@ var reload_account = function(callback) {
         }
     });
 };
+IV.server.reload_account = reload_account;
 
 IV.on("command:account.login", function() {
     var ctx = IV.modals.constructModal({
@@ -57,6 +62,10 @@ IV.on("command:account.login", function() {
         title: "Login",
         width: 400,
         height: 300
+    });
+    ctx.register.click(function() {
+        ctx.close();
+        IV.raise("command:account.register");
     });
     ctx.submit.click(function() {
         var username = ctx.username.val();
@@ -180,7 +189,11 @@ IV.on("command:toolkit.start", function() {
                                                 data.data = jsyaml.load(data.data);
                                                 data.schema = jsyaml.load(data.schema);
                                                 var ds = new IV.PlainDataset(data.data, data.schema);
+                                                IV.editor.unsetVisualization();
                                                 IV.loadData(ds.obj, ds.schema);
+                                                IV.newVisualization();
+                                                IV.dataset_id = data.id;
+                                                ctx.close();
                                             });
                                         })
                                     ).append(
@@ -193,9 +206,30 @@ IV.on("command:toolkit.start", function() {
                                     generate_pagination($(this), page_index, page_size, data, load_visualizations);
                                 });
                                 data.results.forEach(function(vis) {
-                                    ul.append(IV._E("li", "group").append(
+                                    var li_vis = IV._E("li", "group").append(
                                         IV._E("span", "actions pull-right").append(
-                                            IV._E("span", "btn btn-s").text("Load")
+                                            IV._E("span", "btn btn-s").append(IV._E("i", "icon-folder-open")).click(function() {
+                                                IV.server.get("visualizations/" + vis.id, function(err, data) {
+                                                    var yaml_data = jsyaml.load(data.dataset_info.data);
+                                                    var yaml_schema = jsyaml.load(data.dataset_info.schema);
+                                                    var vis_data = JSON.parse(data.content);
+                                                    var ds = new IV.PlainDataset(yaml_data, yaml_schema);
+                                                    IV.loadData(ds.obj, ds.schema);
+                                                    IV.loadVisualization(IV.serializer.deserialize(vis_data));
+                                                    IV.dataset_id = data.dataset_info.id;
+                                                    ctx.close();
+                                                });
+                                            })
+                                        ).append(IV._E("span").text(" ")).append(
+                                            IV._E("span", "btn btn-s").append(IV._E("i", "icon-trash")).click(function() {
+                                                if($(this).is(".btn-confirm")) {
+                                                    IV.server.delete("visualizations/" + vis.id, function(err, data) {
+                                                        if(!err) li_vis.remove();
+                                                    });
+                                                } else {
+                                                    $(this).text("DELETE").addClass("btn-confirm");
+                                                }
+                                            })
                                         )
                                     ).append(
                                         IV._E("span", "description").text(vis.description)
@@ -204,7 +238,8 @@ IV.on("command:toolkit.start", function() {
                                             "by " + vis.user_info.username + ", " +
                                             new Date(vis.created_at).getFullString()
                                         )
-                                    ));
+                                    );
+                                    ul.append(li_vis);
                                 });
                             });
                         };
@@ -218,6 +253,30 @@ IV.on("command:toolkit.start", function() {
         });
     };
     load_page(1);
+});
+
+IV.on("command:toolkit.save", function() {
+    var ctx = IV.modals.constructModal({
+        html: IV.strings("modal_save_visualization"),
+        title: "Save Visualization",
+        width: $(window).width() * 0.5,
+        height: $(window).height() * 0.5
+    });
+
+    ctx.submit.click(function() {
+        var description = ctx.description.val();
+        ctx.status_working();
+        IV.server.post("visualizations/", {
+            user: IV.get("user").id,
+            created_at: new Date().toISOString(),
+            dataset: IV.dataset_id,
+            content: JSON.stringify(IV.serializer.serialize(IV.editor.vis)),
+            description: description
+        }, function(err, data) {
+            if(err) ctx.status_error(err);
+            else ctx.close();
+        });
+    });
 });
 
 })();

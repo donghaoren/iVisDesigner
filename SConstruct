@@ -22,6 +22,7 @@ env.IconFont("images/iconfont/ivfont.css",
 
 Javascript("libraries.js", [
     "libraries/jquery-2.0.3.js",
+    "libraries/jquery-cookie.js",
     "libraries/jquery.mousewheel.js",
     "libraries/js-yaml.js",
     "libraries/chroma.js",
