@@ -107,6 +107,14 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
                             };
                         }
                     }
+                    if(action == "move-element") {
+                        if($this.center.beginMoveElement) {
+                            var c = $this.center.beginMoveElement(rslt.context);
+                            rslt.onMove = function(p0, p1) {
+                                c.onMove(p0, p1);
+                            };
+                        }
+                    }
                 }
             }
         });

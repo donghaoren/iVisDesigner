@@ -177,6 +177,21 @@ var Track = IV.extend(Objects.Object, function(info) {
             }
         });
         return rslt;
+    },
+    beginMoveElement: function(context, d) {
+        var $this = this;
+        var a1 = this.anchor1.getPoint(context);
+        var a2 = this.anchor2.getPoint(context);
+        var min = this.min.get(context);
+        var max = this.max.get(context);
+        if(!d) d = a2.sub(a1).rotate90();
+        return {
+            onMove: function(p0, p1) {
+                var new_value = p1.sub(a1).cross(d) / a2.sub(a1).cross(d);
+                new_value = new_value * (max - min) + min;
+                context.set($this.path, new_value);
+            }
+        };
     }
 });
 
@@ -274,6 +289,18 @@ var Scatter = IV.extend(Objects.Object, function(info) {
             });
         });
         return rslt;
+    },
+    beginMoveElement: function(context) {
+        d1 = this.track1.anchor1.getPoint(context).sub(this.track1.anchor2.getPoint(context));
+        d2 = this.track2.anchor1.getPoint(context).sub(this.track2.anchor2.getPoint(context));
+        var c1 = this.track1.beginMoveElement(context, d2);
+        var c2 = this.track2.beginMoveElement(context, d1);
+        return {
+            onMove: function(p0, p1) {
+                c1.onMove(p0, p1);
+                c2.onMove(p0, p1);
+            }
+        };
     }
 });
 

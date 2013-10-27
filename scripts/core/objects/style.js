@@ -95,20 +95,26 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
             // A pt radius angle1 angle2: arc
             // from angle1 to angle2, clockwise.
             if(cmd == "A") {
-                g.arc(path[i].x, path[i].y, path[i + 1], path[i + 2], path[i + 3]);
+                if(path[i + 1] > 0) {
+                    g.arc(path[i].x, path[i].y, path[i + 1], path[i + 2], path[i + 3]);
+                }
                 i += 4;
             }
             // E pt radiusX radiusY rotation angle1 angle2: ellipse
             if(cmd == "E") {
-                g.ellipse(path[i].x, path[i].y,
-                          path[i + 1], path[i + 2],
-                          path[i + 3],
-                          path[i + 4],  path[i + 5]);
+                if(path[i + 1] > 0 && path[i + 2] > 0) {
+                    g.ellipse(path[i].x, path[i].y,
+                              path[i + 1], path[i + 2],
+                              path[i + 3],
+                              path[i + 4],  path[i + 5]);
+                }
                 i += 6;
             }
             // C pt radius: circle
             if(cmd == "C") {
-                g.arc(path[i].x, path[i].y, path[i + 1], 0, Math.PI * 2);
+                if(path[i + 1] > 0) {
+                    g.arc(path[i].x, path[i].y, path[i + 1], 0, Math.PI * 2);
+                }
                 i += 2;
             }
         }

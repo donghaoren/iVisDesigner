@@ -130,6 +130,32 @@ IV.PathContext.prototype.get = function(path) {
     return new IV.PathContext(this.data, this.root, rc);
 };
 
+IV.PathContext.prototype.set = function(path, value) {
+    var i = 0;
+    var obj = this.root;
+    for(; i < this.components.length && i < path.components.length - 1; i++) {
+        var tc = this.components[i];
+        var pc = path.components[i];
+        if(tc.name != pc.name || tc.type != pc.type) {
+            break;
+        } else {
+            obj = tc.obj;
+        }
+    }
+    for(; i < path.components.length - 1; i++) {
+        var pc = path.components[i];
+        var nc;
+        if(pc.type == "attached") {
+            obj = this.data.getAttached(pc.ns, this.data.getObjectID(obj));
+        } else {
+            obj = obj[pc.name];
+        }
+        obj = nc.obj;
+    }
+    var pc = path.components[i];
+    obj[pc.name] = value;
+};
+
 IV.PathContext.prototype.getReference = function(referenced_path) {
     var o = this.val();
     var objs = [];

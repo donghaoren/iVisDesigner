@@ -150,6 +150,7 @@ var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2, min, 
             return new IV.Color(0, 0, 0, 0);
         var value = context.get(this.path).val();
         value = (value - this.min) / (this.max - this.min);
+        if(value < 0) value = 0; if(value > 1) value = 1;
         var tp = this.stops.length - 1;
         var idx1 = Math.floor(value * tp);
         if(idx1 < 0) idx1 = 0;
