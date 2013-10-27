@@ -39,8 +39,6 @@ Javascript("toolkit.js", [
     "scripts/toolkit.js"
 ])
 
-Image("imgs/panel.png", "images/panel.png")
-Image("imgs/corner.svg", "images/corner.svg")
 Image("imgs/logo.svg", "images/logo.svg")
 
 # All-in-one test data.

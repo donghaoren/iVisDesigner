@@ -185,7 +185,7 @@ IV.on("command:toolkit.start", function() {
                                 ul.append(IV._E("li", "group").append(
                                     IV._E("div", "actions").append(
                                         IV._E("span", "btn btn-s").text("+ New").click(function() {
-                                            IV.server.get("datasets/" + dataset.id, function(err, data) {
+                                            IV.server.get("datasets/" + dataset.id + "/", function(err, data) {
                                                 data.data = jsyaml.load(data.data);
                                                 data.schema = jsyaml.load(data.schema);
                                                 var ds = new IV.PlainDataset(data.data, data.schema);
@@ -209,7 +209,7 @@ IV.on("command:toolkit.start", function() {
                                     var li_vis = IV._E("li", "group").append(
                                         IV._E("span", "actions pull-right").append(
                                             IV._E("span", "btn btn-s").append(IV._E("i", "icon-folder-open")).click(function() {
-                                                IV.server.get("visualizations/" + vis.id, function(err, data) {
+                                                IV.server.get("visualizations/" + vis.id + "/", function(err, data) {
                                                     var yaml_data = jsyaml.load(data.dataset_info.data);
                                                     var yaml_schema = jsyaml.load(data.dataset_info.schema);
                                                     var vis_data = JSON.parse(data.content);
@@ -223,7 +223,7 @@ IV.on("command:toolkit.start", function() {
                                         ).append(IV._E("span").text(" ")).append(
                                             IV._E("span", "btn btn-s").append(IV._E("i", "icon-trash")).click(function() {
                                                 if($(this).is(".btn-confirm")) {
-                                                    IV.server.delete("visualizations/" + vis.id, function(err, data) {
+                                                    IV.server.delete("visualizations/" + vis.id + "/", function(err, data) {
                                                         if(!err) li_vis.remove();
                                                     });
                                                 } else {

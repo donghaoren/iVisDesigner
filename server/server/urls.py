@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
 from rest_framework import routers
 from ivapp import views, auth
+from django.conf.urls.static import static
+import config
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -22,3 +24,6 @@ urlpatterns = patterns('',
     url(r'^accounts/get$', auth.current_user, name = "getuser"),
     url(r'^admin/', include(admin.site.urls))
 )
+
+if config.DEBUG:
+    urlpatterns += static("static/", view='django.contrib.staticfiles.views.serve')
