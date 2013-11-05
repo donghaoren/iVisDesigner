@@ -172,6 +172,30 @@ var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2, min, 
 Objects.ColorLinear = ColorLinear;
 IV.serializer.registerObjectType("ColorLinear", ColorLinear);
 
+// Linear Mapping.
+var CategoricalMapping = IV.extend(Objects.Object, function(path, keys, values, fallback, value_type) {
+    this.type = "CategoricalMapping";
+    this.path = path;
+    this.keys = keys;
+    this.values = values;
+    this.fallback = fallback;
+    this.value_type = value_type;
+}, {
+    get: function(context) {
+        if(!this.path)
+            return null;
+        var value = context.get(this.path).val();
+        for(var i = 0; i < this.keys.length; i++)
+            if(value == this.keys[i]) return this.values[i];
+        return this.fallback;
+    },
+    clone: function() {
+        return new CategoricalMapping(this.path, this.keys.slice(), this.values.slice());
+    }
+});
+Objects.CategoricalMapping = CategoricalMapping;
+IV.serializer.registerObjectType("CategoricalMapping", CategoricalMapping);
+
 var ReferenceWrapper = IV.extend(Objects.Object, function(ref_path, refd_path, object) {
     Objects.Object.call(this);
     this.type = "ReferenceWrapper";

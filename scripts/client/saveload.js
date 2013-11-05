@@ -39,7 +39,7 @@ IV.on("command:toolkit.start", function() {
                                                 data.data = jsyaml.load(data.data);
                                                 data.schema = jsyaml.load(data.schema);
                                                 var ds = new IV.PlainDataset(data.data, data.schema);
-                                                IV.editor.unsetVisualization();
+                                                IV.loadVisualization();
                                                 IV.loadData(ds.obj, ds.schema);
                                                 IV.newVisualization();
                                                 IV.dataset_id = data.id;

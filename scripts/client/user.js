@@ -20,7 +20,7 @@ var reload_account = function(callback) {
 };
 IV.server.reload_account = reload_account;
 
-IV.on("command:account.login",2 function() {
+IV.on("command:account.login", function() {
     var ctx = IV.modals.constructModal({
         html: IV.strings("modal_login"),
         title: "Login",

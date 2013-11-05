@@ -212,6 +212,91 @@ var render_object_value = function(item, args, callback) {
     if(item.type == "Plain") {
         return render_plain_value(item, args, callback);
     }
+    if(item.type == "CategoricalMapping") {
+        var path = primitives.Path(function() { return item.path; }, function(new_val) {
+            item.path = new_val;
+            callback();
+            return new_val;
+        });
+        var r = $("<span />");
+        for(var i = 0; i < item.keys.length; i++) {
+            (function(index) {
+
+                var sp = primitives.String(function() {
+                    if(item.keys[index] === null) return "null";
+                    return item.keys[index].toString();
+                }, function(new_val) {
+                    if(new_val == "true") new_val = true;
+                    if(new_val == "false") new_val = false;
+                    if(new_val == "null") new_val = null;
+                    item.keys[index] = new_val;
+                    callback();
+                    return new_val;
+                });
+                var ss;
+                if(item.value_type == "number") {
+                    ss = primitives.Number(function() { return item.values[index]; }, function(new_val) {
+                        item.values[index] = new_val;
+                        callback();
+                        return new_val;
+                    });
+                }
+                if(item.value_type == "color") {
+                    ss = primitives.Color(function() { return item.values[index]; }, function(new_val) {
+                        item.values[index] = new_val;
+                        callback();
+                        return new_val;
+                    });
+                }
+                var btn_remove = $("<span />").addClass("btn").append($('<i class="xicon-cross"></i>')).click(function() {
+                    item.keys.splice(index, 1);
+                    item.values.splice(index, 1);
+                    callback(item);
+                });
+                var tr = $("<tr />");
+                tr.append($("<td />").append(sp))
+                  .append($("<td />").append($("<span />").text(":")))
+                  .append($("<td />").append(ss))
+                  .append($("<td />").append($("<span />").addClass("sep").text(" ")))
+                  .append($("<td />").append(btn_remove));
+                r.append($("<table />").addClass("linear-even").append(tr));
+            })(i);
+        }
+
+        var btn_add = $("<span />").addClass("btn").text("+").click(function() {
+            item.keys.push("new");
+            if(item.value_type == "number")
+                item.values.push(0);
+            else if(item.value_type == "color")
+                item.values.push(new IV.Color(0, 0, 0, 1));
+            else
+                item.values.push(null);
+            callback(item);
+        });
+        var fallback_control;
+        if(item.value_type == "number") {
+            fallback_control = primitives.Number(function() { return item.fallback; }, function(new_val) {
+                item.fallback = new_val;
+                callback();
+                return new_val;
+            });
+        }
+        if(item.value_type == "color") {
+            fallback_control = primitives.Color(function() { return item.fallback; }, function(new_val) {
+                item.fallback = new_val;
+                callback();
+                return new_val;
+            });
+        }
+        var tr = $("<tr />");
+        tr.append($("<td />").append(btn_add))
+          .append($("<td />").append($("<span />").addClass("sep").text(" ")))
+          .append($("<td />").append(fallback_control));
+        r.append($("<table />").addClass("linear-even").append(tr));
+        //r.append(btn_add).append(fallback_control);
+        r.append(path);
+        return r;
+    }
     if(item.type == "ColorLinear") {
         var c1 = primitives.Color(function() { return item.color1; }, function(new_val) {
             item.color1 = new_val;
@@ -225,6 +310,18 @@ var render_object_value = function(item, args, callback) {
             callback();
             return new_val;
         });
+        var vmin = primitives.Number(function() { return item.min; }, function(new_val) {
+            item.min = new_val;
+            item.propertyUpdate();
+            callback();
+            return new_val;
+        });
+        var vmax = primitives.Number(function() { return item.max; }, function(new_val) {
+            item.max = new_val;
+            item.propertyUpdate();
+            callback();
+            return new_val;
+        });
         var path = primitives.Path(function() { return item.path; }, function(new_val) {
             var stat = Editor.computePathStatistics(new_val);
             item.path = new_val;
@@ -233,11 +330,16 @@ var render_object_value = function(item, args, callback) {
             callback();
             return new_val;
         });
+        var t2 = $("<tr />");
+        t2.append($("<td />").append(vmin))
+          .append($("<td />").text(" - "))
+          .append($("<td />").append(vmax));
         var r = $("<span />");
         r.append(c1)
          .append("<span> - </span>")
          .append(c2)
          .append("<br />")
+         .append($("<table />").addClass("linear-ftf").append(t2))
          .append(path);
         return r;
     }
@@ -331,22 +433,28 @@ var render_property_field = function(item) {
     };
 
     if(type == "color") {
-        make_switch_button([ "Plain", "Linear" ], function(val) {
+        make_switch_button([ "Plain", "Linear", "Categorical" ], function(val) {
             if(val == "Plain") {
                 reload_item(new IV.objects.Plain(new IV.Color(0, 0, 0, 1)));
             }
             if(val == "Linear") {
                 reload_item(new IV.objects.ColorLinear(new IV.Path(), new IV.Color(0, 0, 0, 1), new IV.Color(255, 255, 255, 1)));
             }
+            if(val == "Categorical") {
+                reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], [], new IV.Color(0, 0, 0, 1), "color"));
+            }
         });
     }
     if(type == "number") {
-        make_switch_button([ "Plain", "Linear" ], function(val) {
+        make_switch_button([ "Plain", "Linear", "Categorical" ], function(val) {
             if(val == "Plain") {
                 reload_item(new IV.objects.Plain(0));
             }
             if(val == "Linear") {
                 reload_item(new IV.objects.NumberLinear(new IV.Path(), 0, 1, 0, 1));
+            }
+            if(val == "Categorical") {
+                reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], [], 0, "number"));
             }
         });
     }
