@@ -13,8 +13,7 @@ IV.config = $.extend({
 
 // Data provider
 
-{{include: dataprovider.js}}
-{{include: client.js}}
+{{include: client/client.js}}
 
 IV.loadVisualization = function(vis) {
     IV.editor.setVisualization(vis);

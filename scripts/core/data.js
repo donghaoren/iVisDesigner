@@ -119,6 +119,7 @@ IV.PlainDataset = function(obj, schema) {
     };
     var id_map = { };
     process_subtree(obj, schema, null, function(obj, schema, parent, rtype) {
+        if(obj === null || obj === undefined) return;
         if(schema.type == "object" || rtype == "item")
             obj._parent = parent;
         if(obj._id) {
@@ -130,6 +131,7 @@ IV.PlainDataset = function(obj, schema) {
         }
     });
     process_subtree(obj, schema, null, function(obj, schema, parent) {
+        if(obj === null || obj === undefined) return;
         if(schema.type == "reference") {
             obj._target = id_map[obj.ref_id];
         }
