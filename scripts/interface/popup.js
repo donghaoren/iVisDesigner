@@ -81,18 +81,41 @@
             return data;
         };
 
+        var get_real_bounds = function(elem) {
+            var bound = { x0: -1e10, y0: -1e10, x1: 1e10, y1: 1e10 };
+            while(elem) {
+                var off = elem.offset();
+                var w = elem.outerWidth();
+                var h = elem.outerHeight();
+                if(off && w != 0 && h != 0) {
+                    var x0 = off.left;
+                    var y0 = off.top;
+                    var x1 = x0 + w;
+                    var y1 = y0 + h;
+                    if(bound.x0 < x0) bound.x0 = x0;
+                    if(bound.y0 < y0) bound.y0 = y0;
+                    if(bound.x1 > x1) bound.x1 = x1;
+                    if(bound.y1 > y1) bound.y1 = y1;
+                }
+                if(elem.get(0) == elem.parent().get(0)) break;
+                elem = elem.parent();
+            }
+            return bound;
+        };
+
         data.show = function(anchor, width, height, info) {
             var p = popup;
             if(!width) width = p.default_width;
             if(!height) height = p.default_height;
             $("#popup-container").append(p);
             var margin = 5;
-            var x = anchor.offset().left - width - 2 + anchor.outerWidth();
-            var y = anchor.offset().top - height - margin;
-            var cx = anchor.offset().left + anchor.width() / 2;
-            var cy = anchor.offset().top + anchor.height() / 2;
-            if(cx < $(window).width() / 2) x = anchor.offset().left;
-            if(cy < $(window).height() / 2) y = anchor.offset().top + anchor.height() + margin;
+            var bound = get_real_bounds(anchor);
+            var x = bound.x1 - width - 2;
+            var y = bound.y0 - height - margin - 7;
+            var cx = (bound.x0 + bound.x1) / 2;
+            var cy = (bound.y0 + bound.y1) / 2;
+            if(cx < $(window).width() / 2) x = bound.x0;
+            if(cy < $(window).height() / 2) y = bound.y1 + margin;
             p.css({
                 width: width + "px",
                 height: height + "px",

@@ -16,6 +16,7 @@ var Track = IV.extend(Objects.Object, function(info) {
     this.min = info.min !== undefined ? info.min : new IV.objects.Plain(0);
     this.max = info.max !== undefined ? info.max : new IV.objects.Plain(100);
     this.guide_path = IV.Path.commonPrefix([ this.anchor1.getPath(), this.anchor2.getPath() ]);
+    this.mapping = "linear";
 }, {
     can: function(cap) {
         if(cap == "get-point") return true;
@@ -32,7 +33,11 @@ var Track = IV.extend(Objects.Object, function(info) {
         var min = this.min.get(context);
         var max = this.max.get(context);
         var value = context.get(this.path).val();
-        value = (value - min) / (max - min);
+        if(this.mapping == "logarithmic") {
+            value = (Math.log(value) - Math.log(min)) / (Math.log(max) - Math.log(min));
+        } else {
+            value = (value - min) / (max - min);
+        }
         return p1.interp(p2, value);
     },
     getPropertyContext: function() {
@@ -79,6 +84,14 @@ var Track = IV.extend(Objects.Object, function(info) {
                 type: "point",
                 get: function() { return $this.anchor2; },
                 set: function(val) { return $this.anchor2 = val; }
+            },
+            {
+                name: "Mapping",
+                group: "Track",
+                type: "string",
+                args: [{ name: "linear", display: "Linear" }, { name: "logarithmic", display: "Logarithmic" }],
+                get: function() { return $this.mapping ? $this.mapping : "linear"; },
+                set: function(val) { return $this.mapping = val; }
             }
         ]);
     },

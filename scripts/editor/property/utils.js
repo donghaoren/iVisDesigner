@@ -63,7 +63,13 @@ primitives.String = function(get, set, args) {
             });
         var reload = function() {
             var val0 = get();
-            r.children("span").text(val0 + " ");
+            var text = val0;
+            for(var k in args) {
+                if(typeof(args[k]) == "object") {
+                    if(val0 == args[k].name) text = args[k].display;
+                }
+            }
+            r.children("span").text(text + " ");
         };
         reload();
         r.data().reload = reload;
@@ -327,9 +333,16 @@ var render_object_value = function(item, args, callback) {
             item.path = new_val;
             item.min = stat.min;
             item.max = stat.max;
+            vmin.data().reload();
+            vmax.data().reload();
             callback();
             return new_val;
         });
+        var mapping_type = primitives.String(function() { return item.mapping ? item.mapping : "linear"; }, function(new_val) {
+            item.mapping = new_val;
+            callback();
+            return new_val;
+        }, [{ name: "linear", display: "Linear" }, { name: "logarithmic", display: "Logarithmic" }]);
         var t2 = $("<tr />");
         t2.append($("<td />").append(vmin))
           .append($("<td />").text(" - "))
@@ -340,6 +353,7 @@ var render_object_value = function(item, args, callback) {
          .append(c2)
          .append("<br />")
          .append($("<table />").addClass("linear-ftf").append(t2))
+         .append(mapping_type).append("<br />")
          .append(path);
         return r;
     }
@@ -361,6 +375,8 @@ var render_object_value = function(item, args, callback) {
             item.path = new_val;
             item.min = stat.min;
             item.max = stat.max;
+            vmin.data().reload();
+            vmax.data().reload();
             callback();
             return new_val;
         });
@@ -376,6 +392,11 @@ var render_object_value = function(item, args, callback) {
             callback();
             return new_val;
         });
+        var mapping_type = primitives.String(function() { return item.mapping ? item.mapping : "linear"; }, function(new_val) {
+            item.mapping = new_val;
+            callback();
+            return new_val;
+        }, [{ name: "linear", display: "Linear" }, { name: "logarithmic", display: "Logarithmic" }]);
         var t1 = $("<tr />");
         t1.append($("<td />").append(c1))
           .append($("<td />").text(" - "))
@@ -387,6 +408,7 @@ var render_object_value = function(item, args, callback) {
         var r = $("<span />");
         r.append($("<table />").addClass("linear-ftf").append(t1))
          .append($("<table />").addClass("linear-ftf").append(t2))
+         .append(mapping_type).append("<br />")
          .append(path);
         return r;
     }
@@ -427,13 +449,17 @@ var render_property_field = function(item) {
           $('<span />')
             .append($('<i class="icon-list-ul" /></i>'))
             .addClass("multi btn").click(function() {
-                IV.popups.beginContextMenu($(this), list, callback);
+                IV.popups.beginContextMenu($(this), list, function(val) {
+                    callback(val);
+                    Editor.renderer.trigger();
+                    Editor.renderer.render();
+                });
             })
         );
     };
 
     if(type == "color") {
-        make_switch_button([ "Plain", "Linear", "Categorical" ], function(val) {
+        make_switch_button([ "Plain", "Linear", "Categorical"], function(val) {
             if(val == "Plain") {
                 reload_item(new IV.objects.Plain(new IV.Color(0, 0, 0, 1)));
             }

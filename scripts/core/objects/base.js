@@ -121,8 +121,12 @@ var NumberLinear = IV.extend(Objects.Object, function(path, num1, num2, min, max
     get: function(context) {
         if(!this.path) return 0;
         var value = context.get(this.path).val();
-        if(this.max !== undefined && this.min !== undefined)
-            value = (value - this.min) / (this.max - this.min);
+        if(this.max !== undefined && this.min !== undefined) {
+            if(this.mapping == "logarithmic")
+                value = (Math.log(value) - Math.log(this.min)) / (Math.log(this.max) - Math.log(this.min));
+            else
+                value = (value - this.min) / (this.max - this.min);
+        }
         return this.num1 + value * (this.num2 - this.num1);
     },
     clone: function() {
@@ -144,12 +148,16 @@ var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2, min, 
     this.propertyUpdate();
 
     this.type = "ColorLinear";
+    this.mapping = "linear";
 }, {
     get: function(context) {
         if(!this.path || this.min === undefined || this.max === undefined)
             return new IV.Color(0, 0, 0, 0);
         var value = context.get(this.path).val();
-        value = (value - this.min) / (this.max - this.min);
+        if(this.mapping == "logarithmic")
+            value = (Math.log(value) - Math.log(this.min)) / (Math.log(this.max) - Math.log(this.min));
+        else
+            value = (value - this.min) / (this.max - this.min);
         if(value < 0) value = 0; if(value > 1) value = 1;
         var tp = this.stops.length - 1;
         var idx1 = Math.floor(value * tp);
