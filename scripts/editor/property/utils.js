@@ -426,10 +426,33 @@ var render_object_value = function(item, args, callback) {
     return r;
 };
 
+var property_clipboard = null;
+
 // Render a property field's value part.
 var render_property_field = function(item) {
     var target = $("<div />").addClass("field group");
-    var iName = $("<span />").addClass("name").append($("<span />").text(item.name));
+    var iName = $("<span />").addClass("name").append(
+        $("<span />").text(item.name).click(function() {
+            var $this = $(this);
+            IV.popups.beginContextMenu($this, [ "Copy", "Paste", "Reference" ], function(val) {
+                if(val == "Copy") {
+                    property_clipboard = item.get();
+                }
+                if(val == "Paste") {
+                    item.set(property_clipboard.clone());
+                    reload_item();
+                    Editor.renderer.trigger();
+                    Editor.renderer.render();
+                }
+                if(val == "Reference") {
+                    item.set(property_clipboard);
+                    reload_item();
+                    Editor.renderer.trigger();
+                    Editor.renderer.render();
+                }
+            });
+        })
+    );
     var iVal = $("<span />").addClass("val");
     var type = item.type;
     var reload_item = function(val) {

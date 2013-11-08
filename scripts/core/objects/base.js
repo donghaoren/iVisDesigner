@@ -200,7 +200,7 @@ var CategoricalMapping = IV.extend(Objects.Object, function(path, keys, values, 
         return this.fallback;
     },
     clone: function() {
-        return new CategoricalMapping(this.path, this.keys.slice(), this.values.slice());
+        return new CategoricalMapping(this.path, this.keys.slice(), this.values.slice(), this.fallback, this.value_type);
     }
 });
 Objects.CategoricalMapping = CategoricalMapping;
