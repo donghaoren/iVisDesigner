@@ -50,19 +50,21 @@ IV.Path.prototype._enumerate_internal = function(ctx, subdata, index, cb) {
     } else {
         var c = this.components[index];
         if(c.type == "iterate") {
-            var array = subdata[c.name];
-            for(var i = 0; i < array.length; i++) {
-                ctx.components[index].obj = array[i];
-                var r = this._enumerate_internal(ctx, array[i], index + 1, cb);
-                if(r === false) return false;
+            if(subdata) {
+                var array = subdata[c.name];
+                for(var i = 0; i < array.length; i++) {
+                    ctx.components[index].obj = array[i];
+                    var r = this._enumerate_internal(ctx, array[i], index + 1, cb);
+                    if(r === false) return false;
+                }
             }
         } else if(c.type == "attached") {
-            var obj = ctx.data.getAttached(c.ns, ctx.data.getObjectID(subdata));
+            var obj = subdata ? ctx.data.getAttached(c.ns, ctx.data.getObjectID(subdata)) : null;
             ctx.components[index].obj = obj;
             var r = this._enumerate_internal(ctx, obj, index + 1, cb);
             if(r === false) return false;
         } else {
-            var obj = subdata[c.name];
+            var obj = subdata ? subdata[c.name] : null;
             ctx.components[index].obj = obj;
             var r = this._enumerate_internal(ctx, obj, index + 1, cb);
             if(r === false) return false;
@@ -115,13 +117,13 @@ IV.PathContext.prototype.get = function(path) {
                 type: pc.type,
                 name: pc.name,
                 ns: pc.ns,
-                obj: this.data.getAttached(pc.ns, this.data.getObjectID(obj))
+                obj: obj ? this.data.getAttached(pc.ns, this.data.getObjectID(obj)) : null
             };
         } else {
             nc = {
                 type: pc.type,
                 name: pc.name,
-                obj: obj[pc.name]
+                obj: obj ? obj[pc.name] : null
             };
         }
         obj = nc.obj;

@@ -52,9 +52,10 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
     this.radius = info.radius ? info.radius : new Objects.Plain(2);
 }, {
     shapePaths: function(context, cb) {
-        cb([
-            "C", this.center.getPoint(context), this.radius.get(context)
-        ]);
+        var c = this.center.getPoint(context);
+        var r = this.radius.get(context);
+        if(c === null || r === null) return;
+        cb([ "C", c, r ]);
     },
     can: function(cap) {
         if(cap == "get-point") return true;
@@ -87,6 +88,7 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
         this.path.enumerate(data, function(context) {
             var c = $this.center.getPoint(context);
             var radius = $this.radius.get(context);
+            if(c === null || radius === null) return;
             var d = Math.abs(pt.distance(c) - radius);
             if(d <= 4.0 / pt.view_scale) {
                 if(!rslt || rslt.distance > d) {
@@ -129,10 +131,10 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
     this.point2 = info.point2;
 }, {
     shapePaths: function(context, cb) {
-        cb([
-            "M", this.point1.getPoint(context),
-            "L", this.point2.getPoint(context)
-        ]);
+        var p1 = this.point1.getPoint(context);
+        var p2 = this.point2.getPoint(context);
+        if(p1 === null || p2 === null) return;
+        cb([ "M", p1, "L", p2 ]);
     },
     select: function(pt, data, action) {
         var rslt = null;
@@ -140,6 +142,7 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
         this.path.enumerate(data, function(context) {
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
+            if(p1 === null || p2 === null) return;
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
             var threshold = 4.0 / pt.view_scale;
             if(d < threshold) {
@@ -161,6 +164,7 @@ Objects.Bar = IV.extend(Objects.Shape, function(info) {
     shapePaths: function(context, cb) {
         var p1 = this.point1.getPoint(context);
         var p2 = this.point2.getPoint(context);
+        if(p1 === null || p2 === null) return;
         var d = p1.sub(p2).normalize().rotate90().scale(0.5 * this.width.get(context));
         cb([
             "M", p1.add(d),
@@ -188,6 +192,7 @@ Objects.Bar = IV.extend(Objects.Shape, function(info) {
         this.path.enumerate(data, function(context) {
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
+            if(p1 === null || p2 === null) return;
             var d = IV.pointLineSegmentDistance(pt, p1, p2);
             var threshold = 4.0 / pt.view_scale;
             if(d < threshold) {
@@ -208,12 +213,14 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
         var $this = this;
         var line = [];
         $this.points.getPath().enumerateAtContext(context, function(ctx) {
+            var pt = $this.points.getPoint(ctx);
+            if(pt === null) return;
             if(line.length == 0) {
                 line.push("M");
             } else {
                 line.push("L");
             }
-            line.push($this.points.getPoint(ctx));
+            line.push(pt);
         });
         cb(line);
     },
@@ -229,7 +236,9 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
         $this.path.enumerate(data, function(fctx) {
             var pts = [];
             $this.points.getPath().enumerateAtContext(fctx, function(context) {
-                pts.push($this.points.getPoint(context));
+                var pt = $this.points.getPoint(context);
+                if(pt !== null)
+                    pts.push(pt);
             });
             for(var i = 0; i < pts.length - 1; i++) {
                 var d = IV.pointLineSegmentDistance(pt, pts[i], pts[i + 1]);

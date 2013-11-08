@@ -119,8 +119,9 @@ var NumberLinear = IV.extend(Objects.Object, function(path, num1, num2, min, max
     this.type = "NumberLinear";
 }, {
     get: function(context) {
-        if(!this.path) return 0;
+        if(!this.path) return null;
         var value = context.get(this.path).val();
+        if(value === null) return null;
         if(this.max !== undefined && this.min !== undefined) {
             if(this.mapping == "logarithmic")
                 value = (Math.log(value) - Math.log(this.min)) / (Math.log(this.max) - Math.log(this.min));
@@ -152,8 +153,9 @@ var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2, min, 
 }, {
     get: function(context) {
         if(!this.path || this.min === undefined || this.max === undefined)
-            return new IV.Color(0, 0, 0, 0);
+            return null;
         var value = context.get(this.path).val();
+        if(value === null) return null;
         if(this.mapping == "logarithmic")
             value = (Math.log(value) - Math.log(this.min)) / (Math.log(this.max) - Math.log(this.min));
         else

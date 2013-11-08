@@ -260,10 +260,13 @@ var render_object_value = function(item, args, callback) {
                     callback(item);
                 });
                 var tr = $("<tr />");
-                tr.append($("<td />").append(sp))
-                  .append($("<td />").append($("<span />").text(":")))
+                tr.append($("<td />").append(IV._E("span", "sep", " ")))
                   .append($("<td />").append(ss))
-                  .append($("<td />").append($("<span />").addClass("sep").text(" ")))
+                  .append($("<td />").append(IV._E("span", "sep", " ")))
+                  .append($("<td />").append(IV._E("span", "sep", ":")))
+                  .append($("<td />").append(IV._E("span", "sep", " ")))
+                  .append($("<td />").append(sp))
+                  .append($("<td />").append(IV._E("span", "sep", " ")))
                   .append($("<td />").append(btn_remove));
                 r.append($("<table />").addClass("linear-even").append(tr));
             })(i);
@@ -294,11 +297,12 @@ var render_object_value = function(item, args, callback) {
                 return new_val;
             });
         }
-        var tr = $("<tr />");
-        tr.append($("<td />").append(btn_add))
-          .append($("<td />").append($("<span />").addClass("sep").text(" ")))
-          .append($("<td />").append(fallback_control));
-        r.append($("<table />").addClass("linear-even").append(tr));
+        var tr = IV._E("tr");
+        tr.append(IV._E("td").append(IV._E("span", "sep", " ")))
+          .append(IV._E("td").append(fallback_control))
+          .append(IV._E("td").append(IV._E("span", "sep", " ")))
+          .append(IV._E("td").append(btn_add));
+        r.append(IV._E("table", "linear-even").append(tr));
         //r.append(btn_add).append(fallback_control);
         r.append(path);
         return r;
@@ -413,9 +417,9 @@ var render_object_value = function(item, args, callback) {
         return r;
     }
     if(!item.name) {
-        return $("<span />").addClass("small").text("[" + item.type + "]");
+        return $("<span />").text("[" + item.type + "]");
     } else {
-        return $("<span />").addClass("small").text(item.name).append(
+        return $("<span />").text(item.name).append(
             $("<span />").addClass("gray").text(" " + item.type)
         );
     }

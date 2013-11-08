@@ -33,6 +33,7 @@ var Track = IV.extend(Objects.Object, function(info) {
         var min = this.min.get(context);
         var max = this.max.get(context);
         var value = context.get(this.path).val();
+        if(value === null || p1 === null || p2 === null || min === null || max === null) return null;
         if(this.mapping == "logarithmic") {
             value = (Math.log(value) - Math.log(min)) / (Math.log(max) - Math.log(min));
         } else {
@@ -201,7 +202,11 @@ var Track = IV.extend(Objects.Object, function(info) {
         return {
             onMove: function(p0, p1) {
                 var new_value = p1.sub(a1).cross(d) / a2.sub(a1).cross(d);
-                new_value = new_value * (max - min) + min;
+                if($this.mapping == "logarithmic") {
+                    new_value = Math.exp(new_value * (Math.log(max) - Math.log(min)) + Math.log(min));
+                } else {
+                    new_value = new_value * (max - min) + min;
+                }
                 context.set($this.path, new_value);
             }
         };
@@ -228,6 +233,7 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     get: function(context) {
         var p1 = this.track1.getPoint(context);
         var p2 = this.track2.getPoint(context);
+        if(p1 === null || p2 === null) return null;
 
         var d2 = this.track1.anchor2.getPoint(context)
                 .sub(this.track1.anchor1.getPoint(context)).rotate90();

@@ -29,12 +29,14 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
         this.path.enumerate(data, function(context) {
             g.ivSave();
             var p = $this.center.getPoint(context);
-            var cdata = data.createSubset($this.path, context);
-            g.ivAppendTransform(IV.makeTransform.translate(p.x, p.y));
-            try {
-                $this.vis.render(cdata, g);
-            } catch(e) {
-                console.trace(e.stack);
+            if(p !== null) {
+                var cdata = data.createSubset($this.path, context);
+                g.ivAppendTransform(IV.makeTransform.translate(p.x, p.y));
+                try {
+                    $this.vis.render(cdata, g);
+                } catch(e) {
+                    console.trace(e.stack);
+                }
             }
             g.ivRestore();
         });
@@ -44,6 +46,7 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
         var $this = this;
         this.path.enumerate(data, function(context) {
             var c = $this.center.getPoint(context);
+            if(c === null) return;
             var radius = 0;
             var d = pt.distance(c);
             if(d <= 4.0 / pt.view_scale) {

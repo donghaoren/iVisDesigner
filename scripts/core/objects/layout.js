@@ -68,7 +68,8 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
         $this.path_edgeA.enumerate(data, function(context) {
             var idA = data.getObjectID(context.get($this.path_edgeA).val());
             var idB = data.getObjectID(context.get($this.path_edgeB).val());
-            edges.push([ idA, idB ]);
+            if(idA && idB)
+                edges.push([ idA, idB ]);
         });
         var count = 0;
         $this.path_nodes.enumerate(data, function(context) {

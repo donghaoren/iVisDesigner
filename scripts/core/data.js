@@ -20,7 +20,7 @@ IV.DataObject.prototype.getRoot = function() {
 };
 
 IV.DataObject.prototype.getObjectID = function(obj) {
-    if(!obj) return "";
+    if(!obj) return null;
     if(!obj._id) obj._id = IV.generateUUID();
     return obj._id;
 };

@@ -9,9 +9,10 @@
 // ### IVInputNumeric
 // Numeric input box.
 
-IV._E = function(type, cls) {
+IV._E = function(type, cls, text) {
     var e = $("<" + type + " />");
     if(cls) e.addClass(cls);
+    if(text) e.text(text);
     return e;
 };
 
