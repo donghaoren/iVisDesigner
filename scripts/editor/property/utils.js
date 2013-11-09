@@ -209,6 +209,12 @@ var render_object_value = function(item, args, callback) {
             return new_val;
         }, ["true", "false"]);
     }
+    if(item instanceof IV.Color) {
+        return primitives.Color(function() { return item; }, function(new_val) {
+            callback(new_val);
+            return new_val;
+        });
+    }
     if(item instanceof IV.Path) {
         return primitives.Path(function() { return item; }, function(new_val) {
             callback(new_val);
@@ -535,6 +541,17 @@ var render_caption = function(cap) {
             $(this).children(".icon-caret-right").toggle();
             $(this).children(".icon-caret-down").toggle();
             $(this).next().toggle();
+        });
+};
+// Render the caption of the property field.
+var render_nested_caption = function(cap) {
+    return $("<div />").addClass("nested-caption").text(" " + cap)
+        .prepend($('<i class="icon-caret-right" style="display:none" /></i>'))
+        .prepend($('<i class="icon-caret-down" /></i>'))
+        .click(function() {
+            $(this).children(".icon-caret-right").toggle();
+            $(this).children(".icon-caret-down").toggle();
+            $(this).parent().children(":not(:first-child)").toggle();
         });
 };
 // Render the caption of the property field.

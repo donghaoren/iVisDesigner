@@ -7,6 +7,100 @@
 
 (function() {
 
+var FontStyle = IV.extend(Object, function(info) {
+    this.fillDefault();
+    this.type = "FontStyle";
+}, {
+    fillDefault: function() {
+        if(this.font_family === undefined) this.font_family = "Arial";
+        if(this.font_size === undefined) this.font_size = 11;
+    },
+    postDeserialize: function() {
+        this.fillDefault();
+    },
+    getPropertyContext: function() {
+        var $this = this;
+        return [
+            {
+                name: "Family",
+                group: "Track",
+                type: "plain-string",
+                get: function() { return $this.font_family; },
+                set: function(val) { return $this.font_family = val; }
+            },
+            {
+                name: "Size",
+                group: "Track",
+                type: "plain-number",
+                get: function() { return $this.font_size; },
+                set: function(val) { return $this.font_size = val; }
+            }
+        ];
+    },
+    getFont: function() {
+        return this.font_size + 'px ' + this.font_family;
+    }
+});
+IV.serializer.registerObjectType("FontStyle", FontStyle);
+
+var TickStyle = IV.extend(Object, function(info) {
+    this.fillDefault();
+    this.type = "TickStyle";
+}, {
+    fillDefault: function() {
+        if(this.show_ticks === undefined) this.show_ticks = true;
+        if(this.tick_size === undefined) this.tick_size = 2;
+        if(this.tick_count === undefined) this.tick_count = 5;
+        if(this.tick_color === undefined) this.tick_color = new IV.Color(0, 0, 0, 1);
+        if(this.tick_format === undefined) this.tick_format = "g";
+        if(this.font === undefined) this.font = new FontStyle();
+    },
+    postDeserialize: function() {
+        this.fillDefault();
+    },
+    getPropertyContext: function() {
+        var $this = this;
+        return [
+            {
+                name: "Show",
+                type: "plain-bool",
+                get: function() { return $this.show_ticks; },
+                set: function(val) { return $this.show_ticks = val; }
+            },
+            {
+                name: "Size",
+                type: "plain-number",
+                get: function() { return $this.tick_size; },
+                set: function(val) { return $this.tick_size = val; }
+            },
+            {
+                name: "Count",
+                type: "plain-string",
+                get: function() { return $this.tick_count; },
+                set: function(val) { return $this.tick_count = val; }
+            },
+            {
+                name: "Color",
+                type: "plain-color",
+                get: function() { return $this.tick_color; },
+                set: function(val) { return $this.tick_color = val; }
+            },
+            {
+                name: "Format",
+                type: "plain-string",
+                get: function() { return $this.tick_format; },
+                set: function(val) { return $this.tick_format = val; }
+            },
+            {
+                name: "Font",
+                type: "nested",
+                properties: $this.font.getPropertyContext()
+            }
+        ];
+    }
+});
+IV.serializer.registerObjectType("TickStyle", TickStyle);
+
 var Track = IV.extend(Objects.Object, function(info) {
     Objects.Object.call(this);
     this.path = info.path;
@@ -16,16 +110,14 @@ var Track = IV.extend(Objects.Object, function(info) {
     this.min = info.min !== undefined ? info.min : new IV.objects.Plain(0);
     this.max = info.max !== undefined ? info.max : new IV.objects.Plain(100);
     this.guide_path = IV.Path.commonPrefix([ this.anchor1.getPath(), this.anchor2.getPath() ]);
-    this.mapping = "linear";
-    this.show_ticks = false;
-    this.tick_size = 2;
-    this.tick_color = new IV.Color(0, 0, 0, 1);
+    this.fillDefault();
 }, {
+    fillDefault: function() {
+        if(this.tick_style === undefined) this.tick_style = new TickStyle();
+        if(this.mapping === undefined) this.mapping = "linear";
+    },
     postDeserialize: function() {
-        if(this.show_ticks === undefined) this.show_ticks = true;
-        if(this.tick_size === undefined) this.tick_size = 2;
-        if(this.tick_color === undefined) this.tick_color = new IV.Color(0, 0, 0, 1);
-        if(this.tick_format === undefined) this.tick_format = "4.2f";
+        this.fillDefault();
     },
     can: function(cap) {
         if(cap == "get-point") return true;
@@ -100,36 +192,14 @@ var Track = IV.extend(Objects.Object, function(info) {
                 group: "Track",
                 type: "string",
                 args: [{ name: "linear", display: "Linear" }, { name: "logarithmic", display: "Logarithmic" }],
-                get: function() { return $this.mapping ? $this.mapping : "linear"; },
+                get: function() { return $this.mapping; },
                 set: function(val) { return $this.mapping = val; }
             },
             {
-                name: "Ticks",
+                name: "Tick",
                 group: "Track",
-                type: "plain-bool",
-                get: function() { return $this.show_ticks; },
-                set: function(val) { return $this.show_ticks = val; }
-            },
-            {
-                name: "TickSize",
-                group: "Track",
-                type: "plain-number",
-                get: function() { return $this.tick_size; },
-                set: function(val) { return $this.tick_size = val; }
-            },
-            {
-                name: "TickColor",
-                group: "Track",
-                type: "plain-color",
-                get: function() { return $this.tick_color; },
-                set: function(val) { return $this.tick_color = val; }
-            },
-            {
-                name: "TickFormat",
-                group: "Track",
-                type: "plain-string",
-                get: function() { return $this.tick_format; },
-                set: function(val) { return $this.tick_format = val; }
+                type: "nested",
+                properties: $this.tick_style.getPropertyContext()
             }
         ]);
     },
@@ -196,9 +266,12 @@ var Track = IV.extend(Objects.Object, function(info) {
     },
     render: function(g, data) {
         var $this = this;
-        if(true || $this.show_ticks) {
-            g.strokeStyle = $this.tick_color.toRGBA();
-            var format = d3.format($this.tick_format);
+        var tick_style = $this.tick_style;
+        if(tick_style.show_ticks) {
+            g.strokeStyle = tick_style.tick_color.toRGBA();
+            g.fillStyle = tick_style.tick_color.toRGBA();
+            g.font = tick_style.font.getFont();
+            var format = d3.format(tick_style.tick_format);
             $this.enumerateGuide(data, function(p1, p2, ctx) {
                 var dir = p2.sub(p1).normalize();
                 var len = p2.distance(p1);
@@ -215,8 +288,8 @@ var Track = IV.extend(Objects.Object, function(info) {
                 var scale = $this.getD3Scale(ctx);
                 scale.range([0, len]);
 
-                var ts = $this.tick_size;
-                var ticks = scale.ticks(5);
+                var ts = tick_style.tick_size;
+                var ticks = scale.ticks(Math.round(tick_style.tick_count));
                 for(var i = 0; i < ticks.length; i++) {
                     var v = scale(ticks[i]);
                     g.beginPath();
@@ -225,9 +298,13 @@ var Track = IV.extend(Objects.Object, function(info) {
                     g.stroke();
                 }
                 for(var i = 0; i < ticks.length; i++) {
-                    var v = scale(ticks[i]);
+                    var ti = ticks[i];
+                    if($this.mapping == "logarithmic")
+                        if(Math.abs(Math.round(Math.log10(ti)) - Math.log10(ti)) > 1e-6)
+                            continue;
+                    var v = scale(ti);
                     g.textAlign = "center";
-                    g.fillText(format(ticks[i]), v, -2 - ts);
+                    g.fillText(format(ti), v, -2 - ts);
                 }
                 g.restore();
             });
@@ -306,12 +383,14 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     this.track2 = info.track2;
     this.path = IV.Path.commonPrefix([ this.track1.getPath(), this.track2.getPath() ]);
     this.guide_path = IV.Path.commonPrefix([ this.track1.getGuidePath(), this.track2.getGuidePath() ]);
-    this.show_x_ticks = false;
-    this.show_y_ticks = false;
+    this.fillDefault();
 }, {
-    postDeserialize: function() {
+    fillDefault: function() {
         if(this.show_x_ticks === undefined) this.show_x_ticks = true;
         if(this.show_y_ticks === undefined) this.show_y_ticks = true;
+    },
+    postDeserialize: function() {
+        this.fillDefault();
     },
     can: function(cap) {
         if(cap == "get-point") return true;
@@ -388,6 +467,41 @@ var Scatter = IV.extend(Objects.Object, function(info) {
                 l[1].callLineTo(g);
                 g.stroke();
             });
+        });
+    },
+    render: function(g, data) {
+        var $this = this;
+        $this.enumerateGuide(data, function(p1, p2, q1, q2, context) {
+            var scale1 = $this.track1.getD3Scale(context);
+            var scale2 = $this.track2.getD3Scale(context);
+            var d2 = p2.sub(p1);
+            var d2r = d2.rotate90();
+            var d1 = q2.sub(q1);
+            var p = d1.scale(q1.sub(p1).dot(d2r) / d1.dot(d2r)).add(p1);
+            if($this.show_x_ticks) {
+                g.strokeStyle = $this.track1.tick_style.tick_color.toRGBA(0.1);
+                var ticks = scale1.ticks($this.track1.tick_style.tick_count).map(scale1);
+                for(var i = 0; i < ticks.length; i++) {
+                    var s = p.add(d2.scale(ticks[i]));
+                    var t = s.add(d1);
+                    g.beginPath();
+                    s.callMoveTo(g);
+                    t.callLineTo(g);
+                    g.stroke();
+                }
+            }
+            if($this.show_y_ticks) {
+                g.strokeStyle = $this.track2.tick_style.tick_color.toRGBA(0.1);
+                var ticks = scale2.ticks($this.track2.tick_style.tick_count).map(scale2);
+                for(var i = 0; i < ticks.length; i++) {
+                    var s = p.add(d1.scale(ticks[i]));
+                    var t = s.add(d2);
+                    g.beginPath();
+                    s.callMoveTo(g);
+                    t.callLineTo(g);
+                    g.stroke();
+                }
+            }
         });
     },
     select: function(pt, data, action) {

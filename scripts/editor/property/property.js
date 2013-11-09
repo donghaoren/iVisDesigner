@@ -49,11 +49,25 @@ var render = function() {
         if(!groups[c.group]) groups[c.group] = [];
         groups[c.group].push(c);
     });
+
+    var render_item = function(item, target) {
+        if(item.type == "nested") {
+            var nested_group = IV._E("div", "nested");
+            nested_group.append(render_nested_caption(item.name));
+            item.properties.forEach(function(subitem) {
+                render_item(subitem, nested_group);
+            });
+            target.append(nested_group);
+        } else {
+            target.append(render_property_field(item));
+        }
+    };
+
     IV.forEachInObject(groups, function(g, group) {
         container.append(render_caption(g));
         var target = $("<div />").addClass("item-action");
         group.forEach(function(item) {
-            target.append(render_property_field(item));
+            render_item(item, target);
         });
 
         container.append(target);
