@@ -5,6 +5,9 @@
 # See LICENSE.txt for copyright information.
 
 from SwBuilder import *
+import sys
+
+sys.dont_write_bytecode = True
 
 from version import IV_version, IV_rev
 
@@ -24,6 +27,7 @@ Javascript("libraries.js", [
     "libraries/jquery-2.0.3.js",
     "libraries/jquery-cookie.js",
     "libraries/jquery.mousewheel.js",
+    "libraries/d3.v3.js",
     "libraries/js-yaml.js",
     "libraries/chroma.js",
     "libraries/numeric-1.2.6.js"

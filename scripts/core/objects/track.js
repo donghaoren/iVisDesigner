@@ -17,7 +17,16 @@ var Track = IV.extend(Objects.Object, function(info) {
     this.max = info.max !== undefined ? info.max : new IV.objects.Plain(100);
     this.guide_path = IV.Path.commonPrefix([ this.anchor1.getPath(), this.anchor2.getPath() ]);
     this.mapping = "linear";
+    this.show_ticks = false;
+    this.tick_size = 2;
+    this.tick_color = new IV.Color(0, 0, 0, 1);
 }, {
+    postDeserialize: function() {
+        if(this.show_ticks === undefined) this.show_ticks = true;
+        if(this.tick_size === undefined) this.tick_size = 2;
+        if(this.tick_color === undefined) this.tick_color = new IV.Color(0, 0, 0, 1);
+        if(this.tick_format === undefined) this.tick_format = "4.2f";
+    },
     can: function(cap) {
         if(cap == "get-point") return true;
     },
@@ -35,7 +44,7 @@ var Track = IV.extend(Objects.Object, function(info) {
         var value = context.get(this.path).val();
         if(value === null || p1 === null || p2 === null || min === null || max === null) return null;
         if(this.mapping == "logarithmic") {
-            value = (Math.log(value) - Math.log(min)) / (Math.log(max) - Math.log(min));
+            value = (Math.log10(value) - Math.log10(min)) / (Math.log10(max) - Math.log10(min));
         } else {
             value = (value - min) / (max - min);
         }
@@ -93,6 +102,34 @@ var Track = IV.extend(Objects.Object, function(info) {
                 args: [{ name: "linear", display: "Linear" }, { name: "logarithmic", display: "Logarithmic" }],
                 get: function() { return $this.mapping ? $this.mapping : "linear"; },
                 set: function(val) { return $this.mapping = val; }
+            },
+            {
+                name: "Ticks",
+                group: "Track",
+                type: "plain-bool",
+                get: function() { return $this.show_ticks; },
+                set: function(val) { return $this.show_ticks = val; }
+            },
+            {
+                name: "TickSize",
+                group: "Track",
+                type: "plain-number",
+                get: function() { return $this.tick_size; },
+                set: function(val) { return $this.tick_size = val; }
+            },
+            {
+                name: "TickColor",
+                group: "Track",
+                type: "plain-color",
+                get: function() { return $this.tick_color; },
+                set: function(val) { return $this.tick_color = val; }
+            },
+            {
+                name: "TickFormat",
+                group: "Track",
+                type: "plain-string",
+                get: function() { return $this.tick_format; },
+                set: function(val) { return $this.tick_format = val; }
             }
         ]);
     },
@@ -146,6 +183,55 @@ var Track = IV.extend(Objects.Object, function(info) {
             g.arc(p2.x, p2.y, r, 0, Math.PI * 2);
             g.fill();
         });
+    },
+    getD3Scale: function(context) {
+        var scale = d3.scale.linear();
+        if(this.mapping == "logarithmic") {
+            scale = d3.scale.log();
+            scale.base(10);
+        }
+        scale.domain([ this.min.get(context), this.max.get(context) ]);
+        scale.range([0, 1]);
+        return scale;
+    },
+    render: function(g, data) {
+        var $this = this;
+        if(true || $this.show_ticks) {
+            g.strokeStyle = $this.tick_color.toRGBA();
+            var format = d3.format($this.tick_format);
+            $this.enumerateGuide(data, function(p1, p2, ctx) {
+                var dir = p2.sub(p1).normalize();
+                var len = p2.distance(p1);
+                g.save();
+                g.translate(p1.x, p1.y);
+                g.rotate(Math.atan2(dir.y, dir.x));
+                g.scale(1, -1);
+
+                g.beginPath();
+                g.moveTo(0, 0);
+                g.lineTo(len, 0);
+                g.stroke();
+
+                var scale = $this.getD3Scale(ctx);
+                scale.range([0, len]);
+
+                var ts = $this.tick_size;
+                var ticks = scale.ticks(5);
+                for(var i = 0; i < ticks.length; i++) {
+                    var v = scale(ticks[i]);
+                    g.beginPath();
+                    g.moveTo(v, -ts);
+                    g.lineTo(v, ts);
+                    g.stroke();
+                }
+                for(var i = 0; i < ticks.length; i++) {
+                    var v = scale(ticks[i]);
+                    g.textAlign = "center";
+                    g.fillText(format(ticks[i]), v, -2 - ts);
+                }
+                g.restore();
+            });
+        }
     },
     select: function(pt, data, action) {
         var $this = this;
@@ -203,7 +289,7 @@ var Track = IV.extend(Objects.Object, function(info) {
             onMove: function(p0, p1) {
                 var new_value = p1.sub(a1).cross(d) / a2.sub(a1).cross(d);
                 if($this.mapping == "logarithmic") {
-                    new_value = Math.exp(new_value * (Math.log(max) - Math.log(min)) + Math.log(min));
+                    new_value = Math.exp(new_value * (Math.log10(max) - Math.log10(min)) + Math.log10(min));
                 } else {
                     new_value = new_value * (max - min) + min;
                 }
@@ -220,7 +306,13 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     this.track2 = info.track2;
     this.path = IV.Path.commonPrefix([ this.track1.getPath(), this.track2.getPath() ]);
     this.guide_path = IV.Path.commonPrefix([ this.track1.getGuidePath(), this.track2.getGuidePath() ]);
+    this.show_x_ticks = false;
+    this.show_y_ticks = false;
 }, {
+    postDeserialize: function() {
+        if(this.show_x_ticks === undefined) this.show_x_ticks = true;
+        if(this.show_y_ticks === undefined) this.show_y_ticks = true;
+    },
     can: function(cap) {
         if(cap == "get-point") return true;
     },

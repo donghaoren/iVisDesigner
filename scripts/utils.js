@@ -1531,6 +1531,10 @@ NS.strings = function(key) {
     return DATA_Strings[key];
 };
 
+Math.log10 = function(v) {
+    return Math.log(v) / 2.302585092994046;
+};
+
 return NS;
 
 })(); // main nested function.
