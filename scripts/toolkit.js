@@ -26,11 +26,6 @@ IV.newVisualization = function() {
     IV.editor.setVisualization(vis);
 };
 
-IV.loadData = function(data, schema) {
-    IV.data = new IV.DataObject(data, schema);
-    IV.editor.setData(IV.data);
-};
-
 // ------------------------------------------------------------------------
 // System Initialization
 // ------------------------------------------------------------------------

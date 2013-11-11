@@ -1,4 +1,5 @@
 var ajaxCall = function(url, method, params, callback) {
+    if(!callback) callback = function(){};
     if(typeof(params) == "function") callback = params;
     $.ajax({
         url: IV_Config.api_base + url,
@@ -32,4 +33,9 @@ IV.server = {
     put: function(url, params, callback) { ajaxCall("api/" + url, "put", params, callback); },
     delete: function(url, params, callback) { ajaxCall("api/" + url, "delete", params, callback); },
     accounts: function(url, params, callback) { ajaxCall("accounts/" + url, "post", params, callback); },
+    twisted: function(action, params, callback) {
+        params.action = action;
+        params.sid = IV.server.twisted_sid;
+        ajaxCall("twisted/", "post", { request: JSON.stringify(params) }, callback);
+    }
 };

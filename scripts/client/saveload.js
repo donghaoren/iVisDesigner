@@ -1,3 +1,30 @@
+var load_dataset_from_server = function(info) {
+    var schema = jsyaml.load(info.schema);
+    var data = null;
+    if(schema.source) {
+        var name = schema.source.name;
+        var obj = new IV.server.SyncedObject(name);
+        var data_obj = null;
+        obj.onUpdate = function(data) {
+            var ds = new IV.PlainDataset(data, schema);
+            if(!data_obj) {
+                data_obj = new IV.DataObject(ds.obj, ds.schema);
+                IV.data = data_obj;
+                IV.editor.setData(IV.data);
+            } else {
+                data_obj.updateRoot(ds.obj);
+                data_obj.raise("update");
+            }
+        };
+    } else {
+        data = jsyaml.load(info.data);
+        var ds = new IV.PlainDataset(data, schema);
+        IV.loadVisualization();
+        IV.data = new IV.DataObject(ds.obj, ds.schema);
+        IV.editor.setData(IV.data);
+    }
+}
+
 IV.on("command:toolkit.start", function() {
     var ctx = IV.modals.constructModal({
         html: IV.strings("modal_load_dataset"),
@@ -36,11 +63,7 @@ IV.on("command:toolkit.start", function() {
                                     IV._E("div", "actions").append(
                                         IV._E("span", "btn btn-s").text("+ New").click(function() {
                                             IV.server.get("datasets/" + dataset.id + "/", function(err, data) {
-                                                data.data = jsyaml.load(data.data);
-                                                data.schema = jsyaml.load(data.schema);
-                                                var ds = new IV.PlainDataset(data.data, data.schema);
-                                                IV.loadVisualization();
-                                                IV.loadData(ds.obj, ds.schema);
+                                                load_dataset_from_server(data);
                                                 IV.newVisualization();
                                                 IV.dataset_id = data.id;
                                                 ctx.close();
@@ -60,11 +83,8 @@ IV.on("command:toolkit.start", function() {
                                         IV._E("span", "actions pull-right").append(
                                             IV._E("span", "btn btn-s").append(IV._E("i", "icon-folder-open")).click(function() {
                                                 IV.server.get("visualizations/" + vis.id + "/", function(err, data) {
-                                                    var yaml_data = jsyaml.load(data.dataset_info.data);
-                                                    var yaml_schema = jsyaml.load(data.dataset_info.schema);
+                                                    load_dataset_from_server(data.dataset_info);
                                                     var vis_data = JSON.parse(data.content);
-                                                    var ds = new IV.PlainDataset(yaml_data, yaml_schema);
-                                                    IV.loadData(ds.obj, ds.schema);
                                                     IV.loadVisualization(IV.serializer.deserialize(vis_data));
                                                     IV.dataset_id = data.dataset_info.id;
                                                     ctx.close();

@@ -33,6 +33,27 @@ Objects.Number = Plain;
 Objects.Style = Plain;
 Objects.Point = Plain;
 
+// PassThrough Object.
+var PassThrough = IV.extend(Objects.Object, function(path) {
+    Objects.Object.call(this);
+    this.path = path;
+    this.type = "PassThrough";
+}, {
+    can: function(cap) {
+        if(cap == "get-point") return true;
+        if(cap == "get-number") return true;
+        if(cap == "get-style") return true;
+    },
+    getPath: function() { return new IV.Path(""); },
+    getGuidePath: function() { return new IV.Path(""); },
+    get: function(context) { return context.get(this.path).val(); },
+    clone: function() {
+        return new PassThrough(IV.deepClone(this.path));
+    }
+});
+Objects.PassThrough = PassThrough;
+IV.serializer.registerObjectType("PassThrough", PassThrough);
+
 // Composite Object.
 var Composite = IV.extend(Objects.Object, function(obj, wrap) {
     Objects.Object.call(this);

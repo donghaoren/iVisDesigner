@@ -6,7 +6,10 @@ IV.DataObject = function(root, schema) {
     this.root = root;
     this.schema = schema;
     this.namespaces = { };
+    IV.EventSource.call(this);
 };
+
+IV.implement(IV.EventSource, IV.DataObject);
 
 IV.DataObject.prototype.getSchema = function() {
     return this.schema;
@@ -17,6 +20,10 @@ IV.DataObject.prototype.getSchema = function() {
 // _target: reference the target object for a reference.
 IV.DataObject.prototype.getRoot = function() {
     return this.root;
+};
+
+IV.DataObject.prototype.updateRoot = function(new_root) {
+    return this.root = new_root;
 };
 
 IV.DataObject.prototype.getObjectID = function(obj) {

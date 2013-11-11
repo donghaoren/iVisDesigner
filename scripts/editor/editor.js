@@ -64,6 +64,10 @@ Editor.setData = function(data) {
     Editor.renderer.setData(Editor.data);
     Editor.schema = data.getSchema();
     Editor.renderDataSchema(Editor.schema);
+    data.bind("update", function() {
+        Editor.renderer.trigger();
+        Editor.renderer.render();
+    });
     if(Editor.vis) {
         Editor.vis.data = Editor.data;
     }
