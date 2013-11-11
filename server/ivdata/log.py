@@ -1,2 +1,3 @@
+import twisted.python
 def log(s):
-    print(s)
+    twisted.python.log.msg(s);

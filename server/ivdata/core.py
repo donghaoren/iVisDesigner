@@ -2,63 +2,13 @@ import time
 import json
 import hmac
 import hashlib
+import json
 
 import client
 
-registered_clients = { }
-registered_groups = { }
-
-
-
-def push_item(item):
-    global registered_clients, registered_groups
-    cids = set()
-    if 'target' in item:
-        cids.add(item['target'])
-    if 'targets' in item:
-        cids.update(item['targets'])
-    if 'target_group' in item:
-        if item['target_group'] in registered_groups:
-            cids.update(registered_groups[item['target_group']]['clients'])
-    for cid in cids:
-        if not cid in registered_clients: continue
-        registered_clients[cid]['messages'].append(item)
-
-def notify_client(c):
-    if c['pull_callback'] != None:
-        if len(c['messages']) > 0 or time.time() - c['pull_time']:
-            c['pull_callback'](c['messages'])
-            c['messages'] = []
-            c['pull_callback'] = None
-
-def notify_clients():
-    global registered_clients, registered_groups
-    for cid in registered_clients:
-        notify_client(registered_clients[cid])
-
-def add_client(client_id, hmac_digest = ""):
-    global registered_clients, registered_groups
-    if hmac_key != "":
-        computed_digest = hmac.new(hmac_key, client_id, hashlib.sha1).hexdigest()
-        if hmac_digest != computed_digest:
-            raise Exception("E_PERMISSION_DENIED")
-    print "Add Client: %s" % client_id
-    registered_clients[client_id] = {
-        'client_id': client_id,
-        'messages': [],
-        'last_access': time.time(),
-        'pull_callback': None,
-        'pull_time': None
-    }
-
-def add_client_group(client_id, group):
-    global registered_clients, registered_groups
-    if group in registered_groups:
-        registered_groups[group]['clients'].add(client_id)
-    else:
-        registered_groups[group] = {
-            'clients': set([client_id])
-        }
+from twisted.web import server, resource
+from twisted.web.static import File as StaticFile
+from twisted.internet import reactor, task
 
 def every_second():
     client.cleanup_clients()
@@ -69,3 +19,30 @@ def request_handler(args, callback):
     r = client.request_handler(args['action'], args, callback)
     if r != False: return r
     raise Exception("E_INVALID_ARGS")
+
+class MainResource(resource.Resource):
+    isLeaf = True
+    def _delayedRender(self, request, response):
+        try:
+            request.write(response)
+            request.finish()
+        except:
+            pass
+
+    def render_POST(self, request):
+        request.setHeader("content-type", "text/plain; charset=utf-8")
+
+        try:
+            if not 'request' in request.args: return json.dumps({ "status": "E_INVALID_ARGS" })
+            args = json.loads(request.args['request'][0].decode("UTF-8"))
+        except:
+            return json.dumps({ "status": "E_INVALID_ARGS" })
+        try:
+            r = request_handler(args, lambda res: self._delayedRender(request, json.dumps(res).encode("utf-8")))
+        except Exception as e:
+            r = { "status": e.message }
+        if r != None:
+            if r == True:
+                r = { "status": "success" }
+            return json.dumps(r).encode("utf-8")
+        return server.NOT_DONE_YET

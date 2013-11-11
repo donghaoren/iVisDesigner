@@ -1,5 +1,6 @@
 from db import rdb
 from threading import Thread, Lock
+from twisted.internet import reactor
 import time
 from log import log
 
@@ -26,7 +27,7 @@ class SubscriptionThread(Thread):
                     channel = msg['channel']
                     if channel in subscription_keys:
                         for func in subscription_keys[channel].itervalues():
-                            func(msg['data'])
+                            reactor.callFromThread(func, msg['data'])
                 if self.should_stop:
                     break
             # The for loop breaks when there's no subscriptions.
