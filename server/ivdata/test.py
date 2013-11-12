@@ -2,7 +2,7 @@ from document import DocumentRepresentation
 from db import rdb
 import psutil
 import time
-doc = DocumentRepresentation(rdb, "test", {
+doc = DocumentRepresentation(rdb, "monitor", {
     "measures": []
 })
 
