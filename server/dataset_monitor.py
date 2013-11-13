@@ -1,4 +1,4 @@
-from document import DocumentRepresentation
+from realtime.document import DocumentRepresentation
 import psutil
 import time
 import redis
