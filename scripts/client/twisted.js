@@ -1,30 +1,71 @@
+(function() {
+
 IV.server.twisted_listeners = { };
 
 IV.server.twisted_start = function(callback) {
-    IV.server.twisted_sid = "1";
-    IV.server.twisted("register", { }, callback);
+    if(!callback) callback = function() { };
+    IV.server.twisted_sid = IV.generateUUID();
+    var serial_id = -1;
+    var continued_failures = 0;
+
     var listen = function() {
-        IV.server.twisted("messages.get", { }, function(err, data) {
+        IV.server.twisted("messages.get", { serial: serial_id }, function(err, data) {
             if(err) {
-                setTimeout(listen, 1000);
+                // Count how many continous errors.
+                continued_failures += 1;
+                if(continued_failures > 5) {
+                    // Five continous errors, stop listening and yields an error.
+                    callback("E_DISCONNECTED");
+                } else {
+                    // Otherwise try listen again after 1sec.
+                    // (in case of connection failure, we can't retry immediately.)
+                    setTimeout(listen, 1000);
+                }
             } else {
                 listen();
+                continued_failures = 0;
+
+                var max_serial = serial_id;
                 data.messages.forEach(function(m) {
+                    if(m.serial >= max_serial) max_serial = m.serial;
+                    else return;
                     if(IV.server.twisted_listeners[m.channel]) {
-                        IV.server.twisted_listeners[m.channel](m);
+                        try {
+                            IV.server.twisted_listeners[m.channel](null, m);
+                        } catch(e) {
+                            console.log("Twisted Listener:", e);
+                        }
                     }
                 });
+                serial_id = max_serial;
             }
         });
     };
-    listen();
+    // HMAC authentication with App server here.
+    IV.server.accounts("hmac_signature", { info: "register:" + IV.server.twisted_sid }, function(err, data) {
+        if(err) { callback(err); return; }
+        IV.server.twisted("register", { hmac: data.signature }, function(err, data) {
+            if(err) {
+                callback(err);
+            } else {
+                for(var channel in IV.server.twisted_listeners) {
+                    IV.server.twisted_listeners[channel]("E_CONNECTED");
+                }
+                listen();
+            }
+        });
+    });
 };
 
 IV.server.SyncedObject = IV.extend(Object, function(name) {
     var $this = this;
     this.name = name;
     this.reload_data();
-    IV.server.twisted_listeners["doc." + name] = function(m) {
+    IV.server.twisted_listeners["doc." + name] = function(err, m) {
+        if(err) {
+            if(err == "E_CONNECTED") $this.reload_data();
+            return;
+        }
         var oplog = m.oplog.reverse();
         oplog.forEach(function(ops) {
             $this.ops.push(ops);
@@ -42,6 +83,7 @@ IV.server.SyncedObject = IV.extend(Object, function(name) {
         $this.index = {};
         $this.data = null;
         IV.server.twisted("document.listen", { name: $this.name }, function(err, data) {
+            if(err) return;
             $this.data = data.data;
             $this.rev = data.rev;
             $this.build_index();
@@ -122,6 +164,13 @@ IV.server.SyncedObject = IV.extend(Object, function(name) {
     }
 });
 
-IV.server.twisted_start(function(err) {
-});
+var twisted_daemon_proc = function() {
+    IV.server.twisted_start(function(err) {
+        if(err) {
+            setTimeout(twisted_daemon_proc, 1000);
+        }
+    });
+};
+twisted_daemon_proc();
 
+})();

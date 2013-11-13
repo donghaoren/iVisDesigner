@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^accounts/logout$', auth.logout_view, name = "logout"),
     url(r'^accounts/register$', auth.register_view, name = "register"),
     url(r'^accounts/get$', auth.current_user, name = "getuser"),
+    url(r'^accounts/hmac_signature$', auth.hmac_get_signature, name = "hmac_signature"),
     url(r'^admin/', include(admin.site.urls))
 )
 

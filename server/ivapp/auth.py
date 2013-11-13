@@ -9,6 +9,9 @@ from django.utils.decorators import method_decorator
 from django.http import HttpResponseForbidden, HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from server.config import HMAC_KEY
+import hmac
+import hashlib
 
 import json
 
@@ -19,6 +22,28 @@ def current_user(request):
         return Response({"anonymous": "true"})
     else:
         return Response(UserSerializer(request.user).data)
+
+@api_view(['POST', ])
+@permission_classes((AllowAny, ))
+def hmac_get_signature(request):
+    info = request.POST['info']
+
+    def hmac_sign(info):
+        if HMAC_KEY == "":
+            signature = "SIGNED"
+        else:
+            signature = hmac.new(HMAC_KEY, info, hashlib.sha1).hexdigest()
+        return Response({ "status": "success", "signature": signature })
+
+    # Check for permission.
+    if request.user.is_anonymous():
+        return hmac_sign(info)
+    else:
+        return hmac_sign(info)
+
+    return Response({"status":"E_PERMISSION_DENIED"})
+
+
 
 def MyResponse(s):
     return HttpResponse(json.dumps(s))
@@ -33,15 +58,15 @@ def register_view(request):
             user = fm.save()
             g = Group.objects.get(name = 'normal')
             g.user_set.add(user)
-            return MyResponse({"status":"success"})
+            return Response({"status":"success"})
         else:
-            return MyResponse({"status":"E_FAILED"})
-    return MyResponse({"status":"E_INVALID"})
+            return Response({"status":"E_FAILED"})
+    return Response({"status":"E_INVALID"})
 
 @permission_classes((IsAuthenticated, ))
 def logout_view(request):
     logout(request)
-    return MyResponse({"status":"success"})
+    return Response({"status":"success"})
 
 @csrf_exempt
 @ensure_csrf_cookie
@@ -55,9 +80,9 @@ def login_view(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return MyResponse({"status":"success"})
+                    return Response({"status":"success"})
                 else:
-                    return MyResponse({"status":"E_INACTIVE"})
+                    return Response({"status":"E_INACTIVE"})
             else:
-                return MyResponse({"status":"E_DENIED"})
-    return MyResponse({"status":"E_INVALID"})
+                return Response({"status":"E_DENIED"})
+    return Response({"status":"E_INVALID"})

@@ -1,4 +1,5 @@
-var load_dataset_from_server = function(info) {
+var load_dataset_from_server = function(info, callback) {
+    if(!callback) callback = function(){};
     var schema = jsyaml.load(info.schema);
     var data = null;
     if(schema.source) {
@@ -11,6 +12,7 @@ var load_dataset_from_server = function(info) {
                 data_obj = new IV.DataObject(ds.obj, ds.schema);
                 IV.data = data_obj;
                 IV.editor.setData(IV.data);
+                callback();
             } else {
                 data_obj.updateRoot(ds.obj);
                 data_obj.raise("update");
@@ -22,6 +24,7 @@ var load_dataset_from_server = function(info) {
         IV.loadVisualization();
         IV.data = new IV.DataObject(ds.obj, ds.schema);
         IV.editor.setData(IV.data);
+        callback();
     }
 }
 
@@ -63,10 +66,11 @@ IV.on("command:toolkit.start", function() {
                                     IV._E("div", "actions").append(
                                         IV._E("span", "btn btn-s").text("+ New").click(function() {
                                             IV.server.get("datasets/" + dataset.id + "/", function(err, data) {
-                                                load_dataset_from_server(data);
-                                                IV.newVisualization();
-                                                IV.dataset_id = data.id;
-                                                ctx.close();
+                                                load_dataset_from_server(data, function() {
+                                                    IV.newVisualization();
+                                                    IV.dataset_id = data.id;
+                                                    ctx.close();
+                                                });
                                             });
                                         })
                                     ).append(
@@ -83,11 +87,13 @@ IV.on("command:toolkit.start", function() {
                                         IV._E("span", "actions pull-right").append(
                                             IV._E("span", "btn btn-s").append(IV._E("i", "icon-folder-open")).click(function() {
                                                 IV.server.get("visualizations/" + vis.id + "/", function(err, data) {
-                                                    load_dataset_from_server(data.dataset_info);
-                                                    var vis_data = JSON.parse(data.content);
-                                                    IV.loadVisualization(IV.serializer.deserialize(vis_data));
-                                                    IV.dataset_id = data.dataset_info.id;
-                                                    ctx.close();
+                                                    load_dataset_from_server(data.dataset_info, function() {
+                                                        var vis_data = JSON.parse(data.content);
+                                                        IV.visualization_info = data;
+                                                        IV.loadVisualization(IV.serializer.deserialize(vis_data));
+                                                        IV.dataset_id = data.dataset_info.id;
+                                                        ctx.close();
+                                                    });
                                                 });
                                             })
                                         ).append(IV._E("span").text(" ")).append(
@@ -133,7 +139,7 @@ IV.on("command:toolkit.save", function() {
         height: $(window).height() * 0.5
     });
 
-    ctx.submit.click(function() {
+    ctx.saveas.click(function() {
         var description = ctx.description.val();
         ctx.status_working();
         IV.server.post("visualizations/", {
@@ -147,4 +153,21 @@ IV.on("command:toolkit.save", function() {
             else ctx.close();
         });
     });
+    if(IV.visualization_info) {
+        ctx.description.val(IV.visualization_info.description);
+        ctx.save.click(function() {
+            var description = ctx.description.val();
+            ctx.status_working();
+            IV.server.put("visualizations/" + IV.visualization_info.id + "/", {
+                user: IV.get("user").id,
+                created_at: new Date().toISOString(),
+                dataset: IV.dataset_id,
+                content: JSON.stringify(IV.serializer.serialize(IV.editor.vis)),
+                description: description
+            }, function(err, data) {
+                if(err) ctx.status_error(err);
+                else ctx.close();
+            });
+        });
+    } else ctx.save.remove();
 });

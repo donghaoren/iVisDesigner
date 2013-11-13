@@ -46,6 +46,6 @@ def add_subscription_handler(key, sid, func):
         subscription_clients[sid].append(key)
 
 def remove_subscription_client(sid):
-    for sid in subscription_clients:
+    if sid in subscription_clients:
         for key in subscription_clients[sid]:
             del subscription_keys[key][sid]

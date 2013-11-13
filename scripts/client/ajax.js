@@ -10,6 +10,7 @@ var ajaxCall = function(url, method, params, callback) {
         xhrFields: {
             withCredentials: true
         },
+        timeout: 15000,
         beforeSend: function(xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", $.cookie("csrftoken"));
         }

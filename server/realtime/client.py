@@ -25,6 +25,7 @@ class ClientInfo:
         self.sid = sid
         self.callback = None
         self.messages = []
+        self.serial = 0
 
     def feed(self):
         self.last_action = time.time()
@@ -33,35 +34,49 @@ class ClientInfo:
         return time.time() - self.last_action
 
     def add_message(self, msg):
+        msg['serial'] = self.serial
         self.messages.append(msg)
+        self.serial += 1
         reactor.callLater(0.001, self.post_message)
 
+    def remove_old_messages(self, serial):
+        # Pop all messages whose serial is smaller than or equals to 'serial'.
+        while len(self.messages) > 0 and self.messages[0]['serial'] <= serial:
+            self.messages.pop(0)
+
     def post_message(self):
+        # Post all messages in the queue if exists, and finalize the callback.
         if len(self.messages) != 0 and self.callback != None:
             self.callback({ "status": "success", "messages": self.messages })
             self.callback = None
-            self.messages = []
 
     def assign_callback(self, callback):
-        self.post_message()
+        # If we have a existing callback, finish it.
+        self.finish_callback()
+        # Assign new callback.
         self.callback = callback
+        # If there is message, post.
         self.post_message()
 
     def finish_callback(self):
+        # If there is message, post.
         self.post_message()
+        # Otherwise, respond empty and clear it.
         if self.callback:
             self.callback({ "status": "success", "messages": [] })
             self.callback = None
 
-def auth_client(args):
+def auth_client(args, register = False):
     if 'sid' in args:
         sid = args['sid']
         if sid in clients:
             return clients[sid]
+        if not register:
+            raise Exception("E_AUTHENTICATION_FAILURE")
         hmac_digest = ''
         if 'hmac' in args: hmac_digest = args['hmac']
         if hmac_key != "":
-            computed_digest = hmac.new(hmac_key, sid, hashlib.sha1).hexdigest()
+            computed_digest = hmac.new(hmac_key, "register:" + sid, hashlib.sha1).hexdigest()
             if hmac_digest != computed_digest:
                 raise Exception("E_AUTHENTICATION_FAILURE")
 
@@ -89,7 +104,7 @@ def cleanup_clients():
 def request_handler(action, args, callback):
     # Register: add a new user (or overwrite existing one).
     if action == "register":
-        c = auth_client(args)
+        c = auth_client(args, register = True)
         c.feed()
         return True
 
@@ -117,5 +132,7 @@ def request_handler(action, args, callback):
     if action == "messages.get":
         c = auth_client(args)
         c.feed()
+        serial = require_key(args, "serial", 0)
+        c.remove_old_messages(serial)
         c.assign_callback(callback)
         return None # Not done yet.
