@@ -1,7 +1,9 @@
 from document import DocumentRepresentation
-from db import rdb
 import psutil
 import time
+import redis
+
+rdb  = redis.StrictRedis("localhost", 6379, db=0)
 doc = DocumentRepresentation(rdb, "monitor", {
     "measures": []
 })

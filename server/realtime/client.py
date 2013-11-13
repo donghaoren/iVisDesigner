@@ -1,5 +1,3 @@
-from db import rdb
-from config import config
 from log import log
 from subscriptions import add_subscription_handler, remove_subscription_client
 from document import DocumentInfo
@@ -8,10 +6,13 @@ from twisted.internet import reactor
 import time
 import json
 
-hmac_key = config.get("authentication", "hmac_key")
-client_lifetime = int(config.get("client", "lifetime"))
-client_callback_lifetime = int(config.get("client", "callback_lifetime"))
-clients = { }
+def load_config(config, rdb_):
+    global hmac_key, client_lifetime, client_callback_lifetime, clients, rdb
+    hmac_key = config.get("authentication", "hmac_key")
+    client_lifetime = int(config.get("realtime", "client_timeout"))
+    client_callback_lifetime = int(config.get("realtime", "polling_timeout"))
+    clients = { }
+    rdb = rdb_
 
 def require_key(args, key, default = "RAISE"):
     if not key in args:

@@ -1,5 +1,9 @@
 import redis
-from config import config
+from log import log
 
-rdb = redis.StrictRedis(config.get("redis", "host"), int(config.get("redis", "port")), db=0)
-print "Connected to redis database localhost:6379"
+def open_redis(config):
+    host = config.get("redis", "host")
+    port = int(config.get("redis", "port"))
+    rdb = redis.StrictRedis(host, port, db=0)
+    print("Connected to redis database %s:%d" % (host, port))
+    return rdb

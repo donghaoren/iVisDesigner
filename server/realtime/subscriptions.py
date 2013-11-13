@@ -1,4 +1,3 @@
-from db import rdb
 from threading import Thread, Lock
 from twisted.internet import reactor
 import time
@@ -9,16 +8,18 @@ subscription_clients = { }
 
 class SubscriptionThread(Thread):
     should_stop = False
-    subs = rdb.pubsub()
-    def __init__(self):
+    def __init__(self, rdb):
         Thread.__init__(self)
         # Here we subscribe to all events.
+        self.rdb = rdb
+        self.subs = rdb.pubsub()
         self.subs.psubscribe("doc.*")
         self.subs.psubscribe("control.*")
 
+
     def trigger_stop(self):
         self.should_stop = True
-        rdb.publish("control.stop", 1)
+        self.rdb.publish("control.stop", 1)
 
     def run(self):
         while not self.should_stop:
