@@ -1,6 +1,7 @@
 temp/
 deploy/
 dist/
+docs/
 images/unused
 images/iconfont/*.svg
 images/iconfont/*.ttf
