@@ -1,9 +1,3 @@
-// ## jQuery Controls
-
-// - scripts/controls.js
-// - Author: Donghao Ren, PKUVIS, Peking University, 2013.04
-// - See LICENSE.txt for copyright information.
-
 // This file can be considered as a set of jQuery plugins.
 
 // ### IVInputNumeric

@@ -1,10 +1,3 @@
-// iVisDesigner
-// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
-// See LICENSE.txt for copyright information.
-
-// scripts/panels.js
-// Edit panels.
-
 IV.panels = { };
 
 IV.panels.beginEdit = function(objects, callback) {

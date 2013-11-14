@@ -1,7 +1,9 @@
 #!/usr/bin/python
 
 # iVisDesigner
-# Author: Donghao Ren, PKUVIS, Peking University, 2013.04
+# Author: Donghao Ren
+#   PKUVIS, Peking University, 2013.04-2013.09
+#   FourEyes Lab, UC Santa Barbara, 2013.09-present
 # See LICENSE.txt for copyright information.
 
 from SwBuilder import *

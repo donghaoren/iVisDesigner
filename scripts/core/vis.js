@@ -1,5 +1,3 @@
-// ### Visualization Object
-
 IV.Visualization = function() {
     // All objects of the visualization, ordered in an array.
     this.objects = [];

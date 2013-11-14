@@ -1,8 +1,3 @@
-// ### Path
-
-// Basic path.
-// Path = [key1]:key2:key3:value
-
 IV.Path = function(str) {
     if(!str || str == "[ROOT]") str = "";
     if(typeof(str) == "string") {

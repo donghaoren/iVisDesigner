@@ -1,10 +1,3 @@
-// iVisDesigner
-// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
-// See LICENSE.txt for copyright information.
-
-// scripts/objects/shapes.js
-// Define objects for various shapes.
-
 (function() {
 
 var GoogleMapStatic = function(lng, lat, zoom, size_x, size_y, maptype, scale) {

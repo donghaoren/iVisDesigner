@@ -1,7 +1,3 @@
-// iVisDesigner
-// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
-// See LICENSE.txt for copyright information.
-
 // scripts/panel.js
 // Implements a jQuery plugin IVPanel.
 

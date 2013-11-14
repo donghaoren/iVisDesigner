@@ -1,6 +1,3 @@
-// Function: IV.getOptimalRatio()
-// Get optimal resoultion ratio for canvas rendering.
-
 IV.getOptimalRatio = function() {
     var canvas = document.createElement("canvas");
     var g = canvas.getContext("2d");

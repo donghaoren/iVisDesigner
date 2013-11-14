@@ -1,5 +1,3 @@
-// The path style object.
-
 Objects.PathStyle = IV.extend(Objects.Object, function() {
     Objects.Object.call(this);
     // Default attributes.

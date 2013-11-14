@@ -1,10 +1,3 @@
-// iVisDesigner
-// Author: Donghao Ren, PKUVIS, Peking University, 2013.04
-// See LICENSE.txt for copyright information.
-
-// scripts/objects/base.js
-// Base objects.
-
 (function() {
 
 // Plain Object.
