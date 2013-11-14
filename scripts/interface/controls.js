@@ -10,6 +10,10 @@ IV._E = function(type, cls, text) {
     return e;
 };
 
+IV._icon = function(cls) {
+    return $('<i class="' + cls + '"></i>');
+};
+
 $.fn.IVInputNumeric = function(num) {
     var $this = this;
     var data = $this.data();

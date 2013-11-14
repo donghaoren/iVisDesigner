@@ -1,6 +1,6 @@
 (function() {
 
-{{include: utils.js}}
+{{include: render.js}}
 
 {{include: style.js}}
 
