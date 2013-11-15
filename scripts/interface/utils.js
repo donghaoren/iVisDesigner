@@ -81,14 +81,18 @@ IV.registerObjectType("span[data-toggle]", function() {
         });
     } else {
         if(!IV.exists(id)) IV.add(id, "bool");
-        if(IV.get(id)) {
-            $(this).addClass("toggle-on");
-        } else {
-            $(this).removeClass("toggle-on");
-        }
+        var th = $(this);
+        var f = function() {
+            if(IV.get(id)) {
+                th.addClass("toggle-on");
+            } else {
+                th.removeClass("toggle-on");
+            }
+        };
+        IV.listen(id, f);
+        f();
         $(this).click(function() {
             IV.set(id, !IV.get(id));
-            $(this).toggleClass("toggle-on");
         });
     }
 }, "unique");

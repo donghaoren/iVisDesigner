@@ -69,6 +69,7 @@ IV.Renderer = function() {
     this.frame_origin = true;
     this.frame_grid = true;
     this.grid_size = 10;
+    this.show_guide = true;
     var $this = this;
 
     IV.EventSource.call(this);
@@ -125,7 +126,7 @@ IV.Renderer = function() {
             g.strokeStyle = "gray";
             g.stroke();
         }
-        if($this.vis) {
+        if($this.vis && $this.show_guide) {
             $this.vis.renderGuide(data, g);
         }
     });

@@ -1,99 +1,5 @@
 (function() {
 
-var FontStyle = IV.extend(Object, function(info) {
-    this.fillDefault();
-    this.type = "FontStyle";
-}, {
-    fillDefault: function() {
-        if(this.font_family === undefined) this.font_family = "Arial";
-        if(this.font_size === undefined) this.font_size = 11;
-    },
-    postDeserialize: function() {
-        this.fillDefault();
-    },
-    getPropertyContext: function() {
-        var $this = this;
-        return [
-            {
-                name: "Family",
-                group: "Track",
-                type: "plain-string",
-                get: function() { return $this.font_family; },
-                set: function(val) { return $this.font_family = val; }
-            },
-            {
-                name: "Size",
-                group: "Track",
-                type: "plain-number",
-                get: function() { return $this.font_size; },
-                set: function(val) { return $this.font_size = val; }
-            }
-        ];
-    },
-    getFont: function() {
-        return this.font_size + 'px ' + this.font_family;
-    }
-});
-IV.serializer.registerObjectType("FontStyle", FontStyle);
-
-var TickStyle = IV.extend(Object, function(info) {
-    this.fillDefault();
-    this.type = "TickStyle";
-}, {
-    fillDefault: function() {
-        if(this.show_ticks === undefined) this.show_ticks = true;
-        if(this.tick_size === undefined) this.tick_size = 2;
-        if(this.tick_count === undefined) this.tick_count = 5;
-        if(this.tick_color === undefined) this.tick_color = new IV.Color(0, 0, 0, 1);
-        if(this.tick_format === undefined) this.tick_format = "g";
-        if(this.font === undefined) this.font = new FontStyle();
-    },
-    postDeserialize: function() {
-        this.fillDefault();
-    },
-    getPropertyContext: function() {
-        var $this = this;
-        return [
-            {
-                name: "Show",
-                type: "plain-bool",
-                get: function() { return $this.show_ticks; },
-                set: function(val) { return $this.show_ticks = val; }
-            },
-            {
-                name: "Size",
-                type: "plain-number",
-                get: function() { return $this.tick_size; },
-                set: function(val) { return $this.tick_size = val; }
-            },
-            {
-                name: "Count",
-                type: "plain-string",
-                get: function() { return $this.tick_count; },
-                set: function(val) { return $this.tick_count = val; }
-            },
-            {
-                name: "Color",
-                type: "plain-color",
-                get: function() { return $this.tick_color; },
-                set: function(val) { return $this.tick_color = val; }
-            },
-            {
-                name: "Format",
-                type: "plain-string",
-                get: function() { return $this.tick_format; },
-                set: function(val) { return $this.tick_format = val; }
-            },
-            {
-                name: "Font",
-                type: "nested",
-                properties: $this.font.getPropertyContext()
-            }
-        ];
-    }
-});
-IV.serializer.registerObjectType("TickStyle", TickStyle);
-
 var Track = IV.extend(Objects.Object, function(info) {
     Objects.Object.call(this);
     this.path = info.path;
@@ -296,8 +202,40 @@ var Track = IV.extend(Objects.Object, function(info) {
                         if(Math.abs(Math.round(Math.log10(ti)) - Math.log10(ti)) > 1e-6)
                             continue;
                     var v = scale(ti);
+                    var text = format(ti);
+
+                    var font_height = tick_style.font.font_size;
+                    var rotation = tick_style.rotation;
+                    // Make rotation within -180 to 180.
+                    rotation = rotation % 360;
+                    if(rotation < 0) rotation += 360;
+                    if(rotation > 180) rotation -= 360;
+                    var rotation_rad = rotation / 180.0 * Math.PI;
+                    var font_width = g.measureText(text).width;
+                    var sh = Math.min(Math.abs(rotation) / 10, 1);
                     g.textAlign = "center";
-                    g.fillText(format(ti), v, -2 - ts);
+                    if(ts >= 0) {
+                        var rsh = Math.cos(rotation_rad) * font_width / 2 * sh;
+                        if(rotation > 0) rsh = -rsh;
+                        var rsw = 0;
+                        if(Math.abs(rotation) > 90) rsw = Math.abs(Math.cos(rotation_rad)) * font_height;
+                        g.save();
+                        g.translate(v + rsh, -2 - ts - Math.abs(Math.sin(rotation_rad)) * font_width / 2 - rsw);
+                        g.rotate(rotation_rad);
+                        g.fillText(text, 0, 0);
+                        g.restore();
+                    } else {
+                        var rsh = Math.cos(rotation_rad) * font_width / 2 * sh;
+                        if(rotation < 0) rsh = -rsh;
+                        var rsw = 0;
+                        if(Math.abs(rotation) < 90) rsw = Math.abs(Math.cos(rotation_rad)) * font_height;
+                        g.save();
+                        g.translate(v + rsh, 2 - ts + Math.abs(Math.sin(rotation_rad)) * font_width / 2 + rsw);
+                        g.rotate(rotation_rad);
+                        g.fillText(text, 0, 0);
+                        g.restore();
+                        //g.fillText(text, v, -ts + font_height);
+                    }
                 }
                 g.restore();
             });
@@ -519,6 +457,25 @@ var Scatter = IV.extend(Objects.Object, function(info) {
                 c2.onMove(p0, p1);
             }
         };
+    },
+    getPropertyContext: function() {
+        var $this = this;
+        return Objects.Object.prototype.getPropertyContext.call(this).concat([
+            {
+                name: "XTicks",
+                group: "Scatter",
+                type: "plain-bool",
+                get: function() { return $this.show_x_ticks; },
+                set: function(val) { return $this.show_x_ticks = val; }
+            },
+            {
+                name: "YTicks",
+                group: "Scatter",
+                type: "plain-bool",
+                get: function() { return $this.show_y_ticks; },
+                set: function(val) { return $this.show_y_ticks = val; }
+            }
+        ]);
     }
 });
 

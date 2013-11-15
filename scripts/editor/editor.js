@@ -146,6 +146,21 @@ Editor.bind("reset", function() {
     }
 });
 
+IV.set("visible-guide", true);
+IV.set("visible-grid", true);
+IV.listen("visible-guide", function(val) {
+    Editor.renderer.show_guide = val;
+    Editor.renderer.trigger();
+    Editor.renderer.render();
+});
+
+IV.listen("visible-grid", function(val) {
+    Editor.renderer.frame_origin = val;
+    Editor.renderer.frame_grid = val;
+    Editor.renderer.trigger();
+    Editor.renderer.render();
+});
+
 setInterval(function() {
     if(Editor.vis && Editor.data) {
         Editor.vis.timerTick(Editor.data);
