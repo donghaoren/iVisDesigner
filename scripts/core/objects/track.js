@@ -171,6 +171,12 @@ var Track = IV.extend(Objects.Object, function(info) {
             g.fillStyle = tick_style.tick_color.toRGBA();
             g.font = tick_style.font.getFont();
             var format = d3.format(tick_style.tick_format);
+            if(tick_style.tick_format.slice(-2) == ".T") {
+                var tf = d3.time.format(tick_style.tick_format.slice(0, -2));
+                format = function(val) {
+                    return tf(new Date(val * 1000));
+                };
+            }
             $this.enumerateGuide(data, function(p1, p2, ctx) {
                 var dir = p2.sub(p1).normalize();
                 var len = p2.distance(p1);

@@ -4,9 +4,10 @@ import time
 import redis
 
 rdb  = redis.StrictRedis("localhost", 6379, db=0)
-doc = DocumentRepresentation(rdb, "monitor", {
-    "measures": []
-})
+doc = DocumentRepresentation(rdb, "monitor")
+
+if not 'measures' in doc.data:
+    doc.set(doc.data, "measures", [])
 
 net = psutil.net_io_counters()
 net_sbytes = net.bytes_sent

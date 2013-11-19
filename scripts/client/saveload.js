@@ -90,7 +90,9 @@ IV.on("command:toolkit.start", function() {
                                                     load_dataset_from_server(data.dataset_info, function() {
                                                         var vis_data = JSON.parse(data.content);
                                                         IV.visualization_info = data;
-                                                        IV.loadVisualization(IV.serializer.deserialize(vis_data));
+                                                        var vis = IV.serializer.deserialize(vis_data);
+                                                        IV.loadVisualization(vis);
+                                                        vis.clearSelection();
                                                         IV.dataset_id = data.dataset_info.id;
                                                         ctx.close();
                                                     });
