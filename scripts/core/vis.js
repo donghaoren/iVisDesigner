@@ -157,6 +157,7 @@ IV.Visualization.prototype.appendSelection = function(ctx) {
 };
 // Clear selected objects.
 IV.Visualization.prototype.clearSelection = function() {
+    this.objects.forEach(function(obj) { obj.selected = false; });
     this.selection.forEach(function(c) { c.obj.selected = false; });
     this.selection = [];
     this.raise("selection");

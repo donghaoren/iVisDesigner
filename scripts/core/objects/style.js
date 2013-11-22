@@ -45,6 +45,15 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
         this._run_path(g, path);
         g.stroke();
     },
+    renderText: function(context, g, text, x, y, font) {
+        var $this = this;
+        this.actions.forEach(function(act) {
+            if(act.enabled) {
+                if(!act.enabled.get(context)) return;
+            }
+            $this["_perform_" + act.type + "_text"](act, context, g, text, x, y, font);
+        });
+    },
     clone: function() {
         var r = new Objects.PathStyle();
         r.actions = this.actions.map(function(act) {
@@ -136,6 +145,24 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
         g.beginPath();
         this._run_path(g, path);
         g.fill();
+    },
+    _perform_stroke_text: function(act, context, g, text, x, y, font) {
+        var w = act.width.get(context);
+        if(w <= 0) return;
+        var color = act.color.get(context).toRGBA();
+        g.strokeStyle = color;
+        g.lineWidth = w;
+        g.lineCap = act.cap.get(context);
+        g.lineJoin = act.join.get(context);
+        g.miterLimit = 10 * g.iv_pre_ratio; // adapt with pre-scale ratio.
+        g.ivSetFont(font);
+        g.ivStrokeText(text, x, y);
+    },
+    _perform_fill_text: function(act, context, g, text, x, y, font) {
+        var color = act.color.get(context).toRGBA();
+        g.fillStyle = color;
+        g.ivSetFont(font);
+        g.ivFillText(text, x, y);
     }
 });
 
@@ -172,7 +199,10 @@ var FontStyle = IV.extend(Object, function(info) {
         ];
     },
     getFont: function() {
-        return this.font_size + 'px ' + this.font_family;
+        return {
+            family: this.font_family,
+            size: this.font_size
+        };
     }
 });
 IV.serializer.registerObjectType("FontStyle", FontStyle);
@@ -183,6 +213,7 @@ var TickStyle = IV.extend(Object, function(info) {
 }, {
     fillDefault: function() {
         if(this.show_ticks === undefined) this.show_ticks = true;
+        if(this.tick_width === undefined) this.tick_width = 1;
         if(this.tick_size === undefined) this.tick_size = 2;
         if(this.tick_count === undefined) this.tick_count = 5;
         if(this.tick_color === undefined) this.tick_color = new IV.Color(0, 0, 0, 1);
@@ -207,6 +238,12 @@ var TickStyle = IV.extend(Object, function(info) {
                 type: "plain-number",
                 get: function() { return $this.tick_size; },
                 set: function(val) { return $this.tick_size = val; }
+            },
+            {
+                name: "Width",
+                type: "plain-number",
+                get: function() { return $this.tick_width; },
+                set: function(val) { return $this.tick_width = val; }
             },
             {
                 name: "Rotation",

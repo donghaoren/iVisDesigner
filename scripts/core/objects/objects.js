@@ -49,6 +49,7 @@ Objects.Object.prototype = {
 {{include: style.js}}
 {{include: track.js}}
 {{include: shapes.js}}
+{{include: text.js}}
 {{include: layout.js}}
 {{include: map.js}}
 {{include: component.js}}

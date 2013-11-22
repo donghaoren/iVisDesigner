@@ -1523,6 +1523,14 @@ NS.raiseObjectEvent = function(obj, event_key) {
     });
 };
 
+NS.isNull = function(val) {
+    return val === null || val === undefined;
+};
+
+NS.notNull = function(val) {
+    return val !== null && val !== undefined;
+};
+
 NS.strings = function(key) {
     return DATA_Strings[key];
 };

@@ -242,6 +242,35 @@ CanvasRenderingContext2D.prototype.ivGuideLineWidth = function() {
     return this.lineWidth = this.ivGetGuideWidth();
 };
 
+CanvasRenderingContext2D.prototype.ivSetFont = function(font_info) {
+    var sz = font_info.size ? font_info.size : 12;
+    var f = font_info.family ? font_info.family : "Arial";
+    this.font = "36px " + f;
+    this._font_size = sz;
+};
+
+CanvasRenderingContext2D.prototype.ivMeasureText = function(s) {
+    var r = this.measureText(s);
+    return { width: r.width / 36 * this._font_size };
+};
+
+CanvasRenderingContext2D.prototype.ivFillText = function(s, x, y) {
+    this.save();
+    var scale = 1.0 / 36.0 * this._font_size;
+    this.translate(x, y);
+    this.scale(scale, -scale);
+    this.fillText(s, 0, 0);
+    this.restore();
+};
+CanvasRenderingContext2D.prototype.ivStrokeText = function(s, x, y) {
+    this.save();
+    var scale = 1.0 / 36.0 * this._font_size;
+    this.translate(x, y);
+    this.scale(scale, -scale);
+    this.strokeText(s, 0, 0);
+    this.restore();
+};
+
 IV.Renderer.prototype._set_transform = function(ctx) {
     ctx.iv_pre_ratio = this.manager.ratio;
     ctx.ivAppendTransform(new IV.affineTransform([

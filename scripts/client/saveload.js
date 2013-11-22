@@ -92,8 +92,8 @@ IV.on("command:toolkit.start", function() {
                                                         IV.visualization_info = data;
                                                         var vis = IV.serializer.deserialize(vis_data);
                                                         IV.loadVisualization(vis);
-                                                        vis.clearSelection();
                                                         IV.dataset_id = data.dataset_info.id;
+                                                        vis.clearSelection();
                                                         ctx.close();
                                                     });
                                                 });

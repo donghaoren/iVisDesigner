@@ -169,7 +169,8 @@ var Track = IV.extend(Objects.Object, function(info) {
         if(tick_style.show_ticks) {
             g.strokeStyle = tick_style.tick_color.toRGBA();
             g.fillStyle = tick_style.tick_color.toRGBA();
-            g.font = tick_style.font.getFont();
+            g.lineWidth = tick_style.tick_width;
+            g.ivSetFont(tick_style.font.getFont());
             var format = d3.format(tick_style.tick_format);
             if(tick_style.tick_format.slice(-2) == ".T") {
                 var tf = d3.time.format(tick_style.tick_format.slice(0, -2));
@@ -183,7 +184,6 @@ var Track = IV.extend(Objects.Object, function(info) {
                 g.save();
                 g.translate(p1.x, p1.y);
                 g.rotate(Math.atan2(dir.y, dir.x));
-                g.scale(1, -1);
 
                 g.beginPath();
                 g.moveTo(0, 0);
@@ -217,28 +217,29 @@ var Track = IV.extend(Objects.Object, function(info) {
                     if(rotation < 0) rotation += 360;
                     if(rotation > 180) rotation -= 360;
                     var rotation_rad = rotation / 180.0 * Math.PI;
-                    var font_width = g.measureText(text).width;
+                    var font_width = g.ivMeasureText(text).width;
                     var sh = Math.min(Math.abs(rotation) / 10, 1);
                     g.textAlign = "center";
+                    var roffset = tick_style.font.font_size / 5;
                     if(ts >= 0) {
                         var rsh = Math.cos(rotation_rad) * font_width / 2 * sh;
                         if(rotation > 0) rsh = -rsh;
                         var rsw = 0;
-                        if(Math.abs(rotation) > 90) rsw = Math.abs(Math.cos(rotation_rad)) * font_height;
+                        if(Math.abs(rotation) < 90) rsw = Math.abs(Math.cos(rotation_rad)) * font_height;
                         g.save();
-                        g.translate(v + rsh, -2 - ts - Math.abs(Math.sin(rotation_rad)) * font_width / 2 - rsw);
+                        g.translate(v + rsh, -roffset - ts - Math.abs(Math.sin(rotation_rad)) * font_width / 2 - rsw);
                         g.rotate(rotation_rad);
-                        g.fillText(text, 0, 0);
+                        g.ivFillText(text, 0, 0);
                         g.restore();
                     } else {
                         var rsh = Math.cos(rotation_rad) * font_width / 2 * sh;
                         if(rotation < 0) rsh = -rsh;
                         var rsw = 0;
-                        if(Math.abs(rotation) < 90) rsw = Math.abs(Math.cos(rotation_rad)) * font_height;
+                        if(Math.abs(rotation) > 90) rsw = Math.abs(Math.cos(rotation_rad)) * font_height;
                         g.save();
-                        g.translate(v + rsh, 2 - ts + Math.abs(Math.sin(rotation_rad)) * font_width / 2 + rsw);
+                        g.translate(v + rsh, roffset - ts + Math.abs(Math.sin(rotation_rad)) * font_width / 2 + rsw);
                         g.rotate(rotation_rad);
-                        g.fillText(text, 0, 0);
+                        g.ivFillText(text, 0, 0);
                         g.restore();
                         //g.fillText(text, v, -ts + font_height);
                     }

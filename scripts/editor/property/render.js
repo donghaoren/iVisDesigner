@@ -178,6 +178,19 @@ var render_property_field = function(item) {
             }
         });
     }
+    if(type == "string") {
+        make_switch_button([ "Plain", "Categorical", "Equals"], function(val) {
+            if(val == "Plain") {
+                reload_item(new IV.objects.Plain(""));
+            }
+            if(val == "Categorical") {
+                reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], [], "", "string"));
+            }
+            if(val == "Equals") {
+                reload_item(new IV.objects.PassThrough(new IV.Path()));
+            }
+        });
+    }
     reload_item();
 
     return target;

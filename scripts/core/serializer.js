@@ -99,7 +99,7 @@ IV.serializer.deserialize = function(d) {
         var item = d.objects[u];
         var constructor = Object;
         if(object_types[item.t]) constructor = object_types[item.t];
-        else console.log("Unknown type: " + item.t);
+        //else console.log("Unknown type: " + item.t);
         context.objects[u] = Object.create(constructor.prototype);
         context.objects[u].__waiting__ = true;
     }
