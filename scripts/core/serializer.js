@@ -29,9 +29,9 @@ var serialize_internal = function(item, context) {
         if(context.objects[item.uuid])
             return { u: item.uuid };
         var obj = { };
-        if(item.type === undefined) {
+        /*if(item.type === undefined) {
             console.log("Can't serialize:", item);
-        }
+        }*/
         context.objects[item.uuid] = { u: item.uuid, p: obj, t: item.type };
         var fields = item.serializeFields ? item.serializeFields() : null;
         if(fields) {

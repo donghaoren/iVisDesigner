@@ -15,7 +15,7 @@ Tools.Text = {
                     path: path,
                     anchor: loc
                 });
-                Editor.doAddObject(Text);
+                Editor.doAddObject(text);
             }
         }, "tools:Text");
     },

@@ -119,15 +119,24 @@ var render_property_field = function(item) {
     var reload_item = function(val) {
         if(val !== undefined) item.set(val);
         iVal.children().remove();
-        iVal.append(render_object_value(item.get(), item.args, function(new_val) {
-            if(new_val !== undefined) {
-                item.set(new_val);
-                reload_item();
-            }
-            Editor.renderer.trigger();
-            Editor.renderer.render();
-        }));
-
+        if(item.type == "button") {
+            item.get().split(",").forEach(function(name) {
+                iVal.append(IV._E("span", "btn", name).click(function() {
+                    item.set(name);
+                    Editor.renderer.trigger();
+                    Editor.renderer.render();
+                }));
+            });
+        } else {
+            iVal.append(render_object_value(item.get(), item.args, function(new_val) {
+                if(new_val !== undefined) {
+                    item.set(new_val);
+                    reload_item();
+                }
+                Editor.renderer.trigger();
+                Editor.renderer.render();
+            }));
+        }
     };
     target.append(iName);
     target.append(iVal);

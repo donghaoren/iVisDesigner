@@ -209,7 +209,7 @@ IV.listen("tools:current", function(val) {
 {{include: circle.js}}
 {{include: line.js}}
 {{include: component.js}}
-
+{{include: text.js}}
 {{include: viewarea.js}}
 
 {{include: moveelement.js}}

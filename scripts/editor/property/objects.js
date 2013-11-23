@@ -24,6 +24,13 @@ object_renderers.CategoricalMapping = function(item, args, callback) {
                 return new_val;
             });
             var ss;
+            if(item.value_type == "string") {
+                ss = primitives.String(function() { return item.values[index]; }, function(new_val) {
+                    item.values[index] = new_val;
+                    callback();
+                    return new_val;
+                });
+            }
             if(item.value_type == "number") {
                 ss = primitives.Number(function() { return item.values[index]; }, function(new_val) {
                     item.values[index] = new_val;
@@ -58,6 +65,13 @@ object_renderers.CategoricalMapping = function(item, args, callback) {
         callback(item);
     });
     var fallback_control;
+    if(item.value_type == "string") {
+        fallback_control = primitives.String(function() { return item.fallback; }, function(new_val) {
+            item.fallback = new_val;
+            callback();
+            return new_val;
+        });
+    }
     if(item.value_type == "number") {
         fallback_control = primitives.Number(function() { return item.fallback; }, function(new_val) {
             item.fallback = new_val;
