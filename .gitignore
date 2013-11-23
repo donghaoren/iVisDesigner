@@ -2,6 +2,7 @@ temp/
 deploy/
 dist/
 docs/
+website/
 images/unused
 images/iconfont/*.svg
 images/iconfont/*.ttf

@@ -52,7 +52,7 @@ Binary("datasets/test.schema", "datasets/test.yaml");
 Binary("datasets/test.data", "datasets/test.data.yaml");
 
 HTML("toolkit.html", "html/toolkit.html")
-HTML("credits.html", "CREDITS.md")
-HTML("license.html", "LICENSE.md")
+env.Markdown("temp/credits.html", "CREDITS.md")
+env.Markdown("temp/license.html", "LICENSE.md")
 
 WriteDeployList("deploy_list")
