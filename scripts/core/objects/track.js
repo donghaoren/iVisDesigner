@@ -374,10 +374,22 @@ var Scatter = IV.extend(Objects.Object, function(info) {
             return scatter(p1.interp(p2, k1), q1.interp(q2, k2));
         };
         var s = 0.05;
-        var lines = [[kscatter(0, s), kscatter(0, 1 - s)],
-                     [kscatter(1, s), kscatter(1, 1 - s)],
-                     [kscatter(s, 0), kscatter(1 - s, 0)],
-                     [kscatter(s, 1), kscatter(1 - s, 1)]];
+        var s1 = 0.06;
+        var s2 = 0.04;
+        var lines = [
+            [kscatter(0, s), kscatter(0, 1 - s)],
+            [kscatter(1, s), kscatter(1, 1 - s)],
+            [kscatter(s, 0), kscatter(1 - s, 0)],
+            [kscatter(s, 1), kscatter(1 - s, 1)],
+            [kscatter(s1, s), kscatter(s2, s)],
+            [kscatter(1 - s1, s), kscatter(1 - s2, s)],
+            [kscatter(s1, 1 - s), kscatter(s2, 1 - s)],
+            [kscatter(1 - s1, 1 - s), kscatter(1 - s2, 1 - s)],
+            [kscatter(s, s1), kscatter(s, s2)],
+            [kscatter(s, 1 - s1), kscatter(s, 1 - s2)],
+            [kscatter(1 - s, s1), kscatter(1 - s, s2)],
+            [kscatter(1 - s, 1 - s1), kscatter(1 - s, 1 - s2)]
+        ];
         return lines;
     },
     renderGuide: function(g, data) {
