@@ -10,6 +10,7 @@ Tools.MoveElement = {
         Tools.beginSelectObject(function(context, e_down) {
             if(context) {
             } else {
+                return;
             }
             if(context.onMove) {
                 var handle_r = function(r) {

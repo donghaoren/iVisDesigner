@@ -86,6 +86,8 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
             if(d <= 4.0 / pt.view_scale) {
                 if(!rslt || rslt.distance > d) {
                     rslt = { distance: d, context: context.clone() };
+                    make_anchor_move_context(rslt, $this.center, action);
+                    /*
                     if(action == "move") {
                         if($this.center.type == "Plain") {
                             rslt.original = $this.center.obj;
@@ -110,6 +112,7 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
                             };
                         }
                     }
+                    */
                 }
             }
         });
@@ -130,6 +133,7 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
         cb([ "M", p1, "L", p2 ]);
     },
     select: function(pt, data, action) {
+        if(action == "move-element") return null;
         var rslt = null;
         var $this = this;
         this.path.enumerate(data, function(context) {
@@ -180,6 +184,7 @@ Objects.Bar = IV.extend(Objects.Shape, function(info) {
         ]);
     },
     select: function(pt, data, action) {
+        if(action == "move-element") return null;
         var rslt = null;
         var $this = this;
         this.path.enumerate(data, function(context) {
@@ -224,6 +229,7 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
         return this.points.getPoint(context);
     },
     select: function(pt, data, action) {
+        if(action == "move-element") return null;
         var rslt = null;
         var $this = this;
         $this.path.enumerate(data, function(fctx) {

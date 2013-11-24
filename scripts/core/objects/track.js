@@ -249,6 +249,7 @@ var Track = IV.extend(Objects.Object, function(info) {
         }
     },
     select: function(pt, data, action) {
+        if(action == "move-element") return null;
         var $this = this;
         var rslt = null;
         this.enumerateGuide(data, function(p1, p2) {
@@ -443,6 +444,7 @@ var Scatter = IV.extend(Objects.Object, function(info) {
         });
     },
     select: function(pt, data, action) {
+        if(action == "move-element") return null;
         var $this = this;
         var rslt = null;
         $this.enumerateGuide(data, function(p1, p2, q1, q2) {

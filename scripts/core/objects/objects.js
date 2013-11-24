@@ -45,6 +45,7 @@ Objects.Object.prototype = {
     }
 };
 
+{{include: utils.js}}
 {{include: base.js}}
 {{include: style.js}}
 {{include: track.js}}

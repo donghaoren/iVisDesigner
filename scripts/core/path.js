@@ -147,7 +147,7 @@ IV.PathContext.prototype.set = function(path, value) {
         } else {
             obj = obj[pc.name];
         }
-        obj = nc.obj;
+        //obj = nc.obj;
     }
     var pc = path.components[i];
     obj[pc.name] = value;

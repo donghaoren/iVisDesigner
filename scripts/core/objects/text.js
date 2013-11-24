@@ -13,6 +13,28 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
     onAttach: function(vis) {
         this.vis = vis;
     },
+    _get_rect: function(context, no_offset) {
+        var text = this.text.get(context);
+        var text_align = this.text_align.get(context);
+        var font = {
+            family: this.font_family.get(context),
+            size: this.font_size.get(context)
+        };
+        var p = this.anchor.get(context);
+        var x0 = p.x;
+        var y0 = p.y;
+        var w = IV.measureText(text, "36px " + font.family).width / 36 * font.size;
+        var h = font.size;
+        y0 += h / 2;
+        if(!no_offset && this.offsets) {
+            var oid = context.data.getObjectID(context.val());
+            if(this.offsets[oid]) {
+                x0 += this.offsets[oid].x;
+                y0 += this.offsets[oid].y;
+            }
+        }
+        return [ x0, y0, w, h ];
+    },
     render: function(g, data) {
         var $this = this;
         $this.path.enumerate(data, function(context) {
@@ -34,6 +56,25 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
             $this.style.renderText(context, g, text, p.x, p.y, font);
         });
     },
+    renderSelected: function(g, data, context) {
+        var $this = this;
+        var draw_with_context = function(context) {
+            var r = $this._get_rect(context);
+            g.ivGuideLineWidth();
+            g.strokeStyle = IV.colors.selection.toRGBA();
+            g.fillStyle = IV.colors.selection.toRGBA();
+            g.beginPath();
+            var w = r[2] / 2, h = r[3] / 2;
+            g.moveTo(r[0] - w, r[1] - h);
+            g.lineTo(r[0] + w, r[1] - h);
+            g.lineTo(r[0] + w, r[1] + h);
+            g.lineTo(r[0] - w, r[1] + h);
+            g.closePath();
+            g.stroke();
+        };
+        if(context) draw_with_context(context);
+        else $this.path.enumerate(data, draw_with_context);
+    },
     can: function(cap) {
         if(cap == "get-point") return true;
     },
@@ -46,19 +87,8 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
         var data = this.vis.data;
         var rects = [];
         $this.path.enumerate(data, function(context) {
-            var text = $this.text.get(context);
-            var text_align = $this.text_align.get(context);
-            var font = {
-                family: $this.font_family.get(context),
-                size: $this.font_size.get(context)
-            };
-            var p = $this.anchor.get(context);
-            var x0 = p.x;
-            var y0 = p.y;
-            var w = IV.measureText(text, "36px " + font.family).width / 36 * font.size;
-            var h = font.size;
-            y0 += h / 2;
-            rects.push([ data.getObjectID(context.val()), x0, y0, w * 1.05, h * 1.05 ]);
+            var r = $this._get_rect(context, true);
+            rects.push([ data.getObjectID(context.val()), r[0], r[1], r[2] * 1.05, r[3] * 1.05 ]);
         });
         var Y = [];
         for(var i = 0; i < rects.length; i++) {
@@ -162,6 +192,17 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
     },
     select: function(pt, data, action) {
         var rslt = null;
+        var $this = this;
+        this.path.enumerate(data, function(context) {
+            var r = $this._get_rect(context);
+            if(Math.abs(pt.x - r[0]) < r[2] / 2 && Math.abs(pt.y - r[1]) < r[3] / 2) {
+                var d = pt.distance(new IV.Vector(r[0], r[1]));
+                if(!rslt || rslt.distance > d) {
+                    rslt = { distance: d, context: context.clone() };
+                    make_anchor_move_context(rslt, $this.anchor, action);
+                }
+            }
+        });
         return rslt;
     }
 });
