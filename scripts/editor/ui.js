@@ -110,29 +110,48 @@ IV.listen("status", function(s) {
         else s = JSON.stringify(str, null, " ");
         $("#log-container > ul").prepend($("<li></li>").append($("<pre></pre>").text(s)));
     };
-})();
 
-Editor.status = {
-    start: function() {
-        $(".status-text").html("");
-        return this;
-    },
-    add: function(info) {
-        this.append(info);
-        return this;
-    },
-    append: function(info) { // append will return a descriptor, while add return the obj.
-        var sp = $("<span />").text(info);
-        $(".status-text").append(sp);
-        var ctx = {
-            set: function(info) {
-                sp.text(info);
-            }
-        };
-        return ctx;
-    },
-    end: function() {
-        $(".status-text").html("");
-        return this;
-    }
-};
+
+    Editor.status = {
+        start: function() {
+            $(".status-text").html("");
+            return this;
+        },
+        add: function(info) {
+            this.append(info);
+            return this;
+        },
+        append: function(info) { // append will return a descriptor, while add return the obj.
+            var sp = $("<span />").text(info);
+            $(".status-text").append(sp);
+            var ctx = {
+                set: function(info) {
+                    sp.text(info);
+                }
+            };
+            return ctx;
+        },
+        end: function() {
+            $(".status-text").html("");
+            return this;
+        }
+    };
+
+    var editor_messages = {};
+
+    Editor.showMessage = function(str) {
+        var s;
+        if(editor_messages[str]) {
+            s = editor_messages[str];
+            clearTimeout(s.data().timeout);
+        } else {
+            s = IV._E("div").append(IV._E("span", type ? "msg-" + type : "message", str));
+            editor_messages[str] = s;
+            $("#editor-messages").append(s);
+        }
+        s.data().timeout = setTimeout(function() {
+            s.remove();
+            delete editor_messages[str];
+        }, 2000);
+    };
+})();

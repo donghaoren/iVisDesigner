@@ -299,3 +299,17 @@
         }
     }
 }
+
+#editor-messages {
+    position: fixed;
+    z-index: 10001;
+    left: 199px;
+    top: 84px;
+    & > div > span {
+        display: inline-block;
+        border: 1px solid @panel_titlecolor;
+        padding: 4px 5px;
+        margin: 2px 0px;
+        .panel_background();
+    }
+}

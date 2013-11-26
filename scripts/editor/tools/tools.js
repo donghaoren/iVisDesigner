@@ -195,7 +195,7 @@ IV.listen("tools:current", function(val) {
     } else {
         IV.current_tool = {
             onActive: function() {
-                IV.set("status", "This tool is not implemeted yet.");
+                Editor.showMessage("This tool is not implemeted yet.");
             }
         };
     }

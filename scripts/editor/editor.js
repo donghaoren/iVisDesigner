@@ -148,6 +148,8 @@ Editor.bind("reset", function() {
 
 IV.set("visible-guide", true);
 IV.set("visible-grid", true);
+IV.set("render-2x", IV.getOptimalRatio() == 2);
+
 IV.listen("visible-guide", function(val) {
     Editor.renderer.show_guide = val;
     Editor.renderer.trigger();
@@ -157,6 +159,17 @@ IV.listen("visible-guide", function(val) {
 IV.listen("visible-grid", function(val) {
     Editor.renderer.frame_origin = val;
     Editor.renderer.frame_grid = val;
+    Editor.renderer.trigger();
+    Editor.renderer.render();
+});
+
+
+IV.listen("render-2x", function(val) {
+    if(val) {
+        Editor.renderer.manager.setResolutionRatio(2);
+    } else {
+        Editor.renderer.manager.setResolutionRatio(1);
+    }
     Editor.renderer.trigger();
     Editor.renderer.render();
 });

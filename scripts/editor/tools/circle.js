@@ -16,6 +16,8 @@ Tools.Circle = {
                     center: loc
                 });
                 Editor.doAddObject(circle);
+            } else {
+                Editor.showMessage("No path selected.");
             }
         }, "tools:Circle");
     },
