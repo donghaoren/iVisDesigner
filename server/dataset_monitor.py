@@ -6,6 +6,26 @@ import redis
 rdb  = redis.StrictRedis("localhost", 6379, db=0)
 doc = DocumentRepresentation(rdb, "monitor")
 
+schema = """
+type: object
+source:
+  type: realtime
+  host: "[this]"
+  sid: "1"
+  name: "monitor"
+fields:
+  time_min: { type: number }
+  time_max: { type: number }
+  measures:
+    type: collection
+    fields:
+      time: { type: number }
+      cpu: { type: number }
+      memory: { type: number }
+      net_sent: { type: number }
+      net_recv: { type: number }
+""".strip()
+
 if not 'measures' in doc.data:
     doc.set(doc.data, "measures", [])
 

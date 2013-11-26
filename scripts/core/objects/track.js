@@ -11,6 +11,7 @@ var Track = IV.extend(Objects.Object, function(info) {
     this.guide_path = IV.Path.commonPrefix([ this.anchor1.getPath(), this.anchor2.getPath() ]);
     this.fillDefault();
 }, {
+    $auto_properties: [ "path", "anchor1", "anchor2", "min", "max", "mapping", "guide_path" ],
     fillDefault: function() {
         if(this.tick_style === undefined) this.tick_style = new TickStyle();
         if(this.mapping === undefined) this.mapping = "linear";
@@ -44,56 +45,15 @@ var Track = IV.extend(Objects.Object, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
-            {
-                name: "Path",
-                group: "Track",
-                type: "path",
-                get: function() { return $this.guide_path; },
-                set: function(val) { return $this.guide_path = val; }
-            },
-            {
-                name: "Value",
-                group: "Track",
-                type: "path",
-                get: function() { return $this.path; },
-                set: function(val) { return $this.path = val; }
-            },
-            {
-                name: "Min",
-                group: "Track",
-                type: "number",
-                get: function() { return $this.min; },
-                set: function(val) { return $this.min = val; }
-            },
-            {
-                name: "Max",
-                group: "Track",
-                type: "number",
-                get: function() { return $this.max; },
-                set: function(val) { return $this.max = val; }
-            },
-            {
-                name: "Anchor1",
-                group: "Track",
-                type: "point",
-                get: function() { return $this.anchor1; },
-                set: function(val) { return $this.anchor1 = val; }
-            },
-            {
-                name: "Anchor2",
-                group: "Track",
-                type: "point",
-                get: function() { return $this.anchor2; },
-                set: function(val) { return $this.anchor2 = val; }
-            },
-            {
-                name: "Mapping",
-                group: "Track",
-                type: "string",
-                args: [{ name: "linear", display: "Linear" }, { name: "logarithmic", display: "Logarithmic" }],
-                get: function() { return $this.mapping; },
-                set: function(val) { return $this.mapping = val; }
-            },
+            make_prop_ctx($this, "guide_path", "Path", "Track", "path"),
+            make_prop_ctx($this, "path", "Value", "Track", "path"),
+            make_prop_ctx($this, "min", "Min", "Track", "number"),
+            make_prop_ctx($this, "max", "Max", "Track", "number"),
+            make_prop_ctx($this, "anchor1", "Anchor1", "Track", "point"),
+            make_prop_ctx($this, "anchor2", "Anchor2", "Track", "point"),
+            make_prop_ctx($this, "mapping", "Mapping", "Track", "string",
+                [{ name: "linear", display: "Linear" }, { name: "logarithmic", display: "Logarithmic" }]
+            ),
             {
                 name: "Tick",
                 group: "Track",

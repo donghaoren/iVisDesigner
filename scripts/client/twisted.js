@@ -92,6 +92,7 @@ IV.server.SyncedObject = IV.extend(Object, function(name) {
         });
     },
     index_object: function(obj) {
+        if(!obj) return obj;
         if(obj.constructor == Object) {
             this.index[obj._id] = obj;
             for(var k in obj) {
