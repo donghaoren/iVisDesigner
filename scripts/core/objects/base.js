@@ -132,6 +132,7 @@ var NumberLinear = IV.extend(Objects.Object, function(path, num1, num2, min, max
     this.max = max;
     this.type = "NumberLinear";
 }, {
+    $auto_properties: [ "path", "num1", "num2", "min", "max" ],
     get: function(context) {
         if(!this.path) return null;
         var value = context.get(this.path).val();
@@ -165,6 +166,10 @@ var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2, min, 
     this.type = "ColorLinear";
     this.mapping = "linear";
 }, {
+    $auto_properties: [ "path", "color1", "color2", "min", "max" ],
+    $auto_properties_after: function() {
+        this.propertyUpdate();
+    },
     get: function(context) {
         if(!this.path || this.min === undefined || this.max === undefined)
             return null;

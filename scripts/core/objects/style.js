@@ -168,10 +168,11 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
 
 IV.serializer.registerObjectType("PathStyle", Objects.PathStyle);
 
-var FontStyle = IV.extend(Object, function(info) {
+var FontStyle = IV.extend(Objects.Object, function(info) {
     this.fillDefault();
     this.type = "FontStyle";
 }, {
+    $auto_properties: [ "font_family", "font_size" ],
     fillDefault: function() {
         if(this.font_family === undefined) this.font_family = "Arial";
         if(this.font_size === undefined) this.font_size = 11;
@@ -182,20 +183,8 @@ var FontStyle = IV.extend(Object, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return [
-            {
-                name: "Family",
-                group: "Track",
-                type: "plain-string",
-                get: function() { return $this.font_family; },
-                set: function(val) { return $this.font_family = val; }
-            },
-            {
-                name: "Size",
-                group: "Track",
-                type: "plain-number",
-                get: function() { return $this.font_size; },
-                set: function(val) { return $this.font_size = val; }
-            }
+            make_prop_ctx(this, "font_family", "Family", undefined, "plain-string"),
+            make_prop_ctx(this, "font_size", "Size", undefined, "plain-number")
         ];
     },
     getFont: function() {
@@ -207,10 +196,11 @@ var FontStyle = IV.extend(Object, function(info) {
 });
 IV.serializer.registerObjectType("FontStyle", FontStyle);
 
-var TickStyle = IV.extend(Object, function(info) {
+var TickStyle = IV.extend(Objects.Object, function(info) {
     this.fillDefault();
     this.type = "TickStyle";
 }, {
+    $auto_properties: [ "show_ticks", "tick_size", "tick_width", "rotation", "tick_count", "tick_color", "tick_format" ],
     fillDefault: function() {
         if(this.show_ticks === undefined) this.show_ticks = true;
         if(this.tick_width === undefined) this.tick_width = 1;
@@ -227,48 +217,13 @@ var TickStyle = IV.extend(Object, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return [
-            {
-                name: "Show",
-                type: "plain-bool",
-                get: function() { return $this.show_ticks; },
-                set: function(val) { return $this.show_ticks = val; }
-            },
-            {
-                name: "Size",
-                type: "plain-number",
-                get: function() { return $this.tick_size; },
-                set: function(val) { return $this.tick_size = val; }
-            },
-            {
-                name: "Width",
-                type: "plain-number",
-                get: function() { return $this.tick_width; },
-                set: function(val) { return $this.tick_width = val; }
-            },
-            {
-                name: "Rotation",
-                type: "plain-number",
-                get: function() { return $this.rotation; },
-                set: function(val) { return $this.rotation = val; }
-            },
-            {
-                name: "Count",
-                type: "plain-string",
-                get: function() { return $this.tick_count; },
-                set: function(val) { return $this.tick_count = val; }
-            },
-            {
-                name: "Color",
-                type: "plain-color",
-                get: function() { return $this.tick_color; },
-                set: function(val) { return $this.tick_color = val; }
-            },
-            {
-                name: "Format",
-                type: "plain-string",
-                get: function() { return $this.tick_format; },
-                set: function(val) { return $this.tick_format = val; }
-            },
+            make_prop_ctx(this, "show_ticks", "Show", undefined, "plain-bool"),
+            make_prop_ctx(this, "tick_size", "Size", undefined, "plain-number"),
+            make_prop_ctx(this, "tick_width", "Width", undefined, "plain-number"),
+            make_prop_ctx(this, "rotation", "Rotation", undefined, "plain-number"),
+            make_prop_ctx(this, "tick_count", "Count", undefined, "plain-string"),
+            make_prop_ctx(this, "tick_color", "Color", undefined, "plain-color"),
+            make_prop_ctx(this, "tick_format", "Format", undefined, "plain-string"),
             {
                 name: "Font",
                 type: "nested",

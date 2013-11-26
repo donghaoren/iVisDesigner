@@ -13,14 +13,16 @@ var render_plain_value = function(item, args, callback) {
     var obj = item.obj;
     if(obj.constructor == Number) {
         return primitives.Number(function() { return item.obj; }, function(new_val) {
-            item.obj = new_val;
+            Actions.add(new Actions.SetDirectly(item, "obj", new_val));
+            Actions.commit();
             callback();
             return new_val;
         }, args);
     }
     if(obj.constructor == String) {
         return primitives.String(function() { return item.obj; }, function(new_val) {
-            item.obj = new_val;
+            Actions.add(new Actions.SetDirectly(item, "obj", new_val));
+            Actions.commit();
             callback();
             return new_val;
         }, args);
@@ -30,7 +32,8 @@ var render_plain_value = function(item, args, callback) {
     }
     if(obj instanceof IV.Color) {
         return primitives.Color(function() { return item.obj; }, function(new_val) {
-            item.obj = new_val;
+            Actions.add(new Actions.SetDirectly(item, "obj", new_val));
+            Actions.commit();
             callback();
             return new_val;
         }, args);
@@ -117,7 +120,10 @@ var render_property_field = function(item) {
     var iVal = IV._E("span", "val");
     var type = item.type;
     var reload_item = function(val) {
-        if(val !== undefined) item.set(val);
+        if(val !== undefined) {
+            Actions.add(new Actions.SetProperty(item, val));
+            Actions.commit();
+        }
         iVal.children().remove();
         if(item.type == "button") {
             item.get().split(",").forEach(function(name) {
@@ -130,7 +136,9 @@ var render_property_field = function(item) {
         } else {
             iVal.append(render_object_value(item.get(), item.args, function(new_val) {
                 if(new_val !== undefined) {
-                    item.set(new_val);
+                    Actions.add(new Actions.SetProperty(item, new_val));
+                    Actions.commit();
+                    //item.set(new_val);
                     reload_item();
                 }
                 Editor.renderer.trigger();

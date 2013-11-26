@@ -1409,7 +1409,28 @@ NS.extend = function(base, sub, funcs) {
     sub._base_constructor = base;
     if(funcs) {
         for(var i in funcs) {
-            sub.prototype[i] = funcs[i];
+            if(i == "$auto_properties") {
+                funcs[i].forEach(function(p) {
+                    if(funcs["$auto_properties_after"]) {
+                        var fafter = funcs["$auto_properties_after"];
+                        sub.prototype["_set_" + p] = function(val) {
+                            this[p] = val;
+                            fafter.call(this, p, val);
+                            return val;
+                        };
+                    } else {
+                        sub.prototype["_set_" + p] = function(val) {
+                            this[p] = val;
+                            return val;
+                        };
+                    }
+                    sub.prototype["_get_" + p] = function() {
+                        return this[p];
+                    };
+                });
+            } else {
+                sub.prototype[i] = funcs[i];
+            }
         }
     }
     return sub;

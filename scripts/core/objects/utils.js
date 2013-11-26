@@ -25,3 +25,14 @@ var make_anchor_move_context = function(rslt, anchor, action) {
     }
     return rslt;
 };
+
+var make_prop_ctx = function(obj, property, name, group, type) {
+    var ctx = { name: name, group: group, type: type, property: property, owner: obj };
+    ctx.get = function() {
+        return obj["_get_" + property]();
+    };
+    ctx.set = function(val) {
+        return obj["_set_" + property](val);
+    };
+    return ctx;
+};

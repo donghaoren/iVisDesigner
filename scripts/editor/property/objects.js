@@ -11,7 +11,6 @@ object_renderers.CategoricalMapping = function(item, args, callback) {
     var r = IV._E("span");
     for(var i = 0; i < item.keys.length; i++) {
         (function(index) {
-
             var sp = primitives.String(function() {
                 if(item.keys[index] === null) return "null";
                 return item.keys[index].toString();
@@ -92,25 +91,28 @@ object_renderers.CategoricalMapping = function(item, args, callback) {
 };
 object_renderers.ColorLinear = function(item, args, callback) {
     var c1 = primitives.Color(function() { return item.color1; }, function(new_val) {
-        item.color1 = new_val;
-        item.propertyUpdate();
+        Actions.add(new Actions.SetProperty(item, "color1", new_val));
+        Actions.commit();
         callback();
         return new_val;
     });
     var c2 = primitives.Color(function() { return item.color2; }, function(new_val) {
-        item.color2 = new_val;
+        Actions.add(new Actions.SetProperty(item, "color2", new_val));
+        Actions.commit();
         item.propertyUpdate();
         callback();
         return new_val;
     });
     var vmin = primitives.Number(function() { return item.min; }, function(new_val) {
-        item.min = new_val;
+        Actions.add(new Actions.SetProperty(item, "min", new_val));
+        Actions.commit();
         item.propertyUpdate();
         callback();
         return new_val;
     });
     var vmax = primitives.Number(function() { return item.max; }, function(new_val) {
-        item.max = new_val;
+        Actions.add(new Actions.SetProperty(item, "max", new_val));
+        Actions.commit();
         item.propertyUpdate();
         callback();
         return new_val;

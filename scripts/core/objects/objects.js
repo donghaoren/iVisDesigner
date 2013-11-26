@@ -27,6 +27,7 @@ Objects.Object.prototype = {
     renderSelected: function() { },
     renderGuide: function() { },
     renderGuideSelected: function() { },
+    setDirty: function() { },
     select: function() { return null; },
     clone: function() {
         throw new Error("Clone not implemented: " + this.type);
@@ -54,4 +55,5 @@ Objects.Object.prototype = {
 {{include: layout.js}}
 {{include: map.js}}
 {{include: component.js}}
+
 })();

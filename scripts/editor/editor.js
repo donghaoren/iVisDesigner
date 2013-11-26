@@ -59,6 +59,8 @@ Editor.doAddObject = function(obj) {
 
 {{include: tools/tools.js}}
 
+{{include: actionmanager.js}}
+
 Editor.setData = function(data) {
     Editor.data = data;
     Editor.renderer.setData(Editor.data);

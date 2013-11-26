@@ -5,6 +5,7 @@ Objects.Shape = IV.extend(Objects.Object,function(info) {
     else
         this.style = new Objects.PathStyle();
 }, {
+    $auto_properties: [ "path" ],
     render: function(g, data) {
         var $this = this;
         $this.path.enumerate(data, function(context) {
@@ -26,13 +27,7 @@ Objects.Shape = IV.extend(Objects.Object,function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
-            {
-                name: "Path",
-                group: "Shape",
-                type: "path",
-                get: function() { return $this.path; },
-                set: function(val) { return $this.path = val; }
-            }
+            make_prop_ctx($this, "path", "Path", "Shape", "path")
         ]);
     }
 });
@@ -44,6 +39,7 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
     this.center = info.center ? info.center : new Objects.Plain(new IV.Vector(0, 0));
     this.radius = info.radius ? info.radius : new Objects.Plain(2);
 }, {
+    $auto_properties: [ "radius", "center" ],
     shapePaths: function(context, cb) {
         var c = this.center.getPoint(context);
         var r = this.radius.get(context);
@@ -59,20 +55,8 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Shape.prototype.getPropertyContext.call(this).concat([
-            {
-                name: "Center",
-                group: "Shape",
-                type: "point",
-                get: function() { return $this.center; },
-                set: function(val) { return $this.center = val; }
-            },
-            {
-                name: "Radius",
-                group: "Shape",
-                type: "number",
-                get: function() { return $this.radius; },
-                set: function(val) { return $this.radius = val; }
-            }
+            make_prop_ctx($this, "center", "Center", "Shape", "point"),
+            make_prop_ctx($this, "radius", "Radius", "Shape", "number")
         ]);
     },
     select: function(pt, data, action) {
@@ -158,6 +142,7 @@ Objects.Bar = IV.extend(Objects.Shape, function(info) {
     this.point2 = info.point2;
     this.width = info.width;
 }, {
+    $auto_properties: [ "width" ],
     shapePaths: function(context, cb) {
         var p1 = this.point1.getPoint(context);
         var p2 = this.point2.getPoint(context);
@@ -174,13 +159,7 @@ Objects.Bar = IV.extend(Objects.Shape, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Shape.prototype.getPropertyContext.call(this).concat([
-            {
-                name: "Width",
-                group: "Shape",
-                type: "number",
-                get: function() { return $this.width; },
-                set: function(val) { return $this.width = val; }
-            }
+            make_prop_ctx($this, "width", "Width", "Shape", "number")
         ]);
     },
     select: function(pt, data, action) {
