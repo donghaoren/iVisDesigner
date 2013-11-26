@@ -15,6 +15,9 @@ import hashlib
 
 import json
 
+def MyResponse(s):
+    return HttpResponse(json.dumps(s))
+
 @api_view(['POST', 'GET'])
 @permission_classes((AllowAny, ))
 def current_user(request):
@@ -43,11 +46,7 @@ def hmac_get_signature(request):
 
     return Response({"status":"E_PERMISSION_DENIED"})
 
-
-
-def MyResponse(s):
-    return HttpResponse(json.dumps(s))
-
+@api_view(['POST', ])
 @permission_classes((AllowAny, ))
 @csrf_exempt
 @ensure_csrf_cookie
@@ -63,11 +62,13 @@ def register_view(request):
             return Response({"status":"E_FAILED"})
     return Response({"status":"E_INVALID"})
 
+@api_view(['POST', ])
 @permission_classes((IsAuthenticated, ))
 def logout_view(request):
     logout(request)
     return Response({"status":"success"})
 
+@api_view(['POST', ])
 @csrf_exempt
 @ensure_csrf_cookie
 @permission_classes((AllowAny, ))

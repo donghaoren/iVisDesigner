@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import filters
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissionsOrAnonReadOnly
 from ivapp.serializers import DatasetSerializer, DatasetSerializer_List
@@ -22,10 +23,12 @@ class DatasetViewSet(ListDetailViewSet):
 
 class VisualizationViewSet(ListDetailViewSet):
     permission_classes = (IsOwnerOrReadOnly, )
-    queryset = Visualization.objects.all().order_by("-created_at")
+    queryset = Visualization.objects.all()
     serializer_class = VisualizationSerializer
     serializer_list_class = VisualizationSerializer_List
+    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
     filter_fields = ('user', 'dataset')
+    ordering = "-created_at"
 
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly, )

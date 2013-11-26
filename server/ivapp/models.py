@@ -12,7 +12,7 @@ class Dataset(models.Model):
         return self.name
 
 class Visualization(models.Model):
-    created_at = models.DateTimeField()          # Time created.
+    created_at = models.DateTimeField(auto_now = True)          # Time created.
     content = models.TextField()                 # JSON string for this visualization.
     description = models.TextField()             # Description text.
     user = models.ForeignKey(User)               # Author.

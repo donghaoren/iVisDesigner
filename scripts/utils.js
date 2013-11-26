@@ -1539,6 +1539,10 @@ Math.log10 = function(v) {
     return Math.log(v) / 2.302585092994046;
 };
 
+Math.exp10 = function(v) {
+    return Math.pow(10, v);
+};
+
 return NS;
 
 })(); // main nested function.

@@ -305,7 +305,7 @@ var Track = IV.extend(Objects.Object, function(info) {
             onMove: function(p0, p1) {
                 var new_value = p1.sub(a1).cross(d) / a2.sub(a1).cross(d);
                 if($this.mapping == "logarithmic") {
-                    new_value = Math.exp(new_value * (Math.log10(max) - Math.log10(min)) + Math.log10(min));
+                    new_value = Math.exp10(new_value * (Math.log10(max) - Math.log10(min)) + Math.log10(min));
                 } else {
                     new_value = new_value * (max - min) + min;
                 }
