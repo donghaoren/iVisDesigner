@@ -284,6 +284,7 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     this.guide_path = IV.Path.commonPrefix([ this.track1.getGuidePath(), this.track2.getGuidePath() ]);
     this.fillDefault();
 }, {
+    $auto_properties: [ "show_x_ticks", "show_y_ticks", "track1", "track2", "path", "guide_path" ],
     fillDefault: function() {
         if(this.show_x_ticks === undefined) this.show_x_ticks = true;
         if(this.show_y_ticks === undefined) this.show_y_ticks = true;
@@ -442,20 +443,8 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
-            {
-                name: "XTicks",
-                group: "Scatter",
-                type: "plain-bool",
-                get: function() { return $this.show_x_ticks; },
-                set: function(val) { return $this.show_x_ticks = val; }
-            },
-            {
-                name: "YTicks",
-                group: "Scatter",
-                type: "plain-bool",
-                get: function() { return $this.show_y_ticks; },
-                set: function(val) { return $this.show_y_ticks = val; }
-            }
+            make_prop_ctx(this, "show_x_ticks", "XTicks", "Scatter", "plain-bool"),
+            make_prop_ctx(this, "show_y_ticks", "YTicks", "Scatter", "plain-bool")
         ]);
     }
 });

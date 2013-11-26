@@ -5,7 +5,7 @@ IV.popups.ColorSelect = function() {
     p.children(".content").html(IV.strings("popup_color_select"));
     p.attr("data-popup", "color-selector");
 
-    data.addActions([ "ok", "cancel" ])
+    data.addActions([ "cancel" ])
         .prepend($('<span class="btn btn-s" data-action="remove">Remove</span>'))
         .prepend($('<span class="selected-color"><span class="selected-color-inner"></span></span>'));
 

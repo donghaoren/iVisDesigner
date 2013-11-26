@@ -1416,11 +1416,13 @@ NS.extend = function(base, sub, funcs) {
                         sub.prototype["_set_" + p] = function(val) {
                             this[p] = val;
                             fafter.call(this, p, val);
+                            NS.raiseObjectEvent(this, "set:" + p, val);
                             return val;
                         };
                     } else {
                         sub.prototype["_set_" + p] = function(val) {
                             this[p] = val;
+                            NS.raiseObjectEvent(this, "set:" + p, val);
                             return val;
                         };
                     }
@@ -1527,6 +1529,19 @@ NS.bindObjectEvent = function(obj, event_key, listener) {
                 ll[event_key].splice(idx, 1);
             }
             if(ll[event_key].length == 0) delete ll[event_key];
+        }
+    };
+};
+
+NS.bindObjectEvents = function(obj, event_keys, listener) {
+    var ls = event_keys.map(function(key) {
+        return NS.bindObjectEvent(obj, key, function(val) {
+            listener(key, val);
+        });
+    });
+    return {
+        unbind: function() {
+            ls.forEach(function(l) { l.unbind(); });
         }
     };
 };

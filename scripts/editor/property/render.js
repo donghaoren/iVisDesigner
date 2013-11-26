@@ -92,6 +92,11 @@ var render_object_value = function(item, args, callback) {
 
 var property_clipboard = null;
 
+var make_set_action = function(item, val) {
+    if(item.set_action) return item.set_action(val);
+    return new Actions.SetProperty(item, val);
+};
+
 // Render a property field's value part.
 var render_property_field = function(item) {
     var target = IV._E("div", "field group");
@@ -121,7 +126,7 @@ var render_property_field = function(item) {
     var type = item.type;
     var reload_item = function(val) {
         if(val !== undefined) {
-            Actions.add(new Actions.SetProperty(item, val));
+            Actions.add(make_set_action(item, val));
             Actions.commit();
         }
         iVal.children().remove();
@@ -136,7 +141,7 @@ var render_property_field = function(item) {
         } else {
             iVal.append(render_object_value(item.get(), item.args, function(new_val) {
                 if(new_val !== undefined) {
-                    Actions.add(new Actions.SetProperty(item, new_val));
+                    Actions.add(make_set_action(item, new_val));
                     Actions.commit();
                     //item.set(new_val);
                     reload_item();

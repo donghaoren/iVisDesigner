@@ -99,29 +99,27 @@ object_renderers.ColorLinear = function(item, args, callback) {
     var c2 = primitives.Color(function() { return item.color2; }, function(new_val) {
         Actions.add(new Actions.SetProperty(item, "color2", new_val));
         Actions.commit();
-        item.propertyUpdate();
         callback();
         return new_val;
     });
     var vmin = primitives.Number(function() { return item.min; }, function(new_val) {
         Actions.add(new Actions.SetProperty(item, "min", new_val));
         Actions.commit();
-        item.propertyUpdate();
         callback();
         return new_val;
     });
     var vmax = primitives.Number(function() { return item.max; }, function(new_val) {
         Actions.add(new Actions.SetProperty(item, "max", new_val));
         Actions.commit();
-        item.propertyUpdate();
         callback();
         return new_val;
     });
     var path = primitives.Path(function() { return item.path; }, function(new_val) {
         var stat = Editor.computePathStatistics(new_val);
-        item.path = new_val;
-        item.min = stat.min;
-        item.max = stat.max;
+        Actions.add(new Actions.SetProperty(item, "path", new_val));
+        Actions.add(new Actions.SetProperty(item, "min", stat.min));
+        Actions.add(new Actions.SetProperty(item, "max", stat.max));
+        Actions.commit();
         vmin.data().reload();
         vmax.data().reload();
         callback();
@@ -144,41 +142,43 @@ object_renderers.ColorLinear = function(item, args, callback) {
 };
 object_renderers.NumberLinear = function(item, args, callback) {
     var c1 = primitives.Number(function() { return item.num1; }, function(new_val) {
-        item.num1 = new_val;
-        item.propertyUpdate();
+        Actions.add(new Actions.SetProperty(item, "num1", new_val));
+        Actions.commit();
         callback();
         return new_val;
     });
     var c2 = primitives.Number(function() { return item.num2; }, function(new_val) {
-        item.num2 = new_val;
-        item.propertyUpdate();
+        Actions.add(new Actions.SetProperty(item, "num2", new_val));
+        Actions.commit();
         callback();
         return new_val;
     });
     var path = primitives.Path(function() { return item.path; }, function(new_val) {
         var stat = Editor.computePathStatistics(new_val);
-        item.path = new_val;
-        item.min = stat.min;
-        item.max = stat.max;
+        Actions.add(new Actions.SetProperty(item, "path", new_val));
+        Actions.add(new Actions.SetProperty(item, "min", stat.min));
+        Actions.add(new Actions.SetProperty(item, "max", stat.max));
+        Actions.commit();
         vmin.data().reload();
         vmax.data().reload();
         callback();
         return new_val;
     });
     var vmin = primitives.Number(function() { return item.min; }, function(new_val) {
-        item.min = new_val;
-        item.propertyUpdate();
+        Actions.add(new Actions.SetProperty(item, "min", new_val));
+        Actions.commit();
         callback();
         return new_val;
     });
     var vmax = primitives.Number(function() { return item.max; }, function(new_val) {
-        item.max = new_val;
-        item.propertyUpdate();
+        Actions.add(new Actions.SetProperty(item, "max", new_val));
+        Actions.commit();
         callback();
         return new_val;
     });
     var mapping_type = primitives.String(function() { return item.mapping ? item.mapping : "linear"; }, function(new_val) {
-        item.mapping = new_val;
+        Actions.add(new Actions.SetProperty(item, "mapping", new_val));
+        Actions.commit();
         callback();
         return new_val;
     }, [{ name: "linear", display: "Linear" }, { name: "logarithmic", display: "Logarithmic" }]);
@@ -188,12 +188,24 @@ object_renderers.NumberLinear = function(item, args, callback) {
      .append(make_table(vmin, " - ", vmax))
      .append(mapping_type).append("<br />")
      .append(path);
+    var listener = IV.bindObjectEvents(item,
+        ["set:min", "set:max", "set:num1", "set:num2", "set:mapping", "set:path"],
+    function(ev, val) {
+        if(ev == "set:num1") c1.data().reload();
+        if(ev == "set:num2") c2.data().reload();
+        if(ev == "set:min") vmin.data().reload();
+        if(ev == "set:max") vmax.data().reload();
+        if(ev == "set:mapping") mapping_type.data().reload();
+        if(ev == "set:path") path.data().reload();
+    });
+    r.bind("destroyed", function() { listener.unbind(); console.log("removed"); });
     return r;
 };
 
 object_renderers.PassThrough = function(item, args, callback) {
     var path = primitives.Path(function() { return item.path; }, function(new_val) {
-        item.path = new_val;
+        Actions.add(new Actions.SetProperty(item, "path", new_val));
+        Actions.commit();
         callback();
         return new_val;
     });

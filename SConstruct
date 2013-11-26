@@ -29,6 +29,7 @@ Javascript("libraries.js", [
     "libraries/jquery-2.0.3.js",
     "libraries/jquery-cookie.js",
     "libraries/jquery.mousewheel.js",
+    "libraries/jquery.event.destroyed.js",
     "libraries/d3.v3.js",
     "libraries/js-yaml.js",
     "libraries/chroma.js",

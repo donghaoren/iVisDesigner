@@ -6,6 +6,7 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
     this.center = info.center ? info.center : new Objects.Plain(new IV.Vector(0, 0));
     this.vis = new IV.Visualization();
 }, {
+    $auto_properties: [ "path", "center" ],
     can: function(cap) {
         if(cap == "get-point") return true;
     },
@@ -15,13 +16,7 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Shape.prototype.getPropertyContext.call(this).concat([
-            {
-                name: "Center",
-                group: "Shape",
-                type: "point",
-                get: function() { return $this.center; },
-                set: function(val) { return $this.center = val; }
-            }
+            make_prop_ctx($this, "center", "Center", "Shape", "point")
         ]);
     },
     render: function(g, data) {

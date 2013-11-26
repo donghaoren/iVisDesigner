@@ -10,6 +10,7 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
     this.type = "ForceLayout";
     this.enabled = false;
 }, {
+    $auto_properties: [ "path_nodes", "path_edgeA", "path_edgeB", "enabled" ],
     onAttach: function(vis) {
         this.vis = vis;
     },
@@ -44,13 +45,7 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
     getPropertyContext: function(data) {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
-            {
-                name: "Enabled",
-                group: "ForceLayout",
-                type: "plain-bool",
-                get: function() { return $this.enabled; },
-                set: function(val) { return $this.enabled = val; }
-            }
+            make_prop_ctx($this, "enabled", "Enabled", "ForceLayout", "plain-bool")
         ]);
     },
     _runStep: function(data) {

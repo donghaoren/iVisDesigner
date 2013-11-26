@@ -10,6 +10,7 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
     this.font_size = IV.notNull(info.font_size) ? info.font_size : new Objects.Plain(10);
     this.style = IV.notNull(info.style) ? info.style : new Objects.PathStyle();
 }, {
+    $auto_properties: [ "path", "anchor", "text", "text_align", "font_family", "font_size" ],
     onAttach: function(vis) {
         this.vis = vis;
     },
@@ -133,49 +134,12 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
-            {
-                name: "Path",
-                group: "Text",
-                type: "path",
-                get: function() { return $this.path; },
-                set: function(val) { return $this.path = val; }
-            },
-            {
-                name: "Text",
-                group: "Text",
-                type: "string",
-                get: function() { return $this.text; },
-                set: function(val) { return $this.text = val; }
-            },
-            {
-                name: "Anchor",
-                group: "Text",
-                type: "point",
-                get: function() { return $this.anchor; },
-                set: function(val) { return $this.anchor = val; }
-            },
-            {
-                name: "Align",
-                group: "Text",
-                type: "string",
-                get: function() { return $this.text_align; },
-                set: function(val) { return $this.text_align = val; },
-                args: [ "left", "right", "center" ]
-            },
-            {
-                name: "Family",
-                group: "Text",
-                type: "string",
-                get: function() { return $this.font_family; },
-                set: function(val) { return $this.font_family = val; }
-            },
-            {
-                name: "Size",
-                group: "Text",
-                type: "number",
-                get: function() { return $this.font_size; },
-                set: function(val) { return $this.font_size = val; }
-            },
+            make_prop_ctx(this, "path", "Path", "Text", "path"),
+            make_prop_ctx(this, "text", "Text", "Text", "string"),
+            make_prop_ctx(this, "anchor", "Anchor", "Text", "point"),
+            make_prop_ctx(this, "text_align", "Align", "Text", "string"),
+            make_prop_ctx(this, "font_family", "Family", "Text", "string"),
+            make_prop_ctx(this, "font_size", "Size", "Text", "number"),
             {
                 name: "Adjust",
                 group: "Text",

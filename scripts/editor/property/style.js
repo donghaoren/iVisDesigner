@@ -37,11 +37,16 @@ var build_style_property_item = function(name, act, key, type, args) {
         name: name,
         args: args,
         type: type,
+        owner: act,
+        property: key,
         get: function() {
             return act[key];
         },
         set: function(val) {
             act[key] = val;
+        },
+        set_action: function(val) {
+            return new Actions.SetDirectly(act, key, val);
         }
     });
 };
