@@ -26,8 +26,8 @@ fields:
       net_recv: { type: number }
 """.strip()
 
-if not 'measures' in doc.data:
-    doc.set(doc.data, "measures", [])
+#if not 'measures' in doc.data:
+doc.set(doc.data, "measures", [])
 
 net = psutil.net_io_counters()
 net_sbytes = net.bytes_sent

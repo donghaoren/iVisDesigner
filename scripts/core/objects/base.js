@@ -32,6 +32,7 @@ var PassThrough = IV.extend(Objects.Object, function(path) {
     this.path = path;
     this.type = "PassThrough";
 }, {
+    $auto_properties: [ "path" ],
     can: function(cap) {
         if(cap == "get-point") return true;
         if(cap == "get-number") return true;

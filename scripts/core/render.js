@@ -266,6 +266,7 @@ CanvasRenderingContext2D.prototype.ivStrokeText = function(s, x, y) {
     this.save();
     var scale = 1.0 / 36.0 * this._font_size;
     this.translate(x, y);
+    this.lineWidth /= this._font_size / 36;
     this.scale(scale, -scale);
     this.strokeText(s, 0, 0);
     this.restore();
