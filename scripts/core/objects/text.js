@@ -27,6 +27,10 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
         var w = IV.measureText(text, "36px " + font.family).width / 36 * font.size;
         var h = font.size;
         y0 += h / 2;
+        if(text_align == "left")
+            x0 += w / 2;
+        if(text_align == "right")
+            x0 -= w / 2;
         if(!no_offset && this.offsets) {
             var oid = context.data.getObjectID(context.val());
             if(this.offsets[oid]) {
@@ -137,7 +141,11 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
             make_prop_ctx(this, "path", "Path", "Text", "path"),
             make_prop_ctx(this, "text", "Text", "Text", "string"),
             make_prop_ctx(this, "anchor", "Anchor", "Text", "point"),
-            make_prop_ctx(this, "text_align", "Align", "Text", "string"),
+            make_prop_ctx(this, "text_align", "Align", "Text", "string", [
+                { name: "left", display: "Left" },
+                { name: "center", display: "Center" },
+                { name: "right", display: "Right" }
+            ]),
             make_prop_ctx(this, "font_family", "Family", "Text", "string"),
             make_prop_ctx(this, "font_size", "Size", "Text", "number"),
             {

@@ -203,25 +203,36 @@ Objects.ColorLinear = ColorLinear;
 IV.serializer.registerObjectType("ColorLinear", ColorLinear);
 
 // Linear Mapping.
-var CategoricalMapping = IV.extend(Objects.Object, function(path, keys, values, fallback, value_type) {
+var CategoricalMapping = IV.extend(Objects.Object, function(path, keys_values, fallback, value_type) {
     this.type = "CategoricalMapping";
     this.path = path;
-    this.keys = keys;
-    this.values = values;
+    this.keys_values = keys_values;
     this.fallback = fallback;
     this.value_type = value_type;
 }, {
-    $auto_properties: [ "path", "fallback", "value_type" ],
+    postDeserialize: function() {
+        if(this.keys && this.values) {
+            var vals = this.values;
+            this.keys_values = this.keys.map(function(key, i) {
+                return { key: key, value: vals[i] };
+            });
+            delete this.keys;
+            delete this.values;
+        }
+    },
+    $auto_properties: [ "path", "fallback", "$array:keys_values" ],
     get: function(context) {
         if(!this.path)
             return null;
         var value = context.get(this.path).val();
-        for(var i = 0; i < this.keys.length; i++)
-            if(value == this.keys[i]) return this.values[i];
+        for(var i = 0; i < this.keys_values.length; i++) {
+            var key = this.keys_values[i].key;
+            if(value == key) return this.keys_values[i].value;
+        }
         return this.fallback;
     },
     clone: function() {
-        return new CategoricalMapping(this.path, this.keys.slice(), this.values.slice(), this.fallback, this.value_type);
+        return new CategoricalMapping(this.path, this.keys_values.slice(), this.fallback, this.value_type);
     }
 });
 Objects.CategoricalMapping = CategoricalMapping;

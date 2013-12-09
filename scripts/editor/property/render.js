@@ -8,38 +8,6 @@ var object_renderers = { };
 {{include: primitives.js}}
 {{include: objects.js}}
 
-// Plain value.
-var render_plain_value = function(item, args, callback) {
-    var obj = item.obj;
-    if(obj.constructor == Number) {
-        return primitives.Number(function() { return item.obj; }, function(new_val) {
-            Actions.add(new Actions.SetDirectly(item, "obj", new_val));
-            Actions.commit();
-            callback();
-            return new_val;
-        }, args);
-    }
-    if(obj.constructor == String) {
-        return primitives.String(function() { return item.obj; }, function(new_val) {
-            Actions.add(new Actions.SetDirectly(item, "obj", new_val));
-            Actions.commit();
-            callback();
-            return new_val;
-        }, args);
-    }
-    if(obj instanceof IV.Vector) {
-        return IV._E("span", "plain-vector", "(" + obj.x + ", " + obj.y + ")");
-    }
-    if(obj instanceof IV.Color) {
-        return primitives.Color(function() { return item.obj; }, function(new_val) {
-            Actions.add(new Actions.SetDirectly(item, "obj", new_val));
-            Actions.commit();
-            callback();
-            return new_val;
-        }, args);
-    }
-};
-
 // Object value.
 var render_object_value = function(item, args, callback) {
     if(item.constructor == Number) {
@@ -177,7 +145,7 @@ var render_property_field = function(item) {
                 reload_item(new IV.objects.ColorLinear(new IV.Path(), new IV.Color(0, 0, 0, 1), new IV.Color(255, 255, 255, 1)));
             }
             if(val == "Categorical") {
-                reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], [], new IV.Color(0, 0, 0, 1), "color"));
+                reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], new IV.Color(0, 0, 0, 1), "color"));
             }
             if(val == "Equals") {
                 reload_item(new IV.objects.PassThrough(new IV.Path()));
@@ -193,7 +161,7 @@ var render_property_field = function(item) {
                 reload_item(new IV.objects.NumberLinear(new IV.Path(), 0, 1, 0, 1));
             }
             if(val == "Categorical") {
-                reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], [], 0, "number"));
+                reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], 0, "number"));
             }
             if(val == "Equals") {
                 reload_item(new IV.objects.PassThrough(new IV.Path()));
@@ -206,7 +174,7 @@ var render_property_field = function(item) {
                 reload_item(new IV.objects.Plain(""));
             }
             if(val == "Categorical") {
-                reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], [], "", "string"));
+                reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], "", "string"));
             }
             if(val == "Equals") {
                 reload_item(new IV.objects.PassThrough(new IV.Path()));
@@ -214,6 +182,14 @@ var render_property_field = function(item) {
         });
     }
     reload_item();
+    if(item.owner && item.property) {
+        var listener = IV.bindObjectEvents(item.owner,
+            ["set:" + item.property],
+        function(ev, val) {
+            reload_item();
+        });
+        target.bind("destroyed", function() { listener.unbind(); });
+    }
 
     return target;
 };

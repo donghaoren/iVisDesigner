@@ -9,6 +9,8 @@ Objects.Object = function() {
     this.uuid = IV.generateUUID();
 };
 Objects.Object.prototype = {
+    _get_name: function() { return this.name; },
+    _set_name: function(val) { return this.name = val; },
     setName: function(name) {
         if(this.name != name) {
             this.name = name;
@@ -35,13 +37,7 @@ Objects.Object.prototype = {
     getPropertyContext: function() {
         var $this = this;
         return [
-            {
-                name: "Name",
-                group: "Common",
-                type: "plain-string",
-                get: function() { return $this.name; },
-                set: function(val) { return $this.setName(val); }
-            }
+            make_prop_ctx(this, "name", "Name", "Common", "plain-string")
         ];
     }
 };

@@ -1289,6 +1289,9 @@ NS.Color.prototype = {
     clone: function() {
         return new NS.Color(this.r, this.g, this.b, this.a);
     },
+    equals: function(c) {
+        return this.r == c.r && this.g == c.g && this.b == c.b && this.a == c.a;
+    },
     serialize: function() {
         return { de: "Color", r: this.r, g: this.g, b: this.b, a: this.a };
     }

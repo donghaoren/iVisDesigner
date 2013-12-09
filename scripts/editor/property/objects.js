@@ -1,5 +1,41 @@
 object_renderers.Plain = function(item, args, callback) {
-    return render_plain_value(item, args, callback);
+    var obj = item.obj;
+    var _listen = function(elem) {
+        var listener = IV.bindObjectEvents(item,
+        ["set:obj"],
+        function(ev, val) {
+            elem.data().reload();
+        });
+        elem.bind("destroyed", function() { listener.unbind(); });
+        return elem;
+    }
+    if(obj.constructor == Number) {
+        return _listen(primitives.Number(function() { return item.obj; }, function(new_val) {
+            Actions.add(new Actions.SetDirectly(item, "obj", new_val));
+            Actions.commit();
+            callback();
+            return new_val;
+        }, args));
+    }
+    if(obj.constructor == String) {
+        return _listen(primitives.String(function() { return item.obj; }, function(new_val) {
+            Actions.add(new Actions.SetDirectly(item, "obj", new_val));
+            Actions.commit();
+            callback();
+            return new_val;
+        }, args));
+    }
+    if(obj instanceof IV.Vector) {
+        return IV._E("span", "plain-vector", "(" + obj.x + ", " + obj.y + ")");
+    }
+    if(obj instanceof IV.Color) {
+        return _listen(primitives.Color(function() { return item.obj; }, function(new_val) {
+            Actions.add(new Actions.SetDirectly(item, "obj", new_val));
+            Actions.commit();
+            callback();
+            return new_val;
+        }, args));
+    }
 };
 
 object_renderers.CategoricalMapping = function(item, args, callback) {
@@ -8,85 +44,89 @@ object_renderers.CategoricalMapping = function(item, args, callback) {
         callback();
         return new_val;
     });
+    var value_primitive = function(get, set) {
+        if(item.value_type == "string")
+            return primitives.String(get, set, args);
+        if(item.value_type == "number")
+            return primitives.Number(get, set);
+        if(item.value_type == "color")
+            return primitives.Color(get, set);
+    };
     var r = IV._E("span");
-    for(var i = 0; i < item.keys.length; i++) {
-        (function(index) {
-            var sp = primitives.String(function() {
-                if(item.keys[index] === null) return "null";
-                return item.keys[index].toString();
-            }, function(new_val) {
-                if(new_val == "true") new_val = true;
-                if(new_val == "false") new_val = false;
-                if(new_val == "null") new_val = null;
-                item.keys[index] = new_val;
-                callback();
-                return new_val;
-            });
-            var ss;
-            if(item.value_type == "string") {
-                ss = primitives.String(function() { return item.values[index]; }, function(new_val) {
-                    item.values[index] = new_val;
+    var kv_container = IV._E("span");
+    r.append(kv_container);
+    var rebuild_key_values = function() {
+        kv_container.children().remove();
+        for(var i = 0; i < item.keys_values.length; i++) {
+            (function(index) {
+                var sp = primitives.String(function() {
+                    if(item.keys_values[index].key === null) return "null";
+                    return item.keys_values[index].key.toString();
+                }, function(new_val) {
+                    if(new_val == "true") new_val = true;
+                    if(new_val == "false") new_val = false;
+                    if(new_val == "null") new_val = null;
+                    var new_kv = { key: new_val, value: item.keys_values[index].value };
+                    Actions.add(new Actions.SetArrayDirectly(item, "keys_values", "set", index, new_kv));
+                    Actions.commit();
                     callback();
                     return new_val;
                 });
-            }
-            if(item.value_type == "number") {
-                ss = primitives.Number(function() { return item.values[index]; }, function(new_val) {
-                    item.values[index] = new_val;
+                var ss = value_primitive(function() { return item.keys_values[index].value; }, function(new_val) {
+                    var new_kv = { key: item.keys_values[index].key, value: new_val };
+                    Actions.add(new Actions.SetArrayDirectly(item, "keys_values", "set", index, new_kv));
+                    Actions.commit();
                     callback();
                     return new_val;
                 });
-            }
-            if(item.value_type == "color") {
-                ss = primitives.Color(function() { return item.values[index]; }, function(new_val) {
-                    item.values[index] = new_val;
+                var btn_remove = $("<span />").addClass("btn").append($('<i class="xicon-cross"></i>')).click(function() {
+                    Actions.add(new Actions.SetArrayDirectly(item, "keys_values", "splice", index, 1, []));
+                    Actions.commit();
                     callback();
-                    return new_val;
                 });
-            }
-            var btn_remove = $("<span />").addClass("btn").append($('<i class="xicon-cross"></i>')).click(function() {
-                item.keys.splice(index, 1);
-                item.values.splice(index, 1);
-                callback(item);
-            });
-            r.append(make_table("|", ss, "|", ":", "|", sp, "|", btn_remove));
-        })(i);
-    }
+                var elem = make_table("|", ss, "|", ":", "|", sp, "|", btn_remove);
+                elem.addClass("keyvalue-item");
+                kv_container.append(elem);
+                return {
+                    elem: elem,
+                    reload: function() {
+                        sp.reload();
+                        ss.reload();
+                    }
+                };
+            })(i);
+        }
+    };
+
+    rebuild_key_values();
 
     var btn_add = $("<span />").addClass("btn").text("+").click(function() {
-        item.keys.push("new");
+        var nv = null;
         if(item.value_type == "number")
-            item.values.push(0);
+            nv = { key: "new", value: 0 };
         else if(item.value_type == "color")
-            item.values.push(new IV.Color(0, 0, 0, 1));
+            nv = { key: "new", value: new IV.Color(0, 0, 0, 1) };
         else
-            item.values.push(null);
-        callback(item);
+            nv = { key: "new", value: null };
+        Actions.add(new Actions.SetArrayDirectly(item, "keys_values", "push", nv));
+        Actions.commit();
+        callback();
     });
-    var fallback_control;
-    if(item.value_type == "string") {
-        fallback_control = primitives.String(function() { return item.fallback; }, function(new_val) {
-            item.fallback = new_val;
-            callback();
-            return new_val;
-        });
-    }
-    if(item.value_type == "number") {
-        fallback_control = primitives.Number(function() { return item.fallback; }, function(new_val) {
-            item.fallback = new_val;
-            callback();
-            return new_val;
-        });
-    }
-    if(item.value_type == "color") {
-        fallback_control = primitives.Color(function() { return item.fallback; }, function(new_val) {
-            item.fallback = new_val;
-            callback();
-            return new_val;
-        });
-    }
+    var fallback_control = value_primitive(function() { return item.fallback; }, function(new_val) {
+        Actions.add(new Actions.SetProperty(item, "fallback", new_val));
+        Actions.commit();
+        callback();
+        return new_val;
+    });
     r.append(make_table("|", fallback_control, "|", btn_add));
     r.append(path);
+    var listener = IV.bindObjectEvents(item,
+        ["set:fallback", "set:keys_values"],
+    function(ev, val) {
+        if(ev == "set:fallback") fallback_control.data().reload();
+        if(ev == "set:keys_values") rebuild_key_values();
+    });
+    r.bind("destroyed", function() { listener.unbind(); });
     return r;
 };
 object_renderers.ColorLinear = function(item, args, callback) {
@@ -138,6 +178,17 @@ object_renderers.ColorLinear = function(item, args, callback) {
      .append(make_table(vmin, " - ", vmax))
      .append(mapping_type).append("<br />")
      .append(path);
+    var listener = IV.bindObjectEvents(item,
+        ["set:min", "set:max", "set:color1", "set:color2", "set:mapping", "set:path"],
+    function(ev, val) {
+        if(ev == "set:color1") c1.data().reload();
+        if(ev == "set:color2") c2.data().reload();
+        if(ev == "set:min") vmin.data().reload();
+        if(ev == "set:max") vmax.data().reload();
+        if(ev == "set:mapping") mapping_type.data().reload();
+        if(ev == "set:path") path.data().reload();
+    });
+    r.bind("destroyed", function() { listener.unbind(); });
     return r;
 };
 object_renderers.NumberLinear = function(item, args, callback) {
@@ -198,7 +249,7 @@ object_renderers.NumberLinear = function(item, args, callback) {
         if(ev == "set:mapping") mapping_type.data().reload();
         if(ev == "set:path") path.data().reload();
     });
-    r.bind("destroyed", function() { listener.unbind(); console.log("removed"); });
+    r.bind("destroyed", function() { listener.unbind(); });
     return r;
 };
 
@@ -209,5 +260,12 @@ object_renderers.PassThrough = function(item, args, callback) {
         callback();
         return new_val;
     });
-    return IV._E("span").append(path);
+    var r = IV._E("span").append(path);
+    var listener = IV.bindObjectEvents(item,
+        ["set:path"],
+    function(ev, val) {
+        if(ev == "set:path") path.data().reload();
+    });
+    r.bind("destroyed", function() { listener.unbind(); });
+    return r;
 };

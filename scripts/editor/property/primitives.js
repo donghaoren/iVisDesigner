@@ -7,8 +7,12 @@ primitives.Color = function(get, set, args) {
             var cc = get();
             IV.popups.beginColorSelect($this, cc, function(new_color) {
                 if(!new_color) new_color = new IV.Color(0, 0, 0, 0);
-                set(new_color);
-                reload();
+                var orig = get();
+                console.log(orig, new_color);
+                if(!orig || !orig.equals(new_color)) {
+                    set(new_color);
+                    reload();
+                }
             });
         });
     var reload = function() {
@@ -31,8 +35,10 @@ primitives.String = function(get, set, args) {
             .bind("keydown focusout", function(e) {
                 if(e.type == "focusout" || e.which == 13) {
                     $(this).removeClass("dirty");
-                    set($(this).val());
-                    reload();
+                    if(get() != $(this).val()) {
+                        set($(this).val());
+                        reload();
+                    }
                 } else if($(this).val() != val0) {
                     $(this).addClass("dirty");
                 }
@@ -52,8 +58,10 @@ primitives.String = function(get, set, args) {
             .click(function() {
                 var $this = $(this);
                 IV.popups.beginContextMenu($this, args, function(val) {
-                    set(val);
-                    reload();
+                    if(get() != val) {
+                        set(val);
+                        reload();
+                    }
                 });
             });
         var reload = function() {
@@ -81,8 +89,10 @@ primitives.Number = function(get, set, args) {
             if(e.type == "focusout" || e.which == 13) {
                 $(this).removeClass("dirty");
                 val0 = +$(this).val();
-                set(val0);
-                reload();
+                if(get() != val0) {
+                    set(val0);
+                    reload();
+                }
             } else if($(this).val() != val0) {
                 $(this).addClass("dirty");
             }

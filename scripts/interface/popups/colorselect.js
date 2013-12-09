@@ -5,7 +5,7 @@ IV.popups.ColorSelect = function() {
     p.children(".content").html(IV.strings("popup_color_select"));
     p.attr("data-popup", "color-selector");
 
-    data.addActions([ "cancel" ])
+    data.addActions([ "ok" ])
         .prepend($('<span class="btn btn-s" data-action="remove">Remove</span>'))
         .prepend($('<span class="selected-color"><span class="selected-color-inner"></span></span>'));
 
@@ -39,11 +39,11 @@ IV.popups.ColorSelect = function() {
             if(data.onSelectColor) data.onSelectColor(mycolor ? mycolor.clone() : null, true);
         }
     };
+    // data.onOk = function() {
+    //     if(data.onSelectColor) data.onSelectColor(mycolor ? mycolor.clone() : null);
+    //     data.hide();
+    // };
     data.onOk = function() {
-        if(data.onSelectColor) data.onSelectColor(mycolor ? mycolor.clone() : null);
-        data.hide();
-    };
-    data.onCancel = function() {
         data.hide();
     };
     p.find('[data-action="remove"]').click(function() {
