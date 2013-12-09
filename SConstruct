@@ -39,11 +39,17 @@ Javascript("libraries.js", [
 YAML2DataJavascript("strings.js", ["scripts/strings.yaml"], variable = "DATA_Strings")
 
 Javascript("toolkit.js", [
-    "scripts/utils.js",
+    "scripts/utils/utils.js",
     "scripts/core/core.js",
     "scripts/interface/interface.js",
     "scripts/editor/editor.js",
     "scripts/toolkit.js"
+])
+
+Javascript("embed.js", [
+    "scripts/utils/utils.js",
+    "scripts/core/core.js",
+    "scripts/embed/embed.js"
 ])
 
 Image("imgs/logo.svg", "images/logo.svg")

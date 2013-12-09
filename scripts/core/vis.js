@@ -75,7 +75,7 @@ IV.Visualization.prototype.validate = function(data) {
 IV.Visualization.prototype.render = function(data, g) {
     this.validate(data);
     // First we draw the objects.
-    this.objects.forEachReversed(function(obj) {
+    IV.forEachReversed(this.objects, function(obj) {
         // Save the graphics state before calling render().
         g.ivSave();
         // Try-catch block to prevent exceptions.
@@ -91,7 +91,7 @@ IV.Visualization.prototype.render = function(data, g) {
 IV.Visualization.prototype.renderSelection = function(data, g) {
     this.validate(data);
     // Then we draw the selections.
-    this.selection.forEachReversed(function(c) {
+    IV.forEachReversed(this.selection, function(c) {
         g.ivSave();
         try {
             c.obj.renderSelected(g, data, c.context);
@@ -106,7 +106,7 @@ IV.Visualization.prototype.renderSelection = function(data, g) {
 IV.Visualization.prototype.renderGuide = function(data, g) {
     this.validate(data);
     // Same way as render().
-    this.objects.forEachReversed(function(obj) {
+    IV.forEachReversed(this.objects, function(obj) {
         g.ivSave();
         try {
             obj.renderGuide(g, data);
@@ -115,7 +115,7 @@ IV.Visualization.prototype.renderGuide = function(data, g) {
         }
         g.ivRestore();
     });
-    this.selection.forEachReversed(function(c) {
+    IV.forEachReversed(this.selection, function(c) {
         var obj = c.obj;
         g.ivSave();
         try {
