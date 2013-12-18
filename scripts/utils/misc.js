@@ -4,9 +4,7 @@ NS.getQuery = function(name) {
              .replace(/\+/g, '%20'))||null;
 };
 
-
 var tmp_canvas = document.createElement("canvas");
-
 NS.measureText = function(text, font) {
     var tc = tmp_canvas.getContext("2d");
     tc.font = font;
@@ -61,4 +59,10 @@ NS.notNull = function(val) {
 
 NS.strings = function(key) {
     return DATA_Strings[key];
+};
+
+NS.fillDefault = function(obj, defaults) {
+    for(var key in defaults) {
+        if(obj[key] === undefined) obj[key] = defaults[key];
+    }
 };

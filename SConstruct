@@ -59,6 +59,7 @@ Binary("datasets/test.schema", "datasets/test.yaml");
 Binary("datasets/test.data", "datasets/test.data.yaml");
 
 HTML("toolkit.html", "html/toolkit.html")
+HTML("embed_test.html", "html/embed_test.html")
 env.Markdown("temp/credits.html", "CREDITS.md")
 env.Markdown("temp/license.html", "LICENSE.md")
 
