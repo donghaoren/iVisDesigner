@@ -2,7 +2,7 @@ iVisDesigner is designed and programmed by Donghao Ren, advised by
 Professor Xiaoru Yuan, PKU Visualization and Visual Analytics Group, Peking
 University.
 
-Copyright (C) 2013 Peking University
+Copyright (C) 2013 Donghao Ren, Peking University, University of California, Santa Barbara.
 
     iVisDesigner is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published
