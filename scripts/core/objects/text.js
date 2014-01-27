@@ -16,12 +16,16 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
     },
     _get_rect: function(context, no_offset) {
         var text = this.text.get(context);
+        if(text === null) return null;
         var text_align = this.text_align.get(context);
+        if(text_align === null) return null;
         var font = {
             family: this.font_family.get(context),
             size: this.font_size.get(context)
         };
+        if(font.family === null || font.size === null) return null;
         var p = this.anchor.get(context);
+        if(p === null) return null;
         var x0 = p.x;
         var y0 = p.y;
         var w = IV.measureText(text, "36px " + font.family).width / 36 * font.size;
@@ -45,11 +49,14 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
         $this.path.enumerate(data, function(context) {
             var text = $this.text.get(context);
             var text_align = $this.text_align.get(context);
+            if(text_align === null) return;
             var font = {
                 family: $this.font_family.get(context),
                 size: $this.font_size.get(context)
             };
+            if(font.family === null || font.size === null) return;
             var p = $this.anchor.get(context);
+            if(p === null) return;
             g.textAlign = $this.text_align.get(context);
             if($this.offsets) {
                 var oid = data.getObjectID(context.val());
@@ -65,6 +72,7 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
         var $this = this;
         var draw_with_context = function(context) {
             var r = $this._get_rect(context);
+            if(r === null) return;
             g.ivGuideLineWidth();
             g.strokeStyle = IV.colors.selection.toRGBA();
             g.fillStyle = IV.colors.selection.toRGBA();
@@ -93,6 +101,7 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
         var rects = [];
         $this.path.enumerate(data, function(context) {
             var r = $this._get_rect(context, true);
+            if(r === null) return;
             rects.push([ data.getObjectID(context.val()), r[0], r[1], r[2] * 1.05, r[3] * 1.05 ]);
         });
         var Y = [];
@@ -126,7 +135,7 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
             }
             return r;
         };
-        var sol = numeric.dopri(0, 5, Y, dydt);
+        var sol = numeric.dopri(0, 20, Y, dydt);
         for(var i = 0; i < rects.length; i++) {
             var y_last = sol.y[sol.y.length - 1];
             this.offsets[rects[i][0]] = {
@@ -167,6 +176,7 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
         var $this = this;
         this.path.enumerate(data, function(context) {
             var r = $this._get_rect(context);
+            if(r === null) return;
             if(Math.abs(pt.x - r[0]) < r[2] / 2 && Math.abs(pt.y - r[1]) < r[3] / 2) {
                 var d = pt.distance(new IV.Vector(r[0], r[1]));
                 if(!rslt || rslt.distance > d) {

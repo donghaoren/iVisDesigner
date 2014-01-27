@@ -15,6 +15,7 @@ Editor.renderSchema = function(schema, prev_path, set_active, attached_paths) {
                             ns: obj.uuid,
                             name: obj.name
                         };
+                        if(key == "[ROOT]") key = "";
                         if(!attached_paths[key]) attached_paths[key] = [ info ];
                         else attached_paths[key].push(info);
                     });
@@ -69,17 +70,19 @@ Editor.renderSchema = function(schema, prev_path, set_active, attached_paths) {
             .append(span);
         if(child.type == "collection" || child.type == "object" || child.type == "sequence")
             li.append(Editor.renderSchema(child.fields, this_path, set_active, attached_paths));
-        if(attached_paths[this_path]) {
-            attached_paths[this_path].forEach(function(item) {
-                var iul = $("<ul />");
-                var ili = $("<li />").append($("<span />").text(item.name));
-                ili.append(Editor.renderSchema(item.schema.fields, this_path + ":{" + item.name + "@" + item.ns + "}", set_active, {}));
-                iul.append(ili);
-                li.append(iul);
-                //console.log(item);
-            });
-        }
         elem.append(li);
+    }
+    if(attached_paths[prev_path]) {
+        attached_paths[prev_path].forEach(function(item) {
+            var iul = $("<ul />");
+            var ili = $("<li />").append($("<span />").text(item.name));
+            var new_path = "{" + item.name + "@" + item.ns + "}";
+            if(prev_path != "") new_path = prev_path + ":" + new_path;
+            ili.append(Editor.renderSchema(item.schema.fields, new_path, set_active, {}));
+            iul.append(ili);
+            elem = elem.add(iul);
+            //console.log(item);
+        });
     }
     return elem;
 };

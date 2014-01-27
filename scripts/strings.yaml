@@ -30,6 +30,68 @@ popup_create_layout: |
     </div>
   </div>
 
+popup_create_statistics: |
+  <div class="property-list">
+    <div class="item-caption">Statistics</div>
+    <div class="item-action">
+      <div class="field group">
+        <span class="name"><span>Anchor</span></span>
+        <span class="val">
+          <span data-field="path" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Data</span></span>
+        <span class="val">
+          <span data-field="path-data" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+popup_create_map: |
+  <div class="property-list">
+    <div class="item-caption">Google Map</div>
+    <div class="item-action">
+      <div class="field group">
+        <span class="name"><span>Longitude</span></span>
+        <span class="val">
+          <span data-field="path-longitude" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Latitude</span></span>
+        <span class="val">
+          <span data-field="path-latitude" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Longitude</span></span>
+        <span class="val">
+          <span class="input-group">
+            <span class="input-longitude input-numeric" data-min="-180" data-max="180" data-delta-scale="50"></span>
+          </span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Latitude</span></span>
+        <span class="val">
+          <span class="input-group">
+            <span class="input-latitude input-numeric" data-min="-90" data-max="90" data-delta-scale="50"></span>
+          </span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Scale</span></span>
+        <span class="val">
+          <span class="input-group">
+            <span class="input-scale input-numeric" data-min="0" data-max="24" data-delta-scale="50"></span>
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+
 popup_color_select: |
   <div class="tab" data-default="predefined">
     <div class="header">

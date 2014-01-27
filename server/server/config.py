@@ -47,6 +47,9 @@ DEBUG = config.get("django", "debug") == "yes"
 
 HMAC_KEY = config.get("authentication", "hmac_key")
 
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = config.get("django", "secret_key")
+
 DATABASES = {
     'default': {
         'ENGINE': config.get("database", "engine"),   # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.

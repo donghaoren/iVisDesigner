@@ -26,3 +26,29 @@ IV.popups.CreateLayout = function() {
     };
     return data;
 };
+
+IV.popups.CreateStatistics = function() {
+    var data = IV.popups.create();
+    data.addActions([ "ok", "cancel" ]);
+
+    var p = data.selector;
+    p.children(".content").html(IV.strings("popup_create_statistics"));
+
+    p.default_width = 300;
+    p.default_height = 130;
+    var data = p.data();
+    data.onOk = function() {
+        var path = p.find('[data-field="path"]').data().get();
+        var path_data = p.find('[data-field="path-data"]').data().get();
+        var obj = new IV.objects.Statistics({
+            path: path,
+            path_data: path_data
+        });
+        Editor.doAddObject(obj);
+        data.hide();
+    };
+    data.onCancel = function() {
+        data.hide();
+    };
+    return data;
+};

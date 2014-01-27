@@ -87,3 +87,38 @@ def login_view(request):
             else:
                 return Response({"status":"E_DENIED"})
     return Response({"status":"E_INVALID"})
+
+from pprint import pformat
+from django.views.generic import View
+
+@api_view(['GET', ])
+@csrf_exempt
+@ensure_csrf_cookie
+@permission_classes((AllowAny, ))
+def Fineid(request):
+    ctx = dict(
+        user_data=user_dict_from_dn(request.META['HTTP_X_SSL_USER_DN']),
+        authentication_status=request.META['HTTP_X_SSL_AUTHENTICATED'],
+        user=str(request.user))
+    return HttpResponse(pformat(ctx), mimetype="text/plain")
+
+@api_view(['GET', ])
+@csrf_exempt
+@ensure_csrf_cookie
+@permission_classes((AllowAny, ))
+def FineidTest(request):
+    ctx = dict(
+        user_dn=request.META['HTTP_X_SSL_USER_DN'],
+        authentication_status=request.META['HTTP_X_SSL_AUTHENTICATED'],
+        user=str(request.user))
+    return HttpResponse(pformat(ctx), mimetype="text/plain")
+
+def _dictify_dn(dn):
+    return dict(x.split('=') for x in dn.split('/') if '=' in x)
+
+def user_dict_from_dn(dn):
+    d = _dictify_dn(dn)
+    ret = dict()
+    ret['username'] = d['CN']
+    ret['email'] = d['emailAddress']
+    return ret

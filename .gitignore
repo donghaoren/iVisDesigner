@@ -3,6 +3,7 @@ deploy/
 dist/
 docs/
 website/
+paper/
 images/unused
 images/iconfont/*.svg
 images/iconfont/*.ttf

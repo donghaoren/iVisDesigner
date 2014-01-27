@@ -15,8 +15,12 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
         this.vis = vis;
     },
     validate: function(data) {
+        if(data.revision !== this._revision) {
+            this._validated = false;
+        }
         if(!this._validated) {
             this._runStep(data);
+            this._revision = data.revision;
             this._validated = true;
         }
     },
@@ -77,7 +81,7 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
             count++;
         });
         var N_iterate = 10;
-        var gravity = 10;
+        var gravity = 1000;
         var speed = 0.05;
         var k = Math.sqrt(4) / Math.sqrt(1 + count);
         var max_displace = 0.1;

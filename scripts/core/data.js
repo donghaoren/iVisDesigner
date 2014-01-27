@@ -6,6 +6,7 @@ IV.DataObject = function(root, schema) {
     this.root = root;
     this.schema = schema;
     this.namespaces = { };
+    this.revision = IV.generateUUID();
     IV.EventSource.call(this);
 };
 
@@ -101,6 +102,7 @@ IV.DataObject.prototype.computeFullStatistics = function(path, context) {
 IV.PlainDataset = function(obj, schema) {
         // Preprocess object.
     var process_subtree = function(obj, schema, parent, onobject) {
+        if(!obj) return;
         onobject(obj, schema, parent);
         if(schema.type == "object") {
             if(schema.fields) {

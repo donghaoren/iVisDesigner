@@ -36,7 +36,8 @@ var Track = IV.extend(Objects.Object, function(info) {
         var value = context.get(this.path).val();
         if(value === null || p1 === null || p2 === null || min === null || max === null) return null;
         if(this.mapping == "logarithmic") {
-            value = (Math.log10(value) - Math.log10(min)) / (Math.log10(max) - Math.log10(min));
+            if(value <= 0) value = -0.05;
+            else value = (Math.log10(value) - Math.log10(min)) / (Math.log10(max) - Math.log10(min));
         } else {
             value = (value - min) / (max - min);
         }

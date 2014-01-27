@@ -1,23 +1,74 @@
+var double_async_jsonp = function(url, params, callback) {
+    callback_name = "IVJSONP_" + new Date().getTime();
+    var script = document.createElement("script");
+    var kvs = ['callback=' + callback_name];
+    for(var k in params) {
+        kvs.push(k + "=" + encodeURIComponent(params[k]));
+    }
+    script.src = url + "?" + kvs.join("&");
+    window[callback_name] = function(data) {
+        callback(data);
+    };
+    document.body.appendChild(script);
+};
+
 var load_dataset_from_server = function(info, callback) {
     if(!callback) callback = function(){};
     var schema = jsyaml.load(info.schema);
     var data = null;
     if(schema.source) {
-        var name = schema.source.name;
-        var obj = new IV.server.SyncedObject(name);
-        var data_obj = null;
-        obj.onUpdate = function(data) {
-            var ds = new IV.PlainDataset(data, schema);
-            if(!data_obj) {
-                data_obj = new IV.DataObject(ds.obj, ds.schema);
-                IV.data = data_obj;
-                IV.editor.setData(IV.data);
-                callback();
+        if(schema.source.name) {
+            var name = schema.source.name;
+            var obj = new IV.server.SyncedObject(name);
+            var data_obj = null;
+            obj.onUpdate = function(data) {
+                var ds = new IV.PlainDataset(data, schema);
+                if(!data_obj) {
+                    data_obj = new IV.DataObject(ds.obj, ds.schema);
+                    IV.data = data_obj;
+                    IV.editor.setData(IV.data);
+                    callback();
+                } else {
+                    data_obj.updateRoot(ds.obj);
+                    data_obj.raise("update");
+                }
+            };
+        } else if(schema.source.url) {
+            var url = schema.source.url;
+            if(schema.source.type == "jsonp") {
+                var is_first_time = true;
+                double_async_jsonp(url, { }, function(data) {
+                    if(is_first_time) {
+                        var ds = new IV.PlainDataset(data, schema);
+                        IV.loadVisualization();
+                        IV.data = new IV.DataObject(ds.obj, ds.schema);
+                        IV.editor.setData(IV.data);
+                        callback();
+                    } else {
+                        var ds = new IV.PlainDataset(data, schema);
+                        IV.data = new IV.DataObject(ds.obj, ds.schema);
+                        IV.editor.setData(IV.data);
+                        IV.data.raise("update");
+                    }
+                    is_first_time = false;
+                });
             } else {
-                data_obj.updateRoot(ds.obj);
-                data_obj.raise("update");
+                $.ajax({
+                    url: url,
+                    dataType: "json",
+                    type: "get",
+                    crossDomain: true,
+                    timeout: 60000
+                }).done(function(data) {
+                    var ds = new IV.PlainDataset(data, schema);
+                    IV.loadVisualization();
+                    IV.data = new IV.DataObject(ds.obj, ds.schema);
+                    IV.editor.setData(IV.data);
+                    callback();
+                }).fail(function() {
+                });
             }
-        };
+        }
     } else {
         data = jsyaml.load(info.data);
         var ds = new IV.PlainDataset(data, schema);
