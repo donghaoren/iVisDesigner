@@ -66,8 +66,8 @@ IV.Renderer = function() {
     this.center = new IV.Vector(0, 0);
     this.scale = 1;
     this.needs_render = { };
-    this.frame_origin = true;
-    this.frame_grid = true;
+    this.frame_origin = false;
+    this.frame_grid = false;
     this.grid_size = 10;
     this.show_guide = true;
     var $this = this;
@@ -85,6 +85,10 @@ IV.Renderer = function() {
         }
     });
     this.bind("back", function(data, g) {
+        if($this.vis && $this.show_guide) {
+            g.strokeStyle = "gray";
+            g.strokeRect($this.vis.artboard.x0, $this.vis.artboard.y0, $this.vis.artboard.width, $this.vis.artboard.height);
+        }
         if($this.frame_grid) {
             var gs = this.grid_size;
             while(gs * this.scale < 5) {
@@ -156,6 +160,18 @@ IV.Renderer.prototype.getView = function() {
         center: this.center,
         scale: this.scale
     };
+};
+
+IV.Renderer.prototype.autoView = function(vis) {
+    var ab = vis.artboard;
+    var w = this.manager.width;
+    var h = this.manager.height;
+    this.scale = Math.min(
+        (w - 10) / ab.width,
+        (h - 10) / ab.height
+    );
+    this.center = new IV.Vector(-(ab.x0 + ab.width / 2) * this.scale,
+                                -(ab.y0 + ab.height / 2) * this.scale);
 };
 
 IV.Renderer.prototype.getConfig = function() {

@@ -39,7 +39,11 @@ $(function() {
     IV.raise("initialize:before");
     IV.raise("initialize");
     IV.raise("initialize:after");
-    IV.raise("command:toolkit.start");
-    IV.server.reload_account();
+    IV.server.reload_account(function() {
+        if(IV.get("user") && !IV.get("user").anonymous) IV.raise("command:toolkit.start");
+        else {
+            IV.raise("command:account.login");
+        }
+    });
 });
 

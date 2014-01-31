@@ -30,6 +30,13 @@ IV.on("command:account.login", function() {
     ctx.register.click(function() {
         ctx.close();
         IV.raise("command:account.register");
+        return false;
+    });
+    ctx.username.keydown(function(e) {
+        if(e.keyCode == 13) ctx.submit.click();
+    });
+    ctx.password.keydown(function(e) {
+        if(e.keyCode == 13) ctx.submit.click();
     });
     ctx.submit.click(function() {
         var username = ctx.username.val();
@@ -42,9 +49,10 @@ IV.on("command:account.login", function() {
             if(!err) {
                 reload_account(function(success) {
                     ctx.close();
+                    if(!IV.data) IV.raise("command:toolkit.start");
                 });
             } else {
-                ctx.status_error("Login failed: " + err);
+                ctx.status_error("Login failed: " + errorString(err));
             }
         });
     });
@@ -62,18 +70,41 @@ IV.on("command:account.register", function() {
         width: 400,
         height: 300
     });
+    ctx.login.click(function() {
+        ctx.close();
+        IV.raise("command:account.login");
+        return false;
+    });
     ctx.submit.click(function() {
         var username = ctx.username.val();
         var email = ctx.email.val();
         var password1 = ctx.password1.val();
         var password2 = ctx.password2.val();
+        ctx.status_working();
         IV.server.accounts("register", {
             username: username,
             email: email,
             password1: password1,
             password2: password2
         }, function(err, data) {
-            reload_account();
+            if(!err) {
+                ctx.status_error("Logging in...");
+                IV.server.accounts("login", {
+                    username: username,
+                    password: password1
+                }, function(err, data) {
+                    if(!err) {
+                        reload_account(function() {
+                            ctx.close();
+                            if(!IV.data) IV.raise("command:toolkit.start");
+                        });
+                    } else {
+                        ctx.status_error("Login failed: " + errorString(err));
+                    }
+                });
+            } else {
+                ctx.status_error("Registration failed: " + errorString(err));
+            }
         });
     });
 });

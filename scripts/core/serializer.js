@@ -119,6 +119,9 @@ IV.serializer.deserialize = function(d) {
 IV.serializer.registerDeserializer("Vector", function(item) {
     return new IV.Vector(item.x, item.y);
 });
+IV.serializer.registerDeserializer("Rectangle", function(item) {
+    return new IV.Rectangle(item.x0, item.y0, item.width, item.height, item.angle);
+});
 IV.serializer.registerDeserializer("Color", function(item) {
     return new IV.Color(item.r, item.g, item.b, item.a);
 });

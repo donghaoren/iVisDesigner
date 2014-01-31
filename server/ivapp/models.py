@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 class Dataset(models.Model):
     created_at = models.DateTimeField()          # Time created.
@@ -7,6 +7,7 @@ class Dataset(models.Model):
     description = models.TextField()             # Description text.
     schema = models.TextField()                  # JSON schema.
     data = models.TextField()                    # JSON data content.
+    group = models.ForeignKey(Group, blank = True, null = True)             # Which group can access it.
 
     def __unicode__(self):
         return self.name
@@ -16,7 +17,7 @@ class Visualization(models.Model):
     content = models.TextField()                 # JSON string for this visualization.
     description = models.TextField()             # Description text.
     user = models.ForeignKey(User)               # Author.
-    dataset = models.ForeignKey('Dataset')       # Dataset.
+    dataset = models.ForeignKey(Dataset)         # Dataset.
 
     def __unicode__(self):
         return self.description

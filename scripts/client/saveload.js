@@ -90,6 +90,10 @@ IV.on("command:toolkit.start", function() {
     var load_page = function(page_index) {
         IV.server.get("datasets/", { page: page_index, page_size: page_size }, function(err, data) {
             ctx.datasets.children().remove();
+            if(err) {
+                ctx.datasets.append($("<p />").text("Error: " + errorString(err)));
+                return;
+            }
             ctx.item.find(".pagination").each(function() {
                 var c = $(this);
                 generate_pagination(c, page_index, page_size, data, load_page);
@@ -111,8 +115,11 @@ IV.on("command:toolkit.start", function() {
                                 page: page_index,
                                 page_size: page_size
                             }, function(err, data) {
-                                if(err) return;
                                 ul.children().remove();
+                                if(err) {
+                                    ul.append(IV._E("li").text("Error: " + errorString(err)));
+                                    return;
+                                }
                                 ul.append(IV._E("li", "group").append(
                                     IV._E("div", "actions").append(
                                         IV._E("span", "btn btn-s").text("+ New").click(function() {
@@ -173,7 +180,9 @@ IV.on("command:toolkit.start", function() {
                             });
                         };
                         load_visualizations(1);
+                        ul.data().load_visualizations = load_visualizations;
                     } else {
+                        ul.data().load_visualizations(1);
                         ul.toggle();
                     }
                 });
@@ -202,7 +211,7 @@ IV.on("command:toolkit.save", function() {
             content: JSON.stringify(IV.serializer.serialize(IV.editor.vis)),
             description: description
         }, function(err, data) {
-            if(err) ctx.status_error(err);
+            if(err) ctx.status_error(errorString(err));
             else ctx.close();
         });
     });
@@ -218,7 +227,7 @@ IV.on("command:toolkit.save", function() {
                 content: JSON.stringify(IV.serializer.serialize(IV.editor.vis)),
                 description: description
             }, function(err, data) {
-                if(err) ctx.status_error(err);
+                if(err) ctx.status_error(errorString(err));
                 else ctx.close();
             });
         });

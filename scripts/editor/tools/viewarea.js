@@ -42,4 +42,25 @@ Tools.Zoom = {
     }
 };
 
+Tools.Artboard = {
+    onActive: function() {
+        var $this = this;
+        IV.set("status", "Drag to change the artboard.");
+        Tools.beginTrackMouse(function(e_down) {
+            e_down.move(function(e_move) {
+                if(Editor.vis) {
+                    Editor.vis.artboard = new IV.Rectangle(
+                        Math.min(e_down.offset.x, e_move.offset.x), Math.min(e_down.offset.y, e_move.offset.y),
+                        Math.abs(e_down.offset.x - e_move.offset.x), Math.abs(e_down.offset.y - e_move.offset.y)
+                    );
+                    Tools.triggerRender();
+                }
+            });
+        }, "tools:Zoom");
+    },
+    onInactive: function() {
+        Tools.endTrackMouse("tools:Zoom");
+    }
+};
+
 })();

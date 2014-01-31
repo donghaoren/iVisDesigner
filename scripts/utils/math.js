@@ -407,5 +407,11 @@ NS.Rectangle.prototype = {
     },
     getCorners: function() {
         return [ this.corner1(), this.corner2(), this.corner3(), this.corner4() ];
+    },
+    serialize: function() {
+        return { de: "Rectangle",
+                 x0: this.x0, y0: this.y0,
+                 width: this.width, height: this.height,
+                 angle: this.angle };
     }
 };

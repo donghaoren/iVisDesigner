@@ -149,8 +149,8 @@ modal_login: |
     <div class="input-group group">
       <label></label>
       <div>
-        <span class="btn btn-s" data-for="submit">Submit</span>
-        <span class="btn btn-s" data-for="register">Register</span>
+        <span class="btn btn-s" data-for="submit">Login</span>
+        <a href="#" data-for="register" style="float: right">Register</a>
         <span data-for="status"></span>
       </div>
     </div>
@@ -177,7 +177,8 @@ modal_register: |
     <div class="input-group group">
       <label></label>
       <div>
-        <span class="btn btn-s" data-for="submit">Submit</span>
+        <span class="btn btn-s" data-for="submit">Register</span>
+        <a href="#" data-for="login" style="float: right">Login</a>
         <span data-for="status"></span>
       </div>
     </div>
@@ -203,3 +204,11 @@ modal_save_visualization: |
       <div><span class="btn btn-s" data-for="save">Save</span> <span class="btn btn-s" data-for="saveas">Save As</span> <span data-for="status"></span></div>
     </div>
   </form>
+
+error_codes:
+  E_PERMISSION_DENIED: Permission denied
+  E_FAILED: Failed
+  E_INVALID: Invalid request or parameters
+  E_INACTIVE: User is inactive
+  E_DENIED: Denied
+  E_CONNECTION: Network error

@@ -139,6 +139,8 @@ Editor.computePathStatistics = function(path) {
 Editor.bind("reset", function() {
     Editor.raise("selection");
     Editor.raise("objects");
+    if(Editor.vis)
+        Editor.renderer.autoView(Editor.vis);
     Editor.renderer.trigger();
     Editor.renderer.render();
     if(Editor.component_stack.length > 0) {
@@ -149,7 +151,7 @@ Editor.bind("reset", function() {
 });
 
 IV.set("visible-guide", true);
-IV.set("visible-grid", true);
+IV.set("visible-grid", false);
 IV.set("render-2x", IV.getOptimalRatio() == 2);
 
 IV.listen("visible-guide", function(val) {

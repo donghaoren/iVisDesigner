@@ -71,32 +71,6 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
                 if(!rslt || rslt.distance > d) {
                     rslt = { distance: d, context: context.clone() };
                     make_anchor_move_context(rslt, $this.center, action);
-                    /*
-                    if(action == "move") {
-                        if($this.center.type == "Plain") {
-                            rslt.original = $this.center.obj;
-                            rslt.onMove = function(p0, p1) {
-                                $this.center.obj = rslt.original.sub(p0).add(p1);
-                                return { trigger_render: "main" };
-                            };
-                        }
-                        if($this.center.type == "PointOffset") {
-                            rslt.original = $this.center.offset;
-                            rslt.onMove = function(p0, p1) {
-                                $this.center.offset = rslt.original.sub(p0).add(p1);
-                                return { trigger_render: "main" };
-                            };
-                        }
-                    }
-                    if(action == "move-element") {
-                        if($this.center.beginMoveElement) {
-                            var c = $this.center.beginMoveElement(rslt.context);
-                            rslt.onMove = function(p0, p1) {
-                                c.onMove(p0, p1);
-                            };
-                        }
-                    }
-                    */
                 }
             }
         });
@@ -124,11 +98,66 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
             if(p1 === null || p2 === null) return;
-            var d = IV.pointLineSegmentDistance(pt, p1, p2);
-            var threshold = 4.0 / pt.view_scale;
-            if(d < threshold) {
-                if(!rslt || rslt.distance > d)
+            var threshold = 4.0 / pt.view_scale, d, anchor_selected = false;
+            d = Math.abs(pt.distance(p1));
+            if(d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
+                make_anchor_move_context(rslt, $this.point1, action);
+                anchor_selected = true;
+            }
+            d = Math.abs(pt.distance(p2));
+            if(d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
+                make_anchor_move_context(rslt, $this.point2, action);
+                anchor_selected = true;
+            }
+            d = IV.pointLineSegmentDistance(pt, p1, p2);
+            if(!anchor_selected && d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
+            }
+        });
+        return rslt;
+    }
+});
+
+Objects.Polyline = IV.extend(Objects.Shape, function(info) {
+    Objects.Shape.call(this, info);
+    this.type = "Polyline";
+    this.points = info.points;
+}, {
+    shapePaths: function(context, cb) {
+        var pts = this.points.map(function(p) { return p.getPoint(context); });
+        var desc = [];
+        for(var i in pts) {
+            if(pts[i] === null) return;
+            if(desc.length == 0) desc.push("M");
+            else desc.push("L");
+            desc.push(pts[i]);
+        }
+        cb(desc);
+    },
+    select: function(pt, data, action) {
+        var rslt = null;
+        var $this = this;
+        this.path.enumerate(data, function(context) {
+            var p1 = null;
+            var threshold = 4.0 / pt.view_scale, d, anchor_selected = false;
+            for(var i = 0; i < $this.points.length; i++) {
+                var p2 = $this.points[i].getPoint(context);
+                if(p2 === null) return;
+                d = Math.abs(pt.distance(p2));
+                if(d < threshold && (!rslt || rslt.distance > d)) {
                     rslt = { distance: d, context: context.clone() };
+                    make_anchor_move_context(rslt, $this.points[i], action);
+                    anchor_selected = true;
+                }
+                if(p1 !== null) {
+                    d = IV.pointLineSegmentDistance(pt, p1, p2);
+                    if(!anchor_selected && d < threshold && (!rslt || rslt.distance > d)) {
+                        rslt = { distance: d, context: context.clone() };
+                    }
+                }
+                p1 = p2;
             }
         });
         return rslt;
@@ -163,18 +192,28 @@ Objects.Bar = IV.extend(Objects.Shape, function(info) {
         ]);
     },
     select: function(pt, data, action) {
-        if(action == "move-element") return null;
         var rslt = null;
         var $this = this;
         this.path.enumerate(data, function(context) {
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
             if(p1 === null || p2 === null) return;
-            var d = IV.pointLineSegmentDistance(pt, p1, p2);
-            var threshold = 4.0 / pt.view_scale;
-            if(d < threshold) {
-                if(!rslt || rslt.distance > d)
-                    rslt = { distance: d, context: context.clone() };
+            var threshold = 4.0 / pt.view_scale, d, anchor_selected = false;
+            d = Math.abs(pt.distance(p1));
+            if(d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
+                make_anchor_move_context(rslt, $this.point1, action);
+                anchor_selected = true;
+            }
+            d = Math.abs(pt.distance(p2));
+            if(d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
+                make_anchor_move_context(rslt, $this.point2, action);
+                anchor_selected = true;
+            }
+            d = IV.pointLineSegmentDistance(pt, p1, p2);
+            if(!anchor_selected && d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
             }
         });
         return rslt;

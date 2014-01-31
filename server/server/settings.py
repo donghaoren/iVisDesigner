@@ -88,10 +88,8 @@ REST_FRAMEWORK = {
     'MAX_PAGINATE_BY': 200,            # Maximum limit allowed when using `?page_size=xxx`.
 }
 
-CORS_ORIGIN_ALLOW_ALL = False
-if DEBUG:
-    CORS_ORIGIN_WHITELIST = ( 'localhost' )
-CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

@@ -3,21 +3,24 @@ IV.Visualization = function() {
     this.objects = [];
     // Selected objects.
     this.selection = [];
-    this.needs_render = true;
+    this._needs_render = true;
     this.type = "Visualization";
+    this.artboard = new IV.Rectangle(-600, -400, 1200, 800);
     IV.EventSource.call(this);
 };
-
 
 IV.serializer.registerObjectType("Visualization", IV.Visualization);
 
 IV.implement(IV.EventSource, IV.Visualization);
 
 IV.Visualization.prototype.serializeFields = function() {
-    return [ "objects" ];
+    return [ "objects", "artboard" ];
 };
 IV.Visualization.prototype.postDeserialize = function() {
     this.selection = [];
+    if(!this.artboard) {
+        this.artboard = new IV.Rectangle(-600, -400, 1200, 800);
+    }
     IV.EventSource.call(this);
 };
 
@@ -58,12 +61,12 @@ IV.Visualization.prototype.removeObject = function(obj) {
     this.raise("objects");
 };
 IV.Visualization.prototype.setNeedsRender = function() {
-    this.needs_render = true;
+    this._needs_render = true;
 };
 IV.Visualization.prototype.triggerRenderer = function(renderer) {
-    if(this.needs_render) {
+    if(this._needs_render) {
         renderer.trigger();
-        this.needs_render = false;
+        this._needs_render = false;
     }
 };
 IV.Visualization.prototype.validate = function(data) {

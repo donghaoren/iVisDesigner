@@ -75,6 +75,39 @@ Tools.Bar = {
     }
 };
 
+Tools.Polyline = {
+    onActive: function() {
+        var $this = this;
+        if($this.locs && $this.locs.length >= 2) {
+            var path = Editor.get("selected-path");
+            var line = new IV.objects.Polyline({
+                path: path,
+                points: $this.locs
+            });
+            Editor.doAddObject(line);
+            $this.locs = [];
+            sA = Editor.status.start()
+                .add("Polyline: ")
+                .append("1: [please select]");
+        }
+        $this.locs = [];
+        var sA = Editor.status.start()
+            .add("Polyline: ")
+            .append("1: [please select]");
+
+        Tools.beginSelectLocation(function(loc) {
+            if(loc) {
+                $this.locs.push(loc);
+                sA.set($this.locs.length + ": " + loc.type);
+                sA = Editor.status.append(($this.locs.length + 1) + ": [please select]");
+            }
+        }, "tools:Polyline");
+    },
+    onInactive: function() {
+        Tools.endSelectLocation("tools:Polyline");
+    }
+};
+
 
 Tools.LineThrough = {
     onActive: function() {

@@ -211,7 +211,6 @@ IV.listen("tools:current", function(val) {
 {{include: component.js}}
 {{include: text.js}}
 {{include: viewarea.js}}
-
 {{include: moveelement.js}}
 
 IV.set("tools:current", "Select");

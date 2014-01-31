@@ -21,11 +21,15 @@ IV.EmbeddedCanvas = IV.extend(Object, function(div, options) {
     this.renderer.setCanvasManager(this.manager);
     this.renderer.setView(options.center, options.scale);
 
-    if(options.data)
+    if(options.data) {
         this.renderer.setData(options.data);
+        this.data = options.data;
+    }
 
-    if(options.visualization)
+    if(options.visualization) {
         this.renderer.setVisualization(options.visualization);
+        this.vis = options.visualization;
+    }
 
 
     var add_canvas = function() {
@@ -43,7 +47,17 @@ IV.EmbeddedCanvas = IV.extend(Object, function(div, options) {
     this.manager.add("overlay", add_canvas());
 
     this.resize(this.width, this.height);
+
+    if(options.visualization)
+        this.renderer.autoView(options.visualization);
     this.redraw();
+
+    var $this = this;
+    setInterval(function() {
+        $this.vis.timerTick($this.data);
+        $this.vis.triggerRenderer($this.renderer);
+        $this.renderer.render();
+    }, 30);
 }, {
     redraw: function() {
         this.renderer.trigger();
@@ -70,4 +84,5 @@ IV.EmbeddedCanvas = IV.extend(Object, function(div, options) {
 
 $.fn.ivVisualization = function(options) {
     $(this).data().c = new IV.EmbeddedCanvas($(this), options);
+    return $(this);
 };

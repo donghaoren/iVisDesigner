@@ -10,12 +10,12 @@ class UserSerializer(serializers.ModelSerializer):
 class DatasetSerializer_List(serializers.ModelSerializer):
     class Meta:
         model = Dataset
-        fields = ('id', 'name', 'description', 'schema', 'created_at')
+        fields = ('id', 'name', 'description', 'schema', 'created_at', 'group')
 
 class DatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dataset
-        fields = ('id', 'name', 'description', 'schema', 'created_at', 'data')
+        fields = ('id', 'name', 'description', 'schema', 'created_at', 'data', 'group')
 
 class VisualizationSerializer(serializers.ModelSerializer):
     user_info = UserSerializer(source = 'user', read_only = True)

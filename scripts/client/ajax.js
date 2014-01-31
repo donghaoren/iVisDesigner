@@ -23,9 +23,15 @@ var ajaxCall = function(url, method, params, callback) {
         else
             callback(false, data);
     }).fail(function() {
-        callback("E_UNKNOWN");
+        callback("E_CONNECTION");
     });
 };
+
+var errorString = function(err) {
+    var err_codes = IV.strings("error_codes");
+    if(err_codes[err]) return err_codes[err];
+    return "Unknown error";
+}
 
 
 IV.server = {
