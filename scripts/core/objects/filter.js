@@ -8,7 +8,7 @@ var RangeFilter = IV.extend(Objects.Object, function(path, min, max) {
 }, {
     $auto_properties: [ "path", "min", "max" ],
     get: function(context) {
-        if(!this.path) return null;
+        if(!this.path) return true;
         var value = context.get(this.path).val();
         if(this.min <= this.max)
             return value >= this.min && value <= this.max;
@@ -30,11 +30,10 @@ var CategoricalFilter = IV.extend(Objects.Object, function(path, keys, is_black_
 }, {
     $auto_properties: [ "path", "$array:keys", "is_black_list" ],
     get: function(context) {
-        if(!this.path)
-            return null;
+        if(!this.path) return true;
         var value = context.get(this.path).val();
-        if(this.is_black_list) return
-        return this.keys.find(value) != 0 ^ this.is_black_list;
+        var found = this.keys.indexOf(value.toString()) >= 0;
+        return found ? !this.is_black_list : this.is_black_list;
     },
     clone: function() {
         return new CategoricalFilter(this.path, this.keys.slice(), this.is_black_list);
@@ -42,3 +41,24 @@ var CategoricalFilter = IV.extend(Objects.Object, function(path, keys, is_black_
 });
 Objects.CategoricalFilter = CategoricalFilter;
 IV.serializer.registerObjectType("CategoricalFilter", CategoricalFilter);
+
+var CompoundFilter = IV.extend(Objects.Object, function(path, filters, is_conjunctive) {
+    this.type = "CompoundFilter";
+    this.filters = filters ? filters : [];
+    this.is_conjunctive = is_conjunctive ? true : false;
+}, {
+    $auto_properties: [ "$array:filters", "is_conjunctive" ],
+    get: function(context) {
+        if(this.is_conjunctive) {
+            for(var i = 0; i < this.filters.length; i++) {
+                if(!this.filters[i].get(context)) return false;
+            }
+            return true;
+        } else {
+            for(var i = 0; i < this.filters.length; i++) {
+                if(this.filters[i].get(context)) return true;
+            }
+            return false;
+        }
+    },
+});

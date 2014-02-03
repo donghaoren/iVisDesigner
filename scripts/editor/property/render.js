@@ -10,6 +10,7 @@ var object_renderers = { };
 
 // Object value.
 var render_object_value = function(item, args, callback) {
+    if(!item) return IV._E("span").text("None");
     if(item.constructor == Number) {
         return primitives.Number(function() { return item; }, function(new_val) {
             callback(new_val);
@@ -178,6 +179,19 @@ var render_property_field = function(item) {
             }
             if(val == "Equals") {
                 reload_item(new IV.objects.PassThrough(new IV.Path()));
+            }
+        });
+    }
+    if(type == "filter") {
+        make_switch_button([ "None", "Range", "Categorical"], function(val) {
+            if(val == "None") {
+                reload_item(null);
+            }
+            if(val == "Range") {
+                reload_item(new IV.objects.RangeFilter(new IV.Path(), 0, 1));
+            }
+            if(val == "Categorical") {
+                reload_item(new IV.objects.CategoricalFilter(new IV.Path(), [], false));
             }
         });
     }

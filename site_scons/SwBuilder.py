@@ -737,9 +737,17 @@ def YAML2DataJavascript(url, source, variable = "DATA"):
 def Images(url_path, list):
     Binaries(url_path, list)
 
-def Find(pattern, directory = "."):
-    dir = Dir(directory)
-    r = dir.glob(pattern, strings=True)
+def Find(pattern, directory = ".", recursive = False):
+    if recursive:
+        import fnmatch
+        r = []
+        for root, dirnames, filenames in os.walk(directory):
+          for filename in fnmatch.filter(filenames, pattern):
+            path = os.path.join(os.path.relpath(root, directory), filename)
+            r.append(path)
+    else:
+        dir = Dir(directory)
+        r = dir.glob(pattern, strings=True)
     return map(lambda x: (x, directory + "/" + x), r)
 
 def FindFiles(pattern, directory = "."):

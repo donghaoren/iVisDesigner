@@ -4,11 +4,16 @@ Objects.Shape = IV.extend(Objects.Object,function(info) {
         this.style = info.style;
     else
         this.style = new Objects.PathStyle();
+    if(info.filter)
+        this.filter = info.filter;
+    else
+        this.filter = null;
 }, {
-    $auto_properties: [ "path" ],
+    $auto_properties: [ "path", "filter" ],
     render: function(g, data) {
         var $this = this;
         $this.path.enumerate(data, function(context) {
+            if($this.filter && !$this.filter.get(context)) return;
             $this.shapePaths(context, function(path) {
                 $this.style.renderPath(context, g, path);
             });
@@ -17,6 +22,7 @@ Objects.Shape = IV.extend(Objects.Object,function(info) {
     renderSelected: function(g, data, context) {
         var $this = this;
         var draw_with_context = function(context) {
+            if($this.filter && !$this.filter.get(context)) return;
             $this.shapePaths(context, function(path) {
                 $this.style.renderSelection(context, g, path);
             });
@@ -27,7 +33,8 @@ Objects.Shape = IV.extend(Objects.Object,function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
-            make_prop_ctx($this, "path", "Path", "Shape", "path")
+            make_prop_ctx($this, "path", "Path", "Shape", "path"),
+            make_prop_ctx($this, "filter", "Filter", "Shape", "filter")
         ]);
     }
 });
@@ -63,6 +70,7 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
         var rslt = null;
         var $this = this;
         this.path.enumerate(data, function(context) {
+            if($this.filter && !$this.filter.get(context)) return;
             var c = $this.center.getPoint(context);
             var radius = $this.radius.get(context);
             if(c === null || radius === null) return;
@@ -91,10 +99,10 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
         cb([ "M", p1, "L", p2 ]);
     },
     select: function(pt, data, action) {
-        if(action == "move-element") return null;
         var rslt = null;
         var $this = this;
         this.path.enumerate(data, function(context) {
+            if($this.filter && !$this.filter.get(context)) return;
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
             if(p1 === null || p2 === null) return;
@@ -140,6 +148,7 @@ Objects.Polyline = IV.extend(Objects.Shape, function(info) {
         var rslt = null;
         var $this = this;
         this.path.enumerate(data, function(context) {
+            if($this.filter && !$this.filter.get(context)) return;
             var p1 = null;
             var threshold = 4.0 / pt.view_scale, d, anchor_selected = false;
             for(var i = 0; i < $this.points.length; i++) {
@@ -195,6 +204,7 @@ Objects.Bar = IV.extend(Objects.Shape, function(info) {
         var rslt = null;
         var $this = this;
         this.path.enumerate(data, function(context) {
+            if($this.filter && !$this.filter.get(context)) return;
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
             if(p1 === null || p2 === null) return;
@@ -251,6 +261,7 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
         var rslt = null;
         var $this = this;
         $this.path.enumerate(data, function(fctx) {
+            if($this.filter && !$this.filter.get(context)) return;
             var pts = [];
             $this.points.getPath().enumerateAtContext(fctx, function(context) {
                 var pt = $this.points.getPoint(context);
@@ -273,3 +284,4 @@ IV.serializer.registerObjectType("Circle", Objects.Circle);
 IV.serializer.registerObjectType("Line", Objects.Line);
 IV.serializer.registerObjectType("Bar", Objects.Bar);
 IV.serializer.registerObjectType("LineThrough", Objects.LineThrough);
+IV.serializer.registerObjectType("Polyline", Objects.Polyline);

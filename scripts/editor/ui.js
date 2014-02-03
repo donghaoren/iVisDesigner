@@ -154,4 +154,10 @@ IV.listen("status", function(s) {
             delete editor_messages[str];
         }, 2000);
     };
+
+    $(window).keydown(function(e) {
+        if(e.keyCode == 8 && e.target == document.body) {
+            e.preventDefault();
+        }
+    });
 })();

@@ -75,7 +75,11 @@ def CreateIconFont(name, files, target):
      for key in mapping
     ]) + "\n"
 
-    open(target, "w").write(css.encode("utf-8"))
+    f_css = open(target, "w")
+    f_css.write(css.encode("utf-8"))
+    f_css.close()
     for key in mapping:
         mapping[key] = unichr(mapping[key])
-    open(target + ".js", "w").write(("FONT_" + name + " = " + json.dumps(mapping) + ";").encode("utf-8"))
+    f_js = open(target + ".js", "w")
+    f_js.write(("FONT_" + name + " = " + json.dumps(mapping) + ";").encode("utf-8"))
+    f_js.close()

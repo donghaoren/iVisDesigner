@@ -87,6 +87,7 @@ IV.Renderer = function() {
     this.bind("back", function(data, g) {
         if($this.vis && $this.show_guide) {
             g.strokeStyle = "gray";
+            var w = g.ivGuideLineWidth();
             g.strokeRect($this.vis.artboard.x0, $this.vis.artboard.y0, $this.vis.artboard.width, $this.vis.artboard.height);
         }
         if($this.frame_grid) {

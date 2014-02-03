@@ -44,6 +44,7 @@ Objects.Object.prototype = {
 
 {{include: utils.js}}
 {{include: base.js}}
+{{include: filter.js}}
 {{include: style.js}}
 {{include: track.js}}
 {{include: shapes.js}}
