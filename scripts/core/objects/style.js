@@ -1,3 +1,10 @@
+IV.catmullRomCurveTo = function(ctx, x0, y0, x1, y1, x2, y2, x3, y3) {
+    // Convert to bezier.
+    ctx.bezierCurveTo(x2 / 6 + x1 - x0 / 6, y2 / 6 + y1 - y0 / 6,
+                      x1 / 6 + x2 - x3 / 6, y1 / 6 + y2 - y3 / 6,
+                      x2, y2);
+};
+
 Objects.PathStyle = IV.extend(Objects.Object, function() {
     Objects.Object.call(this);
     // Default attributes.
@@ -123,6 +130,44 @@ Objects.PathStyle = IV.extend(Objects.Object, function() {
                     g.arc(path[i].x, path[i].y, path[i + 1], 0, Math.PI * 2);
                 }
                 i += 2;
+            }
+            if(cmd == "POLYLINE") {
+                var n = path[i++];
+                var c = path[i++];
+                if(c == "C") {
+                    for(var k = 0; k < n; k++) {
+                        var p2 = path[i + (k + 1) % n];
+                        g.lineTo(p2.x, p2.y);
+                    }
+                } else {
+                    for(var k = 0; k < n - 1; k++) {
+                        var p2 = path[i + k + 1];
+                        g.lineTo(p2.x, p2.y);
+                    }
+                }
+                i += n;
+            }
+            if(cmd == "CATMULLROM") {
+                var n = path[i++];
+                var c = path[i++];
+                if(c == "C") {
+                    for(var k = 0; k < n; k++) {
+                        var p0 = path[i + (n + k - 1) % n];
+                        var p1 = path[i + k];
+                        var p2 = path[i + (k + 1) % n];
+                        var p3 = path[i + (k + 2) % n];
+                        IV.catmullRomCurveTo(g, p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+                    }
+                } else {
+                    for(var k = 0; k < n - 1; k++) {
+                        var p0 = path[i + Math.max(0, k - 1)];
+                        var p1 = path[i + k];
+                        var p2 = path[i + k + 1];
+                        var p3 = path[i + Math.min(n - 1, k + 2)];
+                        IV.catmullRomCurveTo(g, p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+                    }
+                }
+                i += n;
             }
         }
     },

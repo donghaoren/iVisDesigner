@@ -10,7 +10,7 @@ var object_renderers = { };
 
 // Object value.
 var render_object_value = function(item, args, callback) {
-    if(!item) return IV._E("span").text("None");
+    if(item === undefined || item === null) return IV._E("span").text("None");
     if(item.constructor == Number) {
         return primitives.Number(function() { return item; }, function(new_val) {
             callback(new_val);
@@ -28,11 +28,6 @@ var render_object_value = function(item, args, callback) {
             callback(new_val);
             return new_val;
         }, args);
-        // return primitives.String(function() { return item ? "true" : "false"; }, function(new_val) {
-        //     new_val = new_val == "true" ? true : false
-        //     callback(new_val);
-        //     return new_val;
-        // }, ["true", "false"]);
     }
     if(item instanceof IV.Color) {
         return primitives.Color(function() { return item; }, function(new_val) {
@@ -183,7 +178,7 @@ var render_property_field = function(item) {
         });
     }
     if(type == "filter") {
-        make_switch_button([ "None", "Range", "Categorical"], function(val) {
+        make_switch_button([ "None", "Range", "Categorical", "Combined"], function(val) {
             if(val == "None") {
                 reload_item(null);
             }
@@ -192,6 +187,9 @@ var render_property_field = function(item) {
             }
             if(val == "Categorical") {
                 reload_item(new IV.objects.CategoricalFilter(new IV.Path(), [], false));
+            }
+            if(val == "Combined") {
+                reload_item(new IV.objects.CombinedFilter([], false));
             }
         });
     }

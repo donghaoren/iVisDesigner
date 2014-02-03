@@ -132,14 +132,19 @@ Objects.Polyline = IV.extend(Objects.Shape, function(info) {
     Objects.Shape.call(this, info);
     this.type = "Polyline";
     this.points = info.points;
+    this.curved = info.curved ? true : false;
+    this.closed = info.closed ? true : false;
 }, {
+    $auto_properties: [ "curved", "closed" ],
+    postDeserialize: function() {
+        if(!this.curved) this.curved = false;
+        if(!this.closed) this.closed = false;
+    },
     shapePaths: function(context, cb) {
         var pts = this.points.map(function(p) { return p.getPoint(context); });
-        var desc = [];
+        var desc = ["M", pts[0], this.curved ? "CATMULLROM" : "POLYLINE", pts.length, this.closed ? "C" : "L"];
         for(var i in pts) {
             if(pts[i] === null) return;
-            if(desc.length == 0) desc.push("M");
-            else desc.push("L");
             desc.push(pts[i]);
         }
         cb(desc);
@@ -170,7 +175,14 @@ Objects.Polyline = IV.extend(Objects.Shape, function(info) {
             }
         });
         return rslt;
-    }
+    },
+    getPropertyContext: function() {
+        var $this = this;
+        return Objects.Shape.prototype.getPropertyContext.call(this).concat([
+            make_prop_ctx($this, "closed", "Closed", "Shape", "plain-bool"),
+            make_prop_ctx($this, "curved", "Curved", "Shape", "plain-bool")
+        ]);
+    },
 });
 
 Objects.Bar = IV.extend(Objects.Shape, function(info) {

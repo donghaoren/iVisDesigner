@@ -42,8 +42,8 @@ var CategoricalFilter = IV.extend(Objects.Object, function(path, keys, is_black_
 Objects.CategoricalFilter = CategoricalFilter;
 IV.serializer.registerObjectType("CategoricalFilter", CategoricalFilter);
 
-var CompoundFilter = IV.extend(Objects.Object, function(path, filters, is_conjunctive) {
-    this.type = "CompoundFilter";
+var CombinedFilter = IV.extend(Objects.Object, function(path, filters, is_conjunctive) {
+    this.type = "CombinedFilter";
     this.filters = filters ? filters : [];
     this.is_conjunctive = is_conjunctive ? true : false;
 }, {
@@ -62,3 +62,5 @@ var CompoundFilter = IV.extend(Objects.Object, function(path, filters, is_conjun
         }
     },
 });
+Objects.CombinedFilter = CombinedFilter;
+IV.serializer.registerObjectType("CombinedFilter", CombinedFilter);

@@ -374,3 +374,64 @@ object_renderers.PassThrough = function(item, args, callback) {
     r.bind("destroyed", function() { listener.unbind(); });
     return r;
 };
+
+object_renderers.CombinedFilter = function(item, args, callback) {
+    var r = IV._E("span");
+    var fc = IV._E("span");
+    var render_filters = function() {
+        fc.children().remove();
+        for(var i = 0; i < item.filters.length; i++) { (function(index) {
+            console.log("R", item.filters[index]);
+            var elem = render_object_value(item.filters[index], args, function(val) {
+                if(val) {
+                    Actions.add(new Actions.SetArrayDirectly(item, "filters", "set", index, val));
+                    Actions.commit();
+                }
+                callback();
+                return val;
+            });
+            var btn_remove = $("<span />").addClass("btn").append($('<i class="xicon-cross"></i>')).click(function() {
+                Actions.add(new Actions.SetArrayDirectly(item, "filters", "splice", index, 1, []));
+                Actions.commit();
+                callback();
+            });
+            fc.append(make_table(IV._E("span", "small", item.filters[index].type), "|", btn_remove));
+            fc.append(elem);
+        })(i) };
+    };
+    render_filters();
+    var btn_add = $("<span />").addClass("btn").text("+").click(function() {
+        IV.popups.beginContextMenu($(this), [ "Range", "Categorical", "Combined"], function(val) {
+            var new_filter;
+            if(val == "Range") {
+                new_filter = new IV.objects.RangeFilter(new IV.Path(), 0, 1);
+            }
+            if(val == "Categorical") {
+                new_filter = new IV.objects.CategoricalFilter(new IV.Path(), [], false);
+            }
+            if(val == "Combined") {
+                new_filter = new IV.objects.CombinedFilter([], false);
+            }
+            Actions.add(new Actions.SetArrayDirectly(item, "filters", "push", new_filter));
+            Actions.commit();
+            callback();
+        });
+    });
+    var btn_is_conjunctive = primitives.Toggle(function() { return item.is_conjunctive; }, function(new_val) {
+        Actions.add(new Actions.SetProperty(item, "is_conjunctive", new_val));
+        Actions.commit();
+        callback();
+        return new_val;
+    }, { "true": "Conjunctive", "false": "Disjunctive" });
+    r.append(fc);
+    var buttons = make_table(btn_is_conjunctive, "|", btn_add);
+    r.append(buttons);
+    var listener = IV.bindObjectEvents(item,
+        ["set:is_conjunctive", "set:filters"],
+    function(ev, val) {
+        if(ev == "set:is_conjunctive") btn_is_conjunctive.data().reload();
+        if(ev == "set:filters") render_filters();
+    });
+    r.bind("destroyed", function() { listener.unbind(); });
+    return r;
+};
