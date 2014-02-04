@@ -247,20 +247,23 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
     this.points = info.points;
     this.type = "LineThrough";
 }, {
+    $auto_properties: [ "curved", "closed", "points" ],
+    postDeserialize: function() {
+        if(!this.curved) this.curved = false;
+        if(!this.closed) this.closed = false;
+    },
     shapePaths: function(context, cb) {
         var $this = this;
         var line = [];
         $this.points.getPath().enumerateAtContext(context, function(ctx) {
             var pt = $this.points.getPoint(ctx);
             if(pt === null) return;
-            if(line.length == 0) {
-                line.push("M");
-            } else {
-                line.push("L");
-            }
             line.push(pt);
         });
-        cb(line);
+        if(line.length >= 2) {
+            var desc = ["M", line[0], $this.curved ? "CATMULLROM" : "POLYLINE", line.length, $this.closed ? "C" : "L"];
+            cb(desc.concat(line));
+        }
     },
     can: function(cap) {
         if(cap == "get-point") return true;
@@ -289,7 +292,14 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
             }
         });
         return rslt;
-    }
+    },
+    getPropertyContext: function() {
+        var $this = this;
+        return Objects.Shape.prototype.getPropertyContext.call(this).concat([
+            make_prop_ctx($this, "closed", "Closed", "Shape", "plain-bool"),
+            make_prop_ctx($this, "curved", "Curved", "Shape", "plain-bool")
+        ]);
+    },
 });
 
 IV.serializer.registerObjectType("Circle", Objects.Circle);

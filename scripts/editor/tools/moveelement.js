@@ -9,7 +9,12 @@ Tools.MoveElement = {
 
         Tools.beginSelectObject(function(context, e_down) {
             if(context) {
+                if(Editor.vis) {
+                    Editor.vis.clearSelection();
+                    Editor.vis.appendSelection(context);
+                }
             } else {
+                Editor.vis.clearSelection();
                 return;
             }
             if(context.onMove) {

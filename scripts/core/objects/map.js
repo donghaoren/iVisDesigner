@@ -1,14 +1,5 @@
 (function() {
 
-var GoogleMapStatic = function(lng, lat, zoom, size_x, size_y, maptype, scale) {
-    this.center_lng = lng;
-    this.center_lat = lat;
-    this.zoom = zoom;
-    this.size_x = size_x;
-    this.size_y = size_y;
-    this.scale = scale;
-    this.maptype = maptype;
-};
 // Mercator Projection
 var GoogleMapMercator = function(lng, lat) {
     var x = lng;
@@ -16,6 +7,7 @@ var GoogleMapMercator = function(lng, lat) {
     var y = Math.log( (1 + Math.sin(rlat)) / (1 - Math.sin(rlat)) ) / 2;
     return new IV.Vector(x / 360.0, y / Math.PI / 2);
 };
+
 var GoogleMapMercatorInverse = function(x, y) {
     var tanh = function(x) {
         return (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
@@ -24,23 +16,121 @@ var GoogleMapMercatorInverse = function(x, y) {
     lat = 180 * Math.asin(tanh(2 * Math.PI * y)) / Math.PI;
     return [lng, lat];
 };
+
+var GoogleMapImage = function(maptype, zoom) {
+    this.maptype = maptype;
+    this.zoom = zoom;
+    this.map_width = 256 * (1 << this.zoom);
+    this.images = { };
+    this.callback = function() { };
+};
+
+GoogleMapImage.prototype.renderImages = function(g, cx, cy, width, height) {
+    var tile_size = 512;
+    var tile_count = (1 << this.zoom) / 2;
+    var x_min = Math.floor((cx) / tile_size);
+    var x_max = Math.floor((cx + width) / tile_size);
+    var y_min = Math.floor((cy) / tile_size);
+    var y_max = Math.floor((cy + height) / tile_size);
+    if(y_min < 0) y_min = 0; if(y_min >= tile_count) y_min = tile_count - 1;
+    if(y_max < 0) y_max = 0; if(y_max >= tile_count) y_max = tile_count - 1;
+    for(var x = x_min; x <= x_max; x++) {
+        for(var y = y_min; y <= y_max; y++) {
+            var tile = this.requestTile((x % tile_count + tile_count) % tile_count, y);
+            try {
+                var sx = 0, sy = 0, sw = tile_size + 128, sh = tile_size + 128;
+                var dx = x * tile_size - cx - 64, dy = y * tile_size - cy - 64;
+                if(dx < 0) { sx -= dx; dx = 0; }
+                if(dy < 0) { sy -= dy; dy = 0; }
+                if(dx + sw > width) { sw = width - dx; }
+                if(dy + sh > height) { sh = height - dy; }
+                if(sw > 0 && sh > 0 && dx < width && dy < height)
+                    g.drawImage(tile, sx * 2, sy * 2, sw * 2, sh * 2, dx, dy, sw, sh);
+            } catch(e) { }
+        }
+    }
+    this.purgeImages();
+};
+
+GoogleMapImage.prototype.purgeImages = function() {
+    var now = new Date().getTime();
+    for(var k in this.images) {
+        if(now - this.images[k].last_used > 10000 * 1000) delete this.images[k];
+    }
+};
+
+GoogleMapImage.prototype.requestTile = function(x, y) {
+    var key = this.maptype + "," + x + "," + y;
+    var $this = this;
+    if(this.images[key]) {
+        this.images[key].last_used = new Date().getTime();
+        return this.images[key].img;
+    } else {
+        var o = {
+            img: new Image(),
+            last_used: new Date().getTime()
+        };
+        o.img.onload = function() {
+            $this.callback($this);
+        };
+        o.img.src = this.getTileURL(x, y);
+        this.images[key] = o;
+        return o.img;
+    }
+};
+
+GoogleMapImage.prototype.getTileURL = function(x, y) {
+    // In this function we work in the GoogleMapMercator coordinate, world range: -0.5 ~ 0.5.
+    var cell_width = Math.pow(2, -(this.zoom - 1));
+    var xy_first_cell = -0.5 + cell_width / 2.0;
+    var lnglat = GoogleMapMercatorInverse(xy_first_cell + cell_width * x, -xy_first_cell - cell_width * y);
+    var params = {
+        center: lnglat[1] + "," + lnglat[0], // lat,lng
+        zoom: this.zoom,
+        size: "640x640",
+        sensor: false,
+        scale: 2,
+        maptype: this.maptype,
+        key: "AIzaSyBWFLxkr7mBCEpjyJotpP50n_ZOtcW-RTo",
+        language: "en_US",
+        visual_refresh: true
+    };
+    var baseurl = "https://maps.googleapis.com/maps/api/staticmap";
+    var params_array = [];
+    for(var key in params) {
+        params_array.push(escape(key) + "=" + escape(params[key]));
+    }
+    return baseurl + "?" + params_array.join("&");
+};
+
+var GoogleMapStatic = function(lng, lat, zoom, size_x, size_y, maptype, scale) {
+    this.center_lng = lng;
+    this.center_lat = lat;
+    this.zoom = zoom;
+    this.size_x = size_x;
+    this.size_y = size_y;
+    this.scale = scale;
+    this.maptype = maptype;
+    this.images = { };
+};
+
 GoogleMapStatic.prototype = {
-    lngLatToPixel: function(lng, lat) {
-        var world_width = 256 * (1 << this.zoom);
+    lngLatToPixel: function(lng, lat, zoom) {
+        var world_width = 256 * Math.pow(2, this.zoom);
         var pt = GoogleMapMercator(lng, lat);
         var p0 = GoogleMapMercator(this.center_lng, this.center_lat);
         var sh = pt.sub(p0).scale(world_width);
         return sh.add(new IV.Vector(this.size_x / 2, this.size_y / 2));
     },
     lngLatToPixelCentered: function(lng, lat) {
-        var world_width = 256 * (1 << this.zoom);
+        var world_width = 256 * Math.pow(2, this.zoom);
         var pt = GoogleMapMercator(lng, lat);
         var p0 = GoogleMapMercator(this.center_lng, this.center_lat);
         var sh = pt.sub(p0).scale(world_width);
         return sh;
     },
     pixelToLngLatCentered: function(x, y) {
-        var world_width = 256 * (1 << this.zoom);
+        var world_width = 256 * Math.pow(2, this.zoom);
         var p0 = GoogleMapMercator(this.center_lng, this.center_lat);
         x /= world_width;
         y /= world_width;
@@ -48,26 +138,29 @@ GoogleMapStatic.prototype = {
         y += p0.y;
         return GoogleMapMercatorInverse(x, y);
     },
-    getURL: function() {
-        var params = {
-            center: this.center_lat + "," + this.center_lng,
-            zoom: this.zoom,
-            size: this.size_x + "x" + this.size_y,
-            sensor: false,
-            scale: this.scale,
-            maptype: this.maptype,
-            key: "AIzaSyBWFLxkr7mBCEpjyJotpP50n_ZOtcW-RTo",
-            language: "en_US",
-            visual_refresh: true
-        };
-        var baseurl = "https://maps.googleapis.com/maps/api/staticmap";
-        var params_array = [];
-        for(var key in params) {
-            params_array.push(escape(key) + "=" + escape(params[key]));
+    render: function(g) {
+        var map_zoom = Math.round(this.zoom);
+        if(map_zoom < 1) map_zoom = 1; if(map_zoom > 22) map_zoom = 22;
+        if(!this.delegate || this.delegate.zoom != map_zoom) {
+            this.delegate = new GoogleMapImage(this.maptype, map_zoom);
+            var self = this;
+            this.delegate.callback = function(s) {
+                if(self.callback && self.delegate == s) self.callback(self);
+            };
         }
-        return baseurl + "?" + params_array.join("&");
+        g.save();
+        this.delegate.maptype = this.maptype;
+        var my_world_width = 256 * Math.pow(2, this.zoom);
+        var s = my_world_width / this.delegate.map_width;
+        g.scale(s, s);
+        var p0 = GoogleMapMercator(this.center_lng, -this.center_lat);
+        var sh = p0.scale(this.delegate.map_width).add(new IV.Vector(this.delegate.map_width / 2, this.delegate.map_width / 2));
+        g.translate(-this.size_x / s / 2, -this.size_y / s / 2);
+        this.delegate.renderImages(g, sh.x - this.size_x / s / 2, sh.y - this.size_y / s / 2, this.size_x / s, this.size_y / s);
+        g.restore();
     }
 };
+
 // IV.vis.addObject(new Objects.GoogleMap("stations:lng", "stations:lat", new IV.Vector(0, 0), 116.37371, 39.86390, 10));
 Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
     Objects.Object.call(this);
@@ -103,15 +196,18 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
     },
     reloadMap: function() {
         var $this = this;
-        this._map = new GoogleMapStatic(this.longitude, this.latitude, this.scale, 640, 640, this.maptype, 2);
-        this._image = new Image();
-        this._image.src = this._map.getURL();
-        this.loaded = false;
-        this._image.onload = function() {
-            $this.loaded = true;
-            if($this.vis) $this.vis.setNeedsRender();
-        };
-        if($this.vis) $this.vis.setNeedsRender();
+        if(!this._map) {
+            this._map = new GoogleMapStatic(this.longitude, this.latitude, this.scale, 640, 640, this.maptype, 2);
+            this._map.callback = function(s) {
+                if(s == $this._map)
+                    if($this.vis) $this.vis.setNeedsRender();
+            };
+        } else {
+            this._map.center_lng = this.longitude;
+            this._map.center_lat = this.latitude;
+            this._map.zoom = this.scale;
+            this._map.maptype = this.maptype;
+        }
     },
     render: function(g, data) {
         var $this = this;
@@ -119,20 +215,9 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
         g.translate(this.center_offset.x, this.center_offset.y);
         g.scale(1, -1);
         var show_rect = false;
-        if(this.loaded) {
-            g.drawImage(this._image, -this._map.size_x / 2, -this._map.size_y / 2, this._image.width / this._map.scale, this._image.height / this._map.scale);
-        } else {
-            g.font = "12px Arial";
-            g.textAlign = "center";
-            g.fillText("loading...", 0, 0);
-            show_rect = true;
-        }
+        this._map.render(g);
         g.ivRestore();
         var off = this.center_offset;
-        if(this._dragging_offset) {
-            off = off.add(this._dragging_offset);
-            show_rect = true;
-        }
         if(show_rect) {
             var rect = new IV.Rectangle(off.x, off.y, this._map.size_x + 5, this._map.size_y + 5, 0);
             var c1 = rect.corner1();
@@ -189,23 +274,17 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
             if(action == "move-element") {
                 var $this = this;
                 var prev = [ $this.longitude, $this.latitude ];
-                var original = $this.center_offset;
                 rslt.onMove = function(p0, p1) {
-                    $this.center_offset = original.sub(p0).add(p1);
-                    $this._dragging_offset = p0.sub(p1);
                     $this._map.center_lng = prev[0];
                     $this._map.center_lat = prev[1];
-                    var off_p0 = $this._map.pixelToLngLatCentered(original.x, original.y);
-                    var off_p1 = $this._map.pixelToLngLatCentered(original.x - p0.x + p1.x, original.y - p0.y + p1.y);
-                    $this.longitude = prev[0] - off_p1[0] + off_p0[0];
-                    $this.latitude = prev[1] - off_p1[1] + off_p0[1];
+                    var off_p1 = $this._map.pixelToLngLatCentered(p0.x - p1.x, p0.y - p1.y);
+                    $this.longitude = off_p1[0];
+                    $this.latitude = off_p1[1];
                     $this._map.center_lng = $this.longitude;
                     $this._map.center_lat = $this.latitude;
+                    $this.reloadMap();
                 };
                 rslt.onRelease = function(p0, p1) {
-                    $this.center_offset = original;
-                    delete $this._dragging_offset;
-                    $this.reloadMap();
                 };
             }
             return rslt;
