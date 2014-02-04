@@ -15,7 +15,7 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
     },
     getPropertyContext: function() {
         var $this = this;
-        return Objects.Shape.prototype.getPropertyContext.call(this).concat([
+        return Objects.Object.prototype.getPropertyContext.call(this).concat([
             make_prop_ctx($this, "center", "Center", "Shape", "point")
         ]);
     },
