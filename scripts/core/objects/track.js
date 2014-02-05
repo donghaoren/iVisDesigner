@@ -69,7 +69,6 @@ var Track = IV.extend(Objects.Object, function(info) {
             var p1 = $this.anchor1.getPoint(context);
             var p2 = $this.anchor2.getPoint(context);
             callback(p1, p2, context);
-            return false;
         });
     },
     renderGuide: function(g, data) {
@@ -323,7 +322,6 @@ var Scatter = IV.extend(Objects.Object, function(info) {
             var q1 = $this.track2.anchor1.getPoint(context);
             var q2 = $this.track2.anchor2.getPoint(context);
             callback(p1, p2, q1, q2, context);
-            return false;
         });
     },
     _getmarkers: function(p1, p2, q1, q2) {

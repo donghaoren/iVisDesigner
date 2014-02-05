@@ -83,6 +83,9 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
             }
         });
         return rslt;
+    },
+    beginMoveElement: function(context) {
+        return this.center.beginMoveElement(context);
     }
 });
 

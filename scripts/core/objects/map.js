@@ -167,6 +167,7 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
     Objects.Object.call(this);
     var $this = this;
     this.type = "GoogleMap";
+    this.path = new IV.Path();
     this.maptype = "roadmap";
     this.longitude = info.longitude;
     this.latitude = info.latitude;
@@ -200,6 +201,7 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
         if(!this.size_x) this.size_x = 640;
         if(!this.size_y) this.size_y = 640;
         if(IV.isNull(this.transparency)) this.transparency = 1;
+        if(!this.path) this.path = new IV.Path();
         this.reloadMap();
     },
     onAttach: function(vis) {
@@ -254,7 +256,6 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
         var lat = context.get(this.path_latitude).val();
         if(lng === null || lat === null) return null;
         var pt = this._map.lngLatToPixelCentered(lng, lat);
-        if(this._dragging_offset) pt = pt.add(this._dragging_offset);
         return pt.add(this.center_offset);
     },
     renderSelected: function(g, data) {
@@ -272,6 +273,18 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
         g.lineTo(c4.x, c4.y);
         g.closePath();
         g.stroke();
+    },
+    beginMoveElement: function(context) {
+        var $this = this;
+        return {
+            onMove: function(p0, p1) {
+                var px = p1.x - $this.center_offset.x;
+                var py = p1.y - $this.center_offset.y;
+                var lnglat = $this._map.pixelToLngLatCentered(px, py);
+                context.set($this.path_longitude, lnglat[0]);
+                context.set($this.path_latitude, lnglat[1]);
+            }
+        };
     },
     select: function(pt, data, action) {
         var rect = new IV.Rectangle(this.center_offset.x, this.center_offset.y, this._map.size_x, this._map.size_y, 0);

@@ -42,27 +42,11 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
         this.path.enumerate(data, function(context) {
             var c = $this.center.getPoint(context);
             if(c === null) return;
-            var radius = 0;
             var d = pt.distance(c);
             if(d <= 4.0 / pt.view_scale) {
                 if(!rslt || rslt.distance > d) {
                     rslt = { distance: d, context: context.clone() };
-                    if(action == "move") {
-                        if($this.center.type == "Plain") {
-                            rslt.original = $this.center.obj;
-                            rslt.onMove = function(p0, p1) {
-                                $this.center.obj = rslt.original.sub(p0).add(p1);
-                                return { trigger_render: "main" };
-                            };
-                        }
-                        if($this.center.type == "PointOffset") {
-                            rslt.original = $this.center.offset;
-                            rslt.onMove = function(p0, p1) {
-                                $this.center.offset = rslt.original.sub(p0).add(p1);
-                                return { trigger_render: "main" };
-                            };
-                        }
-                    }
+                    make_anchor_move_context(rslt, $this.center, action);
                 }
             }
         });
