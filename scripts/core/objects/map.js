@@ -24,7 +24,7 @@ var GoogleMapImage = function(maptype, zoom) {
     this.images = { };
     this.callback = function() { };
 };
-
+G_T = 0;
 GoogleMapImage.prototype.renderImages = function(g, cx, cy, width, height) {
     var tile_size = 512;
     var tile_count = (1 << this.zoom) / 2;
@@ -38,14 +38,15 @@ GoogleMapImage.prototype.renderImages = function(g, cx, cy, width, height) {
         for(var y = y_min; y <= y_max; y++) {
             var tile = this.requestTile((x % tile_count + tile_count) % tile_count, y);
             try {
-                var sx = 0, sy = 0, sw = tile_size + 128, sh = tile_size + 128;
-                var dx = x * tile_size - cx - 64, dy = y * tile_size - cy - 64;
-                if(dx < 0) { sx -= dx; dx = 0; }
-                if(dy < 0) { sy -= dy; dy = 0; }
+                var sx = 64, sy = 64, sw = tile_size, sh = tile_size;
+                var dx = x * tile_size - cx, dy = y * tile_size - cy;
+                if(dx < 0) { sx -= dx; sw += dx; dx = 0; }
+                if(dy < 0) { sy -= dy; sh += dy; dy = 0; }
                 if(dx + sw > width) { sw = width - dx; }
                 if(dy + sh > height) { sh = height - dy; }
-                if(sw > 0 && sh > 0 && dx < width && dy < height)
+                if(sw > 0 && sh > 0 && dx < width && dy < height) {
                     g.drawImage(tile, sx * 2, sy * 2, sw * 2, sh * 2, dx, dy, sw, sh);
+                }
             } catch(e) { }
         }
     }
@@ -173,9 +174,12 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
     this.center_offset = info.center;
     this.path_longitude = info.path_longitude;
     this.path_latitude = info.path_latitude;
+    this.size_x = info.size_x ? info.size_x : 640;
+    this.size_y = info.size_y ? info.size_y : 640;
+    this.transparency = IV.notNull(info.transparency) ? info.transparency : 1;
     this.reloadMap();
 }, {
-    $auto_properties: [ "path_longitude", "path_latitude", "center_offset" ],
+    $auto_properties: [ "path_longitude", "path_latitude", "center_offset", "transparency" ],
     _set_longitude: function(val) { this.longitude = val; this.reloadMap(); },
     _get_longitude: function() { return this.longitude; },
     _set_latitude: function(val) { this.latitude = val; this.reloadMap(); },
@@ -184,11 +188,18 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
     _get_scale: function() { return this.scale; },
     _set_maptype: function(val) { this.maptype = val; this.reloadMap(); },
     _get_maptype: function() { return this.maptype; },
+    _set_size_x: function(val) { this.size_x = val; this.reloadMap(); },
+    _get_size_x: function() { return this.size_x; },
+    _set_size_y: function(val) { this.size_y = val; this.reloadMap(); },
+    _get_size_y: function() { return this.size_y; },
     can: function(cap) {
         if(cap == "get-point") return true;
     },
     postDeserialize: function() {
         if(!this.maptype) this.maptype = "roadmap";
+        if(!this.size_x) this.size_x = 640;
+        if(!this.size_y) this.size_y = 640;
+        if(IV.isNull(this.transparency)) this.transparency = 1;
         this.reloadMap();
     },
     onAttach: function(vis) {
@@ -197,7 +208,7 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
     reloadMap: function() {
         var $this = this;
         if(!this._map) {
-            this._map = new GoogleMapStatic(this.longitude, this.latitude, this.scale, 640, 640, this.maptype, 2);
+            this._map = new GoogleMapStatic(this.longitude, this.latitude, this.scale, this.size_x, this.size_y, this.maptype, 2);
             this._map.callback = function(s) {
                 if(s == $this._map)
                     if($this.vis) $this.vis.setNeedsRender();
@@ -207,6 +218,8 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
             this._map.center_lat = this.latitude;
             this._map.zoom = this.scale;
             this._map.maptype = this.maptype;
+            this._map.size_x = this.size_x;
+            this._map.size_y = this.size_y;
         }
     },
     render: function(g, data) {
@@ -215,6 +228,7 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
         g.translate(this.center_offset.x, this.center_offset.y);
         g.scale(1, -1);
         var show_rect = false;
+        g.globalAlpha = this.transparency;
         this._map.render(g);
         g.ivRestore();
         var off = this.center_offset;
@@ -299,7 +313,10 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
             make_prop_ctx(this, "scale", "Scale", "GoogleMap", "plain-number"),
             make_prop_ctx(this, "maptype", "MapType", "GoogleMap", "plain-string", ["terrain", "roadmap", "satellite", "hybrid"]),
             make_prop_ctx(this, "longitude", "Longitude", "GoogleMap", "plain-number"),
-            make_prop_ctx(this, "latitude", "Latitude", "GoogleMap", "plain-number")
+            make_prop_ctx(this, "latitude", "Latitude", "GoogleMap", "plain-number"),
+            make_prop_ctx(this, "size_x", "Width", "GoogleMap", "plain-number"),
+            make_prop_ctx(this, "size_y", "Height", "GoogleMap", "plain-number"),
+            make_prop_ctx(this, "transparency", "Opacity", "GoogleMap", "plain-number")
         ]);
     }
 });
