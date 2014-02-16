@@ -33,7 +33,7 @@ Objects.Shape = IV.extend(Objects.Object,function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
-            make_prop_ctx($this, "path", "Path", "Shape", "path"),
+            make_prop_ctx($this, "path", "Selector", "Shape", "path"),
             make_prop_ctx($this, "filter", "Filter", "Shape", "filter")
         ]);
     }

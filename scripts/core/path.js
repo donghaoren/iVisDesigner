@@ -37,7 +37,9 @@ IV.Path = function(str) {
 IV.Path.prototype.slice = function(start, length) {
     var sliced = new IV.Path();
     sliced.components = this.components.slice(start, length);
+    return sliced;
 };
+IV.Path.prototype.clone = IV.Path.prototype.slice;
 
 IV.Path.prototype._enumerate_internal = function(ctx, subdata, index, cb) {
     if(index >= this.components.length) {
@@ -171,6 +173,7 @@ IV.PathContext.prototype.getReference = function(referenced_path) {
 };
 
 IV.Path.prototype.enumerate = function(data, callback) {
+    if(data.constructor == IV.PathContext) return this.enumerateAtContext(data, callback);
     var data_root = data.getRoot();
     if(!callback) return;
     var components = this.components.map(function(c) {
@@ -187,7 +190,7 @@ IV.Path.prototype.enumerate = function(data, callback) {
 IV.Path.prototype.enumerateAtContext = function(context, callback) {
     var ctx = context.clone();
     var i = 0;
-    var obj = ctx.root;
+    var obj = ctx.data.getRoot();
     for(; i < ctx.components.length && i < this.components.length; i++) {
         var tc = ctx.components[i];
         var pc = this.components[i];
@@ -206,6 +209,7 @@ IV.Path.prototype.enumerateAtContext = function(context, callback) {
             obj: null
         };
     }
+    ctx.components = ctx.components.slice(0, i);
     this._enumerate_internal(ctx, obj, pi, callback);
 };
 
@@ -234,6 +238,16 @@ IV.Path.prototype.toStringDisplay = function() {
         if(c.type == "reference") return "&";
         return c.name;
     }).join(":");
+};
+
+IV.Path.prototype.toEntityPath = function() {
+    var np = this.clone();
+    var i = np.components.length - 1;
+    for(; i >= 0; i--) {
+        if(np.components[i].type == "iterate") break;
+    }
+    np.components = np.components.slice(0, i + 1);
+    return np;
 };
 
 IV.Path.commonPrefix = function(paths) {

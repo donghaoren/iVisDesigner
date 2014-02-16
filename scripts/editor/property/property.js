@@ -13,7 +13,7 @@ var Property = Editor.Property = { };
 IV.makeEventSource(Property);
 
 var current = null;
-var current_context = null;
+//var current_context = null;
 
 Property.beginEditProperty = function(obj) {
     current = obj;
@@ -28,7 +28,9 @@ Property.endEditProperty = function() {
 Editor.bind("selection", function() {
     if(Editor.vis && Editor.vis.selection.length == 1) {
         current = Editor.vis.selection[0].obj;
-        current_context = Editor.vis.selection[0].context;
+        if(Editor.vis.selection[0].selected_object)
+            current = Editor.vis.selection[0].selected_object;
+        //current_context = Editor.vis.selection[0].context;
         Property.beginEditProperty(current);
     } else {
         Property.endEditProperty();
@@ -72,26 +74,6 @@ var render = function() {
 
         container.append(target);
     });
-
-    if(current.type == "Component") {
-        if(!current_context) {
-            current.path.enumerate(Editor.data, function(ctx) {
-                current_context = ctx.clone();
-                return false;
-            });
-        }
-        (function(current, current_context) {
-            var toolbar = $("<div />").addClass("item-tools");
-            toolbar.append(
-                $("<span />").addClass("btn")
-                  .append($('<i class="xicon-tools-component"></i>'))
-                  .click(function() {
-                      Editor.beginEditingComponent(current.path, current_context, current.vis);
-                  })
-            );
-            container.append(toolbar);
-        })(current, current_context);
-    }
 };
 
 render();

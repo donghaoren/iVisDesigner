@@ -79,7 +79,7 @@ IV.Renderer = function() {
             $this.vis.render(data, g);
         }
     });
-    this.bind("overlay", function(data, g) {
+    this.bind("front", function(data, g) {
         if($this.vis) {
             $this.vis.renderSelection(data, g);
         }
@@ -229,7 +229,6 @@ CanvasRenderingContext2D.prototype.ivRestore = function() {
     this.restore();
     if(!this.iv_transform_stack) this.iv_transform_stack = [];
     this.ivSetTransform(this.iv_transform_stack.pop());
-
 };
 
 CanvasRenderingContext2D.prototype.ivSetTransform = function(tr) {

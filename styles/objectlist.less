@@ -2,6 +2,71 @@
     font-size: 13px;
     line-height: 19px;
 
+    & > div.selector {
+        font-size: 11px;
+        padding-left: 4px;
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    & > ul {
+        ul {
+            margin-left: 10px;
+            border-left: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        li.object {
+            display: block;
+            position: relative;
+            cursor: pointer;
+            padding-left: 10px;
+            span.type {
+                font-size: 10px;
+                line-height: 11px;
+                font-style: italic;
+                color: #999;
+            }
+
+            span.buttons {
+                float: right;
+                display: inline-block;
+
+                span {
+                    float: left;
+                    padding: 0 3px;
+                    font-size: 10px;
+                    line-height: 11px;
+                    height: 11px;
+                    margin: 3px;
+                    border: 1px solid rgba(0, 0, 0, 0);
+                    margin-left: 0;
+                    .gradient_background(#BBB);
+                    &:hover {
+                        border: 1px solid rgba(255, 255, 255, 0.5);
+                    }
+                    &.active, &:active {
+                        .gradient_background_inv(@active_color_warm) !important;
+                        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+                        color: black !important;
+                    }
+                }
+            }
+            &:hover, &:active, &.selected {
+                span.buttons span {
+                    .gradient_background(lighten(@active_color, 10%));
+                    color: white;
+                }
+            }
+
+            &:hover {
+                .gradient_background(@active_color);
+                color: white;
+            }
+            &:active, &.selected {
+                .gradient_background_inv(darken(@active_color, 5%));
+                color: white;
+            }
+        }
+    }
+
     & > div.item {
         display: block;
         position: relative;

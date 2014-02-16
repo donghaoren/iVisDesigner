@@ -97,9 +97,9 @@ IV.Visualization.prototype.renderSelection = function(data, g) {
     IV.forEachReversed(this.selection, function(c) {
         g.ivSave();
         try {
-            c.obj.renderSelected(g, data, c.context);
+            c.obj.renderSelected(g, data, c.context, c);
         } catch(e) {
-            console.log("Render Selected", c, e);
+            console.trace(e.stack);
         }
         g.ivRestore();
     });
@@ -156,6 +156,7 @@ IV.Visualization.prototype.selectObject = function(data, location, action) {
 IV.Visualization.prototype.appendSelection = function(ctx) {
     this.selection.push(ctx);
     ctx.obj.selected = true;
+    ctx.obj._selection_context = ctx;
     this.raise("selection");
 };
 // Clear selected objects.

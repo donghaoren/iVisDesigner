@@ -46,7 +46,7 @@ var Track = IV.extend(Objects.Object, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
-            make_prop_ctx($this, "guide_path", "Path", "Track", "path"),
+            make_prop_ctx($this, "guide_path", "Selector", "Track", "path"),
             make_prop_ctx($this, "path", "Value", "Track", "path"),
             make_prop_ctx($this, "min", "Min", "Track", "number"),
             make_prop_ctx($this, "max", "Max", "Track", "number"),

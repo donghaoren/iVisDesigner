@@ -4,9 +4,25 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
     // Center.
     this.path = info.path;
     this.center = info.center ? info.center : new Objects.Plain(new IV.Vector(0, 0));
-    this.vis = new IV.Visualization();
+    this.scale = info.scale ? info.scale : new Objects.Plain(1);
+    this.objects = info.objects ? info.objects : [];
 }, {
-    $auto_properties: [ "path", "center" ],
+    $auto_properties: [ "path", "center", "scale" ],
+    postDeserialize: function() {
+        var $this = this;
+        this.objects.forEach(function(obj) {
+            if(!obj.name) {
+                var names = { };
+                $this.objects.forEach(function(o) { names[o.name] = true; });
+                for(var i = 1;; i++) {
+                    var name = obj.type + i;
+                    if(names[name]) continue;
+                    obj.name = name;
+                    break;
+                }
+            }
+        });
+    },
     can: function(cap) {
         if(cap == "get-point") return true;
     },
@@ -16,41 +32,144 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
-            make_prop_ctx($this, "center", "Center", "Shape", "point")
+            make_prop_ctx($this, "center", "Center", "Component", "point"),
+            make_prop_ctx($this, "scale", "Scale", "Component", "number")
         ]);
     },
     render: function(g, data) {
         var $this = this;
         this.path.enumerate(data, function(context) {
-            g.ivSave();
             var p = $this.center.getPoint(context);
-            if(p !== null) {
-                var cdata = data.createSubset($this.path, context);
-                g.ivAppendTransform(IV.makeTransform.translate(p.x, p.y));
+            var scale = $this.scale.getPoint(context);
+            if(p === null || scale === null) return;
+            g.ivSave();
+            g.ivAppendTransform(
+                        IV.makeTransform.translate(p.x, p.y)
+                .concat(IV.makeTransform.scale(scale, scale))
+            );
+            $this.objects.forEach(function(obj) {
+                g.ivSave();
                 try {
-                    $this.vis.render(cdata, g);
+                    obj.render(g, context);
                 } catch(e) {
                     console.trace(e.stack);
                 }
-            }
+                g.ivRestore();
+            });
             g.ivRestore();
         });
     },
-    select: function(pt, data, action) {
-        var rslt = null;
+    renderSelected: function(g, data, context, selection_context) {
         var $this = this;
+        if(selection_context) {
+            var p = $this.center.getPoint(context);
+            var scale = $this.scale.getPoint(context);
+            g.ivSave();
+            g.ivAppendTransform(
+                        IV.makeTransform.translate(p.x, p.y)
+                .concat(IV.makeTransform.scale(scale, scale))
+            );
+            if(selection_context.selected_object.renderSelected)
+                selection_context.selected_object.renderSelected(g, context, selection_context.inner.context, selection_context.inner);
+            g.ivRestore();
+        }
+    },
+    select: function(pt, data, action) {
+        var $this = this;
+        var rslt = null;
         this.path.enumerate(data, function(context) {
-            var c = $this.center.getPoint(context);
-            if(c === null) return;
-            var d = pt.distance(c);
-            if(d <= 4.0 / pt.view_scale) {
-                if(!rslt || rslt.distance > d) {
-                    rslt = { distance: d, context: context.clone() };
-                    make_anchor_move_context(rslt, $this.center, action);
+            var p = $this.center.getPoint(context);
+            var scale = $this.scale.getPoint(context);
+            var pt2 = pt.sub(p).scale(1.0 / scale);
+            pt2.view_det = pt.view_det.slice();
+            pt2.view_det[0] *= scale;
+            pt2.view_det[1] *= scale;
+            pt2.view_det[2] *= scale;
+            pt2.view_det[3] *= scale;
+            pt2.view_scale = pt.view_scale * scale;
+            if(p === null) return;
+            $this.objects.forEach(function(obj) {
+                var r = obj.select(pt2, context, action);
+                if(r && (!rslt || rslt.distance > r.distance)) {
+                    rslt = {
+                        distance: r.distance,
+                        selected_object: obj,
+                        inner: r,
+                        context: context.clone()
+                    };
+                    if(r.onMove) {
+                        rslt.onMove = function(p0, p1) {
+                            var rp0 = p0.sub(p).scale(1.0 / scale);
+                            var rp1 = p1.sub(p).scale(1.0 / scale);
+                            return r.onMove(rp0, rp1);
+                        };
+                    }
                 }
-            }
+            });
         });
         return rslt;
+    },
+    selectObject: function(data, obj, r) {
+        var ctx = null;
+        this.path.enumerate(data, function(c) { ctx = c.clone(); return false; });
+        return {
+            inner: r,
+            selected_object: obj,
+            context: ctx
+        };
     }
 });
 IV.serializer.registerObjectType("Component", Objects.Component);
+
+G_CREATE_TEST_COMPONENT = function() {
+    var scatter = new Objects.Scatter({
+        track1: new Objects.Track({
+            path: new IV.Path("[stations]:lng"),
+            min: new Objects.Plain(115.972),
+            max: new Objects.Plain(117.12),
+            anchor1: new Objects.Plain(new IV.Vector(-310, -300)),
+            anchor2: new Objects.Plain(new IV.Vector(-310, 300))
+        }),
+        track2: new Objects.Track({
+            path: new IV.Path("[stations]:lat"),
+            min: new Objects.Plain(39.52),
+            max: new Objects.Plain(40.499),
+            anchor1: new Objects.Plain(new IV.Vector(-300, -310)),
+            anchor2: new Objects.Plain(new IV.Vector(300, -310))
+        })
+    });
+    var scatterk = new Objects.Scatter({
+        track1: new Objects.Track({
+            path: new IV.Path("[stations]:[measurements]:PM2_5"),
+            min: new Objects.Plain(0),
+            max: new Objects.Plain(100),
+            anchor1: new Objects.Plain(new IV.Vector(0, 0)),
+            anchor2: new Objects.Plain(new IV.Vector(0, 30))
+        }),
+        track2: new Objects.Track({
+            path: new IV.Path("[stations]:[measurements]:time"),
+            min: new Objects.Plain(1367337600),
+            max: new Objects.Plain(1367474400),
+            anchor1: new Objects.Plain(new IV.Vector(0, 0)),
+            anchor2: new Objects.Plain(new IV.Vector(30, 0))
+        })
+    });
+    var component = new Objects.Component({
+        path: new IV.Path("[stations]"),
+        center: scatter,
+        objects: [
+            scatterk,
+            scatterk.track1,
+            scatterk.track2,
+            new Objects.Line({
+                path: new IV.Path("[stations]:[measurements]"),
+                point1: scatterk,
+                point2: scatterk.track2
+            })
+        ]
+    });
+    IV.editor.vis.addObject(scatter);
+    IV.editor.vis.addObject(scatter.track1);
+    IV.editor.vis.addObject(scatter.track2);
+    IV.editor.vis.addObject(component);
+};

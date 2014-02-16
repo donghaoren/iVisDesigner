@@ -22,6 +22,8 @@ Style.endEditStyle = function() {
 Editor.bind("selection", function() {
     if(Editor.vis && Editor.vis.selection.length == 1) {
         var selobj = Editor.vis.selection[0].obj;
+        if(Editor.vis.selection[0].selected_object)
+            selobj = Editor.vis.selection[0].selected_object;
         if(selobj.style) {
             Editor.Style.beginEditStyle(selobj.style);
         } else {

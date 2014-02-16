@@ -91,7 +91,7 @@ Editor.tools = { };
                 if(Editor.vis && Editor.data)
                     context = Editor.vis.selectObject(Editor.data, e.offset);
                 if(context && context.obj) {
-                    overlay_info.hover = context.obj;
+                    overlay_info.hover = context;
                 } else {
                     overlay_info.hover = null;
                 }
@@ -149,7 +149,7 @@ Editor.tools = { };
             } else {
                 var context = Editor.vis.selectObject(Editor.data, e.offset);
                 if(context && context.obj) {
-                    overlay_info.hover = context.obj;
+                    overlay_info.hover = context;
                 } else {
                     overlay_info.hover = null;
                 }
@@ -166,10 +166,10 @@ Editor.tools = { };
     Tools.renderOverlay = function(g) {
         if(overlay_info) {
             if(overlay_info.hover) {
-                var obj = overlay_info.hover;
+                var obj = overlay_info.hover.obj;
                 g.ivSave();
-                if(obj.renderSelected) obj.renderSelected(g, IV.data);
-                if(obj.renderGuideSelected) obj.renderGuideSelected(g, IV.data);
+                if(obj.renderSelected) obj.renderSelected(g, IV.data, overlay_info.hover.context, overlay_info.hover);
+                if(obj.renderGuideSelected) obj.renderGuideSelected(g, IV.data,  overlay_info.hover.context, overlay_info.hover);
                 g.ivRestore();
             }
             if(overlay_info.line) {
@@ -185,6 +185,10 @@ Editor.tools = { };
     Tools.triggerRender = function(items) {
         Editor.renderer.trigger(items);
     };
+
+    Editor.renderer.bind("overlay", function(data, g) {
+        Tools.renderOverlay(g);
+    });
 
 IV.listen("tools:current", function(val) {
     if(IV.current_tool && IV.current_tool.onInactive)
