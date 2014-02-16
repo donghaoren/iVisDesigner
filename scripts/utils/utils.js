@@ -27,6 +27,8 @@ var NS = { };
 
 {{include: misc.js}}
 
+{{include: autoalign.js}}
+
 {{include: storage.js}}
 {{include: oop.js}}
 

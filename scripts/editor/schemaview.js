@@ -68,6 +68,12 @@ Editor.renderSchema = function(schema, prev_path, set_active, attached_paths) {
         }
         var li = $("<li></li>")
             .append(span);
+        (function(this_path) {
+            span.attr("draggable", true);
+            span.bind("dragstart", function(e) {
+                e.originalEvent.dataTransfer.setData("iv/path", this_path);
+            });
+        })(this_path);
         if(child.type == "collection" || child.type == "object" || child.type == "sequence")
             li.append(Editor.renderSchema(child.fields, this_path, set_active, attached_paths));
         elem.append(li);

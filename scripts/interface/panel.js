@@ -20,7 +20,9 @@
                     '<div class="button-close" title="Close"><i class="xicon-cross"></i></div>' +
                 '</div>' +
             '</div>' +
-            '<div class="resize"></div>'
+            '<div class="resize rb" data-resize="0+0+"></div>' +
+            '<div class="resize lb" data-resize="+-0+"></div>' +
+            '<div class="resize lt" data-resize="+-+-"></div>'
         );
         $(container[0]).append($this.children());
 
@@ -32,7 +34,6 @@
         });
 
         var title_wrapper = $this.children(".title-wrapper");
-        var resize_button = $this.children(".resize");
 
         title_wrapper.children(".buttons").children(".button-close").click(function() {
             $this.hide();
@@ -44,52 +45,52 @@
             $this.toggleClass("minimized");
         });
 
-        var mouse_state = null;
-
         title_wrapper.mousedown(function(e) {
-            mouse_state = [
-                "move",
-                e.pageX, e.pageY,
-                parseFloat($this.css("left").replace("px", "")),
-                parseFloat($this.css("top").replace("px", ""))
-            ];
-            $(window).bind("mousemove", my_move);
-            $(window).bind("mouseup", my_up);
+            var left0 = parseFloat($this.css("left").replace("px", ""));
+            var top0 = parseFloat($this.css("top").replace("px", ""));
+            IV.attachMouseEvents({
+                move: function(emove) {
+                    var nx = emove.pageX - e.pageX + left0;
+                    var ny = emove.pageY - e.pageY + top0;
+                    if(ny < 30) ny = 30;
+                    $this.css("left", nx + "px");
+                    $this.css("top", ny + "px");
+                }
+            });
         });
-        resize_button.mousedown(function(e) {
-            mouse_state = [
-                "resize",
-                e.pageX, e.pageY,
-                $this.width(),
-                $this.height()
-            ];
+
+        $this.children(".resize").mousedown(function(e) {
+            var x0 = parseFloat($this.css("left").replace("px", ""));
+            var y0 = parseFloat($this.css("top").replace("px", ""));
+            var w0 = $this.width();
+            var h0 = $this.height();
+            var info = $(this).attr("data-resize");
             e.stopPropagation();
             e.preventDefault();
-            $(window).bind("mousemove", my_move);
-            $(window).bind("mouseup", my_up);
+            IV.attachMouseEvents({
+                move: function(emove) {
+                    var dx = emove.pageX - e.pageX;
+                    var dy = emove.pageY - e.pageY;
+                    if(emove.shiftKey) {
+                        var r = IV.shiftModifyNoDiagnoal(0, 0, dx, dy);
+                        dx = r[0]; dy = r[1];
+                    }
+                    var x1 = x0, y1 = y0, w1 = w0, h1 = h0;
+                    if(info[0] == '+') x1 += dx; if(info[2] == '+') y1 += dy;
+                    if(info[0] == '-') x1 -= dx; if(info[2] == '-') y1 -= dy;
+                    if(info[1] == '+') w1 += dx; if(info[3] == '+') h1 += dy;
+                    if(info[1] == '-') w1 -= dx; if(info[3] == '-') h1 -= dy;
+                    if(w1 < min_width) w1 = min_width;
+                    if(h1 < min_height) h1 = min_height;
+                    if(y1 < 30) y1 = 30;
+                    $this.css("left", x1 + "px");
+                    $this.css("top", y1 + "px");
+                    $this.css("width", w1 + "px");
+                    $this.css("height", h1 + "px");
+                }
+            });
         });
-        var my_move = function(e) {
-            if(mouse_state && mouse_state[0] == "move") {
-                var nx = e.pageX - mouse_state[1] + mouse_state[3];
-                var ny = e.pageY - mouse_state[2] + mouse_state[4];
-                if(ny < 30) ny = 30;
-                $this.css("left", nx + "px");
-                $this.css("top", ny + "px");
-            }
-            if(mouse_state && mouse_state[0] == "resize") {
-                var nx = e.pageX - mouse_state[1] + mouse_state[3];
-                var ny = e.pageY - mouse_state[2] + mouse_state[4];
-                if(nx < min_width) nx = min_width;
-                if(ny < min_height) ny = min_height;
-                $this.css("width", nx + "px");
-                $this.css("height", ny + "px");
-            }
-        };
-        var my_up = function(e) {
-            mouse_state = null;
-            $(window).unbind("mousemove", my_move);
-            $(window).unbind("mouseup", my_up);
-        };
+
         data.reorder = function() {
             // Reorder panels.
             var panels = $("#panel-container > .panel");

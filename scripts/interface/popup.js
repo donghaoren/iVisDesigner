@@ -82,6 +82,9 @@
         };
 
         var get_real_bounds = function(elem) {
+            if(elem instanceof IV.Vector) {
+                return { x0: elem.x, y0: elem.y, x1: elem.x, y1: elem.y };
+            }
             var bound = { x0: -1e10, y0: -1e10, x1: 1e10, y1: 1e10 };
             while(elem) {
                 var off = elem.offset();

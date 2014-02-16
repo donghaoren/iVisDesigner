@@ -98,10 +98,16 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
                         context: context.clone()
                     };
                     if(r.onMove) {
-                        rslt.onMove = function(p0, p1) {
+                        rslt.onMove = function(p0, p1, magnetics) {
                             var rp0 = p0.sub(p).scale(1.0 / scale);
                             var rp1 = p1.sub(p).scale(1.0 / scale);
-                            return r.onMove(rp0, rp1);
+                            magnetics_delegate = {
+                                modify: function(x, y) {
+                                },
+                                accept: function(c, x, y) {
+                                }
+                            };
+                            return r.onMove(rp0, rp1, magnetics_delegate);
                         };
                     }
                 }

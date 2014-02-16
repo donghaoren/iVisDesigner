@@ -21,6 +21,11 @@ IV.listen("status", function(s) {
 
     IV.isTrackingMouse = function() { return mouse_state; }
 
+    $(window).contextmenu(function(e) {
+        if(e.target.tagName == "INPUT") return;
+        e.preventDefault();
+    });
+
     $("#view").mousedown(function(e) {
         var offsetX = e.pageX - $("#view").offset().left;
         var offsetY = e.pageY - $("#view").offset().top;

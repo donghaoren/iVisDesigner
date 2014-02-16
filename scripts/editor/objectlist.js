@@ -1,10 +1,29 @@
+(function() {
+
+var staged_paths = { };
+
+var olist = $("#object-list");
+var panel_objects = $("#panel-objects");
+panel_objects.bind("drop", function(e) {
+    var p = new IV.Path(e.originalEvent.dataTransfer.getData("iv/path"));
+    p = p.toEntityPath();
+    staged_paths[p.toString()] = true;
+    Editor.generateObjectList();
+});
+panel_objects.bind("dragover", function(e) {
+    e.preventDefault();
+});
+
+
+
 Editor.generateObjectList = function() {
-    var olist = $("#object-list");
     olist.children().remove();
     var vis = Editor.vis;
     if(!vis) return;
 
     var classes = { };
+
+    for(var p in staged_paths) classes[p] = [];
 
     vis.objects.forEach(function(obj) {
         var p = obj.getPath();
@@ -15,6 +34,8 @@ Editor.generateObjectList = function() {
         classes[s].push(obj);
     });
 
+
+
     var render_object = function(obj, ul, parents) {
         var li = IV._E("li", "object group");
         ul.append(li);
@@ -24,8 +45,17 @@ Editor.generateObjectList = function() {
         li.append(buttons);
         buttons.append($("<span >").append($('<i class="xicon-cross"></i>')).click(function(e) {
             vis.clearSelection();
-            vis.removeObject(obj);
             e.stopPropagation();
+            if(parents.length == 0) {
+                vis.removeObject(obj);
+            } else {
+                var parent_collection = parents[parents.length - 1].objects;
+                var idx = parent_collection.indexOf(obj);
+                if(idx >= 0) {
+                    parent_collection.splice(idx, 1);
+                }
+                vis.raise("objects");
+            }
         }));
         li.click(function(e) {
             if(!e.shiftKey) vis.clearSelection();
@@ -38,6 +68,39 @@ Editor.generateObjectList = function() {
                 po = parents[i];
             }
             vis.appendSelection(ctx);
+        });
+        li.contextmenu(function(e) {
+            var parent_collection = parents.length == 0 ? Editor.vis.objects : parents[parents.length - 1].objects;
+            IV.popups.beginContextMenu(new IV.Vector(e.pageX, e.pageY), [
+              { name: "F", display: "Bring to front" },
+              { name: "-", display: "Bring forward" },
+              { name: "+", display: "Bring backward" },
+              { name: "B", display: "Bring to back" }
+            ], function(c) {
+                var idx = parent_collection.indexOf(obj);
+                var target = 0;
+                if(c == "F") target = 0;
+                if(c == "-") target = idx - 1;
+                if(c == "+") target = idx + 1;
+                if(c == "B") target = parent_collection.length - 1;
+                if(idx >= 0 && idx < parent_collection.length &&
+                   target >= 0 && target < parent_collection.length &&
+                   idx != target) {
+                    if(idx > target) {
+                        for(var t = idx; t > target; t--) {
+                            parent_collection[t] = parent_collection[t - 1];
+                        }
+                        parent_collection[target] = obj;
+                    }
+                    if(idx < target) {
+                        for(var t = idx; t < target; t++) {
+                            parent_collection[t] = parent_collection[t + 1];
+                        }
+                        parent_collection[target] = obj;
+                    }
+                    Editor.generateObjectList();
+                }
+            });
         });
         var data = li.data();
         data.update = function() {
@@ -83,3 +146,5 @@ Editor.generateObjectList = function() {
         });
     }
 };
+
+})();

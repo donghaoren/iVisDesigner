@@ -25,6 +25,12 @@ var Track = IV.extend(Objects.Object, function(info) {
     getPath: function() {
         return this.path;
     },
+    getAnchors: function() {
+        var r = [];
+        if(this.anchor1.type == "Plain") r.push(this.anchor1.obj);
+        if(this.anchor2.type == "Plain") r.push(this.anchor2.obj);
+        return r;
+    },
     getGuidePath: function() {
         return this.guide_path;
     },
@@ -239,10 +245,18 @@ var Track = IV.extend(Objects.Object, function(info) {
                             if(plain.type == "PointOffset")
                                 return plain.offset;
                         });
-                        rslt.onMove = function(p0, p1) {
+                        rslt.onMove = function(p0, p1, magnetics) {
                             for(var i = 0; i < move_targets.length; i++) {
-                                if(move_targets[i].type == "Plain")
-                                    move_targets[i].obj = p1.sub(p0).add(this.originals[i]);
+                                if(move_targets[i].type == "Plain") {
+                                    var p = p1.sub(p0).add(this.originals[i]);
+                                    var np = magnetics.modify(p.x, p.y);
+                                    if(np) {
+                                        p.x = np.x;
+                                        p.y = np.y;
+                                        magnetics.accept(np, p.x, p.y);
+                                    }
+                                    move_targets[i].obj = p;
+                                }
                                 if(move_targets[i].type == "PointOffset")
                                     move_targets[i].offset = p1.sub(p0).add(this.originals[i]);
                             }
@@ -442,6 +456,8 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
+            make_prop_ctx($this, "guide_path", "Selector", "Scatter", "path"),
+            make_prop_ctx($this, "path", "Value", "Scatter", "path"),
             make_prop_ctx(this, "show_x_ticks", "XTicks", "Scatter", "plain-bool"),
             make_prop_ctx(this, "show_y_ticks", "YTicks", "Scatter", "plain-bool")
         ]);

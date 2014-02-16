@@ -180,6 +180,8 @@ Editor.tools = { };
                 g.stroke();
             }
         }
+        if(IV.current_tool.renderOverlay)
+            IV.current_tool.renderOverlay(g);
     };
 
     Tools.triggerRender = function(items) {

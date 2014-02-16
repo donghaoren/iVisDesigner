@@ -295,7 +295,7 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
                 rslt.original = $this.center_offset;
                 rslt.onMove = function(p0, p1) {
                     $this.center_offset = rslt.original.sub(p0).add(p1);
-                    return { trigger_render: "main" };
+                    return { trigger_render: "main,front" };
                 };
             }
             if(action == "move-element") {
@@ -310,8 +310,7 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
                     $this._map.center_lng = $this.longitude;
                     $this._map.center_lat = $this.latitude;
                     $this.reloadMap();
-                };
-                rslt.onRelease = function(p0, p1) {
+                    return { trigger_render: "main,front" };
                 };
             }
             return rslt;
