@@ -122,7 +122,7 @@ IV.Visualization.prototype.renderGuide = function(data, g) {
         var obj = c.obj;
         g.ivSave();
         try {
-            obj.renderGuideSelected(g, data);
+            obj.renderGuideSelected(g, data, c.context, c);
         } catch(e) {
             console.log("RenderG Selected", c, e);
         }

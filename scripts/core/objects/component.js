@@ -47,7 +47,7 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
                         IV.makeTransform.translate(p.x, p.y)
                 .concat(IV.makeTransform.scale(scale, scale))
             );
-            $this.objects.forEach(function(obj) {
+            IV.forEachReversed($this.objects, function(obj) {
                 g.ivSave();
                 try {
                     obj.render(g, context);
@@ -61,7 +61,7 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
     },
     renderSelected: function(g, data, context, selection_context) {
         var $this = this;
-        if(selection_context) {
+        var render_for_context = function(context) {
             var p = $this.center.getPoint(context);
             var scale = $this.scale.getPoint(context);
             g.ivSave();
@@ -69,9 +69,58 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
                         IV.makeTransform.translate(p.x, p.y)
                 .concat(IV.makeTransform.scale(scale, scale))
             );
-            if(selection_context.selected_object.renderSelected)
-                selection_context.selected_object.renderSelected(g, context, selection_context.inner.context, selection_context.inner);
+            if(selection_context.selected_object) {
+                if(selection_context.selected_object.renderSelected)
+                    selection_context.selected_object.renderSelected(g, context, selection_context.inner.context, selection_context.inner);
+            } else {
+                IV.forEachReversed($this.objects, function(obj) {
+                    g.ivSave();
+                    try {
+                        obj.renderSelected(g, context);
+                    } catch(e) {
+                        console.trace(e.stack);
+                    }
+                    g.ivRestore();
+                });
+            }
             g.ivRestore();
+        };
+        if(context) {
+            render_for_context(context);
+        } else {
+            $this.path.enumerate(data, render_for_context);
+        }
+    },
+    renderGuideSelected: function(g, data, context, selection_context) {
+        var $this = this;
+        var render_for_context = function(context) {
+            var p = $this.center.getPoint(context);
+            var scale = $this.scale.getPoint(context);
+            g.ivSave();
+            g.ivAppendTransform(
+                        IV.makeTransform.translate(p.x, p.y)
+                .concat(IV.makeTransform.scale(scale, scale))
+            );
+            if(selection_context.selected_object) {
+                if(selection_context.selected_object.renderGuideSelected)
+                    selection_context.selected_object.renderGuideSelected(g, context, selection_context.inner.context, selection_context.inner);
+            } else {
+                IV.forEachReversed($this.objects, function(obj) {
+                    g.ivSave();
+                    try {
+                        obj.renderGuideSelected(g, context);
+                    } catch(e) {
+                        console.trace(e.stack);
+                    }
+                    g.ivRestore();
+                });
+            }
+            g.ivRestore();
+        };
+        if(context) {
+            render_for_context(context);
+        } else {
+            $this.path.enumerate(data, render_for_context);
         }
     },
     select: function(pt, data, action) {
@@ -88,7 +137,7 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
             pt2.view_det[3] *= scale;
             pt2.view_scale = pt.view_scale * scale;
             if(p === null) return;
-            $this.objects.forEach(function(obj) {
+            IV.forEachReversed($this.objects, function(obj) {
                 var r = obj.select(pt2, context, action);
                 if(r && (!rslt || rslt.distance > r.distance)) {
                     rslt = {
@@ -116,12 +165,10 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
         return rslt;
     },
     selectObject: function(data, obj, r) {
-        var ctx = null;
-        this.path.enumerate(data, function(c) { ctx = c.clone(); return false; });
         return {
             inner: r,
             selected_object: obj,
-            context: ctx
+            context: null
         };
     }
 });
