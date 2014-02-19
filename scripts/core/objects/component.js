@@ -11,6 +11,7 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
     postDeserialize: function() {
         var $this = this;
         this.objects.forEach(function(obj) {
+            obj.selected = false;
             if(!obj.name) {
                 var names = { };
                 $this.objects.forEach(function(o) { names[o.name] = true; });
@@ -23,11 +24,22 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
             }
         });
     },
-    can: function(cap) {
-        if(cap == "get-point") return true;
+    addObject: function(obj) {
+        var $this = this;
+        if(!obj.name) {
+            var names = { };
+            $this.objects.forEach(function(o) { names[o.name] = true; });
+            for(var i = 1;; i++) {
+                var name = obj.type + i;
+                if(names[name]) continue;
+                obj.name = name;
+                break;
+            }
+        }
+        this.objects.push(obj);
     },
-    get: function(context) {
-        return this.center.getPoint(context);
+    can: function(cap) {
+
     },
     getPropertyContext: function() {
         var $this = this;
@@ -35,6 +47,16 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
             make_prop_ctx($this, "center", "Center", "Component", "point"),
             make_prop_ctx($this, "scale", "Scale", "Component", "number")
         ]);
+    },
+    toLocalCoordinate: function(pt, context) {
+        var p = this.center.getPoint(context);
+        var scale = this.scale.getPoint(context);
+        return pt.sub(p).scale(1.0 / scale);
+    },
+    fromLocalCoordinate: function(pt, context) {
+        var p = this.center.getPoint(context);
+        var scale = this.scale.getPoint(context);
+        return pt.scale(scale).add(p);
     },
     render: function(g, data) {
         var $this = this;
@@ -140,6 +162,7 @@ Objects.Component = IV.extend(Objects.Object, function(info) {
             IV.forEachReversed($this.objects, function(obj) {
                 var r = obj.select(pt2, context, action);
                 if(r && (!rslt || rslt.distance > r.distance)) {
+                    r.obj = obj;
                     rslt = {
                         distance: r.distance,
                         selected_object: obj,

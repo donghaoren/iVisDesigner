@@ -56,6 +56,14 @@ Tools.Scatter = {
             .add("Scatter: ")
             .append("A: [please select]");
 
+        var get_inner_object = function(context) {
+            var current_component = Editor.get("current-component");
+            if(current_component) {
+                context = current_component.resolveSelection(context);
+            }
+            return context.obj;
+        };
+
         Tools.beginSelectObject(function(context) {
             var path = Editor.get("selected-path");
             if(!context) {
@@ -68,12 +76,12 @@ Tools.Scatter = {
                 return;
             }
             if(!obj1) {
-                obj1 = context.obj;
+                obj1 = get_inner_object(context);
                 Editor.vis.appendSelection(context);
                 sA.set("A: " + obj1.type);
                 Editor.status.append("B: [please select]");
             } else if(!obj2) {
-                obj2 = context.obj;
+                obj2 = get_inner_object(context);
                 if(true) {
                     if(obj1.type == "Track" && obj2.type == "Track") {
                         var scatter = new IV.objects.Scatter({

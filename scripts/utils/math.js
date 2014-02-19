@@ -408,6 +408,11 @@ NS.Rectangle.prototype = {
     getCorners: function() {
         return [ this.corner1(), this.corner2(), this.corner3(), this.corner4() ];
     },
+    distance: function(pt) { // TODO: Doesn't handle angle yet.
+        var sx = Math.abs(pt.x - this.x0) - this.width / 2;
+        var sy = Math.abs(pt.y - this.y0) - this.height / 2;
+        return Math.min(Math.abs(sx), Math.abs(sy));
+    },
     serialize: function() {
         return { de: "Rectangle",
                  x0: this.x0, y0: this.y0,

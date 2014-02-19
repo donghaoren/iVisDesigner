@@ -114,6 +114,10 @@ Editor.tools = { };
         Tools.beginTrackMouse(function(e) {
             var p0 = e.offset;
             var context = Editor.vis.selectObject(Editor.data, p0);
+            var current_component = Editor.get("current-component");
+            if(context && current_component) {
+                context = current_component.resolveSelection(context);
+            }
 
             var captured_object = function(obj) {
                 var ref_path = Editor.get("selected-reference");
@@ -138,7 +142,14 @@ Editor.tools = { };
                 });
             } else {
                 e.release(function() {
-                    captured_object(new IV.objects.Plain(e.offset));
+                    var pt = e.offset;
+                    // To component coordinate if editing a component.
+                    var current_component = Editor.get("current-component");
+                    if(current_component) {
+                        pt = current_component.toLocalCoordinate(pt);
+                    }
+                    // Captured the point.
+                    captured_object(new IV.objects.Plain(pt));
                 });
             }
         }, key);
@@ -173,6 +184,7 @@ Editor.tools = { };
                 g.ivRestore();
             }
             if(overlay_info.line) {
+                g.ivGuideLineWidth();
                 g.beginPath();
                 overlay_info.line[0].callMoveTo(g);
                 overlay_info.line[1].callLineTo(g);
@@ -182,6 +194,20 @@ Editor.tools = { };
         }
         if(IV.current_tool.renderOverlay)
             IV.current_tool.renderOverlay(g);
+
+        var current_component = Editor.get("current-component");
+        if(current_component) {
+            var pc = current_component.fromLocalCoordinate(new IV.Vector(0, 0));
+            g.ivGuideLineWidth();
+            g.beginPath();
+            g.moveTo(pc.x - 10, pc.y);
+            g.lineTo(pc.x + 10, pc.y);
+            g.moveTo(pc.x, pc.y - 10);
+            g.lineTo(pc.x, pc.y + 10);
+            g.strokeStyle = "rgba(0, 0, 0, 0.5)";
+            g.stroke();
+
+        }
     };
 
     Tools.triggerRender = function(items) {
@@ -190,6 +216,9 @@ Editor.tools = { };
 
     Editor.renderer.bind("overlay", function(data, g) {
         Tools.renderOverlay(g);
+    });
+    Editor.listen("current-component", function() {
+        Tools.triggerRender("overlay");
     });
 
 IV.listen("tools:current", function(val) {

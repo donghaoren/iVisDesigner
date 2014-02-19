@@ -91,7 +91,30 @@ Editor.generateObjectList = function() {
             vis.appendSelection(ctx);
             if(li.is(".selected") && !li.is(".target")) {
                 if(obj.type == "Component") {
-                    Editor.set("current-component", obj);
+                    // Create a editing context for this component.
+                    var context = null;
+                    obj.path.enumerate(Editor.data, function(ctx) {
+                        context = ctx.clone();
+                        return false;
+                    });
+                    Editor.set("current-component", {
+                        component: obj,
+                        context: context,
+                        toLocalCoordinate: function(pt) {
+                            return obj.toLocalCoordinate(pt, this.context);
+                        },
+                        fromLocalCoordinate: function(pt) {
+                            return obj.fromLocalCoordinate(pt, this.context);
+                        },
+                        addObject: function(o) {
+                            obj.addObject(o);
+                            Editor.vis.raise("objects");
+                        },
+                        resolveSelection: function(selection) {
+                            console.log(selection);
+                            return selection.inner;
+                        }
+                    });
                 }
             }
             if(li.is(".target")) {
@@ -155,7 +178,7 @@ Editor.generateObjectList = function() {
                     li.removeClass("selected");
                 }
             }
-            if(Editor.get("current-component") == obj) {
+            if(Editor.get("current-component") && Editor.get("current-component").component == obj) {
                 li.addClass("target");
             } else {
                 li.removeClass("target");
