@@ -288,34 +288,33 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
     },
     select: function(pt, data, action) {
         var rect = new IV.Rectangle(this.center_offset.x, this.center_offset.y, this._map.size_x, this._map.size_y, 0);
-        if(rect.inside(pt.x, pt.y)) {
-            var rslt = { distance: 10 };
-            if(action == "move") {
-                var $this = this;
-                rslt.original = $this.center_offset;
-                rslt.onMove = function(p0, p1) {
-                    $this.center_offset = rslt.original.sub(p0).add(p1);
-                    return { trigger_render: "main,front" };
-                };
-            }
-            if(action == "move-element") {
-                var $this = this;
-                var prev = [ $this.longitude, $this.latitude ];
-                rslt.onMove = function(p0, p1) {
-                    $this._map.center_lng = prev[0];
-                    $this._map.center_lat = prev[1];
-                    var off_p1 = $this._map.pixelToLngLatCentered(p0.x - p1.x, p0.y - p1.y);
-                    $this.longitude = off_p1[0];
-                    $this.latitude = off_p1[1];
-                    $this._map.center_lng = $this.longitude;
-                    $this._map.center_lat = $this.latitude;
-                    $this.reloadMap();
-                    return { trigger_render: "main,front" };
-                };
-            }
-            return rslt;
+        var rslt = null;
+        if((!action || action == "move") && rect.distance(pt) < 4.0 / pt.view_scale) {
+            rslt = { distance: rect.distance(pt) };
+            var $this = this;
+            rslt.original = $this.center_offset;
+            rslt.onMove = function(p0, p1) {
+                $this.center_offset = rslt.original.sub(p0).add(p1);
+                return { trigger_render: "main,front" };
+            };
         }
-        return null;
+        if(action == "move-element" && rect.inside(pt)) {
+            rslt = { distance: 10 };
+            var $this = this;
+            var prev = [ $this.longitude, $this.latitude ];
+            rslt.onMove = function(p0, p1) {
+                $this._map.center_lng = prev[0];
+                $this._map.center_lat = prev[1];
+                var off_p1 = $this._map.pixelToLngLatCentered(p0.x - p1.x, p0.y - p1.y);
+                $this.longitude = off_p1[0];
+                $this.latitude = off_p1[1];
+                $this._map.center_lng = $this.longitude;
+                $this._map.center_lat = $this.latitude;
+                $this.reloadMap();
+                return { trigger_render: "main,front" };
+            };
+        }
+        return rslt;
     },
     getPropertyContext: function() {
         var $this = this;

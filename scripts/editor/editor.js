@@ -47,7 +47,12 @@ Editor.set("current-component", null);
 
 Editor.doAddObject = function(obj) {
     if(Editor.vis) {
-        Editor.vis.addObject(obj);
+        var current_component = Editor.get("current-component");
+        if(current_component) {
+            current_component.addObject(obj);
+        } else {
+            Editor.vis.addObject(obj);
+        }
     }
 };
 

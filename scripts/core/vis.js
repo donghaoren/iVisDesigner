@@ -18,6 +18,9 @@ IV.Visualization.prototype.serializeFields = function() {
 };
 IV.Visualization.prototype.postDeserialize = function() {
     this.selection = [];
+    this.objects.forEach(function(obj) {
+        obj.selected = false;
+    });
     if(!this.artboard) {
         this.artboard = new IV.Rectangle(-600, -400, 1200, 800);
     }

@@ -408,10 +408,22 @@ NS.Rectangle.prototype = {
     getCorners: function() {
         return [ this.corner1(), this.corner2(), this.corner3(), this.corner4() ];
     },
+    distance: function(pt) { // TODO: Doesn't handle angle yet.
+        var sx = Math.abs(pt.x - this.x0) - this.width / 2;
+        var sy = Math.abs(pt.y - this.y0) - this.height / 2;
+        return Math.min(Math.abs(sx), Math.abs(sy));
+    },
     serialize: function() {
         return { de: "Rectangle",
                  x0: this.x0, y0: this.y0,
                  width: this.width, height: this.height,
                  angle: this.angle };
     }
+};
+
+NS.catmullRomCurveTo = function(ctx, x0, y0, x1, y1, x2, y2, x3, y3) {
+    // Convert to bezier.
+    ctx.bezierCurveTo(x2 / 6 + x1 - x0 / 6, y2 / 6 + y1 - y0 / 6,
+                      x1 / 6 + x2 - x3 / 6, y1 / 6 + y2 - y3 / 6,
+                      x2, y2);
 };

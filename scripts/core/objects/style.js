@@ -1,10 +1,3 @@
-IV.catmullRomCurveTo = function(ctx, x0, y0, x1, y1, x2, y2, x3, y3) {
-    // Convert to bezier.
-    ctx.bezierCurveTo(x2 / 6 + x1 - x0 / 6, y2 / 6 + y1 - y0 / 6,
-                      x1 / 6 + x2 - x3 / 6, y1 / 6 + y2 - y3 / 6,
-                      x2, y2);
-};
-
 Objects.PathStyle = IV.extend(Objects.Object, function() {
     Objects.Object.call(this);
     // Default attributes.
