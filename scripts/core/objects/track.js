@@ -246,19 +246,43 @@ var Track = IV.extend(Objects.Object, function(info) {
                                 return plain.offset;
                         });
                         rslt.onMove = function(p0, p1, magnetics) {
+                            var best_shift = { x: 0, y: 0 };
+                            var accept_info = null;
+                            var best_distance = 1e100;
+
                             for(var i = 0; i < move_targets.length; i++) {
                                 if(move_targets[i].type == "Plain") {
                                     var p = p1.sub(p0).add(this.originals[i]);
                                     var np = magnetics.modify(p.x, p.y);
                                     if(np) {
-                                        p.x = np.x;
-                                        p.y = np.y;
-                                        magnetics.accept(np, p.x, p.y);
+                                        (function(np) {
+                                            var sh = { x: np.x - p.x, y: np.y - p.y };
+                                            var d = sh.x * sh.x + sh.y * sh.y;
+                                            if(best_distance > d) {
+                                                best_distance = d;
+                                                best_shift = sh;
+                                                accept_info = [ np, np.x, np.y ];
+                                            }
+                                        })(np);
                                     }
+                                }
+                            }
+
+                            if(accept_info) {
+                                magnetics.accept(accept_info[0], accept_info[1], accept_info[2]);
+                            }
+
+                            for(var i = 0; i < move_targets.length; i++) {
+                                if(move_targets[i].type == "Plain") {
+                                    var p = p1.sub(p0).add(this.originals[i]);
+                                    p.x += best_shift.x;
+                                    p.y += best_shift.y;
                                     move_targets[i].obj = p;
                                 }
                                 if(move_targets[i].type == "PointOffset")
-                                    move_targets[i].offset = p1.sub(p0).add(this.originals[i]);
+                                    move_targets[i].offset = p1.sub(p0).add(this.originals[i]).add(
+                                        new IV.Vector(best_shift.x, best_shift.y)
+                                    );
                             }
                             return { trigger_render: "main,back" };
                         };

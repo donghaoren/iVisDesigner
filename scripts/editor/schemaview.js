@@ -98,6 +98,7 @@ Editor.renderDataSchema = function(schema) {
     var rootelem_span = $('<span class="key">ROOT</span>');
     var rootelem = $("<li/>").append(rootelem_span);
     rootelem_span.data().path = "";
+    if(Editor.get("selected-path").toString() == "[ROOT]") rootelem_span.addClass("active");
     $("#data-schema").append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));
     $("#data-schema").append(Editor.renderSchema(schema.fields, "", true));
     $("#data-schema span.key").each(function() {
@@ -127,3 +128,7 @@ Editor.renderDataSchema = function(schema) {
         });
     });
 };
+
+Editor.listen("selected-path", function() {
+    Editor.renderDataSchema(Editor.schema);
+});

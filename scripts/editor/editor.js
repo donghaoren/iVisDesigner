@@ -41,6 +41,9 @@ Editor.bind("selection", function() {
 });
 
 Editor.set("selected-path", new IV.Path());
+Editor.set("selected-reference", null);
+
+Editor.set("current-component", null);
 
 Editor.doAddObject = function(obj) {
     if(Editor.vis) {
@@ -139,6 +142,12 @@ Editor.computePathStatistics = function(path) {
 Editor.bind("reset", function() {
     Editor.raise("selection");
     Editor.raise("objects");
+
+    Editor.set("selected-path", new IV.Path());
+    Editor.set("selected-reference", null);
+
+    Editor.set("current-component", null);
+
     if(Editor.vis)
         Editor.renderer.autoView(Editor.vis);
     Editor.renderer.trigger();

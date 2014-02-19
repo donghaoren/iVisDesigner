@@ -6,6 +6,16 @@
         font-size: 11px;
         padding-left: 4px;
         background-color: rgba(0, 0, 0, 0.02);
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        &:hover {
+            .gradient_background(@active_color);
+            color: white;
+        }
+        &.active, &:active {
+            .gradient_background_inv(darken(@active_color, 5%));
+            color: white;
+        }
+        cursor: pointer;
     }
 
     & > ul {
@@ -38,31 +48,30 @@
                     margin: 3px;
                     border: 1px solid rgba(0, 0, 0, 0);
                     margin-left: 0;
-                    .gradient_background(#BBB);
+                    .gradient_background(rgba(0, 0, 0, 0.05));
                     &:hover {
-                        border: 1px solid rgba(255, 255, 255, 0.5);
                     }
                     &.active, &:active {
-                        .gradient_background_inv(@active_color_warm) !important;
+                        .gradient_background_inv(rgba(0, 0, 0, 0.4), 5%) !important;
                         border: 1px solid rgba(0, 0, 0, 0.1) !important;
-                        color: black !important;
                     }
                 }
             }
             &:hover, &:active, &.selected {
                 span.buttons span {
-                    .gradient_background(lighten(@active_color, 10%));
+                    .gradient_background(rgba(0, 0, 0, 0.2), 5%);
                     color: white;
                 }
             }
 
             &:hover {
-                .gradient_background(@active_color);
-                color: white;
+                .gradient_background(lighten(@active_color, 50%), 5%);
             }
             &:active, &.selected {
-                .gradient_background_inv(darken(@active_color, 5%));
-                color: white;
+                .gradient_background_inv(lighten(@active_color, 50%), 5%);
+            }
+            &.target {
+                .gradient_background_inv(lighten(@active_color_warm, 10%));
             }
         }
     }

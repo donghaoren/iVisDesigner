@@ -14,7 +14,24 @@ panel_objects.bind("dragover", function(e) {
     e.preventDefault();
 });
 
+Editor.bind("reset", function() {
+    staged_paths = { };
+    staged_paths['[ROOT]'] = true;
+});
 
+var object_icons = {
+    "Track": "xicon-tools-track",
+    "Scatter": "xicon-tools-scatter",
+    "Circle": "xicon-tools-circle",
+    "Line": "xicon-tools-line",
+    "Polyline": "xicon-tools-polyline",
+    "LineThrough": "xicon-tools-linethrough",
+    "Text": "xicon-tools-text",
+    "Component": "xicon-tools-component",
+    "Statistics": "xicon-tools-statistics",
+    "ForceLayout": "xicon-tools-graph-layout",
+    "GoogleMap": "xicon-tools-map",
+};
 
 Editor.generateObjectList = function() {
     olist.children().remove();
@@ -34,13 +51,17 @@ Editor.generateObjectList = function() {
         classes[s].push(obj);
     });
 
-
-
     var render_object = function(obj, ul, parents) {
         var li = IV._E("li", "object group");
         ul.append(li);
-        li.append(IV._E("span", "name", obj.name));
-        li.append(IV._E("span", "type", " " + obj.type));
+        if(object_icons[obj.type]) {
+            var icon = IV._E("i", "icon " + object_icons[obj.type]);
+            li.append(icon);
+            li.append(IV._E("span", "name", " " + obj.name));
+        } else {
+            li.append(IV._E("span", "name", obj.name));
+            li.append(IV._E("span", "type", " " + obj.type));
+        }
         var buttons = $("<span >").addClass("buttons");
         li.append(buttons);
         buttons.append($("<span >").append($('<i class="xicon-cross"></i>')).click(function(e) {
@@ -68,6 +89,14 @@ Editor.generateObjectList = function() {
                 po = parents[i];
             }
             vis.appendSelection(ctx);
+            if(li.is(".selected") && !li.is(".target")) {
+                if(obj.type == "Component") {
+                    Editor.set("current-component", obj);
+                }
+            }
+            if(li.is(".target")) {
+                Editor.set("current-component", null);
+            }
         });
         li.contextmenu(function(e) {
             var parent_collection = parents.length == 0 ? Editor.vis.objects : parents[parents.length - 1].objects;
@@ -126,6 +155,11 @@ Editor.generateObjectList = function() {
                     li.removeClass("selected");
                 }
             }
+            if(Editor.get("current-component") == obj) {
+                li.addClass("target");
+            } else {
+                li.removeClass("target");
+            }
         };
         data.update();
         if(obj.type == "Component") {
@@ -137,14 +171,30 @@ Editor.generateObjectList = function() {
         }
     };
 
-    for(var p in classes) {
-        olist.append(IV._E("div", "selector", p));
+    for(var p in classes) { (function(p) {
+        var div_sel = IV._E("div", "selector", p);
+        var p_selected = Editor.get("selected-path").toEntityPath();
+        if(p_selected.toString() == p) {
+            div_sel.addClass("active");
+        }
+        div_sel.click(function() {
+            Editor.set("selected-path", new IV.Path(p))
+        });
+        olist.append(div_sel);
         var ul = IV._E("ul", "objects");
         olist.append(ul);
         classes[p].forEach(function(obj) {
             render_object(obj, ul, []);
         });
-    }
+    })(p); }
 };
+
+Editor.listen("selected-path", function() {
+    Editor.generateObjectList();
+});
+
+Editor.listen("current-component", function() {
+    Editor.generateObjectList();
+});
 
 })();

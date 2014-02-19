@@ -51,7 +51,6 @@ Tools.Scatter = {
         var obj1 = null;
         var obj2 = null;
         Editor.vis.clearSelection();
-        //Tools.triggerRender("main,back");
 
         var sA = Editor.status.start()
             .add("Scatter: ")
