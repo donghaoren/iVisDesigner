@@ -14,6 +14,11 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
     onAttach: function(vis) {
         this.vis = vis;
     },
+    getAnchors: function() {
+        var r = [];
+        if(this.anchor.type == "Plain") r.push(this.anchor.obj);
+        return r;
+    },
     _get_rect: function(context, no_offset) {
         var text = this.text.get(context);
         if(text === null) return null;
