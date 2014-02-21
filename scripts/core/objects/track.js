@@ -34,9 +34,11 @@ var Track = IV.extend(Objects.Object, function(info) {
     getGuidePath: function() {
         return this.guide_path;
     },
-    get: function(context) {
+    get: function(context, type) {
         var p1 = this.anchor1.getPoint(context);
         var p2 = this.anchor2.getPoint(context);
+        if(type == "anchor1") return p1;
+        if(type == "anchor2") return p2;
         var min = this.min.get(context);
         var max = this.max.get(context);
         var value = context.get(this.path).val();
@@ -318,14 +320,22 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     this.type = "Scatter";
     this.track1 = info.track1;
     this.track2 = info.track2;
+    var resolve_wrapper = function(o) {
+        if(o.type == "ReferenceWrapper") return resolve_wrapper(o.obj);
+        return o;
+    };
+    this.real_track1 = resolve_wrapper(this.track1);
+    this.real_track2 = resolve_wrapper(this.track2);
     this.path = IV.Path.commonPrefix([ this.track1.getPath(), this.track2.getPath() ]);
-    this.guide_path = IV.Path.commonPrefix([ this.track1.getGuidePath(), this.track2.getGuidePath() ]);
+    this.guide_path = IV.Path.commonPrefix([ this.real_track1.getGuidePath(), this.real_track2.getGuidePath() ]);
     this.fillDefault();
 }, {
     $auto_properties: [ "show_x_ticks", "show_y_ticks", "track1", "track2", "path", "guide_path" ],
     fillDefault: function() {
         if(this.show_x_ticks === undefined) this.show_x_ticks = true;
         if(this.show_y_ticks === undefined) this.show_y_ticks = true;
+        if(!this.real_track1) this.real_track1 = this.track1;
+        if(!this.real_track2) this.real_track2 = this.track2;
     },
     postDeserialize: function() {
         this.fillDefault();
@@ -344,10 +354,10 @@ var Scatter = IV.extend(Objects.Object, function(info) {
         var p2 = this.track2.getPoint(context);
         if(p1 === null || p2 === null) return null;
 
-        var d2 = this.track1.anchor2.getPoint(context)
-                .sub(this.track1.anchor1.getPoint(context)).rotate90();
-        var d1 = this.track2.anchor2.getPoint(context)
-                .sub(this.track2.anchor1.getPoint(context));
+        var d2 = this.track1.get(context, "anchor2")
+                .sub(this.track1.get(context, "anchor1")).rotate90();
+        var d1 = this.track2.get(context, "anchor2")
+                .sub(this.track2.get(context, "anchor1"));
 
         var p = d1.scale(p2.sub(p1).dot(d2) / d1.dot(d2)).add(p1);
         return p;
@@ -355,10 +365,10 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     enumerateGuide: function(data, callback) {
         var $this = this;
         this.guide_path.enumerate(data, function(context) {
-            var p1 = $this.track1.anchor1.getPoint(context);
-            var p2 = $this.track1.anchor2.getPoint(context);
-            var q1 = $this.track2.anchor1.getPoint(context);
-            var q2 = $this.track2.anchor2.getPoint(context);
+            var p1 = $this.track1.get(context, "anchor1");
+            var p2 = $this.track1.get(context, "anchor2");
+            var q1 = $this.track2.get(context, "anchor1");
+            var q2 = $this.track2.get(context, "anchor2");
             callback(p1, p2, q1, q2, context);
         });
     },
@@ -421,15 +431,15 @@ var Scatter = IV.extend(Objects.Object, function(info) {
     render: function(g, data) {
         var $this = this;
         $this.enumerateGuide(data, function(p1, p2, q1, q2, context) {
-            var scale1 = $this.track1.getD3Scale(context);
-            var scale2 = $this.track2.getD3Scale(context);
+            var scale1 = $this.real_track1.getD3Scale(context);
+            var scale2 = $this.real_track2.getD3Scale(context);
             var d2 = p2.sub(p1);
             var d2r = d2.rotate90();
             var d1 = q2.sub(q1);
             var p = d1.scale(q1.sub(p1).dot(d2r) / d1.dot(d2r)).add(p1);
             if($this.show_x_ticks) {
-                g.strokeStyle = $this.track1.tick_style.tick_color.toRGBA(0.1);
-                var ticks = scale1.ticks($this.track1.tick_style.tick_count).map(scale1);
+                g.strokeStyle = $this.real_track1.tick_style.tick_color.toRGBA(0.1);
+                var ticks = scale1.ticks($this.real_track2.tick_style.tick_count).map(scale1);
                 for(var i = 0; i < ticks.length; i++) {
                     var s = p.add(d2.scale(ticks[i]));
                     var t = s.add(d1);
@@ -440,8 +450,8 @@ var Scatter = IV.extend(Objects.Object, function(info) {
                 }
             }
             if($this.show_y_ticks) {
-                g.strokeStyle = $this.track2.tick_style.tick_color.toRGBA(0.1);
-                var ticks = scale2.ticks($this.track2.tick_style.tick_count).map(scale2);
+                g.strokeStyle = $this.real_track2.tick_style.tick_color.toRGBA(0.1);
+                var ticks = scale2.ticks($this.real_track2.tick_style.tick_count).map(scale2);
                 for(var i = 0; i < ticks.length; i++) {
                     var s = p.add(d1.scale(ticks[i]));
                     var t = s.add(d2);
@@ -466,8 +476,8 @@ var Scatter = IV.extend(Objects.Object, function(info) {
         return rslt;
     },
     beginMoveElement: function(context) {
-        d1 = this.track1.anchor1.getPoint(context).sub(this.track1.anchor2.getPoint(context));
-        d2 = this.track2.anchor1.getPoint(context).sub(this.track2.anchor2.getPoint(context));
+        d1 = this.track1.get(context, "anchor1").sub(this.track1.get(context, "anchor2"));
+        d2 = this.track2.get(context, "anchor1").sub(this.track2.get(context, "anchor2"));
         var c1 = this.track1.beginMoveElement(context, d2);
         var c2 = this.track2.beginMoveElement(context, d1);
         return {

@@ -106,6 +106,7 @@ Editor.tools = { };
     };
 
     Tools.beginSelectLocation = function(f, key) {
+        // callback(obj, mouse_event)
         overlay_info = {
             action: "select-location",
             hover: null
@@ -122,8 +123,8 @@ Editor.tools = { };
             var captured_object = function(obj) {
                 var ref_path = Editor.get("selected-reference");
                 var refd_path = Editor.get("selected-reference-target");
-                if(ref_path) f(new IV.objects.ReferenceWrapper(ref_path, refd_path, obj));
-                else f(obj);
+                if(ref_path) f(new IV.objects.ReferenceWrapper(ref_path, refd_path, obj), e);
+                else f(obj, e);
             };
 
             if(context && context.obj.can("get-point")) {

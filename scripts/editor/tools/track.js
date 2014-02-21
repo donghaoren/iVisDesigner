@@ -9,7 +9,7 @@ Tools.Track = {
             .add("Track: ")
             .append("A: [please select]");
 
-        Tools.beginSelectLocation(function(loc) {
+        Tools.beginSelectLocation(function(loc, mouse_event) {
             if(!$this.loc1) {
                 $this.loc1 = loc;
                 sA.set("A: " + loc.type);
@@ -17,30 +17,37 @@ Tools.Track = {
                 return;
             } else {
                 $this.loc2 = loc;
-                var path = Editor.get("selected-path");
-                var reference_path = Editor.get("selected-reference");
-                if(reference_path) {
-                    var reference_target = Editor.get("selected-reference-target");
-                    if(reference_target) {
-                        path = reference_path.applyReference(path, reference_target);
+                var popup = IV.popups.PathSelect();
+                popup.onSelectPath = function(path, ref) {
+                    var path = new IV.Path(path);
+                    if(true) {
+                        var stat = Editor.computePathStatistics(path);
+                        var diff = stat.max - stat.min;
+                        stat.min -= diff * 0.05;
+                        stat.max += diff * 0.05;
+                        var track = new IV.objects.Track({
+                            path: path,
+                            anchor1: $this.loc1,
+                            anchor2: $this.loc2,
+                            min: new IV.objects.Plain(stat.min),
+                            max: new IV.objects.Plain(stat.max)
+                        });
+                        Editor.doAddObject(track);
                     }
-                }
-                if(true) {
-                    var stat = Editor.computePathStatistics(path);
-                    var track = new IV.objects.Track({
-                        path: path,
-                        anchor1: $this.loc1,
-                        anchor2: $this.loc2,
-                        min: new IV.objects.Plain(stat.min),
-                        max: new IV.objects.Plain(stat.max)
-                    });
-                    Editor.doAddObject(track);
-                }
-                $this.loc1 = null;
-                $this.loc2 = null;
-                sA = Editor.status.start()
-                    .add("Track: ")
-                    .append("A: [please select]");
+                    $this.loc1 = null;
+                    $this.loc2 = null;
+                    sA = Editor.status.start()
+                        .add("Track: ")
+                        .append("A: [please select]");
+                };
+                popup.onHide = function() {
+                    $this.loc1 = null;
+                    $this.loc2 = null;
+                    sA = Editor.status.start()
+                        .add("Track: ")
+                        .append("A: [please select]");
+                };
+                popup.show(mouse_event.page, 200, 150);
             }
         }, "tools:Track");
     },
@@ -68,6 +75,9 @@ Tools.Scatter = {
             if(current_component) {
                 context = current_component.resolveSelection(context);
             }
+            var ref_path = Editor.get("selected-reference");
+            var refd_path = Editor.get("selected-reference-target");
+            if(ref_path) return new IV.objects.ReferenceWrapper(ref_path, refd_path, context.obj);
             return context.obj;
         };
 
@@ -89,13 +99,17 @@ Tools.Scatter = {
                 Editor.status.append("B: [please select]");
             } else if(!obj2) {
                 obj2 = get_inner_object(context);
-                if(true) {
-                    if(obj1.type == "Track" && obj2.type == "Track") {
-                        var scatter = new IV.objects.Scatter({
-                            track1: obj1, track2: obj2
-                        });
-                        Editor.doAddObject(scatter);
+                var is_track = function(t) {
+                    if(t.type == "Track") return true;
+                    if(t.type == "ReferenceWrapper") {
+                        return is_track(t.obj);
                     }
+                };
+                if(is_track(obj1) && is_track(obj2)) {
+                    var scatter = new IV.objects.Scatter({
+                        track1: obj1, track2: obj2
+                    });
+                    Editor.doAddObject(scatter);
                 }
                 obj1 = null;
                 obj2 = null;

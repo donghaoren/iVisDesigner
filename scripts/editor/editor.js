@@ -49,9 +49,14 @@ Editor.doAddObject = function(obj) {
     if(Editor.vis) {
         var current_component = Editor.get("current-component");
         if(current_component) {
+            obj.parent = current_component;
             current_component.addObject(obj);
         } else {
             Editor.vis.addObject(obj);
+            Editor.vis.clearSelection();
+            var ctx = obj.selectObject(Editor.data);
+            ctx.obj = obj;
+            Editor.vis.appendSelection(ctx);
         }
     }
 };
