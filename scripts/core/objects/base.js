@@ -249,6 +249,9 @@ var ReferenceWrapper = IV.extend(Objects.Object, function(ref_path, refd_path, o
         var ref_context = context.get(this.reference_path).getReference(this.referenced_path);
         return this.obj.get(ref_context);
     },
+    getPath: function() {
+        return this.reference_path;
+    },
     clone: function() {
         return new ReferenceWrapper(this.reference_path, this.obj);
     }

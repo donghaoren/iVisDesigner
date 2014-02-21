@@ -31,20 +31,54 @@ popup_create_layout: |
   </div>
 
 popup_create_statistics: |
-  <div class="property-list">
-    <div class="item-caption">Statistics</div>
-    <div class="item-action">
-      <div class="field group">
-        <span class="name"><span>Anchor</span></span>
-        <span class="val">
-          <span data-field="path" class="input-path btn plain-path"></span>
-        </span>
+  <div class="tab" data-default="statistics">
+      <div class="header">
+        <span data-tab="statistics">Statistics</span>
+        <span data-tab="expression">Expression</span>
       </div>
-      <div class="field group">
-        <span class="name"><span>Data</span></span>
-        <span class="val">
-          <span data-field="path-data" class="input-path btn plain-path"></span>
-        </span>
+      <div class="tabs">
+        <div data-tab="statistics">
+          <div class="property-list">
+            <div class="item-caption">Statistics</div>
+            <div class="item-action">
+              <div class="field group">
+                <span class="name"><span>Anchor</span></span>
+                <span class="val">
+                  <span data-field="path" class="input-path btn plain-path"></span>
+                </span>
+              </div>
+              <div class="field group">
+                <span class="name"><span>Data</span></span>
+                <span class="val">
+                  <span data-field="path-data" class="input-path btn plain-path"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tabs">
+        <div data-tab="expression">
+          <div class="property-list">
+            <div class="item-caption">Expression</div>
+            <div class="item-action">
+              <div class="field group">
+                <span class="name"><span>Anchor</span></span>
+                <span class="val">
+                  <span data-field="path" class="input-path btn plain-path"></span>
+                </span>
+              </div>
+              <div class="field group">
+                <span class="name"><span>Data</span></span>
+                <span class="val">
+                  <span class="input-group">
+                    <span data-field="expression" class="input-string"></span>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -98,7 +132,7 @@ popup_color_select: |
       <span data-tab="predefined">Predefined</span>
       <span data-tab="hcl">HCL</span>
     </div>
-    <div class="tabs">
+    <div class="tabs" style="padding: 4px">
       <div data-tab="predefined">
         <p><span class="predefined">000000,ffffff,888888,1f77b4,ff7f0e,2ca02c,d62728,9467bd,8c564b,e377c2,bcbd22,17becf</span></p>
         <p><span class="predefined">BD0026,F03B20,FD8D3C,FEB24C,FED976,FFFFB2,045A8D,2B8CBE,74A9CF,A6BDDB,D0D1E6,F1EEF6</span></p>

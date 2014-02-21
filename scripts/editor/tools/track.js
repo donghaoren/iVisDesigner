@@ -18,6 +18,13 @@ Tools.Track = {
             } else {
                 $this.loc2 = loc;
                 var path = Editor.get("selected-path");
+                var reference_path = Editor.get("selected-reference");
+                if(reference_path) {
+                    var reference_target = Editor.get("selected-reference-target");
+                    if(reference_target) {
+                        path = reference_path.applyReference(path, reference_target);
+                    }
+                }
                 if(true) {
                     var stat = Editor.computePathStatistics(path);
                     var track = new IV.objects.Track({

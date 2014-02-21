@@ -608,6 +608,7 @@ $.fn.IVTab = function() {
                     $(this).addClass("active");
                 else $(this).removeClass("active");
             });
+            data.current = name;
         };
         header.children("[data-tab]").each(function() {
             $(this).click(function() {

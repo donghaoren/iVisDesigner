@@ -213,6 +213,19 @@ IV.Path.prototype.enumerateAtContext = function(context, callback) {
     this._enumerate_internal(ctx, obj, pi, callback);
 };
 
+IV.Path.prototype.relativePath = function(path) {
+    var rp = path.clone();
+    rp.components = rp.components.slice(this.components.length);
+    return rp;
+};
+
+IV.Path.prototype.applyReference = function(path, target_path) {
+    var rp = this.clone();
+    console.log(this, path, target_path);
+    rp.components = rp.components.concat(target_path.relativePath(path).components);
+    return rp;
+};
+
 IV.Path.prototype.toString = function() {
     if(this.components.length == 0) return "[ROOT]"
     return this.components.map(function(c) {

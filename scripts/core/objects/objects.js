@@ -53,6 +53,7 @@ Objects.Object.prototype = {
 {{include: layout.js}}
 {{include: map.js}}
 {{include: statistics.js}}
+{{include: generators.js}}
 {{include: component.js}}
 
 })();

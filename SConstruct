@@ -43,7 +43,8 @@ Javascript("toolkit.js", [
     "scripts/core/core.js",
     "scripts/interface/interface.js",
     "scripts/editor/editor.js",
-    "scripts/toolkit.js"
+    "scripts/toolkit.js",
+    "scripts/test.js"
 ])
 
 Javascript("embed.js", [
