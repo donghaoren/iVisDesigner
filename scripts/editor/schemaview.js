@@ -27,11 +27,44 @@ var get_attached_schemas = function() {
     return attached_paths;
 };
 
+var computed_statistics = { };
+var compute_all_statistics = function() {
+    computed_statistics = { };
+    var enumerateSchema = function(s, cb, prev) {
+        cb(prev, s.type);
+        if(s.type == "collection" || s.type == "sequence" || s.type == "object") {
+            for(var key in s.fields) {
+                var name = key;
+                var f = s.fields[key];
+                if(f.type == "collection" || f.type == "sequence") name = "[" + name + "]";
+                enumerateSchema(f, cb, prev != "" ? prev + ":" + name : name);
+            }
+        }
+    };
+    enumerateSchema(Editor.schema, function(path, type) {
+        if(type == "number") {
+            var stat = Editor.computePathStatistics(new IV.Path(path));
+            computed_statistics[path] = stat;
+        }
+        if(type == "sequence" || type == "collection") {
+            var count = 0;
+            new IV.Path(path).enumerate(Editor.data, function() {
+                count++;
+            });
+            computed_statistics[path] = { count: count };
+        }
+    }, "");
+    return computed_statistics;
+};
+
+Editor.computeDataStatistics = compute_all_statistics;
+
 Editor.renderSchemaFields = function(info, fields, previous_path) {
     if(!info.attached_paths) {
         info.attached_paths = get_attached_schemas();
     }
     var attached_paths = info.attached_paths;
+    compute_all_statistics();
     var results = $("<ul></ul>");
     if(previous_path == "") {
         var rootelem_span = $('<span class="key">ROOT</span>');
@@ -54,14 +87,24 @@ Editor.renderSchemaFields = function(info, fields, previous_path) {
         // The text for key.
         var span = IV._E("span", "key", name);
         // Types.
-        if(field.type == "number")
+        if(field.type == "number") {
             span.append(IV._E("span", "type", "num"));
-        if(field.type == "collection")
+            var s = computed_statistics[this_path];
+            if(s) {
+                var text = "total: " + IV.printNumber(s.count) + ", min: " + IV.printNumber(s.min) + ", max: " + IV.printNumber(s.max) + ", mean: " + IV.printNumber(s.avg);
+                span.attr("title", text);
+            }
+        }
+        if(field.type == "collection" || field.type == "sequence") {
             span.append(IV._E("span", "type", "set"));
+            var s = computed_statistics[this_path];
+            if(s) {
+                var text = "(" + s.count + ")";
+                span.append(IV._E("span", "statistics", text));
+            }
+        }
         if(field.type == "object")
             span.append(IV._E("span", "type", "obj"));
-        if(field.type == "sequence")
-            span.append(IV._E("span", "type", "seq"));
         if(info.show_reference_button && field.type == "reference") {
             var ref_button = IV._E("span", "ref", "ref");
             span.append(ref_button);

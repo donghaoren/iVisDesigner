@@ -78,6 +78,15 @@ NS.startsWith = function(str, start) {
     return str.substr(0, start.length) == start;
 };
 
+NS.printNumber = function(num) {
+    if(Math.abs(num) < 1e10) {
+        if(num == Math.round(num)) return num.toString(); // is a integer.
+        return num.toPrecision(6);
+    } else {
+        return num.toPrecision(6);
+    }
+};
+
 NS.fillDefault = function(obj, defaults) {
     for(var key in defaults) {
         if(obj[key] === undefined) obj[key] = defaults[key];

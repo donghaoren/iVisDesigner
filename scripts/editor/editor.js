@@ -78,8 +78,11 @@ Editor.setData = function(data) {
     Editor.data = data;
     Editor.renderer.setData(Editor.data);
     Editor.schema = data.getSchema();
+    Editor.computeDataStatistics();
     Editor.renderDataSchema(Editor.schema);
     data.bind("update", function() {
+        Editor.computeDataStatistics();
+        Editor.renderDataSchema(Editor.schema);
         Editor.renderer.trigger();
         Editor.renderer.render();
     });
