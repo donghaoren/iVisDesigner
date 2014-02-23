@@ -1,4 +1,7 @@
-IV.popups.PathSelect = function() {
+IV.popups.PathSelect = function(fields, previous_path) {
+    if(!fields) fields = IV.editor.schema.fields;
+    if(!previous_path) previous_path = "";
+
     var data = IV.popups.create();
     data.addActions([ "cancel" ]);
     var p = data.selector;
@@ -7,15 +10,6 @@ IV.popups.PathSelect = function() {
     content.append(c);
     content.addClass("scrollview").ScrollView();
 
-    var rootelem_span = $('<span class="key">ROOT</span>');
-    rootelem_span.data().path = new IV.Path();
-    var rootelem = $("<li/>").append(rootelem_span);
-    var elem = IV.editor.renderSchema(IV.editor.schema.fields, "");
-    c.append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));
-    c.append(elem);
-
-    var selected_ref = null;
-
     function onSelectPath(path, ref) {
         if(data.onSelectPath) data.onSelectPath(path, ref);
         data.hide();
@@ -23,6 +17,21 @@ IV.popups.PathSelect = function() {
     data.onCancel = function() {
         data.hide();
     };
+
+
+    var info = {
+        set_active: false,
+        onSelectPath: function(path) {
+            onSelectPath(path);
+        }
+    };
+    var elems = IV.editor.renderSchemaFields(info, fields, previous_path);
+    c.append(elems);
+
+    return data;
+/*
+    var selected_ref = null;
+
 
     c.find("span.key").each(function() {
         var $this = $(this);
@@ -50,4 +59,5 @@ IV.popups.PathSelect = function() {
         });
     });
     return data;
+*/
 };

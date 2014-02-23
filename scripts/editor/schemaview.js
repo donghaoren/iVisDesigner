@@ -1,134 +1,166 @@
 // ------------------------------------------------------------------------
 // Loading data schema and contents
 // ------------------------------------------------------------------------
-Editor.renderSchema = function(schema, prev_path, set_active, attached_paths) {
-    if(!attached_paths) {
-        attached_paths = { };
-        if(Editor.vis) {
-            Editor.vis.objects.forEach(function(obj) {
-                if(obj.getAttachedSchemas) {
-                    obj.getAttachedSchemas().forEach(function(item) {
-                        var key = item.path.toString();
-                        var info = {
-                            schema: item.schema,
-                            path: item.path,
-                            ns: obj.uuid,
-                            name: obj.name
-                        };
-                        if(key == "[ROOT]") key = "";
-                        if(!attached_paths[key]) attached_paths[key] = [ info ];
-                        else attached_paths[key].push(info);
-                    });
-                }
-            });
-        }
+
+(function() {
+
+var get_attached_schemas = function() {
+    var attached_paths = { };
+    if(Editor.vis) {
+        Editor.vis.objects.forEach(function(obj) {
+            if(obj.getAttachedSchemas) {
+                obj.getAttachedSchemas().forEach(function(item) {
+                    var key = item.path.toString();
+                    var info = {
+                        schema: item.schema,
+                        path: item.path,
+                        ns: obj.uuid,
+                        name: obj.name
+                    };
+                    if(key == "[ROOT]") key = "";
+                    if(!attached_paths[key]) attached_paths[key] = [ info ];
+                    else attached_paths[key].push(info);
+                });
+            }
+        });
     }
-    var elem = $("<ul></ul>");
-    for(var key in schema) {
-        // Ignore all keys starting with _
-        if(key[0] == '_') continue;
-        // The child element.
-        var child = schema[key];
-        var this_path;
-        if(child.type == "collection" || child.type == "sequence") {
-            this_path = prev_path + ":[" + key + "]";
-            if(prev_path == "") this_path = "[" + key + "]";
-        } else if(child.type == "reference") {
-            this_path = prev_path + ":" + key + ":&";
-            if(prev_path == "") this_path = key;
+    return attached_paths;
+};
+
+Editor.renderSchemaFields = function(info, fields, previous_path) {
+    if(!info.attached_paths) {
+        info.attached_paths = get_attached_schemas();
+    }
+    var attached_paths = info.attached_paths;
+    var results = $("<ul></ul>");
+    if(previous_path == "") {
+        var rootelem_span = $('<span class="key">ROOT</span>');
+        var rootelem = $("<li/>").append(rootelem_span);
+        rootelem_span.data().path = "";
+        if(Editor.get("selected-path").toString() == "[ROOT]") rootelem_span.addClass("active");
+    }
+    for(var name in fields) { if(name[0] == '_') continue; (function(name, field) {
+        var this_path = "";
+        if(field.type == "collection" || field.type == "sequence") {
+            this_path = "[" + name + "]";
+        } else if(field.type == "reference") {
+            this_path = name + ":&";
         } else {
-            this_path = prev_path + ":" + key;
-            if(prev_path == "") this_path = key;
+            this_path = name;
         }
+        if(previous_path != "") this_path = previous_path + ":" + this_path;
         // Fix abbreviations.
-        if(typeof(child) == "string") child = { "type": child };
+        if(typeof(field) == "string") field = { "type": field };
         // The text for key.
-        var span = $("<span></span>").text(key).addClass("key");
+        var span = IV._E("span", "key", name);
         // Types.
-        if(child.type == "number")
-            span.append($("<span />").addClass("type").text("num"));
-        if(child.type == "collection")
-            span.append($("<span />1").addClass("type").text("set"));
-        if(child.type == "object")
-            span.append($("<span />").addClass("type").text("obj"));
-        if(child.type == "sequence")
-            span.append($("<span />").addClass("type").text("seq"));
-        if(child.type == "reference")
-            span.append($("<span />").addClass("ref").text("ref"));
-        span.data().schema = schema;
-        span.data().key = key;
-        span.data().path = this_path;
-        if(child.type == "reference")
-            span.data().ref_target = child.of;
-        if(set_active) {
-            if(Editor.get("selected-path") && this_path == Editor.get("selected-path").toString())
+        if(field.type == "number")
+            span.append(IV._E("span", "type", "num"));
+        if(field.type == "collection")
+            span.append(IV._E("span", "type", "set"));
+        if(field.type == "object")
+            span.append(IV._E("span", "type", "obj"));
+        if(field.type == "sequence")
+            span.append(IV._E("span", "type", "seq"));
+        if(info.show_reference_button && field.type == "reference") {
+            var ref_button = IV._E("span", "ref", "ref");
+            span.append(ref_button);
+        }
+
+        if(info.set_active) {
+            if(Editor.get("selected-path") && IV.startsWith(Editor.get("selected-path").toString(), this_path))
                 span.addClass("active");
             if(Editor.get("selected-reference") && this_path == Editor.get("selected-reference").toString())
                 span.children(".ref").addClass("active");
         }
-        var li = $("<li></li>")
-            .append(span);
+
+        span.data().path = this_path;
+        span.data().ref_target = field.of;
+
+        if(field.type == "reference") {
+            // add a reference button.
+            var ref_dropdown = IV._E("i", "ref-dropdown icon-caret-down", "");
+            ref_dropdown.click(function(e) {
+                var of_path = new IV.Path(field.of);
+                var path_select = IV.popups.PathSelect(of_path.getSchema(Editor.schema).fields, this_path);
+                path_select.show($(this), 200, 150);
+                path_select.onSelectPath = function(path) {
+                    var new_path = path;
+                    info.onSelectPath(new_path);
+                };
+                e.stopPropagation();
+            });
+            span.append(ref_dropdown);
+        }
+
+        var li = $("<li></li>").append(span);
+
         (function(this_path) {
             span.attr("draggable", true);
             span.bind("dragstart", function(e) {
                 e.originalEvent.dataTransfer.setData("iv/path", this_path);
             });
         })(this_path);
-        if(child.type == "collection" || child.type == "object" || child.type == "sequence")
-            li.append(Editor.renderSchema(child.fields, this_path, set_active, attached_paths));
-        elem.append(li);
-    }
-    if(attached_paths[prev_path]) {
-        attached_paths[prev_path].forEach(function(item) {
+        if(field.type == "collection" || field.type == "object" || field.type == "sequence")
+            li.append(Editor.renderSchemaFields(info, field.fields, this_path));
+        results.append(li);
+
+    })(name, fields[name]); }
+
+    if(attached_paths[previous_path]) {
+        attached_paths[previous_path].forEach(function(item) {
             var iul = $("<ul />");
-            var ili = $("<li />").append($("<span />").text(item.name));
+            var ili = $("<li />").append(IV._E("span", "attached", item.name));
             var new_path = "{" + item.name + "@" + item.ns + "}";
-            if(prev_path != "") new_path = prev_path + ":" + new_path;
-            ili.append(Editor.renderSchema(item.schema.fields, new_path, set_active, {}));
+            if(previous_path != "") new_path = previous_path + ":" + new_path;
+            ili.append(Editor.renderSchemaFields(info, item.schema.fields, new_path));
             iul.append(ili);
-            elem = elem.add(iul);
+            results = results.add(iul);
             //console.log(item);
         });
     }
-    return elem;
+
+    results.find("span.key").each(function() {
+        var span = $(this);
+        var path = span.data().path;
+        var ref_target = span.data().ref_target;
+        span.click(function(e) {
+            info.onSelectPath(path);
+            e.stopPropagation();
+        });
+        span.find(".ref").click(function(e) {
+            info.onSelectReference(path, ref_target);
+            e.stopPropagation();
+        });
+    });
+    return results;
 };
 
-Editor.renderDataSchema = function(schema) {
+Editor.renderDataSchema = function() {
     $("#data-schema").children().remove();
     var rootelem_span = $('<span class="key">ROOT</span>');
     var rootelem = $("<li/>").append(rootelem_span);
     rootelem_span.data().path = "";
     if(Editor.get("selected-path").toString() == "[ROOT]") rootelem_span.addClass("active");
     $("#data-schema").append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));
-    $("#data-schema").append(Editor.renderSchema(schema.fields, "", true));
-    $("#data-schema span.key").each(function() {
-        var $this = $(this);
-        $this.click(function() {
-            $("#data-schema span.key").removeClass("active");
-            $this.addClass("active");
-            var data = $this.data();
-            Editor.set("selected-path", new IV.Path(data.path));
-        });
-    });
-    $("#data-schema span.ref").each(function() {
-        var $this = $(this);
-        var p = $this.parent();
-        $this.click(function(e) {
-            if($this.is(".active")) {
-                $("#data-schema span.ref").removeClass("active");
-                Editor.set("selected-reference", null);
-            } else {
-                $("#data-schema span.ref").removeClass("active");
-                $this.addClass("active");
-                var data = p.data();
-                Editor.set("selected-reference", new IV.Path(data.path));
-                Editor.set("selected-reference-target", new IV.Path(data.ref_target));
-            }
-            e.stopPropagation();
-        });
-    });
+    var info = {
+        set_active: true,
+        show_reference_button: true,
+        onSelectPath: function(path) {
+            Editor.set("selected-path", new IV.Path(path));
+            Editor.renderDataSchema();
+        },
+        onSelectReference: function(path, ref_target) {
+            Editor.set("selected-reference", new IV.Path(path));
+            Editor.set("selected-reference-target", new IV.Path(ref_target));
+            Editor.renderDataSchema();
+        }
+    };
+    $("#data-schema").append(Editor.renderSchemaFields(info, Editor.schema.fields, "", true));
 };
 
 Editor.listen("selected-path", function() {
-    Editor.renderDataSchema(Editor.schema);
+    Editor.renderDataSchema();
 });
+
+})();

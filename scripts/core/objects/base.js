@@ -116,6 +116,15 @@ var PointOffset = IV.extend(Objects.Object, function(point, offset) {
         if(cap == "get-point") return true;
         return false;
     },
+    beginMoveElement: function(context) {
+        var rc = this.point.beginMoveElement(context);
+        var $this = this;
+        return {
+            onMove: function(p0, p1) {
+                rc.onMove(p0.sub($this.offset), p1.sub($this.offset));
+            }
+        };
+    },
     clone: function() {
         return new PointOffset(this.point, this.offset);
     }
@@ -251,6 +260,10 @@ var ReferenceWrapper = IV.extend(Objects.Object, function(ref_path, refd_path, o
     },
     getPath: function() {
         return this.reference_path;
+    },
+    beginMoveElement: function(context) {
+        var ref_context = context.get(this.reference_path).getReference(this.referenced_path);
+        return this.obj.beginMoveElement(ref_context);
     },
     clone: function() {
         return new ReferenceWrapper(this.reference_path, this.obj);

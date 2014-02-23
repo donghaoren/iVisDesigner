@@ -74,6 +74,10 @@ NS.strings = function(key) {
     return DATA_Strings[key];
 };
 
+NS.startsWith = function(str, start) {
+    return str.substr(0, start.length) == start;
+};
+
 NS.fillDefault = function(obj, defaults) {
     for(var key in defaults) {
         if(obj[key] === undefined) obj[key] = defaults[key];

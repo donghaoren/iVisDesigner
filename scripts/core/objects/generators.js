@@ -1,3 +1,5 @@
+IV.math = mathjs();
+
 Objects.Expression = IV.extend(Objects.Object, function(info) {
     Objects.Object.call(this);
     this.type = "Expression";
@@ -54,12 +56,18 @@ Objects.Expression = IV.extend(Objects.Object, function(info) {
         var $this = this;
         $this.results = { };
         var index = 0;
-        var my_function = eval("(function(fctx, index) { var _ = function(path) { return fctx.get(new IV.Path(path)); }; return (__EXPR__); })".replace("__EXPR__", this.expression));
+        var compiled = IV.math.compile(this.expression);
+        // TODO: security issue here!!! need to compile the user expression by hand.
         $this.path.enumerate(data, function(fctx) {
             index += 1;
             var id = data.getObjectID(fctx.val());
             $this.results[id] = {
-                value: my_function(fctx, index),
+                value: compiled.eval({ _: function(fs) {
+                    fs = fs.split(".");
+                    var obj = fctx.val();
+                    for(var i = 0; i < fs.length; i++) obj = obj[fs[i]];
+                    return obj;
+                }, index: index }),
                 index: index
             };
         });

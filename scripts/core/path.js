@@ -263,6 +263,13 @@ IV.Path.prototype.toEntityPath = function() {
     return np;
 };
 
+IV.Path.prototype.getSchema = function(schema) {
+    for(var i = 0; i < this.components.length; i++) {
+        schema = schema.fields[this.components[i].name];
+    }
+    return schema;
+};
+
 IV.Path.commonPrefix = function(paths) {
     if(!paths || paths.length == 0) return new IV.Path();
     var common = paths[0].components.slice();
