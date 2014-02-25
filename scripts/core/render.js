@@ -254,8 +254,8 @@ CanvasRenderingContext2D.prototype.ivGetGuideWidth = function() {
     return 1.0 / Math.sqrt(Math.abs(this.ivGetTransform().det()));
 };
 
-CanvasRenderingContext2D.prototype.ivGuideLineWidth = function() {
-    return this.lineWidth = this.ivGetGuideWidth();
+CanvasRenderingContext2D.prototype.ivGuideLineWidth = function(scale) {
+    return this.lineWidth = this.ivGetGuideWidth() * (scale !== undefined ? scale : 1);
 };
 
 CanvasRenderingContext2D.prototype.ivSetFont = function(font_info) {

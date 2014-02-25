@@ -215,6 +215,16 @@ Editor.tools = { };
         Editor.renderer.trigger(items);
     };
 
+    Tools.disable = function() {
+        if(IV.current_tool && IV.current_tool.onInactive)
+            IV.current_tool.onInactive();
+    };
+
+    Tools.enable = function() {
+        if(IV.current_tool.onActive)
+            IV.current_tool.onActive();
+    };
+
     Editor.renderer.bind("overlay", function(data, g) {
         Tools.renderOverlay(g);
     });
@@ -248,6 +258,7 @@ IV.listen("tools:current", function(val) {
 {{include: text.js}}
 {{include: viewarea.js}}
 {{include: moveelement.js}}
+{{include: brushing.js}}
 
 IV.set("tools:current", "Select");
 

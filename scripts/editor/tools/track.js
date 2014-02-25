@@ -9,17 +9,18 @@ Tools.Track = {
             .add("Track: ")
             .append("A: [please select]");
 
-        Tools.beginSelectLocation(function(loc, mouse_event) {
-            if(!$this.loc1) {
-                $this.loc1 = loc;
-                sA.set("A: " + loc.type);
-                Editor.status.append("B: [please select]");
-                return;
-            } else {
-                $this.loc2 = loc;
-                var popup = IV.popups.PathSelect();
-                popup.onSelectPath = function(path, ref) {
-                    var path = new IV.Path(path);
+        var popup = IV.popups.PathSelect();
+        popup.show($("#tool-icon-track"), 200, 200);
+        popup.onSelectPath = function(selected_path, selected_ref) {
+            Tools.beginSelectLocation(function(loc, mouse_event) {
+                if(!$this.loc1) {
+                    $this.loc1 = loc;
+                    sA.set("A: " + loc.type);
+                    Editor.status.append("B: [please select]");
+                    return;
+                } else {
+                    $this.loc2 = loc;
+                    var path = new IV.Path(selected_path);
                     if(true) {
                         var stat = Editor.computePathStatistics(path);
                         var diff = stat.max - stat.min;
@@ -39,17 +40,9 @@ Tools.Track = {
                     sA = Editor.status.start()
                         .add("Track: ")
                         .append("A: [please select]");
-                };
-                popup.onHide = function() {
-                    $this.loc1 = null;
-                    $this.loc2 = null;
-                    sA = Editor.status.start()
-                        .add("Track: ")
-                        .append("A: [please select]");
-                };
-                popup.show(mouse_event.page, 200, 150);
-            }
-        }, "tools:Track");
+                }
+            }, "tools:Track");
+        };
     },
     onInactive: function() {
         Tools.endSelectLocation("tools:Track");

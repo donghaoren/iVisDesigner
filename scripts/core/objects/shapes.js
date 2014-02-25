@@ -95,11 +95,19 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
     this.point1 = info.point1;
     this.point2 = info.point2;
 }, {
+    $auto_properties: [ "point1", "point2" ],
     shapePaths: function(context, cb) {
         var p1 = this.point1.getPoint(context);
         var p2 = this.point2.getPoint(context);
         if(p1 === null || p2 === null) return;
         cb([ "M", p1, "L", p2 ]);
+    },
+    getPropertyContext: function() {
+        var $this = this;
+        return Objects.Shape.prototype.getPropertyContext.call(this).concat([
+            make_prop_ctx($this, "point1", "Point1", "Shape", "point"),
+            make_prop_ctx($this, "point2", "Point2", "Shape", "point")
+        ]);
     },
     select: function(pt, data, action) {
         var rslt = null;
@@ -195,7 +203,7 @@ Objects.Bar = IV.extend(Objects.Shape, function(info) {
     this.point2 = info.point2;
     this.width = info.width;
 }, {
-    $auto_properties: [ "width" ],
+    $auto_properties: [ "width", "point1", "point2" ],
     shapePaths: function(context, cb) {
         var p1 = this.point1.getPoint(context);
         var p2 = this.point2.getPoint(context);
@@ -212,6 +220,8 @@ Objects.Bar = IV.extend(Objects.Shape, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Shape.prototype.getPropertyContext.call(this).concat([
+            make_prop_ctx($this, "point1", "Point1", "Shape", "point"),
+            make_prop_ctx($this, "point2", "Point2", "Shape", "point"),
             make_prop_ctx($this, "width", "Width", "Shape", "number")
         ]);
     },
@@ -299,6 +309,7 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Shape.prototype.getPropertyContext.call(this).concat([
+            make_prop_ctx($this, "points", "Points", "Shape", "point"),
             make_prop_ctx($this, "closed", "Closed", "Shape", "plain-bool"),
             make_prop_ctx($this, "curved", "Curved", "Shape", "plain-bool")
         ]);

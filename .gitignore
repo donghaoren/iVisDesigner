@@ -16,3 +16,4 @@ images/iconfont/*.js
 linecount.sh
 update_swbuilder.sh
 deploy_list
+*.backup*

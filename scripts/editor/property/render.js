@@ -45,7 +45,9 @@ var render_object_value = function(item, args, callback) {
         return object_renderers[item.type](item, args, callback);
     }
     if(!item.name) {
-        return IV._E("span").text("[" + item.type + "]");
+        return IV._E("span").append(
+            IV._E("span", "gray", " " + item.type)
+        );
     } else {
         return IV._E("span").text(item.name).append(
             IV._E("span", "gray", " " + item.type)
@@ -92,6 +94,8 @@ var render_property_field = function(item) {
         if(val !== undefined) {
             Actions.add(make_set_action(item, val));
             Actions.commit();
+            Editor.renderer.trigger();
+            Editor.renderer.render();
         }
         iVal.children().remove();
         if(item.type == "button") {
@@ -192,6 +196,20 @@ var render_property_field = function(item) {
                 reload_item(new IV.objects.CombinedFilter([], false));
             }
         });
+    }
+    if(type == "point") {
+        target.append(
+           IV._E("span")
+            .append(IV._icon("icon-caret-down"))
+            .addClass("multi btn").click(function() {
+                Editor.tools.disable();
+                Editor.tools.beginSelectLocation(function(loc) {
+                    Editor.tools.endSelectLocation("temporary");
+                    Editor.tools.enable();
+                    reload_item(loc);
+                }, "temporary");
+            })
+        );
     }
     reload_item();
     if(item.owner && item.property) {

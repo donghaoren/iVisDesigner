@@ -15,7 +15,6 @@ Tools.createMagnetics = function() {
 Tools.Select = {
     onActive: function() {
         var $this = this;
-        if(Editor.vis) Editor.vis.clearSelection();
         Tools.triggerRender(["main", "back"]);
         IV.set("status", "Select object.");
 
