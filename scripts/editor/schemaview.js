@@ -125,10 +125,10 @@ Editor.renderSchemaFields = function(info, fields, previous_path) {
             var ref_dropdown = IV._E("i", "ref-dropdown icon-caret-down", "");
             ref_dropdown.click(function(e) {
                 var of_path = new IV.Path(field.of);
-                var path_select = IV.popups.PathSelect(of_path.getSchema(Editor.schema).fields, this_path);
+                var path_select = IV.popups.PathSelect(of_path.getSchema(Editor.schema).fields, field.of);
                 path_select.show($(this), 200, 150);
                 path_select.onSelectPath = function(path) {
-                    var new_path = path;
+                    var new_path = this_path + path.substr(field.of.length);
                     info.onSelectPath(new_path);
                 };
                 e.stopPropagation();
@@ -172,7 +172,11 @@ Editor.renderSchemaFields = function(info, fields, previous_path) {
             e.stopPropagation();
         });
         span.find(".ref").click(function(e) {
-            info.onSelectReference(path, ref_target);
+            if($(this).is(".active")) {
+                info.onSelectReference(null, null);
+            } else {
+                info.onSelectReference(path, ref_target);
+            }
             e.stopPropagation();
         });
     });
@@ -194,8 +198,13 @@ Editor.renderDataSchema = function() {
             Editor.renderDataSchema();
         },
         onSelectReference: function(path, ref_target) {
-            Editor.set("selected-reference", new IV.Path(path));
-            Editor.set("selected-reference-target", new IV.Path(ref_target));
+            if(path === null) {
+                Editor.set("selected-reference", null);
+                Editor.set("selected-reference-target", null);
+            } else {
+                Editor.set("selected-reference", new IV.Path(path));
+                Editor.set("selected-reference-target", new IV.Path(ref_target));
+            }
             Editor.renderDataSchema();
         }
     };

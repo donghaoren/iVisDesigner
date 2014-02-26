@@ -199,12 +199,12 @@ Editor.tools = { };
         var current_component = Editor.get("current-component");
         if(current_component) {
             var pc = current_component.fromLocalCoordinate(new IV.Vector(0, 0));
-            g.ivGuideLineWidth();
+            var w = g.ivGuideLineWidth() * 200;
             g.beginPath();
-            g.moveTo(pc.x - 10, pc.y);
-            g.lineTo(pc.x + 10, pc.y);
-            g.moveTo(pc.x, pc.y - 10);
-            g.lineTo(pc.x, pc.y + 10);
+            g.moveTo(pc.x - w, pc.y);
+            g.lineTo(pc.x + w, pc.y);
+            g.moveTo(pc.x, pc.y - w);
+            g.lineTo(pc.x, pc.y + w);
             g.strokeStyle = "rgba(0, 0, 0, 0.5)";
             g.stroke();
 
