@@ -29,6 +29,8 @@ var object_icons = {
     "Text": "xicon-tools-text",
     "Component": "xicon-tools-component",
     "Statistics": "xicon-tools-statistics",
+    "Expression": "xicon-tools-expression",
+    "BrushingValue": "xicon-tools-brushing",
     "ForceLayout": "xicon-tools-graph-layout",
     "GoogleMap": "xicon-tools-map",
 };
