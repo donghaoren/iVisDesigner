@@ -84,6 +84,20 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
         });
         return rslt;
     },
+    lasso: function(polygon, data, callback) {
+        var $this = this;
+        var contexts = [];
+        this.path.enumerate(data, function(context) {
+            var c = $this.center.getPoint(context);
+            if(c) {
+                if(IV.insidePolygon(polygon, c)) {
+                    callback($this, context);
+                }
+            }
+        });
+        if(contexts.length == 0) return null;
+        return contexts;
+    },
     beginMoveElement: function(context) {
         return this.center.beginMoveElement(context);
     }

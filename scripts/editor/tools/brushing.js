@@ -4,7 +4,6 @@ Tools.Brushing = {
     onActive: function() {
         this.lasso = [];
         var $this = this;
-        if(Editor.vis) Editor.vis.clearSelection();
 
         Tools.beginTrackMouse(function(e) {
             $this.lasso.push(e.offset);
@@ -17,6 +16,17 @@ Tools.Brushing = {
                 var lasso = $this.lasso;
                 $this.lasso = [];
                 Tools.triggerRender("overlay");
+                if(Editor.vis) {
+                    if(Editor.vis.selection.length == 1) {
+                        var target = Editor.vis.selection[0].obj;
+                        if(target.performBrushing) {
+                            var r = Editor.vis.lassoObject(Editor.data, lasso, function(object, context) {
+                                target.performBrushing(Editor.data, context);
+                            });
+                        }
+                    }
+                    Tools.triggerRender();
+                }
             });
         }, "tools:Brushing");
     },

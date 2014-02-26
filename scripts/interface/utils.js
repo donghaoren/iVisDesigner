@@ -39,6 +39,7 @@ IV.registerObjectType("[data-apply-children]", function() {
     });
     $(this).children().each(function() {
         var $this = $(this);
+        if($this.attr("data-apply-children-resist")) return;
         kvs.forEach(function(t) {
             $this.attr(t.key, t.value);
         });

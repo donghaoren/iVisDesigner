@@ -155,6 +155,19 @@ IV.Visualization.prototype.selectObject = function(data, location, action) {
     }
     return best_context;
 };
+
+// Lasso objects from the visualization, given the `polygon`
+IV.Visualization.prototype.lassoObject = function(data, polygon, callback) {
+    this.validate(data);
+    var result = [];
+    for(var i = 0; i < this.objects.length; i++) {
+        var obj = this.objects[i];
+        if(!obj.lasso) continue;
+        obj.lasso(polygon, data, callback);
+    }
+    return result;
+};
+
 // Append a selection to the list of selected objects.
 IV.Visualization.prototype.appendSelection = function(ctx) {
     this.selection.push(ctx);

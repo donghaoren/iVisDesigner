@@ -91,6 +91,26 @@ IV.PathContext.prototype.val = function() {
     return this.root;
 };
 
+IV.PathContext.prototype.getEntity = function(path) {
+    var i = 0;
+    var rc = [];
+    var obj = this.root;
+    for(; i < this.components.length && i < path.components.length; i++) {
+        var tc = this.components[i];
+        var pc = path.components[i];
+        if(tc.name != pc.name || tc.type != pc.type) {
+            break;
+        } else {
+            rc.push(tc);
+            obj = tc.obj;
+        }
+    }
+    if(i >= path.components.length)
+        return new IV.PathContext(this.data, this.root, rc);
+    else
+        return null;
+};
+
 // Get value from another path.
 IV.PathContext.prototype.get = function(path) {
     var i = 0;
@@ -117,11 +137,19 @@ IV.PathContext.prototype.get = function(path) {
                 obj: obj ? this.data.getAttached(pc.ns, this.data.getObjectID(obj)) : null
             };
         } else {
-            nc = {
-                type: pc.type,
-                name: pc.name,
-                obj: obj ? obj[pc.name] : null
-            };
+            if(pc.type == "iterate") {
+                nc = {
+                    type: pc.type,
+                    name: pc.name,
+                    obj: obj ? obj[pc.name][0] : null
+                };
+            } else {
+                nc = {
+                    type: pc.type,
+                    name: pc.name,
+                    obj: obj ? obj[pc.name] : null
+                };
+            }
         }
         obj = nc.obj;
         rc.push(nc);
