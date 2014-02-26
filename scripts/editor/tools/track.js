@@ -68,12 +68,9 @@ Tools.Scatter = {
             if(current_component) {
                 context = current_component.resolveSelection(context);
             }
-<<<<<<< HEAD
             var ref_path = Editor.get("selected-reference");
             var refd_path = Editor.get("selected-reference-target");
             if(ref_path) return new IV.objects.ReferenceWrapper(ref_path, refd_path, context.obj);
-=======
->>>>>>> 60e1409c620ba6280e66b4051fb731a508a94ff8
             return context.obj;
         };
 
