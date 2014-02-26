@@ -255,7 +255,7 @@ IV.Path.prototype.applyReference = function(path, target_path) {
 };
 
 IV.Path.prototype.toString = function() {
-    if(this.components.length == 0) return "[ROOT]"
+    if(this.components.length == 0) return "[ROOT]";
     return this.components.map(function(c) {
         if(c.type == "iterate") return "[" + c.name + "]";
         if(c.type == "attached") return "{" + c.name + "@" + c.ns + "}";

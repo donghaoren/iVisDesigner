@@ -33,6 +33,23 @@ var object_icons = {
     "GoogleMap": "xicon-tools-map",
 };
 
+var generate_prefix_tree = function(paths) {
+    var root = { name: "[ROOT]", children: { } };
+    for(var i = 0; i < paths.length; i++) {
+        if(paths[i] == "[ROOT]") continue;
+        var cs = paths[i].split(":");
+        var w = root;
+        for(var j = 0; j < cs.length; j++) {
+            var c = cs[j];
+            if(!w.children[c]) {
+                w.children[c] = { name: w == root ? c : w.name + ":" + c, children: { } };
+            }
+            w = w.children[c];
+        }
+    }
+    return root;
+};
+
 Editor.generateObjectList = function() {
     olist.children().remove();
     var vis = Editor.vis;
@@ -50,6 +67,12 @@ Editor.generateObjectList = function() {
         if(!classes[s]) classes[s] = [];
         classes[s].push(obj);
     });
+
+    var classes_array = [];
+    for(var s in classes) {
+        classes_array.push(s);
+    }
+    var tree = generate_prefix_tree(classes_array);
 
     var render_object = function(obj, ul, parents) {
         var li = IV._E("li", "object group");
@@ -194,7 +217,8 @@ Editor.generateObjectList = function() {
         }
     };
 
-    for(var p in classes) { (function(p) {
+    var render_tree_node = function(tree, output) {
+        var p = tree.name;
         var div_sel = IV._E("div", "selector", p);
         var p_selected = Editor.get("selected-path").toEntityPath();
         if(p_selected.toString() == p) {
@@ -203,12 +227,24 @@ Editor.generateObjectList = function() {
         div_sel.click(function() {
             Editor.set("selected-path", new IV.Path(p))
         });
-        olist.append(div_sel);
+        output.append(div_sel);
         var ul = IV._E("ul", "objects");
-        olist.append(ul);
+        output.append(ul);
         classes[p].forEach(function(obj) {
             render_object(obj, ul, []);
         });
+        var ul_children = IV._E("ul", "children");
+        output.append(ul_children);
+        for(var c in tree.children) {
+            render_tree_node(tree.children[c], ul_children);
+        }
+    };
+    render_tree_node({ name: "[ROOT]", children: { } }, olist);
+    for(var c in tree.children) {
+        render_tree_node(tree.children[c], olist);
+    }
+    for(var p in classes) { (function(p) {
+
     })(p); }
 };
 
