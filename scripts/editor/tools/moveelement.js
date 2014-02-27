@@ -26,7 +26,7 @@ Tools.MoveElement = {
                     var p0 = e_down.offset;
                     var p1 = e_move.offset;
                     var r = context.onMove(p0, p1);
-                    Tools.triggerRender("main,back");
+                    Tools.triggerRender("main,back,front,overlay");
                     handle_r(r);
                 });
                 e_down.release(function(e_release) {

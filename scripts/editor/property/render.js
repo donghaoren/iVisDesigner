@@ -153,7 +153,7 @@ var render_property_field = function(item) {
         });
     }
     if(type == "number") {
-        make_switch_button([ "Plain", "Linear", "Categorical", "Equals" ], function(val) {
+        make_switch_button([ "Plain", "Linear", "Categorical", "Expression", "Equals" ], function(val) {
             if(val == "Plain") {
                 reload_item(new IV.objects.Plain(0));
             }
@@ -162,6 +162,9 @@ var render_property_field = function(item) {
             }
             if(val == "Categorical") {
                 reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], 0, "number"));
+            }
+            if(val == "Expression") {
+                reload_item(new IV.objects.NumberExpression(new IV.Path(), "0"));
             }
             if(val == "Equals") {
                 reload_item(new IV.objects.PassThrough(new IV.Path()));

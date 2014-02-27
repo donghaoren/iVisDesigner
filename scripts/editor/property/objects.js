@@ -254,6 +254,30 @@ object_renderers.NumberLinear = function(item, args, callback) {
     return r;
 };
 
+object_renderers.NumberExpression = function(item, args, callback) {
+    var path = primitives.Path(function() { return item.path; }, function(new_val) {
+        Actions.add(new Actions.SetProperty(item, "path", new_val));
+        Actions.commit();
+        callback();
+        return new_val;
+    });
+    var expr = primitives.String(function() { return item.expression; }, function(new_val) {
+        Actions.add(new Actions.SetProperty(item, "expression", new_val));
+        Actions.commit();
+        callback();
+        return new_val;
+    });
+    var r = IV._E("span").append(path).append("<br />").append(expr);
+    var listener = IV.bindObjectEvents(item,
+        ["set:path", "set:expression"],
+    function(ev, val) {
+        if(ev == "set:path") path.data().reload();
+        if(ev == "set:expression") expr.data().reload();
+    });
+    r.bind("destroyed", function() { listener.unbind(); });
+    return r;
+};
+
 object_renderers.RangeFilter = function(item, args, callback) {
     var path = primitives.Path(function() { return item.path; }, function(new_val) {
         var stat = Editor.computePathStatistics(new_val);
