@@ -148,10 +148,11 @@
         }
     }
     .separator {
-        margin-left: 3px;
-        margin-right: 3px;
+        margin: 0 4px;
         width: 0;
+        padding: 2px 0;
         border-left: 1px solid rgba(0, 0, 0, 0.05);
+        border-right: 1px solid rgba(255, 255, 255, 0.7);
     }
 }
 
@@ -229,13 +230,14 @@
             .val {
                 float: left;
                 position: relative;
-                width: calc(~"100% - 23px - 70px");
+                width: calc(~"100% - 19px - 70px");
                 overflow: hidden;
             }
             .multi {
                 font-size: 11px;
                 right: 0;
                 position: absolute;
+                padding: 0 2px;
             }
         }
     }

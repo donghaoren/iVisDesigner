@@ -125,7 +125,7 @@ var render_property_field = function(item) {
     var make_switch_button = function(list, callback) {
         target.append(
            IV._E("span")
-            .append(IV._icon("icon-list-ul"))
+            .append(IV._icon("xicon-tools-list"))
             .addClass("multi btn").click(function() {
                 IV.popups.beginContextMenu($(this), list, function(val) {
                     callback(val);
@@ -203,7 +203,7 @@ var render_property_field = function(item) {
     if(type == "point") {
         target.append(
            IV._E("span")
-            .append(IV._icon("icon-caret-down"))
+            .append(IV._icon("xicon-tools-arrow"))
             .addClass("multi btn").click(function() {
                 Editor.tools.disable();
                 Editor.tools.beginSelectLocation(function(loc) {

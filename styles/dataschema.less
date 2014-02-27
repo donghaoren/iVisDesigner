@@ -42,54 +42,29 @@
                 .gradient_background(lighten(@active_color, 10%));
             }
         }
-        & > span.ref {
-            margin-left: 3px;
-            padding: 0 3px;
-            font-size: 10px;
-            line-height: 14px;
-            display: inline-block;
-            vertical-align: baseline;
+        & > span.ref, & > .ref-dropdown {
             float: left;
-            line-height: 12px;
-            height: 12px;
+            padding: 1px 4px;
+            font-size: 10px;
+            line-height: 11px;
+            height: 11px;
             margin: 3px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
             margin-left: 0;
-            &:before { content: "-"; }
-            &:after { content: "-"; }
-            .gradient_background(#BBB);
+            .gradient_background(rgba(0, 0, 0, 0.05));
             &:hover {
-                border: 1px solid rgba(255, 255, 255, 0.5);
+                .gradient_background(lighten(@active_color, 20%));
             }
             &.active, &:active {
-                .gradient_background_inv(@active_color_warm);
-                border: 1px solid rgba(0, 0, 0, 0.1);
-                color: black;
+                .gradient_background_inv(darken(@active_color_warm, 5%), 10%) !important;
+                color: white;
             }
         }
-
+        & > span.ref {
+            &:before { content: '-'; }
+            &:after { content: '-'; }
+        }
         & > .ref-dropdown {
             float: right;
-            margin-left: 3px;
-            padding: 0 3px;
-            font-size: 10px;
-            line-height: 14px;
-            display: inline-block;
-            vertical-align: baseline;
-            line-height: 12px;
-            height: 12px;
-            margin: 3px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            margin-left: 0;
-            .gradient_background(#BBB);
-            &:hover {
-                border: 1px solid rgba(255, 255, 255, 0.5);
-            }
-            &.active, &:active {
-                .gradient_background_inv(lighten(@active_color, 60%));
-                border: 1px solid rgba(0, 0, 0, 0.1);
-                color: black;
-            }
         }
     }
     ul {
