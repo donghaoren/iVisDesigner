@@ -30,6 +30,7 @@ Tools.Select = {
             }
             if(context.onMove) {
                 $this.magnetics = Tools.createMagnetics();
+                $this.magnetics.threshold = 5 / e_down.offset.view_scale;
                 var handle_r = function(r) {
                     if(!r) return;
                     if(r.trigger_render) Tools.triggerRender(r.trigger_render);

@@ -90,7 +90,7 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
         this.path.enumerate(data, function(context) {
             var c = $this.center.getPoint(context);
             if(c) {
-                if(IV.insidePolygon(polygon, c)) {
+                if(IV.geometry.insidePolygon(polygon, c)) {
                     callback($this, context);
                 }
             }
@@ -144,13 +144,28 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
                 make_anchor_move_context(rslt, $this.point2, action);
                 anchor_selected = true;
             }
-            d = IV.pointLineSegmentDistance(pt, p1, p2);
+            d = IV.geometry.pointLineSegmentDistance(pt, p1, p2);
             if(!anchor_selected && d < threshold && (!rslt || rslt.distance > d)) {
                 rslt = { distance: d, context: context.clone() };
             }
         });
         return rslt;
-    }
+    },
+    lasso: function(polygon, data, callback) {
+        var $this = this;
+        var contexts = [];
+        this.path.enumerate(data, function(context) {
+            var p1 = $this.point1.getPoint(context);
+            var p2 = $this.point2.getPoint(context);
+            if(p1 && p2) {
+                if(IV.geometry.lineIntersectPolygon(polygon, p1, p2)) {
+                    callback($this, context);
+                }
+            }
+        });
+        if(contexts.length == 0) return null;
+        return contexts;
+    },
 });
 
 Objects.Polyline = IV.extend(Objects.Shape, function(info) {
@@ -191,7 +206,7 @@ Objects.Polyline = IV.extend(Objects.Shape, function(info) {
                     anchor_selected = true;
                 }
                 if(p1 !== null) {
-                    d = IV.pointLineSegmentDistance(pt, p1, p2);
+                    d = IV.geometry.pointLineSegmentDistance(pt, p1, p2);
                     if(!anchor_selected && d < threshold && (!rslt || rslt.distance > d)) {
                         rslt = { distance: d, context: context.clone() };
                     }
@@ -260,7 +275,7 @@ Objects.Bar = IV.extend(Objects.Shape, function(info) {
                 make_anchor_move_context(rslt, $this.point2, action);
                 anchor_selected = true;
             }
-            d = IV.pointLineSegmentDistance(pt, p1, p2);
+            d = IV.geometry.pointLineSegmentDistance(pt, p1, p2);
             if(!anchor_selected && d < threshold && (!rslt || rslt.distance > d)) {
                 rslt = { distance: d, context: context.clone() };
             }
@@ -311,7 +326,7 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
                     pts.push(pt);
             });
             for(var i = 0; i < pts.length - 1; i++) {
-                var d = IV.pointLineSegmentDistance(pt, pts[i], pts[i + 1]);
+                var d = IV.geometry.pointLineSegmentDistance(pt, pts[i], pts[i + 1]);
                 if(d <= 4.0 / pt.view_scale) {
                     if(!rslt || rslt.distance > d)
                         rslt = { distance: d, context: fctx.clone() };

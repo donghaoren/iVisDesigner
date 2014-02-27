@@ -221,7 +221,7 @@ var Track = IV.extend(Objects.Object, function(info) {
         var $this = this;
         var rslt = null;
         this.enumerateGuide(data, function(p1, p2) {
-            var d = IV.pointLineSegmentDistance(pt, p1, p2);
+            var d = IV.geometry.pointLineSegmentDistance(pt, p1, p2);
             var threshold = 4.0 / pt.view_scale;
             if(d < threshold) {
                 rslt = { distance: d };
@@ -469,7 +469,7 @@ var Scatter = IV.extend(Objects.Object, function(info) {
         var rslt = null;
         $this.enumerateGuide(data, function(p1, p2, q1, q2) {
             $this._getmarkers(p1, p2, q1, q2).forEach(function(l) {
-                var d = IV.pointLineSegmentDistance(pt, l[0], l[1]);
+                var d = IV.geometry.pointLineSegmentDistance(pt, l[0], l[1]);
                 if(d < 4.0 / pt.view_scale) rslt = { distance: d };
             });
         });

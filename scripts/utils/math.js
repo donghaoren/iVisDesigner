@@ -70,13 +70,66 @@ NS.Vector.prototype = {
     }
 };
 
-NS.insidePolygon = function(poly, pt) {
+NS.geometry = { };
+
+NS.geometry.pointLineSegmentDistance = function(pt, p1, p2) {
+    var d = p2.sub(p1);
+    var t = pt.sub(p1).dot(d) / d.dot(d);
+    if(t < 0)
+        return pt.distance(p1);
+    if(t > 1)
+        return pt.distance(p2);
+    var pfoot = p1.interp(p2, t);
+    return pt.distance(pfoot);
+};
+
+NS.geometry.insidePolygon = function(poly, pt) {
     for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i) {
        if ( ((poly[i].y <= pt.y && pt.y < poly[j].y) || (poly[j].y <= pt.y && pt.y < poly[i].y))
         && (pt.x < (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x) )
          (c = !c);
      }
     return c;
+};
+
+NS.geometry.lineSegmentIntersection = function(p1, p2, q1, q2) {
+    var pd = p1.sub(p2), qd = q1.sub(q2);
+    var d = pd.cross(qd);
+    if(d == 0) return null; // parallel.
+    var r1 = (qd.cross(p2) - q1.cross(q2)) / d;
+    var r2 = (p1.cross(p2) - pd.cross(q2)) / d;
+    if(r1 >= 0 && r1 <= 1 && r2 >= 0 && r2 <= 1) {
+        return p1.sub(pd.scale(r1));
+    }
+};
+
+NS.geometry.lineIntersection = function(p1, d1, p2, d2) {
+    // ( p1 + t d1 - p2 )  dot d2.rotate90 == 0
+    // t = (p2 - p1).dot(d2.rotate90) / d1.dot(d2.rotate90);
+    var rd2 = { x: -d2.y, y: d2.x };
+    var b = d1.cross(d2);
+    var a = p2.sub(p1).cross(d2);
+    if(b == 0) return null;
+    var t = a / b;
+    return p1.add(d1.scale(t));
+};
+
+NS.geometry.lineIntersectPolygon = function(poly, p1, p2) {
+    if(NS.geometry.insidePolygon(poly, p1)) return true;
+    if(NS.geometry.insidePolygon(poly, p2)) return true;
+    for(var i = 0; i < poly.length; i++) {
+        var j = i + 1;
+        if(j >= poly.length) j = 0;
+        if(NS.geometry.lineSegmentIntersection(poly[i], poly[j], p1, p2)) return true;
+    }
+};
+
+NS.geometry.distance = function(x0, y0, x1, y1) {
+    return Math.sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
+};
+
+NS.geometry.distance2 = function(a,b) {
+    return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 };
 
 (function() {
@@ -316,38 +369,6 @@ NS.affineTransform.prototype = {
         var m = this.m;
         return m[0] * m[4] - m[1] * m[3];
     }
-};
-
-NS.lineCross = function(p1, d1, p2, d2) {
-    // ( p1 + t d1 - p2 )  dot d2.rotate90 == 0
-    // t = (p2 - p1).dot(d2.rotate90) / d1.dot(d2.rotate90);
-    var rd2 = { x: -d2.y, y: d2.x };
-    var b = d1.x * rd2.x + d1.y * rd2.y;
-    var a = (p2.x - p1.x) * rd2.x + (p2.y - p1.y) * rd2.y;
-    if(Math.abs(b) < 1e-5) return null;
-    var t = a / b;
-    return {
-        x: p1.x + t * d1.x,
-        y: p1.y + t * d1.y
-    };
-};
-
-NS.distance = function(x0, y0, x1, y1) {
-    return Math.sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
-};
-NS.distance2 = function(a,b) {
-    return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
-};
-
-NS.pointLineSegmentDistance = function(pt, p1, p2) {
-    var d = p2.sub(p1);
-    var t = pt.sub(p1).dot(d) / d.dot(d);
-    if(t < 0)
-        return pt.distance(p1);
-    if(t > 1)
-        return pt.distance(p2);
-    var pfoot = p1.interp(p2, t);
-    return pt.distance(pfoot);
 };
 
 // width, height may be negative.
