@@ -9,6 +9,7 @@ images/iconfont/*.svg
 images/iconfont/*.ttf
 images/iconfont/*.css
 images/iconfont/*.js
+scripts/utils/parser.js
 *.sublime-workspace
 *.sublime-project
 *.dblite
@@ -16,4 +17,4 @@ images/iconfont/*.js
 linecount.sh
 update_swbuilder.sh
 deploy_list
-*.backup*
+i*.backup*

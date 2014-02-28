@@ -25,6 +25,8 @@ var NS = { };
 {{include: colors.js}}
 {{include: math.js}}
 
+{{include: expression.js}}
+
 {{include: misc.js}}
 
 {{include: autoalign.js}}

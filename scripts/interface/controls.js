@@ -178,11 +178,11 @@ $.fn.IVInputPath = function(str) {
         data.set = function(path, ref) {
             data.path = new IV.Path(path);
             data.ref = ref ? new IV.Path(ref) : null;
-            if(!data.path) input.text("¶ " + "[ROOT]");
+            if(!data.path) input.text("[ROOT]");
             else if(!data.ref) {
-                input.text("¶ " + data.path.toStringDisplay());
+                input.text(data.path.toStringDisplay());
             } else {
-                input.text("¶ " + data.path.toStringDisplay() + "@" + data.ref.toStringDisplay());
+                input.text(data.path.toStringDisplay() + "@" + data.ref.toStringDisplay());
             }
         };
         data.set(null);

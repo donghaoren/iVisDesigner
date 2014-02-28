@@ -208,4 +208,43 @@ setInterval(function() {
     }
 }, 30);
 
+Editor.exportBitmap = function(scale) {
+    if(!scale) scale = 2; // default as 2x
+
+    var vis = Editor.vis;
+    var data = Editor.data;
+
+    var manager = new IV.CanvasManager(Math.ceil(vis.artboard.width), Math.ceil(vis.artboard.height));
+    var add_canvas = function() {
+        var c = document.createElement("canvas");
+        return c;
+    };
+
+    manager.add("main", add_canvas());
+    manager.add("front", add_canvas());
+    manager.add("back", add_canvas());
+    manager.add("overlay", add_canvas());
+    manager.setResolutionRatio(scale);
+
+
+    var renderer = new IV.Renderer();
+    renderer.setCanvasManager(manager);
+    renderer.setData(data);
+    renderer.setVisualization(vis);
+
+    renderer.frame_grid = false;
+    renderer.show_guide = false;
+    renderer.autoView(vis);
+
+    renderer.trigger();
+    renderer.render();
+
+    var back = manager.get("back");
+    var ctx = back.getContext("2d");
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(manager.get("main"), 0, 0);
+    ctx.drawImage(manager.get("front"), 0, 0);
+    return back.toDataURL("image/png");
+};
+
 })();

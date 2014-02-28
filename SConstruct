@@ -21,7 +21,7 @@ CSS("toolkit.css", ["styles/toolkit.less",
                     "images/iconfont/ivfont.css"])
 
 env.IconFont("images/iconfont/ivfont.css",
-             FindFiles("*.svg", "images/iconfont"),
+             FindFiles("tools_*.svg", "images/iconfont"),
              name = "iVisDesignerIcons")
 
 
@@ -38,6 +38,10 @@ Javascript("libraries.js", [
 ])
 
 YAML2DataJavascript("strings.js", ["scripts/strings.yaml"], variable = "DATA_Strings")
+
+env.Append(BUILDERS = { "PEGJS": Builder(action = "pegjs -e $export $SOURCES $TARGET") })
+
+env.PEGJS("scripts/utils/parser.js", "scripts/utils/parser.pegjs", export = "NS.expression.parser")
 
 Javascript("toolkit.js", [
     "scripts/utils/utils.js",

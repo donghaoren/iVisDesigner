@@ -138,7 +138,6 @@ primitives.Number = function(get, set, args) {
 primitives.Path = function(get, set, args) {
     var r = $("<span />")
         .addClass("btn plain-path")
-        .append($('<span />').text('¶'))
         .append($('<span />').addClass("text"))
         .click(function() {
             var $this = $(this);
