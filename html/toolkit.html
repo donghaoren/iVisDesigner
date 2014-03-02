@@ -44,45 +44,23 @@ IV_version = {
 <div id="menubar">
   <ul class="menu">
     <li>
-      <img src="data:image/svg+xml;base64,{{base64:../images/logo.svg}}" />
-    </li>
-    <li>
-      <span>iVisDesigner</span>
+      <span><i class="xicon-tools-ivisdesigner"></i> iVisDesigner</span>
       <ul>
         <li><span data-open-page="#about-text" data-open-page-title="About iVisDesigner">
-          <span class="icon"><i class="icon-info-sign"></i></span>
+          <span class="icon"><i class="icon-info-circled"></i></span>
           About
         </span></li>
         <li><span data-open-page="base64:{{base64:../temp/credits.html}}" data-open-page-title="Credits">
           <span class="icon"><i class="icon-bookmark"></i></span>
           Credits
         </span></li>
-        <li class="divider"></li>
-        <li>
-          <span data-command="account.register">
-            <span class="icon"><i class="icon-user"></i></span>
-            Register...
-          </span>
-        </li>
-        <li>
-          <span data-command="account.login">
-            <span class="icon"><i class="icon-signin"></i></span>
-            Login...
-          </span>
-        </li>
-        <li>
-          <span data-command="account.logout">
-            <span class="icon"><i class="icon-signout"></i></span>
-            Logout
-          </span>
-        </li>
       </ul>
     </li>
     <li>
       <span>File</span>
       <ul>
-        <li><span data-command="toolkit.start"><span class="icon"><i class="icon-folder-open"></i></span>New / Open</span></li>
-        <li><span data-command="toolkit.save"><span class="icon"><i class="icon-save"></i></span>Save</span></li>
+        <li><span data-command="toolkit.start"><span class="icon"><i class="icon-folder"></i></span>New / Open</span></li>
+        <li><span data-command="toolkit.save"><span class="icon"><i class="icon-floppy"></i></span>Save</span></li>
       </ul>
     </li>
     <li>
@@ -148,9 +126,31 @@ IV_version = {
       </ul>
     </li>
   </ul>
-  <div class="menu-right">
-    <div class="user-name"></div>
-  </div>
+  <ul class="menu menu-right">
+    <li>
+      <span><i class="icon-user"></i> <span class="user-name"></span></span>
+      <ul>
+        <li>
+          <span data-command="account.register">
+            <span class="icon"><i class="icon-user"></i></span>
+            Register...
+          </span>
+        </li>
+        <li>
+          <span data-command="account.login">
+            <span class="icon"><i class="icon-login"></i></span>
+            Login...
+          </span>
+        </li>
+        <li>
+          <span data-command="account.logout">
+            <span class="icon"><i class="icon-logout"></i></span>
+            Logout
+          </span>
+        </li>
+      </ul>
+    </li>
+  </ul>
 </div>
 <div id="statusbar">
   <span class="status-text">Ready.</span>
@@ -170,7 +170,7 @@ IV_version = {
   <div id="panel-tools" class="panel" data-title="Tools">
     <div id="tools-container">
       <div class="tool-icons" data-remove-text-nodes>
-        <span data-apply-children="data-switch=tools:current;class=btn btn-icon btn-s" data-remove-text-nodes>
+        <span data-apply-children="data-switch=tools:current;class=btn btn-icon" data-remove-text-nodes>
           <span data-value="Select" title="Select or move objects.">
             <i class="xicon-tools-arrow"></i>
           </span>
@@ -222,15 +222,15 @@ IV_version = {
           <span data-value="Component" title="Create component.">
             <i class="xicon-tools-component"></i>
           </span>
-          <span data-apply-children-resist="yes" class="btn btn-icon btn-s" title="Create Google Map." data-popup="CreateMap">
+          <span data-apply-children-resist="yes" class="btn btn-icon" title="Create Google Map." data-popup="CreateMap">
             <i class="xicon-tools-map"></i>
           </span>
         </span>
         <span data-apply-children-resist="yes" class="separator"></span>
-        <span class="btn btn-icon btn-s" title="Create graph layout." data-popup="CreateLayout">
+        <span class="btn btn-icon" title="Create graph layout." data-popup="CreateLayout">
           <i class="xicon-tools-graph-layout"></i>
         </span>
-        <span class="btn btn-icon btn-s" title="Create statistics." data-popup="CreateStatistics">
+        <span class="btn btn-icon" title="Create statistics." data-popup="CreateStatistics">
           <i class="xicon-tools-statistics"></i>
         </span>
         <!--<span data-apply-children-resist="yes" class="separator"></span>

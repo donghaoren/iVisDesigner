@@ -1,0 +1,100 @@
+@font-face {
+  font-family: 'fontello';
+  src: url('data:application/ttf;base64,{{base64:fontello.ttf}}') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'fontello';
+    src: url('../font/fontello.svg?10212617#fontello') format('svg');
+  }
+}
+*/
+
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "fontello";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.icon-bookmark:before { content: '\e806'; } /* '' */
+.icon-folder:before { content: '\e800'; } /* '' */
+.icon-users:before { content: '\e822'; } /* '' */
+.icon-user-add:before { content: '\e821'; } /* '' */
+.icon-menu:before { content: '\e825'; } /* '' */
+.icon-check:before { content: '\e823'; } /* '' */
+.icon-cancel:before { content: '\e824'; } /* '' */
+.icon-info-circled:before { content: '\e807'; } /* '' */
+.icon-export:before { content: '\e832'; } /* '' */
+.icon-chat:before { content: '\e833'; } /* '' */
+.icon-login:before { content: '\e802'; } /* '' */
+.icon-logout:before { content: '\e804'; } /* '' */
+.icon-arrow-combo:before { content: '\e820'; } /* '' */
+.icon-down-open:before { content: '\e814'; } /* '' */
+.icon-left-open:before { content: '\e815'; } /* '' */
+.icon-right-open:before { content: '\e816'; } /* '' */
+.icon-up-open:before { content: '\e817'; } /* '' */
+.icon-down-open-mini:before { content: '\e818'; } /* '' */
+.icon-left-open-mini:before { content: '\e819'; } /* '' */
+.icon-right-open-mini:before { content: '\e81a'; } /* '' */
+.icon-up-open-mini:before { content: '\e81b'; } /* '' */
+.icon-down-open-big:before { content: '\e82e'; } /* '' */
+.icon-left-open-big:before { content: '\e82f'; } /* '' */
+.icon-right-open-big:before { content: '\e830'; } /* '' */
+.icon-up-open-big:before { content: '\e831'; } /* '' */
+.icon-down:before { content: '\e81f'; } /* '' */
+.icon-user:before { content: '\e801'; } /* '' */
+.icon-right:before { content: '\e81d'; } /* '' */
+.icon-up:before { content: '\e81c'; } /* '' */
+.icon-down-dir:before { content: '\e808'; } /* '' */
+.icon-left-dir:before { content: '\e809'; } /* '' */
+.icon-right-dir:before { content: '\e80a'; } /* '' */
+.icon-up-dir:before { content: '\e80b'; } /* '' */
+.icon-down-bold:before { content: '\e80c'; } /* '' */
+.icon-left-bold:before { content: '\e80d'; } /* '' */
+.icon-right-bold:before { content: '\e80e'; } /* '' */
+.icon-up-bold:before { content: '\e80f'; } /* '' */
+.icon-down-thin:before { content: '\e810'; } /* '' */
+.icon-left-thin:before { content: '\e811'; } /* '' */
+.icon-right-thin:before { content: '\e812'; } /* '' */
+.icon-up-thin:before { content: '\e813'; } /* '' */
+.icon-paper-plane:before { content: '\e82d'; } /* '' */
+.icon-floppy:before { content: '\e805'; } /* '' */
+.icon-dropbox:before { content: '\e82a'; } /* '' */
+.icon-sina-weibo:before { content: '\e829'; } /* '' */
+.icon-facebook-rect:before { content: '\e826'; } /* '' */
+.icon-twitter-bird:before { content: '\e82b'; } /* '' */
+.icon-googleplus-rect:before { content: '\e834'; } /* '' */
+.icon-github-text:before { content: '\e835'; } /* '' */
+.icon-linkedin-rect:before { content: '\e836'; } /* '' */
+.icon-trash:before { content: '\e803'; } /* '' */
+.icon-left:before { content: '\e81e'; } /* '' */

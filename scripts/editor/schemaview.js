@@ -127,7 +127,7 @@ Editor.renderSchemaFields = function(info, fields, previous_path) {
 
         if(field.type == "reference") {
             // add a reference button.
-            var ref_dropdown = IV._E("i", "ref-dropdown icon-caret-down", "");
+            var ref_dropdown = IV._E("i", "ref-dropdown icon-down-dir", "");
             ref_dropdown.click(function(e) {
                 var of_path = new IV.Path(field.of);
                 var path_select = IV.popups.PathSelect(of_path.getSchema(Editor.schema).fields, field.of);

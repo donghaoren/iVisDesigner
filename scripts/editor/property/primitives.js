@@ -59,7 +59,7 @@ primitives.String = function(get, set, args) {
         var r = $("<span />")
             .addClass("btn")
             .append($("<span />"))
-            .append($('<i class="icon-caret-down" /></i>'))
+            .append($('<i class="icon-down-dir" /></i>'))
             .click(function() {
                 var $this = $(this);
                 IV.popups.beginContextMenu($this, args, function(val) {

@@ -248,22 +248,22 @@ var render_field = function(name, item, type, callback, args) {
 // Render the caption of the property field.
 var render_caption = function(cap) {
     return IV._E("div", "item-caption", " " + cap)
-        .prepend($('<i class="icon-caret-right" style="display:none" /></i>'))
-        .prepend($('<i class="icon-caret-down" /></i>'))
+        .prepend($('<i class="icon-right-dir" style="display:none" /></i>'))
+        .prepend($('<i class="icon-down-dir" /></i>'))
         .click(function() {
-            $(this).children(".icon-caret-right").toggle();
-            $(this).children(".icon-caret-down").toggle();
+            $(this).children(".icon-right-dir").toggle();
+            $(this).children(".icon-down-dir").toggle();
             $(this).next().toggle();
         });
 };
 // Render the caption of the property field.
 var render_nested_caption = function(cap) {
     return IV._E("div", "nested-caption", " " + cap)
-        .prepend($('<i class="icon-caret-right" style="display:none" /></i>'))
-        .prepend($('<i class="icon-caret-down" /></i>'))
+        .prepend($('<i class="icon-right-dir" style="display:none" /></i>'))
+        .prepend($('<i class="icon-down-dir" /></i>'))
         .click(function() {
-            $(this).children(".icon-caret-right").toggle();
-            $(this).children(".icon-caret-down").toggle();
+            $(this).children(".icon-right-dir").toggle();
+            $(this).children(".icon-down-dir").toggle();
             $(this).parent().children(":not(:first-child)").toggle();
         });
 };

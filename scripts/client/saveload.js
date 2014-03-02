@@ -127,7 +127,7 @@ IV.on("command:toolkit.start", function() {
                                 }
                                 ul.append(IV._E("li", "group").append(
                                     IV._E("div", "actions").append(
-                                        IV._E("span", "btn btn-s").text("+ New").click(function() {
+                                        IV._E("span", "btn").text("+ New").click(function() {
                                             IV.server.get("datasets/" + dataset.id + "/", function(err, data) {
                                                 load_dataset_from_server(data, function() {
                                                     IV.newVisualization();
@@ -148,7 +148,7 @@ IV.on("command:toolkit.start", function() {
                                 data.results.forEach(function(vis) {
                                     var li_vis = IV._E("li", "group").append(
                                         IV._E("span", "actions pull-right").append(
-                                            IV._E("span", "btn btn-s").append(IV._E("i", "icon-folder-open")).click(function() {
+                                            IV._E("span", "btn").append(IV._E("i", "icon-folder")).click(function() {
                                                 IV.server.get("visualizations/" + vis.id + "/", function(err, data) {
                                                     load_dataset_from_server(data.dataset_info, function() {
                                                         var vis_data = JSON.parse(data.content);
@@ -162,7 +162,7 @@ IV.on("command:toolkit.start", function() {
                                                 });
                                             })
                                         ).append(IV._E("span").text(" ")).append(
-                                            IV._E("span", "btn btn-s").append(IV._E("i", "icon-trash")).click(function() {
+                                            IV._E("span", "btn").append(IV._E("i", "icon-trash")).click(function() {
                                                 if($(this).is(".btn-confirm")) {
                                                     IV.server.delete("visualizations/" + vis.id + "/", function(err, data) {
                                                         if(!err) li_vis.remove();

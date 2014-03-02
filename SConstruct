@@ -17,7 +17,7 @@ Meta("version", IV_version)
 Meta("revision", IV_rev.upper())
 
 CSS("toolkit.css", ["styles/toolkit.less",
-                    "styles/font-awesome.css",
+                    "styles/fontello.css",
                     "images/iconfont/ivfont.css"])
 
 env.IconFont("images/iconfont/ivfont.css",

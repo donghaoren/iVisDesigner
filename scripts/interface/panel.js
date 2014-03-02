@@ -21,7 +21,7 @@
             '<div class="title-wrapper">' +
                 '<div class="title">' + $this.attr("data-title") + '</div>' +
                 '<div class="buttons">' +
-                    '<div class="button-minimize" title="Minimize"><i class="icon-angle-up"></i></div>' +
+                    '<div class="button-minimize" title="Minimize"><i class="icon-up-open-mini"></i></div>' +
                     '<div class="button-close" title="Close"><i class="xicon-cross"></i></div>' +
                 '</div>' +
             '</div>' +
