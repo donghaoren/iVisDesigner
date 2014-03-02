@@ -46,19 +46,16 @@ var make_prop_ctx = function(obj, property, name, group, type, args) {
 };
 
 var compile_expression = function(expression, base_path) {
-    var new_expression = expression.replace(/\_(\.[a-zA-Z\_][a-zA-Z0-9\_\-]*)+/, function(expr) {
-        var params = expr.split(".").slice(1);
-        var rpath = params.join(":");
-        var p = base_path.toString();
-        if(p != "") rpath = p + ":" + rpath;
-        return "get(" + JSON.stringify(rpath) + ")";
-    });
-    var compiled = IV.math.compile(new_expression);
+    base_path = base_path.toString();
+    var compiled = IV.expression.parse(expression);
     return function(variables, context) {
-        variables.get = function(fs) {
-            var p = new IV.Path(fs);
-            return context.get(p).val();
+        var ctx = new IV.expression.Context();
+        ctx.get = function(path) {
+            var p = path[0] == ':' ? base_path + path : path.substr(1);
+            var r = context.get(new IV.Path(p)).val();
+            return r;
         };
-        return compiled.eval(variables);
+        for(var key in variables) ctx[key] = variables[key];
+        return compiled(ctx);
     };
 };

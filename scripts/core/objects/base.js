@@ -162,11 +162,11 @@ var NumberLinear = IV.extend(Objects.Object, function(path, num1, num2, min, max
 Objects.NumberLinear = NumberLinear;
 IV.serializer.registerObjectType("NumberLinear", NumberLinear);
 
-var NumberExpression = IV.extend(Objects.Object, function(path, expression) {
+var MappingExpression = IV.extend(Objects.Object, function(path, expression) {
     Objects.Object.call(this);
     this.path = path;
     this.expression = expression || "0";
-    this.type = "NumberExpression";
+    this.type = "MappingExpression";
     this._compile();
 }, {
     $auto_properties: [ "path", "expression" ],
@@ -191,11 +191,11 @@ var NumberExpression = IV.extend(Objects.Object, function(path, expression) {
         }
     },
     clone: function() {
-        return new NumberExpression(this.path, this.expression);
+        return new MappingExpression(this.path, this.expression);
     }
 });
-Objects.NumberExpression = NumberExpression;
-IV.serializer.registerObjectType("NumberExpression", NumberExpression);
+Objects.MappingExpression = MappingExpression;
+IV.serializer.registerObjectType("MappingExpression", MappingExpression);
 
 // Color Linear Mapping.
 var ColorLinear = IV.extend(Objects.Object, function(path, color1, color2, min, max) {

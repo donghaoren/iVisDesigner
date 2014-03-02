@@ -80,6 +80,9 @@ IV.Renderer = function() {
         }
     });
     this.bind("front", function(data, g) {
+        if($this.vis && $this.show_guide) {
+            $this.vis.renderGuideSelected(data, g);
+        }
         if($this.vis) {
             $this.vis.renderSelection(data, g);
         }

@@ -137,7 +137,7 @@ var render_property_field = function(item) {
     };
 
     if(type == "color") {
-        make_switch_button([ "Plain", "Linear", "Categorical", "Equals"], function(val) {
+        make_switch_button([ "Plain", "Linear", "Categorical", "Expression", "Equals"], function(val) {
             if(val == "Plain") {
                 reload_item(new IV.objects.Plain(new IV.Color(0, 0, 0, 1)));
             }
@@ -146,6 +146,9 @@ var render_property_field = function(item) {
             }
             if(val == "Categorical") {
                 reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], new IV.Color(0, 0, 0, 1), "color"));
+            }
+            if(val == "Expression") {
+                reload_item(new IV.objects.MappingExpression(new IV.Path(), "rgb(0, 0, 0)"));
             }
             if(val == "Equals") {
                 reload_item(new IV.objects.PassThrough(new IV.Path()));
@@ -164,7 +167,7 @@ var render_property_field = function(item) {
                 reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], 0, "number"));
             }
             if(val == "Expression") {
-                reload_item(new IV.objects.NumberExpression(new IV.Path(), "0"));
+                reload_item(new IV.objects.MappingExpression(new IV.Path(), "0"));
             }
             if(val == "Equals") {
                 reload_item(new IV.objects.PassThrough(new IV.Path()));

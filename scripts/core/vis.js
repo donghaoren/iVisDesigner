@@ -1,3 +1,4 @@
+// The main class for a visualization design.
 IV.Visualization = function() {
     // All objects of the visualization, ordered in an array.
     this.objects = [];
@@ -13,15 +14,19 @@ IV.serializer.registerObjectType("Visualization", IV.Visualization);
 
 IV.implement(IV.EventSource, IV.Visualization);
 
+// Serialization support.
 IV.Visualization.prototype.serializeFields = function() {
     return [ "objects", "artboard" ];
 };
+
 IV.Visualization.prototype.postDeserialize = function() {
+    // Deselect all objects.
     this.selection = [];
     this.objects.forEach(function(obj) {
         obj.selected = false;
     });
     if(!this.artboard) {
+        // Assign default artboard if non-exist.
         this.artboard = new IV.Rectangle(-600, -400, 1200, 800);
     }
     IV.EventSource.call(this);
@@ -49,6 +54,7 @@ IV.Visualization.prototype.addObject = function(obj) {
     // Add object event.
     this.raise("objects");
 };
+
 // Remove an object from the visualization.
 IV.Visualization.prototype.removeObject = function(obj) {
     // Find it and earse from the array.
@@ -63,20 +69,26 @@ IV.Visualization.prototype.removeObject = function(obj) {
     // Remove object event.
     this.raise("objects");
 };
+
+// Trigger rendering.
 IV.Visualization.prototype.setNeedsRender = function() {
     this._needs_render = true;
 };
+
 IV.Visualization.prototype.triggerRenderer = function(renderer) {
     if(this._needs_render) {
         renderer.trigger();
         this._needs_render = false;
     }
 };
+
+// Validate generated values in response to data changes.
 IV.Visualization.prototype.validate = function(data) {
     this.objects.forEach(function(obj) {
         if(obj.validate) obj.validate(data);
     });
 };
+
 // Render the visualization to graphics context.
 IV.Visualization.prototype.render = function(data, g) {
     this.validate(data);
@@ -88,12 +100,13 @@ IV.Visualization.prototype.render = function(data, g) {
         try {
             obj.render(g, data);
         } catch(e) {
-            console.log("Render", obj, e.stack);
+            console.trace(e.stack);
         }
         g.ivRestore();
     });
 };
 
+// Render selected objects.
 IV.Visualization.prototype.renderSelection = function(data, g) {
     this.validate(data);
     // Then we draw the selections.
@@ -107,6 +120,7 @@ IV.Visualization.prototype.renderSelection = function(data, g) {
         g.ivRestore();
     });
 };
+
 // Render the visualization's guides to graphics context.
 // Guides including the axis of the track object, the frame of the scatterplot, etc.
 IV.Visualization.prototype.renderGuide = function(data, g) {
@@ -117,21 +131,27 @@ IV.Visualization.prototype.renderGuide = function(data, g) {
         try {
             obj.renderGuide(g, data);
         } catch(e) {
-            console.log("RenderG", obj, e);
+            console.trace(e.stack);
         }
         g.ivRestore();
     });
+};
+
+// Render guide for selected objects.
+IV.Visualization.prototype.renderGuideSelected = function(data, g) {
+    this.validate(data);
     IV.forEachReversed(this.selection, function(c) {
         var obj = c.obj;
         g.ivSave();
         try {
             obj.renderGuideSelected(g, data, c.context, c);
         } catch(e) {
-            console.log("RenderG Selected", c, e);
+            console.trace(e.stack);
         }
         g.ivRestore();
     });
 };
+
 // Select an object from the visualization, given the `location` and `action`.
 IV.Visualization.prototype.selectObject = function(data, location, action) {
     this.validate(data);
@@ -175,6 +195,7 @@ IV.Visualization.prototype.appendSelection = function(ctx) {
     ctx.obj._selection_context = ctx;
     this.raise("selection");
 };
+
 // Clear selected objects.
 IV.Visualization.prototype.clearSelection = function() {
     this.objects.forEach(function(obj) { obj.selected = false; });
@@ -182,6 +203,7 @@ IV.Visualization.prototype.clearSelection = function() {
     this.selection = [];
     this.raise("selection");
 };
+
 // Handle tick event, pass them to the objects.
 IV.Visualization.prototype.timerTick = function(data) {
     this.objects.forEach(function(obj) {

@@ -51,6 +51,7 @@ item
   = primitive
   / function_call
   / variable
+  / selector
   / "(" sp expr:level1 sp ")" { return expr; }
 
 variable
@@ -59,6 +60,12 @@ variable
 function_call
   = name:name sp "(" sp expr:expression sp ")"
     { return function(ctx) { return ctx[name](expr(ctx)); }; }
+  / name:name sp "(" sp expr1:expression sp "," expr2:expression ")"
+    { return function(ctx) { return ctx[name](expr1(ctx), expr2(ctx)); }; }
+  / name:name sp "(" sp expr1:expression sp "," expr2:expression sp "," expr3:expression sp ")"
+    { return function(ctx) { return ctx[name](expr1(ctx), expr2(ctx), expr3(ctx)); }; }
+  / name:name sp "(" sp expr1:expression sp "," expr2:expression sp "," expr3:expression sp "," expr4:expression sp ")"
+    { return function(ctx) { return ctx[name](expr1(ctx), expr2(ctx), expr3(ctx), expr4(ctx)); }; }
 
 primitive
   = floating_point
@@ -72,9 +79,14 @@ string
   = repr:("\"" [^"]* "\"")
     { var str = JSON.parse(flatten(repr)); return function(ctx) { return str; } }
 
+selector
+  = str:([:$] name (":" name)*) {
+        var s = flatten(str);
+        return function(ctx) { return ctx.get(s); };
+    }
+
 name
   = name:([a-zA-Z_][a-zA-Z0-9_]*) { return flatten(name); }
 
-
 sp
-  = [ ]*
+  = [ \n]*

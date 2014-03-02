@@ -119,23 +119,13 @@ IV.serializer.deserialize = function(d) {
 IV.serializer.registerDeserializer("Vector", function(item) {
     return new IV.Vector(item.x, item.y);
 });
+
 IV.serializer.registerDeserializer("Rectangle", function(item) {
     return new IV.Rectangle(item.x0, item.y0, item.width, item.height, item.angle);
 });
+
 IV.serializer.registerDeserializer("Color", function(item) {
     return new IV.Color(item.r, item.g, item.b, item.a);
 });
 
-IV.serializer.test = function() {
-    var d = IV.serializer.serialize(IV.editor.vis);
-    var j = JSON.stringify(d, undefined, 2);
-    console.log(j);
-    var de = IV.serializer.deserialize(JSON.parse(j));
-    console.log(de);
-    IV.editor.setVisualization(de);
-    return "Test done."
-};
-
 })();
-
-// IV.serializer.serilize(vis);

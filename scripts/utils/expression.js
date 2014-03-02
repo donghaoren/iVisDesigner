@@ -29,13 +29,20 @@ NS.expression.Context.prototype = {
         if(typeof(a) == "number" && typeof(b) == "number") return Math.pow(a, b);
         throw "Invalid operands for operator '^'."
     },
-    "sin": Math.sin,
-    "cos": Math.cos,
-    "tan": Math.tan,
-    "exp": Math.exp,
-    "sqrt": Math.sqrt,
-    "pow": Math.pow
+    "e": Math.e,
+    "pi": Math.PI,
+    "rgba": function(r, g, b, a) { return new IV.Color(r, g, b, a); },
+    "rgb": function(r, g, b) { return new IV.Color(r, g, b); },
+    "hcl": function(h, c, l) { return NS.parseColorChroma(chroma.lch(l, c, h)); },
+    "hcla": function(h, c, l, a) { return NS.parseColorChroma(chroma.lch(l, c, h), a); }
 };
+
+(function() {
+    var keys = "abs,acos,asin,atan,atan2,ceil,cos,exp,floor,log,max,min,pow,random,round,sin,sqrt,tan";
+    keys.split(",").forEach(function(key) {
+        NS.expression.Context.prototype[key] = Math[key];
+    });
+})();
 
 {{include: parser.js}}
 

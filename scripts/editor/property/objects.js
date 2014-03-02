@@ -254,7 +254,7 @@ object_renderers.NumberLinear = function(item, args, callback) {
     return r;
 };
 
-object_renderers.NumberExpression = function(item, args, callback) {
+object_renderers.MappingExpression = function(item, args, callback) {
     var path = primitives.Path(function() { return item.path; }, function(new_val) {
         Actions.add(new Actions.SetProperty(item, "path", new_val));
         Actions.commit();
