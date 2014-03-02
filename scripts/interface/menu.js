@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/interface/menu.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // scripts/menu.js
 // The main menu scripts.
 

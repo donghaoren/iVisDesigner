@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/core/path.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 IV.Path = function(str) {
     if(!str || str == "[ROOT]") str = "";
     if(typeof(str) == "string") {

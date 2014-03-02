@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/editor/popups/pathselect.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 IV.popups.PathSelect = function(fields, previous_path) {
     if(!fields) fields = IV.editor.schema.fields;
     if(!previous_path) previous_path = "";

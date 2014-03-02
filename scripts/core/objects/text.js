@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/core/objects/text.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 Objects.Text = IV.extend(Objects.Object, function(info) {
     Objects.Object.call(this, info);
     this.type = "Text";

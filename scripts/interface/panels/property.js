@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/interface/panels/property.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // The property panel.
 (function() {
 

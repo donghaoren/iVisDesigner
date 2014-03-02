@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/core/render.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 IV.getOptimalRatio = function() {
     var canvas = document.createElement("canvas");
     var g = canvas.getContext("2d");

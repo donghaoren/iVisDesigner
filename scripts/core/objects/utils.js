@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/core/objects/utils.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // Take a selection context, a anchor object, and action, add dragging handlers to the context.
 var make_anchor_move_context = function(rslt, anchor, action) {
     if(action == "move") {

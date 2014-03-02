@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/client/saveload.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 var double_async_jsonp = function(url, params, callback) {
     callback_name = "IVJSONP_" + new Date().getTime();
     var script = document.createElement("script");

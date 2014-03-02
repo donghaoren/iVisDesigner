@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/core/objects/filter.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // Range filter.
 var RangeFilter = IV.extend(Objects.Object, function(path, min, max) {
     Objects.Object.call(this);

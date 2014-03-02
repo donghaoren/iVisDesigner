@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/utils/sha1.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // ======== SHA-1 Checksum ========
 (function() {
 // Calculate SHA1 of the bytes array.

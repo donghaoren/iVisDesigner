@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/client/utils.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 var generate_pagination = function(element, page_index, page_size, data, callback) {
     element.children().remove();
     var page_count = Math.ceil(data.count / page_size);

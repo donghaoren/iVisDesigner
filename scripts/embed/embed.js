@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/embed/embed.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 IV.EmbeddedCanvas = IV.extend(Object, function(div, options) {
     this.div = div;
 

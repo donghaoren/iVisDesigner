@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/interface/utils.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // ### Register Object Type
 // Simple mechanism to dynamically call initialization functions for new elements.
 (function() {

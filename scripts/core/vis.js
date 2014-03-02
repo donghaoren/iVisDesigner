@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/core/vis.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // The main class for a visualization design.
 IV.Visualization = function() {
     // All objects of the visualization, ordered in an array.

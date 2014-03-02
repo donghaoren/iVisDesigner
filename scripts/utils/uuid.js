@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/utils/uuid.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // ### Generate UUID
 
 // UUID is used for object id.

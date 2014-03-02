@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/utils/autoalign.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 NS.shiftModify = function(x0, y0, x1, y1) {
     var angle = Math.atan2(Math.abs(y1 - y0), Math.abs(x1 - x0)) / Math.PI * 180.0;
     if(angle < 22.5 || angle > 67.5) {

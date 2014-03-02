@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/utils/formatting.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // Date.getString:
 //   Date.getFullString()   Jan 17th, 2012 21:34
 //   Date.getDayString()    Jan 17th, 2012

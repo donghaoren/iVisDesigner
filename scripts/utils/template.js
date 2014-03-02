@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/utils/template.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 NS.getTemplate = function(template_name) {
     var ht = $("#" + template_name + "-" + NS.currentLanguage).html();
     if(ht) return ht;

@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/interface/popups/menu.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 IV.popups.beginContextMenu = function(anchor, list, callback) {
     var data = IV.popups.create();
     var ul = $("<ul />").addClass("context-menu");

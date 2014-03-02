@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/editor/ui.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // Panels
 IV.addListener("command:panels.reset", function() {
     $("#panel-schema").IVPanel({ left: 10, top: 10, width: 180, height: 400 }).IVPanel("show");

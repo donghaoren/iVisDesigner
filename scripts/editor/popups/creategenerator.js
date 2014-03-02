@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/editor/popups/creategenerator.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 IV.popups.CreateStatistics = function() {
     // We put statistics and generators together.
     var data = IV.popups.create();

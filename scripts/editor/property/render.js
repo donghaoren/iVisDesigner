@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/editor/property/render.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // First we define functions to create elements for primitive values.
 // Including Color, String, Number, Path, etc.
 

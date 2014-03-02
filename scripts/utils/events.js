@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/utils/events.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // ======== Values and Events ========
 
 // Key-Value Management:

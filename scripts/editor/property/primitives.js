@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/editor/property/primitives.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 primitives.Color = function(get, set, args) {
     var r = $("<span />")
         .addClass("plain-color")

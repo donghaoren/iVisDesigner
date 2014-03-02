@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/utils/math.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 Math.log10 = function(v) {
     return Math.log(v) / 2.302585092994046;
 };

@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/toolkit.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // scripts/toolkit.js
 // The main javascript file for the toolkit.
 

@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/utils/colors.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 NS.Color = function(r, g, b, a) {
     this.r = parseFloat(r);
     this.g = parseFloat(g);

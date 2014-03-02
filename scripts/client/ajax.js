@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/client/ajax.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 var ajaxCall = function(url, method, params, callback) {
     if(!callback) callback = function(){};
     if(typeof(params) == "function") callback = params;

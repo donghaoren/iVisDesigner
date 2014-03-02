@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/interface/modal.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 IV.modals = { };
 
 IV.modals.constructModal = function(info) {

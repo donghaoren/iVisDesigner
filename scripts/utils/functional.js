@@ -1,3 +1,8 @@
+//. iVisDesigner - File: scripts/utils/functional.js
+//. Copyright 2013-2014 Donghao Ren
+//. Peking University, University of California, Santa Barbara
+//. See LICENSE.md for more information.
+
 // Timing functions.
 //   waitUntil(condition, on_finished, interval, timeout)
 //     wait until condition() == true, call on_finished(true/false).
