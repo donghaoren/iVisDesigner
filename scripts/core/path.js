@@ -185,7 +185,12 @@ IV.PathContext.prototype.set = function(path, value) {
         //obj = nc.obj;
     }
     var pc = path.components[i];
-    obj[pc.name] = value;
+    if(obj._variable) {
+        obj[pc.name] = value;
+        if(obj._onSetField) {
+            obj._onSetField(pc.name, value);
+        }
+    }
 };
 
 IV.PathContext.prototype.getReference = function(referenced_path) {

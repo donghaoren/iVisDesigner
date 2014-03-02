@@ -143,10 +143,11 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
         }
         for(var i in objs) {
             if(!$this.points[i]) {
-                $this.points[i] = { x: objs[i].x, y: objs[i].y };
+                $this.points[i] = { x: objs[i].x, y: objs[i].y, _variable: true };
             } else {
                 $this.points[i].x = objs[i].x;
                 $this.points[i].y = objs[i].y;
+                $this.points[i]._variable = true;
             }
         }
 

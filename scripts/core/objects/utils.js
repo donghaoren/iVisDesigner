@@ -16,14 +16,14 @@ var make_anchor_move_context = function(rslt, anchor, action) {
                     anchor.obj.y = np.y;
                     magnetics.accept(np, anchor.obj.x, anchor.obj.y);
                 }
-                return { trigger_render: "main,front" };
+                return { trigger_render: "main,front,back" };
             };
         }
         if(anchor.type == "PointOffset") {
             rslt.original = anchor.offset;
             rslt.onMove = function(p0, p1) {
                 anchor.offset = rslt.original.sub(p0).add(p1);
-                return { trigger_render: "main,front" };
+                return { trigger_render: "main,front,back" };
             };
         }
     }

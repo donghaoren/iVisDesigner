@@ -291,7 +291,7 @@ var Track = IV.extend(Objects.Object, function(info) {
                                         new IV.Vector(best_shift.x, best_shift.y)
                                     );
                             }
-                            return { trigger_render: "main,back" };
+                            return { trigger_render: "main,back,front" };
                         };
                     }
                 }

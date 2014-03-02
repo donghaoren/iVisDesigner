@@ -68,7 +68,8 @@ Objects.Expression = IV.extend(Objects.Object, function(info) {
             try {
                 $this.results[id] = {
                     value: compiled({ index: index }, fctx),
-                    index: index
+                    index: index,
+                    _variable: true
                 };
             } catch(e) {
             }
@@ -171,7 +172,7 @@ Objects.BrushingValue = IV.extend(Objects.Object, function(info) {
         var entity = context.getEntity(this.path);
         if(entity) {
             var id = data.getObjectID(entity.val());
-            this.storage[id] = { value: this.value, brushed: true };
+            this.storage[id] = { value: this.value, brushed: true, _variable: true };
             this._validated = false;
         }
     },
@@ -180,7 +181,7 @@ Objects.BrushingValue = IV.extend(Objects.Object, function(info) {
         $this.path.enumerate(data, function(fctx) {
             var id = data.getObjectID(fctx.val());
             if($this.storage[id] === undefined) {
-                $this.storage[id] = { value: $this.default_value };
+                $this.storage[id] = { value: $this.default_value, _variable: true };
             }
         });
         data.setAttached($this.uuid, $this.storage);

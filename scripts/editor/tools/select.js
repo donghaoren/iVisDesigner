@@ -20,17 +20,17 @@ Tools.createMagnetics = function() {
 Tools.Select = {
     onActive: function() {
         var $this = this;
-        Tools.triggerRender(["main", "back"]);
+        Tools.triggerRender("main,front,back,overlay");
         IV.set("status", "Select object.");
 
         Tools.beginSelectObject(function(context, e_down) {
             if(context) {
                 if(!e_down.shift) Editor.vis.clearSelection();
                 Editor.vis.appendSelection(context);
-                Tools.triggerRender("main,back");
+                Tools.triggerRender("main,front,back,overlay");
             } else {
                 Editor.vis.clearSelection();
-                Tools.triggerRender("main,back");
+                Tools.triggerRender("main,front,back,overlay");
                 return;
             }
             if(context.onMove) {

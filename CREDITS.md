@@ -167,16 +167,41 @@ Copyright (c) 2013, Brandon Aaron (<http://brandonaaron.net/>)
     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Subtle Patterns
+Font Licenses
 ====
 
-Homepage: <http://subtlepatterns.com>
-License: Creative Commons Attribution-ShareAlike 3.0 Unported License, <http://creativecommons.org/licenses/by-sa/3.0/deed.en_US>
+Icon font created by fontello: <http://fontello.com/>
 
-Font Awesome
-====
+## Font Awesome
 
-Font Awesome by Dave Gandy - <http://fortawesome.github.com/Font-Awesome>
+    Copyright (C) 2012 by Dave Gandy
+
+    Author:    Dave Gandy
+    License:   SIL ()
+    Homepage:  http://fortawesome.github.com/Font-Awesome/
+
+## Elusive
+
+    Copyright (C) 2013 by Aristeides Stathopoulos
+
+    Author:    Aristeides Stathopoulos
+    License:   SIL (http://scripts.sil.org/OFL)
+    Homepage:  http://aristeides.com/
+
+## Entypo
+
+    Copyright (C) 2012 by Daniel Bruce
+
+    Author:    Daniel Bruce
+    License:   CC BY-SA (http://creativecommons.org/licenses/by-sa/2.0/)
+    Homepage:  http://www.entypo.com
+
+## Brandico
+
+    (C) 2012 by Vitaly Puzrin
+
+    Author:    Crowdsourced, for Fontello project
+    License:   SIL (http://scripts.sil.org/OFL)
 
 Static Website Builder
 ====
