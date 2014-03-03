@@ -49,7 +49,7 @@ NS.expression.Context.prototype = {
     });
 })();
 
-{{include: parser.js}}
+{{include: parser.js.gen}}
 
 NS.expression.parse = function(expr) {
     return NS.expression.parser.parse(expr);

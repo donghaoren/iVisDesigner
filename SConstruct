@@ -41,7 +41,7 @@ YAML2DataJavascript("strings.js", ["scripts/strings.yaml"], variable = "DATA_Str
 
 env.Append(BUILDERS = { "PEGJS": Builder(action = "pegjs -e $export $SOURCES $TARGET") })
 
-env.PEGJS("scripts/utils/parser.js", "scripts/utils/parser.pegjs", export = "NS.expression.parser")
+env.PEGJS("scripts/utils/parser.js.gen", "scripts/utils/parser.pegjs", export = "NS.expression.parser")
 
 Javascript("toolkit.js", [
     "scripts/utils/utils.js",
@@ -57,8 +57,6 @@ Javascript("embed.js", [
     "scripts/core/core.js",
     "scripts/embed/embed.js"
 ])
-
-Image("imgs/logo.svg", "images/logo.svg")
 
 # All-in-one test data.
 Binary("datasets/test.schema", "datasets/test.yaml");
