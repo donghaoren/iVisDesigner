@@ -108,7 +108,16 @@ NS.geometry.lineSegmentIntersection = function(p1, p2, q1, q2) {
     }
 };
 
-NS.geometry.lineIntersection = function(p1, d1, p2, d2) {
+NS.geometry.lineIntersection = function(p1, p2, q1, q2) {
+    var pd = p1.sub(p2), qd = q1.sub(q2);
+    var d = pd.cross(qd);
+    if(d == 0) return null; // parallel.
+    var r1 = (qd.cross(p2) - q1.cross(q2)) / d;
+    var r2 = (p1.cross(p2) - pd.cross(q2)) / d;
+    return p2.add(pd.scale(r1));
+};
+
+NS.geometry.lineIntersectionPD = function(p1, d1, p2, d2) {
     // ( p1 + t d1 - p2 )  dot d2.rotate90 == 0
     // t = (p2 - p1).dot(d2.rotate90) / d1.dot(d2.rotate90);
     var rd2 = { x: -d2.y, y: d2.x };

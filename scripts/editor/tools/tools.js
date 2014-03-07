@@ -259,6 +259,7 @@ IV.listen("tools:current", function(val) {
 {{include: track.js}}
 {{include: circle.js}}
 {{include: line.js}}
+{{include: geometry.js}}
 {{include: component.js}}
 {{include: text.js}}
 {{include: viewarea.js}}

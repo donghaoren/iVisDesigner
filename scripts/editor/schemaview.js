@@ -158,9 +158,11 @@ Editor.renderSchemaFields = function(info, fields, previous_path) {
     if(attached_paths[previous_path]) {
         attached_paths[previous_path].forEach(function(item) {
             var iul = $("<ul />");
-            var ili = $("<li />").append(IV._E("span", "attached", item.name));
+            var span = IV._E("span", "attached key", item.name);
+            var ili = $("<li />").append(span);
             var new_path = "{" + item.name + "@" + item.ns + "}";
             if(previous_path != "") new_path = previous_path + ":" + new_path;
+            span.data().path = new_path;
             ili.append(Editor.renderSchemaFields(info, item.schema.fields, new_path));
             iul.append(ili);
             results = results.add(iul);

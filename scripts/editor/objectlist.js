@@ -79,7 +79,9 @@ Editor.generateObjectList = function() {
     for(var s in classes) {
         classes_array.push(s);
     }
+
     var tree = generate_prefix_tree(classes_array);
+    console.log(classes, tree);
 
     var render_object = function(obj, ul, parents) {
         var li = IV._E("li", "object group");
@@ -237,9 +239,11 @@ Editor.generateObjectList = function() {
         output.append(div_sel);
         var ul = IV._E("ul", "objects");
         output.append(ul);
-        classes[p].forEach(function(obj) {
-            render_object(obj, ul, []);
-        });
+        if(classes[p]) {
+            classes[p].forEach(function(obj) {
+                render_object(obj, ul, []);
+            });
+        }
         var ul_children = IV._E("ul", "children");
         output.append(ul_children);
         for(var c in tree.children) {

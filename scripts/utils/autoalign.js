@@ -59,7 +59,7 @@ NS.MagneticAlign.prototype.modify = function(x, y) {
             for(var j in angles) {
                 var dpt = (new IV.Vector(1, 0)).rotate(-angles[j] / 180.0 * Math.PI);
                 // cross: pt->dpt, min_a->min_d.
-                var p = IV.geometry.lineIntersection(pt, dpt, min_a, min_d);
+                var p = IV.geometry.lineIntersectionPD(pt, dpt, min_a, min_d);
                 if(p) {
                     var d = IV.geometry.distance(min_s.x, min_s.y, p.x, p.y);
                     if(d < min2_v) {

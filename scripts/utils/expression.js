@@ -12,27 +12,28 @@ NS.expression.Context.prototype = {
     "+": function(a, b) {
         if(typeof(a) == "number" && typeof(b) == "number") return a + b;
         if(typeof(a) == "string" && typeof(b) == "string") return a + b;
-        throw "Invalid operands for operator '+'."
+        throw "Invalid operands for operator '+'.";
     },
     "-": function(a, b) {
         if(typeof(a) == "number" && typeof(b) == "number") return a - b;
-        throw "Invalid operands for operator '-'."
+        throw "Invalid operands for operator '-'.";
     },
     "unary:-": function(a) {
         if(typeof(a) == "number") return -a;
-        throw "Invalid operands for operator '-'."
+        throw "Invalid operands for operator '-'.";
     },
     "*": function(a, b) {
         if(typeof(a) == "number" && typeof(b) == "number") return a * b;
-        throw "Invalid operands for operator '*'."
+        throw "Invalid operands for operator '*'.";
     },
     "/": function(a, b) {
         if(typeof(a) == "number" && typeof(b) == "number") return a / b;
-        throw "Invalid operands for operator '/'."
+        console.log(a, b);
+        throw "Invalid operands for operator '/'.";
     },
     "^": function(a, b) {
         if(typeof(a) == "number" && typeof(b) == "number") return Math.pow(a, b);
-        throw "Invalid operands for operator '^'."
+        throw "Invalid operands for operator '^'.";
     },
     "e": Math.e,
     "pi": Math.PI,
@@ -55,8 +56,9 @@ NS.expression.parse = function(expr) {
     return NS.expression.parser.parse(expr);
 };
 
-NS.expression.eval = function(expr) {
+NS.expression.eval = function(expr, context) {
     var ctx = new NS.expression.Context();
+    for(var f in context) ctx[f] = context[f];
     var p = NS.expression.parse(expr);
     return p(ctx);
 };

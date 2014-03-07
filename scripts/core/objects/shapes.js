@@ -121,6 +121,12 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
         if(p1 === null || p2 === null) return;
         cb([ "M", p1, "L", p2 ]);
     },
+    getLine: function(context) {
+        var p1 = this.point1.getPoint(context);
+        var p2 = this.point2.getPoint(context);
+        if(p1 === null || p2 === null) return null;
+        return [p1, p2];
+    },
     getPropertyContext: function() {
         var $this = this;
         return Objects.Shape.prototype.getPropertyContext.call(this).concat([
@@ -131,12 +137,13 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
     select: function(pt, data, action) {
         var rslt = null;
         var $this = this;
+        var anchor_selected = false;
         this.path.enumerate(data, function(context) {
             if($this.filter && !$this.filter.get(context)) return;
             var p1 = $this.point1.getPoint(context);
             var p2 = $this.point2.getPoint(context);
             if(p1 === null || p2 === null) return;
-            var threshold = 4.0 / pt.view_scale, d, anchor_selected = false;
+            var threshold = 4.0 / pt.view_scale, d;
             d = Math.abs(pt.distance(p1));
             if(d < threshold && (!rslt || rslt.distance > d)) {
                 rslt = { distance: d, context: context.clone() };

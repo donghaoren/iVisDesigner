@@ -14,6 +14,17 @@ IV.popups.CreateStatistics = function() {
     p.default_width = 300;
     p.default_height = 130;
     var data = p.data();
+
+    p.find(".input-numeric").each(function() {
+        var t = $(this);
+        var def = t.attr("data-default");
+        if(def !== undefined) {
+            t.IVInputNumeric(parseFloat(def));
+        } else {
+            t.IVInputNumeric();
+        }
+    });
+
     data.onOk = function() {
         var active_tab = p.find(".tab").data().current;
         if(active_tab == "statistics") {
@@ -41,6 +52,17 @@ IV.popups.CreateStatistics = function() {
             var path = tab.find('[data-field="path"]').data().get();
             var obj = new IV.objects.BrushingValue({
                 path: path
+            });
+            Editor.doAddObject(obj);
+        }
+        if(active_tab == "range") {
+            var tab = p.find('[data-tab="range"]');
+            var path = tab.find('[data-field="path"]').data().get();
+            var min = tab.find('[data-field="min"]').data().get();
+            var max = tab.find('[data-field="max"]').data().get();
+            var step = tab.find('[data-field="step"]').data().get();
+            var obj = new IV.objects.GenerateRange({
+                path: path, min: min, max: max, step: step
             });
             Editor.doAddObject(obj);
         }

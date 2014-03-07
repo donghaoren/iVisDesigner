@@ -26,6 +26,7 @@ Objects.Object.prototype = {
     get: function(context) { return null; },
     getStyle: function(context) { return this.get(context); },
     getPoint: function(context) { return this.get(context); },
+    getLine: function(context) { return this.get(context); },
     getNumber: function(context) { return this.get(context); },
     getPath: function() { return this.path; },
     getGuidePath: function() { return new IV.Path(""); },
@@ -50,7 +51,9 @@ Objects.Object.prototype = {
 
 {{include: utils.js}}
 {{include: base.js}}
-{{include: filter.js}}
+{{include: geometry.js}}
+{{include: mappings.js}}
+{{include: filters.js}}
 {{include: style.js}}
 {{include: track.js}}
 {{include: shapes.js}}
