@@ -177,7 +177,7 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
         });
         if(contexts.length == 0) return null;
         return contexts;
-    },
+    }
 });
 
 Objects.Polyline = IV.extend(Objects.Shape, function(info) {
@@ -347,6 +347,27 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
         });
         return rslt;
     },
+    lasso: function(polygon, data, callback) {
+        var $this = this;
+        var contexts = [];
+        this.path.enumerate(data, function(fctx) {
+            var pts = [];
+            $this.points.getPath().enumerateAtContext(fctx, function(context) {
+                var pt = $this.points.getPoint(context);
+                if(pt !== null)
+                    pts.push(pt);
+            });
+            for(var i = 0; i < pts.length - 1; i++) {
+                var p1 = pts[i];
+                var p2 = pts[i + 1];
+                if(IV.geometry.lineIntersectPolygon(polygon, p1, p2)) {
+                    callback($this, fctx);
+                }
+            }
+        });
+        if(contexts.length == 0) return null;
+        return contexts;
+    },
     getPropertyContext: function() {
         var $this = this;
         return Objects.Shape.prototype.getPropertyContext.call(this).concat([
@@ -354,7 +375,7 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
             make_prop_ctx($this, "closed", "Closed", "Shape", "plain-bool"),
             make_prop_ctx($this, "curved", "Curved", "Shape", "plain-bool")
         ]);
-    },
+    }
 });
 
 IV.serializer.registerObjectType("Circle", Objects.Circle);

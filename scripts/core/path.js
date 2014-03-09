@@ -54,10 +54,12 @@ IV.Path.prototype._enumerate_internal = function(ctx, subdata, index, cb) {
         if(c.type == "iterate") {
             if(subdata) {
                 var array = subdata[c.name];
-                for(var i = 0; i < array.length; i++) {
-                    ctx.components[index].obj = array[i];
-                    var r = this._enumerate_internal(ctx, array[i], index + 1, cb);
-                    if(r === false) return false;
+                if(array) {
+                    for(var i = 0; i < array.length; i++) {
+                        ctx.components[index].obj = array[i];
+                        var r = this._enumerate_internal(ctx, array[i], index + 1, cb);
+                        if(r === false) return false;
+                    }
                 }
             }
         } else if(c.type == "attached") {

@@ -82,9 +82,10 @@ class DatasetViewSet(ListDetailViewSet):
     serializer_list_class = DatasetSerializer_List
     def filter_queryset(self, queryset):
         # Only show data of which the user has permission.
-        if self.request.user.is_staff: return queryset
+        if self.request.user.is_staff: return queryset.order_by("-created_at")
         groups = self.request.user.groups.all()
-        return queryset.filter(Q(group = None) | Q(group__in = groups))
+        return queryset.filter(Q(group = None) | Q(group__in = groups)).order_by("-created_at")
+    ordering = "-created_at"
 
 class VisualizationViewSet(ListDetailViewSet):
     permission_classes = (VisualizationPermissionClass, )
