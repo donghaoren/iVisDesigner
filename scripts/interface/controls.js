@@ -249,6 +249,54 @@ $.fn.IVColorPicker = function(obj) {
 };
 IV.registerObjectType(".color-selector", $.fn.IVColorPicker);
 
+// ### IVSelectValue
+// Select a value from a list of options.
+
+$.fn.IVSelectValue = function(obj) {
+    var $this = this;
+    var data = $this.data();
+    if(!data.is_created) {
+
+        data.select = $("<span />");
+        data.optmap = { };
+        data.val = null;
+        data.options = $this.attr("data-options").split(",").map(function(s) {
+            var sp = s.split("|");
+            if(sp.length == 1) return { name: s, display: s };
+            data.optmap[sp[0]] = sp[1];
+            return { name: sp[0], display: sp[1] };
+        });
+        $this.append(data.select)
+             .append($('<i class="icon-down-dir" style="margin-left:-4px;margin-right:-4px" /></i>'));
+
+        data.select.click(function() {
+            IV.popups.beginContextMenu($this, data.options, function(val) {
+                data.set(val);
+                if(data.changed) data.changed(data.get());
+            });
+        });
+
+        data.get = function() {
+            return data.val;
+        };
+        data.set = function(v) {
+            data.select.text(data.optmap[v] + " ");
+            data.val = v;
+        };
+
+        if($this.attr("data-default")) data.set($this.attr("data-default"));
+        else data.set(data.options[0].name);
+
+        data.is_created = true;
+    }
+    if(obj === undefined) return data.get();
+    if(typeof(obj) == "function")
+        data.changed = obj;
+    else data.set(obj);
+    return this;
+};
+IV.registerObjectType(".control-select-value", $.fn.IVSelectValue);
+
 // ### ScrollView
 // Scrollable view, automatically handle content and window resize.
 
