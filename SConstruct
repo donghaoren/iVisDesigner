@@ -33,11 +33,13 @@ Javascript("libraries.js", [
     "libraries/d3.v3.js",
     "libraries/js-yaml.js",
     "libraries/chroma.js",
-    "libraries/numeric-1.2.6.js",
-    "libraries/math.js"
+    "libraries/numeric-1.2.6.js"
 ])
 
-YAML2DataJavascript("strings.js", ["scripts/strings.yaml"], variable = "DATA_Strings")
+YAML2DataJavascript("strings.js", [
+    "scripts/strings/strings.yaml",
+    "scripts/strings/templates.yaml"
+], variable = "DATA_Strings")
 
 env.Append(BUILDERS = { "PEGJS": Builder(action = "pegjs -e $export $SOURCES $TARGET") })
 

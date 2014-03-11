@@ -300,6 +300,8 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
     Objects.Shape.call(this, info);
     this.points = info.points;
     this.type = "LineThrough";
+    this.curved = false;
+    this.closed = false;
 }, {
     $auto_properties: [ "curved", "closed", "points" ],
     postDeserialize: function() {

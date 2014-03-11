@@ -1,0 +1,68 @@
+popup_template_scatterplot: |
+  <div class="property-list">
+    <div class="item-caption">Scatterplot</div>
+    <div class="item-action">
+      <div class="field group">
+        <span class="name"><span>X Attribute</span></span>
+        <span class="val">
+          <span data-field="path-x" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Y Attribute</span></span>
+        <span class="val">
+          <span data-field="path-y" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+popup_template_timeline: |
+  <div class="property-list">
+    <div class="item-caption">Timeline</div>
+    <div class="item-action">
+      <div class="field group">
+        <span class="name"><span>X Attribute</span></span>
+        <span class="val">
+          <span data-field="path-x" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Y Attribute</span></span>
+        <span class="val">
+          <span data-field="path-y" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+popup_template_graph: |
+  <div class="property-list">
+    <div class="item-caption">Node-Link Graph</div>
+    <div class="item-action">
+      <div class="field group">
+        <span class="name"><span>Nodes</span></span>
+        <span class="val">
+          <span data-field="path-nodes" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Edges</span></span>
+        <span class="val">
+          <span data-field="path-edges" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Source</span></span>
+        <span class="val">
+          <span data-field="path-source" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Target</span></span>
+        <span class="val">
+          <span data-field="path-target" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+    </div>
+  </div>

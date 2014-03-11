@@ -7,3 +7,4 @@
 {{include: createlayout.js}}
 {{include: createmap.js}}
 {{include: creategenerator.js}}
+{{include: templates.js}}

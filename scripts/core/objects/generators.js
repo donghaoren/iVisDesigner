@@ -3,8 +3,6 @@
 //. Peking University, University of California, Santa Barbara
 //. See LICENSE.md for more information.
 
-IV.math = mathjs();
-
 Objects.Expression = IV.extend(Objects.Object, function(info) {
     Objects.Object.call(this);
     this.type = "Expression";

@@ -117,13 +117,19 @@
             if(!height) height = p.default_height;
             $("#popup-container").append(p);
             var margin = 5;
-            var bound = get_real_bounds(anchor);
-            var x = bound.x1 - width - 2;
-            var y = bound.y0 - height - margin - 7;
-            var cx = (bound.x0 + bound.x1) / 2;
-            var cy = (bound.y0 + bound.y1) / 2;
-            if(cx < $(window).width() / 2) x = bound.x0;
-            if(cy < $(window).height() / 2) y = bound.y1 + margin;
+            var x, y;
+            if(anchor) {
+                var bound = get_real_bounds(anchor);
+                x = bound.x1 - width - 2;
+                y = bound.y0 - height - margin - 7;
+                var cx = (bound.x0 + bound.x1) / 2;
+                var cy = (bound.y0 + bound.y1) / 2;
+                if(cx < $(window).width() / 2) x = bound.x0;
+                if(cy < $(window).height() / 2) y = bound.y1 + margin;
+            } else {
+                x = ($(window).width() - width) / 2;
+                y = ($(window).height() - height) / 2;
+            }
             p.css({
                 width: width + "px",
                 height: height + "px",

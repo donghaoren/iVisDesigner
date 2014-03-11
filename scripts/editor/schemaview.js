@@ -215,6 +215,10 @@ Editor.renderDataSchema = function() {
             Editor.renderDataSchema();
         }
     };
+    rootelem_span.click(function(e) {
+        info.onSelectPath("");
+        e.stopPropagation();
+    });
     $("#data-schema").append(Editor.renderSchemaFields(info, Editor.schema.fields, "", true));
 };
 

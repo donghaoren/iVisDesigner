@@ -226,8 +226,23 @@ Editor.tools = { };
     };
 
     Tools.enable = function() {
-        if(IV.current_tool.onActive)
+        if(IV.current_tool && IV.current_tool.onActive)
             IV.current_tool.onActive();
+    };
+
+    var overlay_original = null;
+    Tools.beginOverlay = function(new_tool) {
+        if(IV.current_tool) {
+            if(IV.current_tool.onInactive)
+                IV.current_tool.onInactive();
+            overlay_original = IV.current_tool;
+        }
+        IV.current_tool = new_tool;
+    };
+    Tools.endOverlay = function() {
+        IV.current_tool = overlay_original;
+        if(IV.current_tool.onActive)
+        IV.current_tool.onActive();
     };
 
     Editor.renderer.bind("overlay", function(data, g) {

@@ -136,6 +136,6 @@ IV.registerObjectType("span[data-open-page]", function() {
 IV.registerObjectType("span[data-command]", function() {
     var command = $(this).attr("data-command");
     $(this).click(function() {
-        IV.raiseEvent("command:" + command);
+        IV.raiseEvent("command:" + command, $(this).attr("data-parameters"));
     });
 }, "unique");

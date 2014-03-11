@@ -30,6 +30,16 @@ IV.popups.PathSelect = function(fields, previous_path) {
             onSelectPath(path);
         }
     };
+    if(previous_path == "") {
+        var rootelem_span = $('<span class="key">ROOT</span>');
+        var rootelem = $("<li/>").append(rootelem_span);
+        rootelem_span.data().path = "";
+        c.append($('<ul style="margin-bottom: 2px"></ul>').append(rootelem));
+        rootelem_span.click(function(e) {
+            info.onSelectPath("");
+            e.stopPropagation();
+        });
+    }
     var elems = IV.editor.renderSchemaFields(info, fields, previous_path);
     c.append(elems);
 

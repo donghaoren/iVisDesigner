@@ -44,6 +44,12 @@ IV.Path.prototype.slice = function(start, length) {
     sliced.components = this.components.slice(start, length);
     return sliced;
 };
+IV.Path.prototype.truncate = function(count) {
+    var sliced = new IV.Path();
+    sliced.components = this.components.slice(0, this.components.length - count);
+    return sliced;
+};
+
 IV.Path.prototype.clone = IV.Path.prototype.slice;
 
 IV.Path.prototype._enumerate_internal = function(ctx, subdata, index, cb) {
