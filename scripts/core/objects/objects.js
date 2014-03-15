@@ -41,6 +41,7 @@ Objects.Object.prototype = {
     clone: function() {
         throw new Error("Clone not implemented: " + this.type);
     },
+    getDependencies: function() { return new IV.ObjectSet(); },
     getPropertyContext: function() {
         var $this = this;
         return [

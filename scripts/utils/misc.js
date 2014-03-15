@@ -83,6 +83,41 @@ NS.startsWith = function(str, start) {
     return str.substr(0, start.length) == start;
 };
 
+NS.ObjectSet = function() {
+    this.set = { };
+};
+
+NS.ObjectSet.prototype.add = function(obj) {
+    if(!obj.uuid) obj.uuid = NS.generateUUID();
+    this.set[obj.uuid] = true;
+};
+
+NS.ObjectSet.prototype.unionWith = function(another) {
+    for(var k in another.set) {
+        if(another.set.hasOwnProperty(k)) this.set[k] = true;
+    }
+};
+
+NS.ObjectSet.prototype.subtractWith = function(another) {
+    for(var k in another.set) {
+        if(another.set.hasOwnProperty(k)) delete this.set[k];
+    }
+};
+
+NS.ObjectSet.prototype.union = function(another) {
+    var r = new NS.ObjectSet();
+    r.unionWith(this);
+    r.unionWith(another);
+    return r;
+};
+
+NS.ObjectSet.prototype.subtract = function(another) {
+    var r = new NS.ObjectSet();
+    r.unionWith(this);
+    r.subtractWith(another);
+    return r;
+};
+
 NS.printNumber = function(num) {
     if(Math.abs(num) < 1e10) {
         if(num == Math.round(num)) return num.toString(); // is a integer.

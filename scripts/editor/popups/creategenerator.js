@@ -11,7 +11,7 @@ IV.popups.CreateStatistics = function() {
     var p = data.selector;
     p.children(".content").html(IV.strings("popup_create_statistics"));
 
-    p.default_width = 300;
+    p.default_width = 400;
     p.default_height = 130;
     var data = p.data();
 
@@ -32,6 +32,16 @@ IV.popups.CreateStatistics = function() {
             var path = tab.find('[data-field="path"]').data().get();
             var path_data = tab.find('[data-field="path-data"]').data().get();
             var obj = new IV.objects.Statistics({
+                path: path,
+                path_data: path_data
+            });
+            Editor.doAddObject(obj);
+        }
+        if(active_tab == "aggregator") {
+            var tab = p.find('[data-tab="aggregator"]');
+            var path = tab.find('[data-field="path"]').data().get();
+            var path_data = tab.find('[data-field="path-data"]').data().get();
+            var obj = new IV.objects.Aggregator({
                 path: path,
                 path_data: path_data
             });

@@ -5,5 +5,6 @@
 
 {{include: statistics.js}}
 {{include: expression.js}}
+{{include: aggregator.js}}
 {{include: range.js}}
 {{include: brushingvalue.js}}

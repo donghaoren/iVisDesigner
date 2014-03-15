@@ -69,6 +69,16 @@ Objects.Expression = IV.extend(Objects.Object, function(info) {
         });
         data.setAttached($this.uuid, $this.results);
     },
+    getDependencies: function() {
+        var r = new IV.ObjectSet();
+        for(var i in this.path.components) {
+            var c = this.path.components[i];
+            if(c.type == "attached") {
+                r.add({ uuid: c.ns });
+            }
+        }
+        return r;
+    },
     onDetach: function(vis) {
     },
 });

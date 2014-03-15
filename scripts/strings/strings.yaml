@@ -34,11 +34,13 @@ popup_create_statistics: |
   <div class="tab" data-default="statistics">
     <div class="header">
       <span data-tab="statistics">Statistics</span>
+      <span data-tab="aggregator">Aggregator</span>
       <span data-tab="expression">Expression</span>
       <span data-tab="brushing">Brushing</span>
       <span data-tab="range">Range</span>
     </div>
     <div class="tabs">
+
       <div data-tab="statistics">
         <div class="property-list">
           <div class="item-caption">Statistics</div>
@@ -58,6 +60,27 @@ popup_create_statistics: |
           </div>
         </div>
       </div><!-- statistics -->
+
+      <div data-tab="aggregator">
+        <div class="property-list">
+          <div class="item-caption">Aggregator</div>
+          <div class="item-action">
+            <div class="field group">
+              <span class="name"><span>Anchor</span></span>
+              <span class="val">
+                <span data-field="path" class="input-path btn plain-path"></span>
+              </span>
+            </div>
+            <div class="field group">
+              <span class="name"><span>Data</span></span>
+              <span class="val">
+                <span data-field="path-data" class="input-path btn plain-path"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div><!-- aggregator -->
+
       <div data-tab="expression">
         <div class="property-list">
           <div class="item-caption">Expression</div>
@@ -79,6 +102,7 @@ popup_create_statistics: |
           </div>
         </div>
       </div><!-- statistics -->
+
       <div data-tab="brushing">
         <div class="property-list">
           <div class="item-caption">Brushing</div>
@@ -92,6 +116,7 @@ popup_create_statistics: |
           </div>
         </div>
       </div><!-- brushing -->
+
       <div data-tab="range">
         <div class="property-list">
           <div class="item-caption">Range</div>

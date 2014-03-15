@@ -76,7 +76,6 @@ Objects.Statistics = IV.extend(Objects.Object, function(info) {
                 sum: sum,
                 mean: count > 0 ? sum / count : null
             };
-            console.log("A", fctx.val(), max);
         });
         data.setAttached($this.uuid, $this.results);
     }

@@ -90,10 +90,37 @@ IV.Visualization.prototype.triggerRenderer = function(renderer) {
 
 // Validate generated values in response to data changes.
 IV.Visualization.prototype.validate = function(data) {
+    // Do a topology sort.
+    var object_idmap = { }; // uuid => object
+    this.objects.forEach(function(obj) { object_idmap[obj.uuid] = { o: obj, deps: new IV.ObjectSet(), done: false }; });
     this.objects.forEach(function(obj) {
-        if(obj.validate) obj.validate(data);
+        var deps = obj.getDependencies();
+        object_idmap[obj.uuid].deps.unionWith(deps);
+        for(var uuid in deps.set) {
+            var info = object_idmap[uuid];
+            if(info) {
+                if(info.o._validated === false) {
+                    obj._validated = false;
+                }
+            }
+        }
     });
+    var sorted = [];
+    var append_obj = function(uuid) {
+        var info = object_idmap[uuid];
+        if(!info || info.done) return;
+        for(var depid in info.deps.set) {
+            append_obj(depid);
+        }
+        sorted.push(info.o);
+        info.done = true;
+    };
     this.objects.forEach(function(obj) {
+        append_obj(obj.uuid);
+    });
+    // Finish topology sort, now validate in dependency order.
+
+    sorted.forEach(function(obj) {
         if(obj.validate) obj.validate(data);
     });
 };
