@@ -50,7 +50,7 @@ Objects.Object.prototype = {
 };
 
 {{include: utils.js}}
-{{include: base.js}}
+{{include: basic.js}}
 {{include: geometry.js}}
 {{include: mappings.js}}
 {{include: filters.js}}
@@ -60,8 +60,7 @@ Objects.Object.prototype = {
 {{include: text.js}}
 {{include: layout.js}}
 {{include: map.js}}
-{{include: statistics.js}}
-{{include: generators.js}}
+{{include: generators/generators.js}}
 {{include: component.js}}
 
 })();

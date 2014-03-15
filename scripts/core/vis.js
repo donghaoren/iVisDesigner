@@ -5,6 +5,7 @@
 
 // The main class for a visualization design.
 IV.Visualization = function() {
+    this.uuid = IV.generateUUID();
     // All objects of the visualization, ordered in an array.
     this.objects = [];
     // Selected objects.
@@ -21,7 +22,7 @@ IV.implement(IV.EventSource, IV.Visualization);
 
 // Serialization support.
 IV.Visualization.prototype.serializeFields = function() {
-    return [ "objects", "artboard" ];
+    return [ "objects", "artboard", "uuid" ];
 };
 
 IV.Visualization.prototype.postDeserialize = function() {
@@ -89,6 +90,9 @@ IV.Visualization.prototype.triggerRenderer = function(renderer) {
 
 // Validate generated values in response to data changes.
 IV.Visualization.prototype.validate = function(data) {
+    this.objects.forEach(function(obj) {
+        if(obj.validate) obj.validate(data);
+    });
     this.objects.forEach(function(obj) {
         if(obj.validate) obj.validate(data);
     });

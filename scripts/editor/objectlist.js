@@ -81,7 +81,6 @@ Editor.generateObjectList = function() {
     }
 
     var tree = generate_prefix_tree(classes_array);
-    console.log(classes, tree);
 
     var render_object = function(obj, ul, parents) {
         var li = IV._E("li", "object group");

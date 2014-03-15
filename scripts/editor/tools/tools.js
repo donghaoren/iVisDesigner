@@ -160,6 +160,14 @@ Editor.tools = { };
             }
         }, key);
 
+        var mousemove_handler = null;
+        var result = {
+            mousemove: function(handler) {
+                mousemove_handler = handler;
+                return result;
+            }
+        };
+
         Tools.beginTrackMouseMove(function(e, tracking) {
             if(tracking) {
                 overlay_info.hover = null;
@@ -171,8 +179,11 @@ Editor.tools = { };
                     overlay_info.hover = null;
                 }
             }
+            if(mousemove_handler) mousemove_handler(e, tracking);
             Tools.triggerRender("overlay");
         }, key);
+
+        return result;
     };
     Tools.endSelectLocation = function(key) {
         Tools.endTrackMouse(key);

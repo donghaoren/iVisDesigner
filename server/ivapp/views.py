@@ -100,7 +100,7 @@ class VisualizationViewSet(ListDetailViewSet):
     serializer_class = VisualizationSerializer
     serializer_list_class = VisualizationSerializer_List
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('user', 'dataset')
+    filter_fields = ('user', 'dataset', 'is_autosave')
     ordering = "-created_at"
 
 class UserViewSet(viewsets.ModelViewSet):

@@ -18,6 +18,8 @@ class Visualization(models.Model):
     description = models.TextField()             # Description text.
     user = models.ForeignKey(User)               # Author.
     dataset = models.ForeignKey(Dataset)         # Dataset.
+    uuid = models.CharField(max_length = 64)     # UUID of the visualization.
+    is_autosave = models.BooleanField(default = False)          # Is this visualization an autosave?
 
     def __unicode__(self):
         return self.description

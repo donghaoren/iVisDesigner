@@ -30,6 +30,28 @@ Property.endEditProperty = function() {
     render();
 };
 
+var make_inspector = function(obj) {
+    var r = IV._E("span");
+    if(typeof(obj) == "object") {
+        if(obj instanceof Array) {
+        } else {
+            var ul = IV._E("ul");
+            for(var key in obj) {
+                if(obj.hasOwnProperty(key) && key[0] != '_') {
+                    var nest = make_inspector(obj[key]);
+                    var li = IV._E("li");
+                    li.append(IV._E("span", "", key + ":")).append(nest);
+                    ul.append(li);
+                }
+            }
+            r.append(ul);
+        }
+    } else {
+        r.text(obj.toString());
+    }
+    return r;
+};
+
 Editor.bind("selection", function() {
     if(Editor.vis && Editor.vis.selection.length == 1) {
         current = Editor.vis.selection[0].obj;
@@ -37,6 +59,11 @@ Editor.bind("selection", function() {
             current = Editor.vis.selection[0].selected_object;
         //current_context = Editor.vis.selection[0].context;
         Property.beginEditProperty(current);
+        var context = Editor.vis.selection[0].context;
+        if(context) {
+            $("#data-inspector").children().remove();
+            $("#data-inspector").append(make_inspector(context.val()));
+        }
     } else {
         Property.endEditProperty();
     }

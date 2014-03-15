@@ -46,8 +46,26 @@ Tools.Track = {
                         .add("Track: ")
                         .append("A: [please select]");
                 }
-            }, "tools:Track");
+            }, "tools:Track").mousemove(function(e) {
+                if($this.loc1 && !$this.loc2) {
+                    $this.loc1.getPath().enumerate(Editor.data, function(context) {
+                        $this.overlay_p1 = $this.loc1.getPoint(context);
+                        return false;
+                    });
+                    $this.overlay_p2 = e.offset;
+                }
+            });
         };
+    },
+    renderOverlay: function(g) {
+        if(this.loc1 && !this.loc2) {
+            g.beginPath();
+            g.moveTo(this.overlay_p1.x, this.overlay_p1.y);
+            g.lineTo(this.overlay_p2.x, this.overlay_p2.y);
+            g.ivGuideLineWidth();
+            g.strokeStyle = IV.colors.selection.toRGBA();
+            g.stroke();
+        }
     },
     onInactive: function() {
         Tools.endSelectLocation("tools:Track");

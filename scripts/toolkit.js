@@ -37,6 +37,12 @@ function browserTest() {
 
 IV.user = null;
 
+window.addEventListener("beforeunload", function (e) {
+  var confirmationMessage = "Really want to exit iVisDesigner?";
+  (e || window.event).returnValue = confirmationMessage;     //Gecko + IE
+  return confirmationMessage;                                //Webkit, Safari, Chrome etc.
+});
+
 $(function() {
     if(!browserTest()) return;
     // Remove the loading indicator.

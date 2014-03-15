@@ -24,7 +24,7 @@ class VisualizationSerializer(serializers.ModelSerializer):
         model = Visualization
         fields = ('id', 'user', 'description', 'created_at', 'dataset',
                   'user_info', 'dataset_info',
-                  'content')
+                  'content', 'uuid', 'is_autosave')
 
 class VisualizationSerializer_List(serializers.ModelSerializer):
     user_info = UserSerializer(source = 'user', read_only = True)
@@ -32,4 +32,4 @@ class VisualizationSerializer_List(serializers.ModelSerializer):
     class Meta:
         model = Visualization
         fields = ('id', 'user', 'description', 'created_at', 'dataset',
-                  'user_info', 'dataset_info')
+                  'user_info', 'dataset_info', 'uuid', 'is_autosave')

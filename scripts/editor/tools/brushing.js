@@ -10,6 +10,22 @@ Tools.Brushing = {
         this.lasso = [];
         var $this = this;
 
+        if(Editor.vis && Editor.data) {
+            if(Editor.vis.selection.length != 1 || !Editor.vis.selection[0].obj.performBrushing) {
+                Editor.vis.clearSelection();
+                for(var i = 0; i < Editor.vis.objects.length; i++) {
+                    var o = Editor.vis.objects[i];
+                    console.log(o);
+                    if(o.performBrushing) {
+                        var ctx = o.selectObject(Editor.data);
+                        ctx.obj = o;
+                        Editor.vis.appendSelection(ctx);
+                        break;
+                    }
+                }
+            }
+        }
+
         Tools.beginTrackMouse(function(e) {
             $this.lasso.push(e.offset);
 

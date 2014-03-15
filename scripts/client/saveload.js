@@ -118,7 +118,8 @@ IV.on("command:toolkit.start", function() {
                             IV.server.get("visualizations/", {
                                 dataset: dataset.id,
                                 page: page_index,
-                                page_size: page_size
+                                page_size: page_size,
+                                is_autosave: "False"
                             }, function(err, data) {
                                 ul.children().remove();
                                 if(err) {
@@ -214,7 +215,8 @@ IV.on("command:toolkit.save", function() {
             created_at: new Date().toISOString(),
             dataset: IV.dataset_id,
             content: JSON.stringify(IV.serializer.serialize(IV.editor.vis)),
-            description: description
+            description: description,
+            uuid: IV.editor.vis.uuid
         }, function(err, data) {
             if(err) ctx.status_error(errorString(err));
             else ctx.close();
@@ -230,7 +232,8 @@ IV.on("command:toolkit.save", function() {
                 created_at: new Date().toISOString(),
                 dataset: IV.dataset_id,
                 content: JSON.stringify(IV.serializer.serialize(IV.editor.vis)),
-                description: description
+                description: description,
+                uuid: IV.editor.vis.uuid
             }, function(err, data) {
                 if(err) ctx.status_error(errorString(err));
                 else ctx.close();
@@ -238,3 +241,30 @@ IV.on("command:toolkit.save", function() {
         });
     } else ctx.save.remove();
 });
+
+(function() {
+    var previous_content = null;
+    var running_request = false;
+    setInterval(function() {
+        if(!IV.editor.data || !IV.editor.vis) return;
+        content = JSON.stringify(IV.serializer.serialize(IV.editor.vis));
+        if(content == previous_content || running_request) return;
+        running_request = true;
+        IV.server.post("visualizations/", {
+            user: IV.get("user").id,
+            dataset: IV.dataset_id,
+            content: content,
+            description: "Autosaved Visualization",
+            uuid: IV.editor.vis.uuid,
+            is_autosave: true
+        }, function(err, data) {
+            running_request = false;
+            if(err) {
+                console.log("Autosave Failure");
+            } else {
+                console.log("Autosave Successfully");
+                previous_content = content;
+            }
+        });
+    }, 5000);
+})();

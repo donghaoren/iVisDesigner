@@ -30,7 +30,7 @@ Actions.commit = function() {
     for(var i = 0; i < action_cache.length; i++) {
         action_perform(action_cache[i]);
     }
-    console.log(action_cache);
+    //console.log(action_cache);
     action_log.push(action_cache);
     action_cache = [];
     undo_stack = [];

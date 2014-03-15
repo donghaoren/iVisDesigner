@@ -222,7 +222,7 @@ popup_color_select: |
 modal_login: |
   <form>
     <div class="input-group group">
-      <label>Username</label>
+      <label>Username (New user? <a href="#" data-for="register">Register Here</a>)</label>
       <div><input type="text" data-for="username" /></div>
     </div>
     <div class="input-group group">
@@ -233,7 +233,7 @@ modal_login: |
       <label></label>
       <div>
         <span class="btn btn-s" data-for="submit">Login</span>
-        <a href="#" data-for="register" style="float: right">Register</a>
+      </div><div style="margin-top: 0.5em;">
         <span data-for="status"></span>
       </div>
     </div>
@@ -242,7 +242,7 @@ modal_login: |
 modal_register: |
   <form>
     <div class="input-group group">
-      <label>Username</label>
+      <label>Username (Existing user? <a href="#" data-for="login">Login Here</a>)</label>
       <div><input type="text" data-for="username" /></div>
     </div>
     <div class="input-group group">
@@ -261,7 +261,7 @@ modal_register: |
       <label></label>
       <div>
         <span class="btn btn-s" data-for="submit">Register</span>
-        <a href="#" data-for="login" style="float: right">Login</a>
+      </div><div style="margin-top: 0.5em;">
         <span data-for="status"></span>
       </div>
     </div>
