@@ -57,7 +57,6 @@ class VisualizationPermissionClass(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-
         return obj.user == request.user
 
     def has_permission(self, request, view):
@@ -96,6 +95,7 @@ class VisualizationViewSet(ListDetailViewSet):
         if not self.request.user.is_staff:
             groups = self.request.user.groups.all()
             qs = queryset.filter(Q(dataset__group = None) | Q(dataset__group__in = groups))
+            qs = qs.filter(Q(is_private = False) | Q(user = self.request.user))
         return ListDetailViewSet.filter_queryset(self, qs) # User superclass's filter.
     serializer_class = VisualizationSerializer
     serializer_list_class = VisualizationSerializer_List

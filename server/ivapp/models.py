@@ -20,6 +20,6 @@ class Visualization(models.Model):
     dataset = models.ForeignKey(Dataset)         # Dataset.
     uuid = models.CharField(max_length = 64)     # UUID of the visualization.
     is_autosave = models.BooleanField(default = False)          # Is this visualization an autosave?
-
+    is_private = models.BooleanField(default = True)            # Is this visualization private?
     def __unicode__(self):
         return self.description
