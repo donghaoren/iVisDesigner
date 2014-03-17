@@ -1,4 +1,4 @@
-//. iVisDesigner - File: scripts/core/objects/statistics.js
+//. iVisDesigner - File: scripts/core/objects/generators/aggregator.js
 //. Copyright 2013-2014 Donghao Ren
 //. Peking University, University of California, Santa Barbara
 //. See LICENSE.md for more information.
@@ -12,11 +12,14 @@ Objects.Aggregator = IV.extend(Objects.Object, function(info) {
     this.bin_count = info.bin_count ? info.bin_count : 10;
     this.bin_min = info.bin_min ? info.bin_min : null;
     this.bin_max = info.bin_max ? info.bin_max : null;
+    this.filter_value = null;
+    this.filter_min = null;
+    this.filter_max = null;
     this.results = null;
     this._validated = false;
     this.type = "Aggregator";
 }, {
-    $auto_properties: [ "path", "path_data", "bin_count", "bin_min", "bin_max" ],
+    $auto_properties: [ "path", "path_data", "bin_count", "bin_min", "bin_max", "filter_min", "filter_max", "filter_value" ],
     $auto_properties_after: function() {
         this._validated = false;
     },
@@ -66,6 +69,9 @@ Objects.Aggregator = IV.extend(Objects.Object, function(info) {
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
             make_prop_ctx($this, "path", "Anchor", "Aggregator", "path"),
             make_prop_ctx($this, "path_data", "Data", "Aggregator", "path"),
+            make_prop_ctx($this, "filter_value", "Filter Value", "Aggregator", "number"),
+            make_prop_ctx($this, "filter_min", "Filter Min", "Aggregator", "number"),
+            make_prop_ctx($this, "filter_max", "Filter Max", "Aggregator", "number"),
             make_prop_ctx($this, "bin_count", "Bins", "Aggregator", "plain-number"),
             make_prop_ctx($this, "bin_min", "Min", "Aggregator", "plain-number"),
             make_prop_ctx($this, "bin_max", "Max", "Aggregator", "plain-number")
@@ -99,6 +105,12 @@ Objects.Aggregator = IV.extend(Objects.Object, function(info) {
                 $this.path_data.enumerateAtContext(fctx, function(context) {
                     var val = context.val();
                     if(val !== null && !isNaN(val)) {
+                        if($this.filter_value && $this.filter_min && $this.filter_max) {
+                            var fval = $this.filter_value.get(context);
+                            var vmin = $this.filter_min.get(fctx);
+                            var vmax = $this.filter_max.get(fctx);
+                            if(fval !== null && vmin !== null && vmax !== null && (fval < vmin || fval > vmax)) return;
+                        }
                         if(val >= bmin && val < bmax) bcount++;
                     }
                 });

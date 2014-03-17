@@ -1,4 +1,4 @@
-//. iVisDesigner - File: scripts/core/objects/filter.js
+//. iVisDesigner - File: scripts/core/objects/filters.js
 //. Copyright 2013-2014 Donghao Ren
 //. Peking University, University of California, Santa Barbara
 //. See LICENSE.md for more information.
@@ -15,6 +15,7 @@ var RangeFilter = IV.extend(Objects.Object, function(path, min, max) {
     get: function(context) {
         if(!this.path) return true;
         var value = context.get(this.path).val();
+        if(value === null) return null;
         if(this.min <= this.max)
             return value >= this.min && value <= this.max;
         return value >= this.min || value <= this.max;

@@ -157,7 +157,7 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
     getPropertyContext: function() {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
-            make_prop_ctx(this, "path", "Path", "Text", "path"),
+            make_prop_ctx(this, "path", "Selector", "Text", "path"),
             make_prop_ctx(this, "text", "Text", "Text", "string"),
             make_prop_ctx(this, "anchor", "Anchor", "Text", "point"),
             make_prop_ctx(this, "text_align", "Align", "Text", "string", [
