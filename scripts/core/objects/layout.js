@@ -11,11 +11,17 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
     this.path_edgeA = info.path_edgeA;
     this.path_edgeB = info.path_edgeB;
     this.points = null;
+    this.speed = 0.05;
+    this.gravity = 1000;
     this._validated = false;
     this.type = "ForceLayout";
     this.enabled = false;
 }, {
-    $auto_properties: [ "path_nodes", "path_edgeA", "path_edgeB", "enabled" ],
+    $auto_properties: [ "path_nodes", "path_edgeA", "path_edgeB", "enabled", "speed", "gravity" ],
+    postDeserialize: function() {
+        if(!this.gravity) this.gravity = 1000;
+        if(!this.speed) this.speed = 0.05;
+    },
     onAttach: function(vis) {
         this.vis = vis;
     },
@@ -54,7 +60,9 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
     getPropertyContext: function(data) {
         var $this = this;
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
-            make_prop_ctx($this, "enabled", "Enabled", "ForceLayout", "plain-bool")
+            make_prop_ctx($this, "enabled", "Enabled", "ForceLayout", "plain-bool"),
+            make_prop_ctx($this, "gravity", "Gravity", "ForceLayout", "plain-number"),
+            make_prop_ctx($this, "speed", "Speed", "ForceLayout", "plain-number")
         ]);
     },
     _runStep: function(data) {
@@ -86,8 +94,8 @@ Objects.ForceLayout = IV.extend(Objects.Object, function(info) {
             count++;
         });
         var N_iterate = 10;
-        var gravity = 1000;
-        var speed = 0.05;
+        var gravity = $this.gravity; //1000;
+        var speed = $this.speed; //0.05;
         var k = Math.sqrt(4) / Math.sqrt(1 + count);
         var max_displace = 0.1;
         var eps = 1e-8;

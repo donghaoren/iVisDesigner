@@ -8,7 +8,7 @@ Objects.Shape = IV.extend(Objects.Object,function(info) {
     if(info.style)
         this.style = info.style;
     else
-        this.style = new Objects.PathStyle();
+        this.style = new Objects.PathStyle(this.type);
     if(info.filter)
         this.filter = info.filter;
     else
@@ -45,8 +45,8 @@ Objects.Shape = IV.extend(Objects.Object,function(info) {
 });
 
 Objects.Circle = IV.extend(Objects.Shape, function(info) {
-    Objects.Shape.call(this, info);
     this.type = "Circle";
+    Objects.Shape.call(this, info);
     // Center.
     this.center = info.center ? info.center : new Objects.Plain(new IV.Vector(0, 0));
     this.radius = info.radius ? info.radius : new Objects.Plain(2);
@@ -109,8 +109,8 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
 });
 
 Objects.Line = IV.extend(Objects.Shape, function(info) {
-    Objects.Shape.call(this, info);
     this.type = "Line";
+    Objects.Shape.call(this, info);
     this.point1 = info.point1;
     this.point2 = info.point2;
 }, {
@@ -181,8 +181,8 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
 });
 
 Objects.Polyline = IV.extend(Objects.Shape, function(info) {
-    Objects.Shape.call(this, info);
     this.type = "Polyline";
+    Objects.Shape.call(this, info);
     this.points = info.points;
     this.curved = info.curved ? true : false;
     this.closed = info.closed ? true : false;
@@ -238,8 +238,8 @@ Objects.Polyline = IV.extend(Objects.Shape, function(info) {
 });
 
 Objects.Bar = IV.extend(Objects.Shape, function(info) {
-    Objects.Shape.call(this, info);
     this.type = "Bar";
+    Objects.Shape.call(this, info);
     this.point1 = info.point1;
     this.point2 = info.point2;
     this.width = info.width;
@@ -297,9 +297,9 @@ Objects.Bar = IV.extend(Objects.Shape, function(info) {
 });
 
 Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
+    this.type = "LineThrough";
     Objects.Shape.call(this, info);
     this.points = info.points;
-    this.type = "LineThrough";
     this.curved = false;
     this.closed = false;
 }, {

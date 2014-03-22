@@ -66,7 +66,7 @@ fields:
       text: { type: string }
       retweeted: { type: boolean }
       retweet_count: { type: number }
-      created_at: { type: number }
+      created_at: { type: string }
       user:
         type: object
         fields:
@@ -76,5 +76,5 @@ fields:
             statuses_count: { type: number }
             friends_count: { type: number }
             favourites_count: { type: number }
-            created_at: { type: number }
+            created_at: { type: string }
 """.strip()

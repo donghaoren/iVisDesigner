@@ -13,7 +13,7 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
     this.text_align = IV.notNull(info.text_align) ? info.text_align : new Objects.Plain("left");
     this.font_family = IV.notNull(info.font_family) ? info.font_family : new Objects.Plain("Arial");
     this.font_size = IV.notNull(info.font_size) ? info.font_size : new Objects.Plain(10);
-    this.style = IV.notNull(info.style) ? info.style : new Objects.PathStyle();
+    this.style = IV.notNull(info.style) ? info.style : new Objects.PathStyle(this.path);
 }, {
     $auto_properties: [ "path", "anchor", "text", "text_align", "font_family", "font_size" ],
     onAttach: function(vis) {

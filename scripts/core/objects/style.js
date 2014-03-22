@@ -3,22 +3,41 @@
 //. Peking University, University of California, Santa Barbara
 //. See LICENSE.md for more information.
 
-Objects.PathStyle = IV.extend(Objects.Object, function() {
+Objects.PathStyle = IV.extend(Objects.Object, function(type) {
     Objects.Object.call(this);
-    // Default attributes.
-    this.actions = [
-        {
-            type: "fill",
-            color: new Objects.Plain(new IV.Color(128, 128, 128, 1))
-        },
-        {
-            type: "stroke",
-            color: new Objects.Plain(new IV.Color(0, 0, 0, 1)),
-            width: new Objects.Plain(1),
-            join: new Objects.Plain("bevel"),
-            cap: new Objects.Plain("butt")
-        }
-    ];
+    if(type == "Circle" || type == "Text" || type == "Bar") {
+        this.actions = [
+            {
+                type: "fill",
+                color: new Objects.Plain(new IV.Color(0, 0, 0, 1))
+            }
+        ];
+    } else if(type == "Line" || type == "Polyline" || type == "LineThrough") {
+        this.actions = [
+            {
+                type: "stroke",
+                color: new Objects.Plain(new IV.Color(0, 0, 0, 1)),
+                width: new Objects.Plain(1),
+                join: new Objects.Plain("bevel"),
+                cap: new Objects.Plain("butt")
+            }
+        ];
+    } else {
+        // Default attributes.
+        this.actions = [
+            {
+                type: "fill",
+                color: new Objects.Plain(new IV.Color(128, 128, 128, 1))
+            },
+            {
+                type: "stroke",
+                color: new Objects.Plain(new IV.Color(0, 0, 0, 1)),
+                width: new Objects.Plain(1),
+                join: new Objects.Plain("bevel"),
+                cap: new Objects.Plain("butt")
+            }
+        ];
+    }
     this.type = "PathStyle";
 }, {
     // path should be an array:

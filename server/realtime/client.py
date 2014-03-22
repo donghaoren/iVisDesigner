@@ -38,7 +38,7 @@ class ClientInfo:
         msg['serial'] = self.serial
         self.messages.append(msg)
         self.serial += 1
-        reactor.callLater(0.001, self.post_message)
+        self.post_message()
 
     def remove_old_messages(self, serial):
         # Pop all messages whose serial is smaller than or equals to 'serial'.

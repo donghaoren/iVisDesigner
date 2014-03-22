@@ -119,7 +119,7 @@ IV.on("command:toolkit.start", function() {
                                 dataset: dataset.id,
                                 page: page_index,
                                 page_size: page_size,
-                                is_autosave: "False"
+                                is_autosave: IV.getQuery("autosave") ? null : "False"
                             }, function(err, data) {
                                 ul.children().remove();
                                 if(err) {

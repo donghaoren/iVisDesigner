@@ -95,7 +95,10 @@ class VisualizationViewSet(ListDetailViewSet):
         if not self.request.user.is_staff:
             groups = self.request.user.groups.all()
             qs = queryset.filter(Q(dataset__group = None) | Q(dataset__group__in = groups))
-            qs = qs.filter(Q(is_private = False) | Q(user = self.request.user))
+            if self.request.user.is_authenticated():
+                qs = qs.filter(Q(is_private = False) | Q(user = self.request.user))
+            else:
+                qs = qs.filter(Q(is_private = False))
         return ListDetailViewSet.filter_queryset(self, qs) # User superclass's filter.
     serializer_class = VisualizationSerializer
     serializer_list_class = VisualizationSerializer_List
