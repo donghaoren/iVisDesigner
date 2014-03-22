@@ -20,3 +20,5 @@ source_comments.py
 update_swbuilder.sh
 deploy_list
 *.backup*
+videos/
+datasets/
