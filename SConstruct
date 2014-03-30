@@ -60,6 +60,9 @@ Javascript("embed.js", [
     "scripts/embed/embed.js"
 ])
 
+Image("favicon-64.png", "images/favicon-64.png")
+Image("favicon-512.png", "images/favicon-512.png")
+
 # All-in-one test data.
 Binary("datasets/test.schema", "datasets/test.yaml");
 Binary("datasets/test.data", "datasets/test.data.yaml");

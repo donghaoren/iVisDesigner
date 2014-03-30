@@ -177,7 +177,7 @@ IV.on("command:toolkit.start", function() {
                                         IV._E("span", "description").text(vis.description)
                                     ).append(
                                         IV._E("span", "user").text(
-                                            "by " + vis.user_info.username + ", " +
+                                            "by " + (IV.getQuery("hideusername") ? "anonymous" : vis.user_info.username) + ", " +
                                             new Date(vis.created_at).getFullString()
                                         )
                                     );

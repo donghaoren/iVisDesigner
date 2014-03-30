@@ -79,7 +79,7 @@ IV.listen("status", function(s) {
     var view_elem = document.getElementById("view");
     var touch_state = false;
     view_elem.addEventListener('touchstart',function(e) {
-        if(e.target != view_elem && e.target != canvas_front) return;
+        //if(e.target != view_elem && e.target != canvas_front) return;
         e.preventDefault();
         touch_state = true;
         var offsetX = e.touches[0].pageX - $("#view").offset().left;
@@ -170,5 +170,8 @@ IV.listen("status", function(s) {
         if(e.keyCode == 8 && e.target == document.body) {
             e.preventDefault();
         }
+    });
+    $(document).bind('touchmove', function(e) {
+        e.preventDefault();
     });
 })();

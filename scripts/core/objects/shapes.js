@@ -180,6 +180,88 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
     }
 });
 
+Objects.Arc = IV.extend(Objects.Shape, function(info) {
+    this.type = "Arc";
+    Objects.Shape.call(this, info);
+    this.point1 = info.point1;
+    this.point2 = info.point2;
+    this.radius = info.radius;
+}, {
+    $auto_properties: [ "point1", "point2", "radius" ],
+    shapePaths: function(context, cb) {
+        var p1 = this.point1.getPoint(context);
+        var p2 = this.point2.getPoint(context);
+        var r = this.radius.get(context);
+        if(p1 === null || p2 === null || r === null) return;
+        var dir = p2.sub(p1).rotate90().normalize();
+        var l = p2.sub(p1).length() / 2;
+        r *= p2.sub(p1).length();
+        if(l > r) return;
+        var c = p1.add(p2).scale(0.5);
+        var tr = l * l / Math.sqrt(r * r - l * l);
+        var q = c.add(dir.scale(tr));
+        cb([ "M", p1, "AT", q, p2, Math.abs(r) ]);
+    },
+    getLine: function(context) {
+        var p1 = this.point1.getPoint(context);
+        var p2 = this.point2.getPoint(context);
+        if(p1 === null || p2 === null) return null;
+        return [p1, p2];
+    },
+    getPropertyContext: function() {
+        var $this = this;
+        return Objects.Shape.prototype.getPropertyContext.call(this).concat([
+            make_prop_ctx($this, "point1", "Point1", "Shape", "point"),
+            make_prop_ctx($this, "point2", "Point2", "Shape", "point"),
+            make_prop_ctx($this, "radius", "Radius", "Shape", "number")
+        ]);
+    },
+    select: function(pt, data, action) {
+        var rslt = null;
+        var $this = this;
+        var anchor_selected = false;
+        this.path.enumerate(data, function(context) {
+            if($this.filter && !$this.filter.get(context)) return;
+            var p1 = $this.point1.getPoint(context);
+            var p2 = $this.point2.getPoint(context);
+            if(p1 === null || p2 === null) return;
+            var threshold = 4.0 / pt.view_scale, d;
+            d = Math.abs(pt.distance(p1));
+            if(d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
+                make_anchor_move_context(rslt, $this.point1, action);
+                anchor_selected = true;
+            }
+            d = Math.abs(pt.distance(p2));
+            if(d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
+                make_anchor_move_context(rslt, $this.point2, action);
+                anchor_selected = true;
+            }
+            d = IV.geometry.pointLineSegmentDistance(pt, p1, p2);
+            if(!anchor_selected && d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
+            }
+        });
+        return rslt;
+    },
+    lasso: function(polygon, data, callback) {
+        var $this = this;
+        var contexts = [];
+        this.path.enumerate(data, function(context) {
+            var p1 = $this.point1.getPoint(context);
+            var p2 = $this.point2.getPoint(context);
+            if(p1 && p2) {
+                if(IV.geometry.lineIntersectPolygon(polygon, p1, p2)) {
+                    callback($this, context);
+                }
+            }
+        });
+        if(contexts.length == 0) return null;
+        return contexts;
+    }
+});
+
 Objects.Polyline = IV.extend(Objects.Shape, function(info) {
     this.type = "Polyline";
     Objects.Shape.call(this, info);
@@ -382,6 +464,7 @@ Objects.LineThrough = IV.extend(Objects.Shape, function(info) {
 
 IV.serializer.registerObjectType("Circle", Objects.Circle);
 IV.serializer.registerObjectType("Line", Objects.Line);
+IV.serializer.registerObjectType("Arc", Objects.Arc);
 IV.serializer.registerObjectType("Bar", Objects.Bar);
 IV.serializer.registerObjectType("LineThrough", Objects.LineThrough);
 IV.serializer.registerObjectType("Polyline", Objects.Polyline);

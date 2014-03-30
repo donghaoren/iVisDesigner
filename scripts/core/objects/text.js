@@ -12,8 +12,8 @@ Objects.Text = IV.extend(Objects.Object, function(info) {
     this.text = IV.notNull(info.text) ? info.text : new Objects.Plain("text");
     this.text_align = IV.notNull(info.text_align) ? info.text_align : new Objects.Plain("left");
     this.font_family = IV.notNull(info.font_family) ? info.font_family : new Objects.Plain("Arial");
-    this.font_size = IV.notNull(info.font_size) ? info.font_size : new Objects.Plain(10);
-    this.style = IV.notNull(info.style) ? info.style : new Objects.PathStyle(this.path);
+    this.font_size = IV.notNull(info.font_size) ? info.font_size : new Objects.Plain(14);
+    this.style = IV.notNull(info.style) ? info.style : new Objects.PathStyle(this.type);
 }, {
     $auto_properties: [ "path", "anchor", "text", "text_align", "font_family", "font_size" ],
     onAttach: function(vis) {

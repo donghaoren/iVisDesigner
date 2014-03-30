@@ -106,6 +106,12 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
                 g.lineTo(path[i].x, path[i].y);
                 i += 1;
             }
+            if(cmd == "AT") {
+                g.arcTo(path[i].x, path[i].y,
+                        path[i + 1].x, path[i + 1].y,
+                        path[i + 2]);
+                i += 3;
+            }
             // Z: close path
             if(cmd == "Z") {
                 g.closePath();
@@ -237,7 +243,7 @@ var FontStyle = IV.extend(Objects.Object, function(info) {
     $auto_properties: [ "font_family", "font_size" ],
     fillDefault: function() {
         if(this.font_family === undefined) this.font_family = "Arial";
-        if(this.font_size === undefined) this.font_size = 11;
+        if(this.font_size === undefined) this.font_size = 14;
     },
     postDeserialize: function() {
         this.fillDefault();
