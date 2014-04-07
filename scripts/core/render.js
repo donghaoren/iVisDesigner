@@ -236,20 +236,23 @@ CanvasRenderingContext2D.prototype.ivSave = function() {
 CanvasRenderingContext2D.prototype.ivRestore = function() {
     this.restore();
     if(!this.iv_transform_stack) this.iv_transform_stack = [];
-    this.ivSetTransform(this.iv_transform_stack.pop());
+    this.iv_transform = this.iv_transform_stack.pop();
+    //this.ivSetTransform(this.iv_transform_stack.pop());
 };
 
-CanvasRenderingContext2D.prototype.ivSetTransform = function(tr) {
-    if(!tr) tr = new IV.affineTransform();
-    var r = this.iv_pre_ratio;
-    this.setTransform(r * tr.m[0], r * tr.m[1], r * tr.m[3], r * tr.m[4], r * tr.m[2], r * tr.m[5]);
-    this.iv_transform = tr;
-};
+// CanvasRenderingContext2D.prototype.ivSetTransform = function(tr) {
+//     if(!tr) tr = new IV.affineTransform();
+//     var r = this.iv_pre_ratio;
+//     this.setTransform(r * tr.m[0], r * tr.m[1], r * tr.m[3], r * tr.m[4], r * tr.m[2], r * tr.m[5]);
+//     this.iv_transform = tr;
+// };
 
 CanvasRenderingContext2D.prototype.ivAppendTransform = function(tr) {
     if(this.iv_transform)
-        tr = this.iv_transform.concat(tr);
-    this.ivSetTransform(tr);
+        this.iv_transform = this.iv_transform.concat(tr);
+    else
+        this.iv_transform = tr;
+    this.transform(tr.m[0], tr.m[1], tr.m[3], tr.m[4], tr.m[2], tr.m[5]);
 };
 
 CanvasRenderingContext2D.prototype.ivGetTransform = function(tr) {
@@ -297,7 +300,12 @@ CanvasRenderingContext2D.prototype.ivStrokeText = function(s, x, y) {
 };
 
 IV.Renderer.prototype._set_transform = function(ctx) {
-    ctx.iv_pre_ratio = this.manager.ratio;
+    //ctx.iv_pre_ratio = this.manager.ratio;
+    ctx.ivAppendTransform(new IV.affineTransform([
+        this.manager.ratio, 0, 0,
+        0, this.manager.ratio, 0,
+        0, 0, 1
+    ]));
     ctx.ivAppendTransform(new IV.affineTransform([
         this.scale, 0, this.center.x + this.manager.width / 2,
         0, -this.scale, -this.center.y + this.manager.height / 2,
@@ -308,7 +316,7 @@ IV.Renderer.prototype._set_transform = function(ctx) {
 IV.Renderer.prototype._perform_render = function(key) {
     var canvas = this.manager.get(key);
     var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, this.manager.width, this.manager.height);
+    ctx.clearRect(0, 0, this.manager.width * this.manager.ratio, this.manager.height * this.manager.ratio);
 
     ctx.ivSave();
     this._set_transform(ctx);
@@ -327,4 +335,43 @@ IV.Renderer.prototype.render = function() {
         this._perform_render(key);
         this.needs_render[key] = false;
     }
+};
+
+IV.Renderer.prototype.renderSVG = function() {
+    var ab = this.vis.artboard;
+    var ctx = new C2S(ab.width, ab.height);
+    // Copy extended methods.
+    for(var name in CanvasRenderingContext2D.prototype) {
+        if(name.substr(0, 2) != "iv") continue;
+        ctx[name] = CanvasRenderingContext2D.prototype[name];
+    }
+    // Render stuff.
+    ctx.ivAppendTransform(new IV.affineTransform([
+        1, 0, -ab.x0,
+        0, -1, ab.y0 + ab.height,
+        0, 0, 1
+    ]));
+    this.vis.render(this.data, ctx);
+    var svg = ctx.getSerializedSvg();
+    return svg;
+};
+
+IV.Renderer.prototype.renderBitmap = function(ratio) {
+    var canvas = document.createElement("canvas");
+    var ab = this.vis.artboard;
+    canvas.width = ab.width * ratio;
+    canvas.height = ab.height * ratio;
+    var ctx = canvas.getContext("2d");
+    ctx.ivAppendTransform(new IV.affineTransform([
+        ratio, 0, 0,
+        0, ratio, 0,
+        0, 0, 1
+    ]));
+    ctx.ivAppendTransform(new IV.affineTransform([
+        1, 0, -ab.x0,
+        0, -1, ab.y0 + ab.height,
+        0, 0, 1
+    ]));
+    this.vis.render(this.data, ctx);
+    return canvas.toDataURL("image/png").split(",")[1];
 };

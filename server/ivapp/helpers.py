@@ -1,6 +1,11 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from django.http import HttpResponse
 from rest_framework import permissions
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+import base64
 
 class ListDetailViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
@@ -66,3 +71,17 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
         # Write permissions are only allowed to the owner of the snippet
         return obj.user == request.user
+
+#@api_view(['POST', ])
+#@permission_classes((AllowAny, ))
+@csrf_exempt
+def download(request):
+    content = request.POST['content']
+    mimetype = request.POST['mimetype']
+    filename = request.POST['filename']
+    encoding = request.POST['encoding']
+    if encoding == "base64":
+        content = base64.b64decode(content)
+    response = HttpResponse(content, content_type = mimetype)
+    response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+    return response

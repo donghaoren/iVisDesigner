@@ -54,7 +54,10 @@ var Track = IV.extend(Objects.Object, function(info) {
         } else {
             value = (value - min) / (max - min);
         }
-        return p1.interp(p2, value);
+        var r = p1.interp(p2, value);
+        r.ex = p2.sub(p1).normalize();
+        r.ey = r.ex.rotate90();
+        return r;
     },
     getPropertyContext: function() {
         var $this = this;
@@ -365,6 +368,8 @@ var Scatter = IV.extend(Objects.Object, function(info) {
                 .sub(this.track2.get(context, "anchor1"));
 
         var p = d1.scale(p2.sub(p1).dot(d2) / d1.dot(d2)).add(p1);
+        p.ex = d1.normalize();
+        p.ey = d2.rotate90().normalize();
         return p;
     },
     enumerateGuide: function(data, callback) {

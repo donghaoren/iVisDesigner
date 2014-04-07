@@ -42,6 +42,44 @@ Tools.Line = {
     }
 };
 
+Tools.Arc = {
+    onActive: function() {
+        var $this = this;
+        $this.loc1 = null;
+        $this.loc2 = null;
+        var sA = Editor.status.start()
+            .add("Arc: ")
+            .append("A: [please select]");
+
+        Tools.beginSelectLocation(function(loc) {
+            if(!$this.loc1) {
+                $this.loc1 = loc;
+                sA.set("A: " + loc.type);
+                Editor.status.append("B: [please select]");
+                return;
+            } else {
+                $this.loc2 = loc;
+                var path = Editor.get("selected-path");
+                var arc = new IV.objects.Arc({
+                    path: path,
+                    point1: $this.loc1,
+                    point2: $this.loc2,
+                    radius: new IV.objects.Plain(0.75)
+                });
+                Editor.doAddObject(arc);
+                $this.loc1 = null;
+                $this.loc2 = null;
+                sA = Editor.status.start()
+                    .add("Arc: ")
+                    .append("A: [please select]");
+            }
+        }, "tools:Arc");
+    },
+    onInactive: function() {
+        Tools.endSelectLocation("tools:Arc");
+    }
+};
+
 Tools.Bar = {
     onActive: function() {
         var $this = this;

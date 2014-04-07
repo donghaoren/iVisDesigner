@@ -252,4 +252,13 @@ Editor.exportBitmap = function(scale) {
     return back.toDataURL("image/png");
 };
 
+IV.on("command:toolkit.export.svg", function() {
+    var svg = Editor.renderer.renderSVG();
+    IV.downloadFile(svg, "image/svg", "ivisdesigner.svg");
+});
+IV.on("command:toolkit.export.bitmap", function() {
+    var bmp_base64 = Editor.renderer.renderBitmap(2);
+    IV.downloadFile(bmp_base64, "image/png", "ivisdesigner.png", "base64");
+});
+
 })();

@@ -51,3 +51,20 @@ IV.server = {
         ajaxCall("twisted/", "post", { request: JSON.stringify(params) }, callback);
     }
 };
+
+IV.downloadFile = function(content, mime, filename, encoding) {
+    if(!encoding) encoding = "string";
+    var form =
+    $('<form action="' + IV_Config.api_base + '/download" method="post" style="display:none" target="_blank">'
+     +'<input type="text" name="filename" value="" />'
+     +'<input type="text" name="encoding" value="" />'
+     +'<input type="text" name="mimetype" value=""></input>'
+     +'<textarea name="content"></textarea>'
+     +'<input type="submit" value="submit" />'
+    +'</form>');
+    form.find('input[name="filename"]').val(filename);
+    form.find('input[name="mimetype"]').val(mime);
+    form.find('input[name="encoding"]').val(encoding);
+    form.find('textarea[name="content"]').val(content);
+    form.get(0).submit();
+};

@@ -12,7 +12,7 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
                 color: new Objects.Plain(new IV.Color(0, 0, 0, 1))
             }
         ];
-    } else if(type == "Line" || type == "Polyline" || type == "LineThrough") {
+    } else if(type == "Line" || type == "Arc" || type == "Polyline" || type == "LineThrough") {
         this.actions = [
             {
                 type: "stroke",

@@ -180,6 +180,78 @@ Objects.Line = IV.extend(Objects.Shape, function(info) {
     }
 });
 
+Objects.Bezier = IV.extend(Objects.Shape, function(info) {
+    this.type = "Bezier";
+    Objects.Shape.call(this, info);
+    this.point1 = info.point1;
+    this.point2 = info.point2;
+    this.control1 = info.control1;
+    this.control2 = info.control2;
+}, {
+    $auto_properties: [ "point1", "point2", "control1", "control2" ],
+    shapePaths: function(context, cb) {
+        var p1 = this.point1.getPoint(context);
+        var p2 = this.point2.getPoint(context);
+        var c1 = this.control1.getPoint(context);
+        var c2 = this.control2.getPoint(context);
+        if(p1 === null || p2 === null || c1 === null || c2 === null) return;
+        cb([ "M", p1, "B", c1, c2, p2 ]);
+    },
+    getPropertyContext: function() {
+        var $this = this;
+        return Objects.Shape.prototype.getPropertyContext.call(this).concat([
+            make_prop_ctx($this, "point1", "Point1", "Shape", "point"),
+            make_prop_ctx($this, "control1", "Control1", "Shape", "point"),
+            make_prop_ctx($this, "control2", "Control2", "Shape", "point"),
+            make_prop_ctx($this, "point2", "Point2", "Shape", "point")
+        ]);
+    },
+    select: function(pt, data, action) {
+        var rslt = null;
+        var $this = this;
+        var anchor_selected = false;
+        this.path.enumerate(data, function(context) {
+            if($this.filter && !$this.filter.get(context)) return;
+            var p1 = $this.point1.getPoint(context);
+            var p2 = $this.point2.getPoint(context);
+            if(p1 === null || p2 === null) return;
+            var threshold = 4.0 / pt.view_scale, d;
+            d = Math.abs(pt.distance(p1));
+            if(d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
+                make_anchor_move_context(rslt, $this.point1, action);
+                anchor_selected = true;
+            }
+            d = Math.abs(pt.distance(p2));
+            if(d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
+                make_anchor_move_context(rslt, $this.point2, action);
+                anchor_selected = true;
+            }
+            d = IV.geometry.pointLineSegmentDistance(pt, p1, p2);
+            if(!anchor_selected && d < threshold && (!rslt || rslt.distance > d)) {
+                rslt = { distance: d, context: context.clone() };
+            }
+        });
+        return rslt;
+    },
+    lasso: function(polygon, data, callback) {
+        var $this = this;
+        var contexts = [];
+        this.path.enumerate(data, function(context) {
+            var p1 = $this.point1.getPoint(context);
+            var p2 = $this.point2.getPoint(context);
+            if(p1 && p2) {
+                if(IV.geometry.lineIntersectPolygon(polygon, p1, p2)) {
+                    callback($this, context);
+                }
+            }
+        });
+        if(contexts.length == 0) return null;
+        return contexts;
+    }
+});
+
 Objects.Arc = IV.extend(Objects.Shape, function(info) {
     this.type = "Arc";
     Objects.Shape.call(this, info);
@@ -193,14 +265,24 @@ Objects.Arc = IV.extend(Objects.Shape, function(info) {
         var p2 = this.point2.getPoint(context);
         var r = this.radius.get(context);
         if(p1 === null || p2 === null || r === null) return;
-        var dir = p2.sub(p1).rotate90().normalize();
-        var l = p2.sub(p1).length() / 2;
-        r *= p2.sub(p1).length();
-        if(l > r) return;
-        var c = p1.add(p2).scale(0.5);
-        var tr = l * l / Math.sqrt(r * r - l * l);
-        var q = c.add(dir.scale(tr));
-        cb([ "M", p1, "AT", q, p2, Math.abs(r) ]);
+        if(Math.abs(r) < 0.5) return;
+        var dp = p2.sub(p1);
+        var len = dp.length();
+        var direction = dp.rotate90().scale(1.0 / len);
+        r = len * r;
+        direction = direction.scale(Math.sqrt(r * r - len * len / 4));
+        var o;
+        if(r > 0) o = p1.add(p2).scale(0.5).sub(direction);
+        else o = p1.add(p2).scale(0.5).add(direction);
+        var dp1 = p1.sub(o);
+        var dp2 = p2.sub(o);
+        var angle1 = Math.atan2(dp1.y, dp1.x);
+        var angle2 = Math.atan2(dp2.y, dp2.x);
+        if(r > 0) {
+            cb([ "M", p2, "A", o, r, angle2, angle1 ]);
+        } else {
+            cb([ "M", p1, "A", o, -r, angle1, angle2 ]);
+        }
     },
     getLine: function(context) {
         var p1 = this.point1.getPoint(context);

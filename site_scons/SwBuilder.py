@@ -724,10 +724,18 @@ def ImageMagick(url, source, args = ""):
     env.ImageMagick(output, source, SWB_args = args)
     append_target(output)
 
+def ThumbnailImage(dest, src, size = "600x600"):
+  dest = os.path.splitext(dest)[0] + ".jpg"
+  ImageMagick(dest, src, "-thumbnail %s -format jpg -quality 91" % size)
+
 def YAML2JSON(url, source):
     output = "%s/%s" % (output_directory, url)
     env.YAML2JSON(output, source)
     append_target(output)
+
+def YAML2JSON_SRC(url, source):
+    output = url
+    env.YAML2JSON(output, source)
 
 def YAML2DataJavascript(url, source, variable = "DATA"):
     output = "%s/%s" % (output_directory, url)
@@ -758,7 +766,7 @@ def FindFiles(pattern, directory = "."):
 
 def TargetList(f, url_path, list):
     for filename, path in list:
-        f(url_path + "/" + filename, path)
+        f(os.path.join(url_path, filename), path)
 
 def SourceList(f, list):
     for path in list:
@@ -1080,3 +1088,89 @@ def iconfont_build_function(target, source, env):
     s = [ str(x) for x in source ]
     CreateIconFont(env["name"], s, t)
 env.Append(BUILDERS = { "IconFont": Builder(action = iconfont_build_function) })
+
+class SwIncludeContext:
+    def __init__(self, target_path, path) :
+        self.path = path
+        self.target_path = target_path
+    def translate_path(self, p):
+        return os.path.join(self.path, p)
+    def translate_target_path(self, p):
+        return os.path.join(self.target_path, p)
+    def restore_path(self, p):
+        return os.path.relpath(p, self.path)
+    def restore_target_path(self, p):
+        return os.path.relpath(p, self.target_path)
+    def HTML(self, url, source):
+        url = self.translate_target_path(url)
+        source = self.translate_path(source)
+        return HTML(url, source)
+    def Mustache(self, name, source):
+        source = self.translate_path(source)
+        return Mustache(name, source)
+    def Partial(self, name, source):
+        source = self.translate_path(source)
+        return Partial(name, source)
+    def Page(self, url, source, template, title = '', extra = {}):
+        url = self.translate_target_path(url)
+        source = self.translate_path(source)
+        return Page(url, source, template, title = title, extra = extra)
+    def CSS(self, url, sources):
+        url = self.translate_target_path(url)
+        sources = [ self.translate_path(source) for source in sources ]
+        return CSS(url, sources)
+    def YAML2JSON(self, url, source):
+        url = self.translate_target_path(url)
+        source = self.translate_path(source)
+        return YAML2JSON(url, source)
+    def YAML2JSON_SRC(self, url, source):
+        url = self.translate_path(url)
+        source = self.translate_path(source)
+        return YAML2JSON_SRC(url, source)
+    def Javascript(self, url, sources):
+        url = self.translate_target_path(url)
+        sources = [ self.translate_path(source) for source in sources ]
+        return Javascript(url, sources)
+    def Image(self, url, source):
+        url = self.translate_target_path(url)
+        source = self.translate_path(source)
+        return Image(url, source)
+    def ImageMagick(self, dest, src):
+        dest = self.translate_target_path(dest)
+        src = self.translate_path(src)
+        return ImageMagick(dest, src)
+    def ThumbnailImage(self, dest, src, size = "600x600"):
+        dest = self.translate_target_path(dest)
+        src = self.translate_path(src)
+        return ThumbnailImage(dest, src, size)
+    def Binary(self, url, source):
+        url = self.translate_target_path(url)
+        source = self.translate_path(source)
+        return Binary(url, source)
+    def Find(self, pattern, directory = ".", recursive = False):
+        directory = self.translate_path(directory)
+        r = Find(pattern, directory, recursive)
+        return map(lambda x: (x[0], self.restore_path(x[1])), r)
+    def Include(self, target_path, path):
+        target_path = self.translate_target_path(target_path)
+        path = self.translate_path(path)
+        Include(target_path, path)
+
+def Include(target_path, path):
+    sw = SwIncludeContext(target_path, path)
+    def HTML(*args, **kwargs): return sw.HTML(*args, **kwargs)
+    def Page(*args, **kwargs): return sw.Page(*args, **kwargs)
+    def Mustache(*args, **kwargs): return sw.Mustache(*args, **kwargs)
+    def Partial(*args, **kwargs): return sw.Partial(*args, **kwargs)
+    def Find(*args, **kwargs): return sw.Find(*args, **kwargs)
+    def YAML2JSON(*args, **kwargs): return sw.YAML2JSON(*args, **kwargs)
+    def YAML2JSON_SRC(*args, **kwargs): return sw.YAML2JSON_SRC(*args, **kwargs)
+    def CSS(*args, **kwargs): return sw.CSS(*args, **kwargs)
+    def Javascript(*args, **kwargs): return sw.Javascript(*args, **kwargs)
+    def Image(*args, **kwargs): return sw.Image(*args, **kwargs)
+    def Binary(*args, **kwargs): return sw.Binary(*args, **kwargs)
+    def ImageMagick(*args, **kwargs): return sw.ImageMagick(*args, **kwargs)
+    def ThumbnailImage(*args, **kwargs): return sw.ThumbnailImage(*args, **kwargs)
+    def Include(*args, **kwargs): return sw.Include(*args, **kwargs)
+    this_directory = path
+    execfile(os.path.join(path, "SwInclude.py"))

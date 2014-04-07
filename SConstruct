@@ -33,7 +33,8 @@ Javascript("libraries.js", [
     "libraries/d3.v3.js",
     "libraries/js-yaml.js",
     "libraries/chroma.js",
-    "libraries/numeric-1.2.6.js"
+    "libraries/numeric-1.2.6.js",
+    "libraries/canvas2svg.js"
 ])
 
 YAML2DataJavascript("strings.js", [
