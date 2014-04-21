@@ -43,13 +43,26 @@ IV.server = {
     get: function(url, params, callback) { ajaxCall("api/" + url, "get", params, callback); },
     post: function(url, params, callback) { ajaxCall("api/" + url, "post", params, callback); },
     put: function(url, params, callback) { ajaxCall("api/" + url, "put", params, callback); },
-    delete: function(url, params, callback) { ajaxCall("api/" + url, "delete", params, callback); },
+    "delete": function(url, params, callback) { ajaxCall("api/" + url, "delete", params, callback); },
     accounts: function(url, params, callback) { ajaxCall("accounts/" + url, "post", params, callback); },
     twisted: function(action, params, callback) {
         params.action = action;
         params.sid = IV.server.twisted_sid;
         ajaxCall("twisted/", "post", { request: JSON.stringify(params) }, callback);
-    }
+    },
+    getDelegateURL: function(host, path, params) {
+        if(!params) params = {};
+        params = JSON.stringify(params);
+        var url = IV_Config.api_base + "/delegate";
+        var q = IV.buildQuery({
+            "host": host,
+            "path": path,
+            "query": params,
+            "data": params,
+            "method": "get"
+        });
+        return url + "?" + q;
+    },
 };
 
 IV.downloadFile = function(content, mime, filename, encoding) {

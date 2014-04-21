@@ -917,14 +917,15 @@
             svgImage.setAttribute("width", dw);
             svgImage.setAttribute("height", dh);
             svgImage.setAttribute("preserveAspectRatio", "none");
+            svgImage.setAttribute("opacity", this.globalAlpha);
 
-            if(sx || sy || sw !== image.width || sh !== image.height) {
+            if(true) {
                 //crop the image using a temporary canvas
                 canvas = document.createElement("canvas");
-                canvas.width = dw;
-                canvas.height = dh;
+                canvas.width = sw;
+                canvas.height = sh;
                 context = canvas.getContext("2d");
-                context.drawImage(image, sx, sy, sw, sh, 0, 0, dw, dh);
+                context.drawImage(image, sx, sy, sw, sh, 0, 0, sw, sh);
                 image = canvas;
             }
 

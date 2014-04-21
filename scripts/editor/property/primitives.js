@@ -170,11 +170,11 @@ primitives.Path = function(get, set, args) {
 
 primitives.Toggle = function(get, set, args) {
     if(!args) args = { };
-    if(!args.true) args.true = "true";
-    if(!args.false) args.false = "false";
+    if(!args['true']) args['true'] = "true";
+    if(!args['false']) args['false'] = "false";
     var r = IV._E("span", "btn");
-    var strue = IV._E("span", "", args.true);
-    var sfalse = IV._E("span", "", args.false);
+    var strue = IV._E("span", "", args['true']);
+    var sfalse = IV._E("span", "", args['false']);
     r.append(strue).append(sfalse);
     var reload = function() {
         if(get()) {

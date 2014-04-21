@@ -94,19 +94,20 @@ GoogleMapImage.prototype.getTileURL = function(x, y) {
         center: lnglat[1] + "," + lnglat[0], // lat,lng
         zoom: this.zoom,
         size: "640x640",
-        sensor: false,
+        sensor: "false",
         scale: 2,
         maptype: this.maptype,
         key: "AIzaSyBWFLxkr7mBCEpjyJotpP50n_ZOtcW-RTo",
         language: "en_US",
-        visual_refresh: true
+        visual_refresh: "true"
     };
-    var baseurl = "https://maps.googleapis.com/maps/api/staticmap";
-    var params_array = [];
-    for(var key in params) {
-        params_array.push(escape(key) + "=" + escape(params[key]));
-    }
-    return baseurl + "?" + params_array.join("&");
+    return IV.server.getDelegateURL("https://maps.googleapis.com/", "maps/api/staticmap", params);
+    // var baseurl = "https://maps.googleapis.com/maps/api/staticmap";
+    // var params_array = [];
+    // for(var key in params) {
+    //     params_array.push(escape(key) + "=" + escape(params[key]));
+    // }
+    // return baseurl + "?" + params_array.join("&");
 };
 
 var GoogleMapStatic = function(lng, lat, zoom, size_x, size_y, maptype, scale) {

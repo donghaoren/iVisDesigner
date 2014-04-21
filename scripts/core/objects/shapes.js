@@ -261,11 +261,16 @@ Objects.Arc = IV.extend(Objects.Shape, function(info) {
 }, {
     $auto_properties: [ "point1", "point2", "radius" ],
     shapePaths: function(context, cb) {
+        var arc = this.getArc(context);
+        if(arc === null) return;
+        cb([ "A" ].concat(arc));
+    },
+    getArc: function(context) {
         var p1 = this.point1.getPoint(context);
         var p2 = this.point2.getPoint(context);
         var r = this.radius.get(context);
-        if(p1 === null || p2 === null || r === null) return;
-        if(Math.abs(r) < 0.5) return;
+        if(p1 === null || p2 === null || r === null) return null;
+        if(Math.abs(r) < 0.5) return null;
         var dp = p2.sub(p1);
         var len = dp.length();
         var direction = dp.rotate90().scale(1.0 / len);
@@ -279,16 +284,10 @@ Objects.Arc = IV.extend(Objects.Shape, function(info) {
         var angle1 = Math.atan2(dp1.y, dp1.x);
         var angle2 = Math.atan2(dp2.y, dp2.x);
         if(r > 0) {
-            cb([ "M", p2, "A", o, r, angle2, angle1 ]);
+            return [ o, r, angle2, angle1 ];
         } else {
-            cb([ "M", p1, "A", o, -r, angle1, angle2 ]);
+            return [ o, -r, angle1, angle2 ];
         }
-    },
-    getLine: function(context) {
-        var p1 = this.point1.getPoint(context);
-        var p2 = this.point2.getPoint(context);
-        if(p1 === null || p2 === null) return null;
-        return [p1, p2];
     },
     getPropertyContext: function() {
         var $this = this;

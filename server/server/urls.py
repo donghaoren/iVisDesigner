@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from rest_framework import routers
 from ivapp import views, auth, helpers
+from proxy import views as proxy_views
 from django.conf.urls.static import static
 import config
 
@@ -26,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^accounts/fineid_test$', auth.FineidTest, name = "fineid_test"),
     url(r'^accounts/hmac_signature$', auth.hmac_get_signature, name = "hmac_signature"),
     url(r'^download$', helpers.download, name = "download"),
+    url(r'^delegate$', proxy_views.delegate, name = "delegate"),
     url(r'^admin/', include(admin.site.urls))
 )
 

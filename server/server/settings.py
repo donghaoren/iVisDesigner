@@ -74,7 +74,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'rest_framework',
     'corsheaders',
-    'ivapp'
+    'ivapp',
+    'proxy'
 )
 
 REST_FRAMEWORK = {

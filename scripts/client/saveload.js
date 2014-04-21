@@ -165,7 +165,7 @@ IV.on("command:toolkit.start", function() {
                                         ).append(IV._E("span").text(" ")).append(
                                             IV._E("span", "btn").append(IV._E("i", "icon-trash")).click(function() {
                                                 if($(this).is(".btn-confirm")) {
-                                                    IV.server.delete("visualizations/" + vis.id + "/", function(err, data) {
+                                                    IV.server['delete']("visualizations/" + vis.id + "/", function(err, data) {
                                                         if(!err) li_vis.remove();
                                                     });
                                                 } else {

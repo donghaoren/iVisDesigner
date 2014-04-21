@@ -8,6 +8,14 @@ NS.getQuery = function(name) {
              .exec(location.search)||[,""])[1]
              .replace(/\+/g, '%20'))||null;
 };
+NS.buildQuery = function(params) {
+    if(!params) return "";
+    var params_array = [];
+    for(var key in params) {
+        params_array.push(encodeURIComponent(key) + "=" + encodeURIComponent(params[key]));
+    }
+    return params_array.join("&");
+};
 
 var tmp_canvas = document.createElement("canvas");
 NS.measureText = function(text, font) {
