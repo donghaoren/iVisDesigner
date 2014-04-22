@@ -53,6 +53,7 @@ Javascript("toolkit.js", [
     "scripts/interface/interface.js",
     "scripts/editor/editor.js",
     "scripts/toolkit.js",
+    "scripts/allosphere/allosphere.js",
     "scripts/test.js"
 ])
 

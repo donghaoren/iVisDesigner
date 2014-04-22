@@ -84,6 +84,20 @@ var load_dataset_from_server = function(info, callback) {
     }
 }
 
+IV.loadVisualizationById = function(id, callback) {
+    IV.server.get("visualizations/" + id + "/", function(err, data) {
+        load_dataset_from_server(data.dataset_info, function() {
+            var vis_data = JSON.parse(data.content);
+            IV.visualization_info = data;
+            var vis = IV.serializer.deserialize(vis_data);
+            IV.loadVisualization(vis);
+            IV.dataset_id = data.dataset_info.id;
+            vis.clearSelection();
+            if(callback) callback(vis);
+        });
+    });
+};
+
 IV.on("command:toolkit.start", function() {
     var ctx = IV.modals.constructModal({
         html: IV.strings("modal_load_dataset"),

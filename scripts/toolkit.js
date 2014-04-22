@@ -43,13 +43,17 @@ window.addEventListener("beforeunload", function (e) {
   return confirmationMessage;                                //Webkit, Safari, Chrome etc.
 });
 
-$(function() {
+$(window).ready(function() {
     if(!browserTest()) return;
     // Remove the loading indicator.
     $("#system-loading").remove();
     IV.raise("initialize:before");
     IV.raise("initialize");
     IV.raise("initialize:after");
+    if(window.isAllosphere) {
+        window.hostCall('{"f":"initialize"}');
+        return;
+    }
     IV.server.reload_account(function() {
         if(IV.get("user") && !IV.get("user").anonymous) IV.raise("command:toolkit.start");
         else {
