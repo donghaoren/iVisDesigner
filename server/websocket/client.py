@@ -66,7 +66,6 @@ class DocumentSession(wamp.ApplicationSession):
 
         def document_changed(channel, data):
             if channel.startswith("doc."):
-                print "publish", channel, data
                 self.publish(channel, data)
 
         self.thread = SubscriptionThread(current_thread(), rdb, document_changed)
