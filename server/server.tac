@@ -1,4 +1,4 @@
-#!/usr/bin/env twistd -ny
+#!./ENV/bin/twistd -ny
 
 import os
 

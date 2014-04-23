@@ -6,6 +6,9 @@ from twisted.internet import reactor
 import time
 import json
 
+from autobahn.twisted import wamp
+from twisted.internet.defer import inlineCallbacks
+
 def load_config(config):
     global hmac_key, client_lifetime, client_callback_lifetime, clients, rdb
     hmac_key = config.get("authentication", "hmac_key")
@@ -15,42 +18,7 @@ def load_config(config):
     from db import open_redis
     rdb = open_redis(config)
 
-from threading import Thread, Lock, current_thread
-
-class SubscriptionThread(Thread):
-    should_stop = False
-    def __init__(self, main_thread, rdb, callback):
-        Thread.__init__(self)
-        self.callback = callback
-        # Here we subscribe to all events.
-        self.rdb = rdb
-        self.subs = rdb.pubsub()
-        self.subs.psubscribe("twisted.*")
-
-        def on_shutdown():
-            self.should_stop = True
-            self.rdb.publish("twisted.stop", 1)
-            self.join()
-
-        reactor.addSystemEventTrigger("before", "shutdown", on_shutdown)
-
-    def run(self):
-        while not self.should_stop:
-            for msg in self.subs.listen():
-                if msg['type'] == 'pmessage':
-                    reactor.callFromThread(self.callback, msg['channel'], msg['data'])
-                if self.should_stop:
-                    break
-            # The for loop breaks when there's no subscriptions.
-            # Wait for 10ms then.
-            time.sleep(0.01)
-
-from autobahn.twisted import wamp
-from twisted.internet.defer import inlineCallbacks
-
 class DocumentSession(wamp.ApplicationSession):
-
-    @inlineCallbacks
     def onJoin(self, details):
         # Get a document.
         def document_get(name):
@@ -68,10 +36,24 @@ class DocumentSession(wamp.ApplicationSession):
             if channel.startswith("doc."):
                 self.publish(channel, data)
 
-        self.thread = SubscriptionThread(current_thread(), rdb, document_changed)
-        self.thread.subs.psubscribe("doc.*")
+        subs = rdb.pubsub()
+        subs.psubscribe("doc.*")
+        subs.psubscribe("twisted.*")
 
-        yield self.register(document_get, u'document.get')
-        yield self.register(document_diff, u'document.diff')
+        def on_shutdown():
+            rdb.publish("twisted.stop", 1)
+        reactor.addSystemEventTrigger("before", "shutdown", on_shutdown)
 
-        self.thread.start()
+        def wait_for_pmessage():
+            try:
+                for msg in subs.listen():
+                    if msg['type'] == 'pmessage':
+                        reactor.callFromThread(document_changed, msg['channel'], msg['data'])
+            except:
+                pass
+            reactor.callInThread(wait_for_pmessage)
+
+        reactor.callInThread(wait_for_pmessage)
+
+        self.register(document_get, u'document.get')
+        self.register(document_diff, u'document.diff')

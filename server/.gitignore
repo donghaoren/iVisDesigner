@@ -1,4 +1,5 @@
 ENV/
+run/
 *.sqlite3
 *.pid
 *.ini

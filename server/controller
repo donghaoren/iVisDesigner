@@ -1,0 +1,130 @@
+#!./ENV/bin/python
+
+import os, sys
+import subprocess
+import signal
+import time
+
+from server.config import config
+
+path = os.path.dirname(os.path.realpath(__file__))
+os.chdir(path)
+
+path_run = os.path.join(path, "run")
+
+path_gunicorn_pid_file = os.path.join(path_run, "gunicorn.pid")
+path_twistd_pid_file = os.path.join(path_run, "twistd.pid")
+
+django_address = config.get("django", "bind_address")
+django_num_workers = int(config.get("django", "num_workers"))
+
+path_django_log_file = os.path.join(path_run, "gunicorn.log")
+path_twistd_log_file = os.path.join(path_run, "twistd.log")
+
+# Check if a process exist with pid file f.
+def check_pid_file(f):
+    if os.path.isfile(f):
+        with open(f, 'r') as fp:
+            try:
+                pid = int(fp.read())
+            except:
+                return False
+            try:
+                os.kill(pid, 0)
+            except OSError:
+                return False
+            else:
+                return pid
+    else:
+        return False
+
+def kill_process_with_pidfile(f):
+    pid = check_pid_file(f)
+    if pid != False:
+        print "Sending SIGTERM to process %d..." % pid
+        os.kill(pid, signal.SIGTERM)
+        while check_pid_file(f):
+            time.sleep(0.5)
+
+shell_commands = { }
+def shell_command(f):
+    def shell_command_internal(function):
+        shell_commands[f] = function
+        return function
+    return shell_command_internal
+
+@shell_command("gunicorn.start")
+def cmd_start_gunicorn():
+    print "Starting gunicorn..."
+    if check_pid_file(path_gunicorn_pid_file):
+        print "  Error: gunicorn is already running."
+        return
+    cmd = "./ENV/bin/gunicorn -w %d -p %s --bind=%s --log-level=info --log-file=%s -D server.wsgi:application"
+    subprocess.call(cmd % (django_num_workers, path_gunicorn_pid_file, django_address, path_django_log_file), shell = True)
+    print "  [done]"
+
+@shell_command("twistd.start")
+def cmd_start_twistd():
+    print "Starting twistd..."
+    if check_pid_file(path_twistd_pid_file):
+        print "  Error: twistd is already running."
+        return
+    cmd = "./ENV/bin/twistd --pidfile=%s --logfile=%s -y server.tac"
+    subprocess.call(cmd % (path_twistd_pid_file, path_twistd_log_file), shell = True)
+    print "  [done]"
+
+@shell_command("gunicorn.stop")
+def cmd_stop_gunicorn():
+    print "Stopping gunicorn..."
+    kill_process_with_pidfile(path_gunicorn_pid_file)
+    print "  [done]"
+
+@shell_command("twistd.stop")
+def cmd_stop_twistd():
+    print "Stopping gunicorn..."
+    kill_process_with_pidfile(path_twistd_pid_file)
+    print "  [done]"
+
+@shell_command("gunicorn.restart")
+def cmd_restart_gunicorn():
+    cmd_stop_gunicorn()
+    cmd_start_gunicorn()
+
+@shell_command("twistd.restart")
+def cmd_restart_twistd():
+    cmd_stop_twistd()
+    cmd_start_twistd()
+
+@shell_command("status")
+def cmd_status():
+    pid = check_pid_file(path_gunicorn_pid_file)
+    if pid:
+        print "gunicorn is running: %d." % pid
+    else:
+        print "gunicorn is not running."
+    pid = check_pid_file(path_twistd_pid_file)
+    if pid:
+        print "twistd is running: %d." % pid
+    else:
+        print "twistd is not running."
+
+@shell_command("start")
+def cmd_start():
+    cmd_start_gunicorn()
+    cmd_start_twistd()
+
+@shell_command("stop")
+def cmd_stop():
+    cmd_stop_gunicorn()
+    cmd_stop_twistd()
+
+@shell_command("restart")
+def cmd_restart():
+    cmd_stop()
+    cmd_start()
+
+if len(sys.argv) >= 2 and sys.argv[1] in shell_commands:
+    shell_commands[sys.argv[1]]()
+else:
+    for cmd in shell_commands:
+        print cmd
