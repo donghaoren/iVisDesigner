@@ -8,16 +8,16 @@ config.add_section("authentication")
 config.set("authentication", "hmac_key", "")
 
 # Realtime server settings.
-config.add_section("realtime")
-config.set("realtime", "port", "8001")
-config.set("realtime", "interface", "127.0.0.1")
-config.set("realtime", "polling_timeout", "10")
-config.set("realtime", "client_timeout", "600")
+config.add_section("websocket")
+config.set("websocket", "port", "8001")
+config.set("websocket", "interface", "127.0.0.1")
+config.set("websocket", "debug", "false")
 
 # Redis server settings.
 config.add_section("redis")
 config.set("redis", "host", "localhost")
 config.set("redis", "port", "6379")
+config.set("redis", "socket", "")
 
 # Django settings.
 config.add_section("django")

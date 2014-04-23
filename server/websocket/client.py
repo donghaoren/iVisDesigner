@@ -8,27 +8,26 @@ import json
 
 from autobahn.twisted import wamp
 from twisted.internet.defer import inlineCallbacks
+from db import open_redis, get_redis
+import redis
 
 def load_config(config):
-    global hmac_key, client_lifetime, client_callback_lifetime, clients, rdb
+    global hmac_key
     hmac_key = config.get("authentication", "hmac_key")
-    client_lifetime = int(config.get("realtime", "client_timeout"))
-    client_callback_lifetime = int(config.get("realtime", "polling_timeout"))
-    clients = { }
-    from db import open_redis
-    rdb = open_redis(config)
+
+    open_redis(config)
 
 class DocumentSession(wamp.ApplicationSession):
     def onJoin(self, details):
         # Get a document.
         def document_get(name):
-            doc = DocumentInfo(rdb, name)
+            doc = DocumentInfo(get_redis(), name)
             r = { "data": doc.get_data(), "revision": doc.get_revision() }
             return r
 
         def document_diff(name = None, revision = None):
             if revision == None: revision = 0
-            doc = DocumentInfo(rdb, name)
+            doc = DocumentInfo(get_redis(), name)
             diff = doc.get_diff(revision)
             return diff
 
@@ -36,22 +35,29 @@ class DocumentSession(wamp.ApplicationSession):
             if channel.startswith("doc."):
                 self.publish(channel, data)
 
-        subs = rdb.pubsub()
-        subs.psubscribe("doc.*")
-        subs.psubscribe("twisted.*")
+        self.subs = get_redis().pubsub()
+        self.subs.psubscribe("doc.*")
+        self.subs.psubscribe("twisted.*")
+
+        self.keep_running = True
 
         def on_shutdown():
-            rdb.publish("twisted.stop", 1)
+            self.keep_running = False
+            get_redis().publish("twisted.shutdown", 1)
+
         reactor.addSystemEventTrigger("before", "shutdown", on_shutdown)
 
         def wait_for_pmessage():
             try:
-                for msg in subs.listen():
+                for msg in self.subs.listen():
                     if msg['type'] == 'pmessage':
                         reactor.callFromThread(document_changed, msg['channel'], msg['data'])
+                    if not self.keep_running:
+                        return
             except:
                 pass
-            reactor.callInThread(wait_for_pmessage)
+            if self.keep_running:
+                reactor.callInThread(wait_for_pmessage)
 
         reactor.callInThread(wait_for_pmessage)
 

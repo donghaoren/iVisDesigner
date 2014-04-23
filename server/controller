@@ -81,7 +81,7 @@ def cmd_stop_gunicorn():
 
 @shell_command("twistd.stop")
 def cmd_stop_twistd():
-    print "Stopping gunicorn..."
+    print "Stopping twistd..."
     kill_process_with_pidfile(path_twistd_pid_file)
     print "  [done]"
 
