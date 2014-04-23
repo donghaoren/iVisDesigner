@@ -4,7 +4,7 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 import json
-from realtime.document import DocumentRepresentation
+from websocket.document import DocumentRepresentation
 import redis
 import time
 
@@ -33,7 +33,7 @@ class StdOutListener(StreamListener):
             if len(doc.data['tweets']) > 1000:
                 doc.pop(doc.data, "tweets", 0)
             global last_time
-            if time.time() - last_time > 0.5:
+            if time.time() - last_time > 0.1:
                 doc.commit()
                 last_time = time.time()
         print json.dumps(data, indent=2)

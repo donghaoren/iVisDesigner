@@ -34,7 +34,8 @@ Javascript("libraries.js", [
     "libraries/js-yaml.js",
     "libraries/chroma.js",
     "libraries/numeric-1.2.6.js",
-    "libraries/canvas2svg.js"
+    "libraries/canvas2svg.js",
+    "libraries/wampy-all.min.js"
 ])
 
 YAML2DataJavascript("strings.js", [

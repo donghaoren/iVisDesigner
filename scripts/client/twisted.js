@@ -5,79 +5,38 @@
 
 (function() {
 
-IV.server.twisted_listeners = { };
-
-IV.server.twisted_start = function(callback) {
-    if(!callback) callback = function() { };
-    IV.server.twisted_sid = IV.generateUUID();
-    var serial_id = -1;
-    var continued_failures = 0;
-
-    var listen = function() {
-        IV.server.twisted("messages.get", { serial: serial_id }, function(err, data) {
-            if(err) {
-                // Count how many continous errors.
-                continued_failures += 1;
-                if(continued_failures > 5) {
-                    // Five continous errors, stop listening and yields an error.
-                    callback("E_DISCONNECTED");
-                } else {
-                    // Otherwise try listen again after 1sec.
-                    // (in case of connection failure, we can't retry immediately.)
-                    setTimeout(listen, 1000);
-                }
-            } else {
-                listen();
-                continued_failures = 0;
-
-                var max_serial = serial_id;
-                data.messages.forEach(function(m) {
-                    if(m.serial >= max_serial) max_serial = m.serial;
-                    else return;
-                    if(IV.server.twisted_listeners[m.channel]) {
-                        try {
-                            IV.server.twisted_listeners[m.channel](null, m);
-                        } catch(e) {
-                            console.log("Twisted Listener:", e);
-                        }
-                    }
-                });
-                serial_id = max_serial;
-            }
-        });
-    };
-    // HMAC authentication with App server here.
-    IV.server.accounts("hmac_signature", { info: "register:" + IV.server.twisted_sid }, function(err, data) {
-        if(err) { callback(err); return; }
-        IV.server.twisted("register", { hmac: data.signature }, function(err, data) {
-            if(err) {
-                callback(err);
-            } else {
-                for(var channel in IV.server.twisted_listeners) {
-                    IV.server.twisted_listeners[channel]("E_CONNECTED");
-                }
-                listen();
-            }
-        });
-    });
-};
-
 IV.server.SyncedObject = IV.extend(Object, function(name) {
     var $this = this;
     this.name = name;
     this.reload_data();
-    IV.server.twisted_listeners["doc." + name] = function(err, m) {
-        if(err) {
-            if(err == "E_CONNECTED") $this.reload_data();
-            return;
+    IV.server.wamp.subscribe("doc." + name + ".news", function(message) {
+        if($this.rev === undefined) {
+            $this.reload_data();
+        } else {
+            message = JSON.parse(message[0]);
+            if(message[0] == $this.rev + 1) {
+                $this.ops.push(message);
+                $this.perform_ops();
+                $this.call_callback();
+            } else {
+                IV.server.wamp.call("document.diff", { name: $this.name, revision: $this.rev }, {
+                    onSuccess: function(result) {
+                        result = result[0];
+                        var oplog = result.reverse();
+                        oplog.forEach(function(ops) {
+                            $this.ops.push(ops);
+                            $this.perform_ops();
+                            $this.call_callback();
+                        });
+                    },
+                    onError: function (err) {
+                        console.log(err);
+                        //$this.reload_data();
+                    }
+                });
+            }
         }
-        var oplog = m.oplog.reverse();
-        oplog.forEach(function(ops) {
-            $this.ops.push(ops);
-            $this.perform_ops();
-            $this.call_callback();
-        });
-    };
+    });
 }, {
     call_callback: function() {
         if(this.onUpdate) this.onUpdate(this.data);
@@ -87,14 +46,28 @@ IV.server.SyncedObject = IV.extend(Object, function(name) {
         $this.ops = [];
         $this.index = {};
         $this.data = null;
-        IV.server.twisted("document.listen", { name: $this.name }, function(err, data) {
-            if(err) return;
-            $this.data = data.data;
-            $this.rev = data.rev;
-            $this.build_index();
-            $this.perform_ops();
-            $this.call_callback();
+        IV.server.wamp.call('document.get', $this.name, {
+            onSuccess: function (result) {
+                result = result[0];
+                $this.data = result.data;
+                $this.rev = result.revision;
+                $this.build_index();
+                $this.perform_ops();
+                $this.call_callback();
+            },
+            onError: function (err) {
+                console.log(err);
+                //$this.reload_data();
+            }
         });
+        // IV.server.wamp.call("document.get", $this.name, function(data) {
+        //     if(err) return;
+        //     $this.data = data.data;
+        //     $this.rev = data.rev;
+        //     $this.build_index();
+        //     $this.perform_ops();
+        //     $this.call_callback();
+        // });
     },
     index_object: function(obj) {
         if(!obj) return obj;
@@ -128,6 +101,8 @@ IV.server.SyncedObject = IV.extend(Object, function(name) {
             if(r <= $this.rev) {
                 continue;
             } else if(r > $this.rev + 1) {
+                $this.rev = undefined;
+                console.log("lost track, reload data.");
                 $this.reload_data();
                 return;
             }
@@ -169,14 +144,5 @@ IV.server.SyncedObject = IV.extend(Object, function(name) {
         }
     }
 });
-
-var twisted_daemon_proc = function() {
-    IV.server.twisted_start(function(err) {
-        if(err) {
-            setTimeout(twisted_daemon_proc, 1000);
-        }
-    });
-};
-twisted_daemon_proc();
 
 })();

@@ -43,12 +43,15 @@ IV.server = {
     get: function(url, params, callback) { ajaxCall("api/" + url, "get", params, callback); },
     post: function(url, params, callback) { ajaxCall("api/" + url, "post", params, callback); },
     put: function(url, params, callback) { ajaxCall("api/" + url, "put", params, callback); },
-    "delete": function(url, params, callback) { ajaxCall("api/" + url, "delete", params, callback); },
+    delete: function(url, params, callback) { ajaxCall("api/" + url, "delete", params, callback); },
     accounts: function(url, params, callback) { ajaxCall("accounts/" + url, "post", params, callback); },
-    twisted: function(action, params, callback) {
-        params.action = action;
-        params.sid = IV.server.twisted_sid;
-        ajaxCall("twisted/", "post", { request: JSON.stringify(params) }, callback);
+    // twisted: function(action, params, callback) {
+    //     params.action = action;
+    //     params.sid = IV.server.twisted_sid;
+    //     ajaxCall("twisted/", "post", { request: JSON.stringify(params) }, callback);
+    // },
+    websocket: function(f, params, callback) {
+
     },
     getDelegateURL: function(host, path, params) {
         if(!params) params = {};
@@ -62,7 +65,7 @@ IV.server = {
             "method": "get"
         });
         return url + "?" + q;
-    },
+    }
 };
 
 IV.downloadFile = function(content, mime, filename, encoding) {
@@ -81,3 +84,26 @@ IV.downloadFile = function(content, mime, filename, encoding) {
     form.find('textarea[name="content"]').val(content);
     form.get(0).submit();
 };
+
+(function() {
+    var url = IV_Config.api_base + "/ws/";
+    if(url.substr(0, 4) == 'http') {
+        url = IV_Config.api_base.replace(/^http/, "ws");
+    } else {
+        url = window.location.protocol.replace(/^http/, "ws") + "//" + window.location.host + IV_Config.api_base + "ws/";
+    }
+    if(IV_Config.url_websocket) url = IV_Config.url_websocket;
+    var ws = new Wampy(url, { realm: "anonymous" });
+
+    ws.call('com.timeservice.now', null, {
+        onSuccess: function (stime) {
+            console.log('RPC successfully called');
+            console.log('Server time is ' + stime);
+        },
+        onError: function (err) {
+            console.log('RPC call failed with error ' + err);
+        }
+    });
+    IV.server.wamp = ws;
+
+})();
