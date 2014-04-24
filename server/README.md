@@ -11,3 +11,4 @@ pip install gunicorn
 pip install Twisted
 pip install redis
 pip install autobahn
+pip install psutil

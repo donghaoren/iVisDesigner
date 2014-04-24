@@ -31,6 +31,8 @@ config.set("django","use_x_forwarded_host", "no")
 config.set("django","force_script_name", "")
 config.set("django","staticfiles_dirs", "")
 config.set("django","allowed_hosts", "")
+config.set("django","bind_address", "127.0.0.1:8000")
+config.set("django","num_workers", "4")
 
 # Relational database.
 config.add_section("database")

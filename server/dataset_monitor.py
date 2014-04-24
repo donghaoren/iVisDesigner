@@ -55,4 +55,4 @@ while True:
     doc.set(doc.data, "time_min", doc.data['measures'][0]['time'])
     doc.set(doc.data, "time_max", doc.data['measures'][-1]['time'])
     doc.commit()
-    time.sleep(0.2)
+    time.sleep(0.02)

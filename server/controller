@@ -4,6 +4,8 @@ import os, sys
 import subprocess
 import signal
 import time
+import psutil
+import datetime
 
 from server.config import config
 
@@ -21,30 +23,82 @@ django_num_workers = int(config.get("django", "num_workers"))
 path_django_log_file = os.path.join(path_run, "gunicorn.log")
 path_twistd_log_file = os.path.join(path_run, "twistd.log")
 
-# Check if a process exist with pid file f.
-def check_pid_file(f):
-    if os.path.isfile(f):
-        with open(f, 'r') as fp:
-            try:
-                pid = int(fp.read())
-            except:
-                return False
-            try:
-                os.kill(pid, 0)
-            except OSError:
-                return False
-            else:
-                return pid
-    else:
-        return False
+class ProgressLine:
+    def __init__(self, text):
+        sys.stderr.write(text)
+        sys.stderr.flush()
+    def message(self, message):
+        sys.stderr.write("\n * " + message)
+        sys.stderr.flush()
+    def done(self, text = "done"):
+        sys.stderr.write(" [%s]\n" % text)
+        sys.stderr.flush()
 
-def kill_process_with_pidfile(f):
-    pid = check_pid_file(f)
-    if pid != False:
-        print "Sending SIGTERM to process %d..." % pid
-        os.kill(pid, signal.SIGTERM)
-        while check_pid_file(f):
-            time.sleep(0.5)
+services = set()
+
+def add_service(name, cmd, pidfile):
+    services.add(name)
+    @shell_command(name + ".start")
+    def cmd_start():
+        p = ProgressLine("Starting %s..." % name)
+        if check_pid_file(pidfile):
+            p.message("%s is already running." % name)
+            p.done()
+            return
+        subprocess.call(cmd, shell = True)
+        p.done()
+
+    @shell_command(name + ".stop")
+    def cmd_stop():
+        p = ProgressLine("Stopping %s..." % name)
+        kill_process_with_pidfile(pidfile, p)
+        p.done()
+
+    @shell_command(name + ".restart")
+    def cmd_restart():
+        cmd_stop()
+        cmd_start()
+
+    @shell_command(name + ".status")
+    def cmd_status():
+        pid = check_pid_file(pidfile)
+        if pid:
+            proc = psutil.Process(pid)
+            print "Service %s is running, pid is: %d." % (name, pid)
+            (rss, vms) = proc.memory_info()
+            for c in proc.children(True):
+                cmem = c.memory_info()
+                rss += cmem.rss
+                vms += cmem.vms
+            print " * Resident: %.2f MB, VM: %.2f MB." % (rss / 1048576.0, vms / 1048576.0)
+            (user, system) = proc.cpu_times()
+            for c in proc.children(True):
+                cpu = c.cpu_times()
+                user += cpu.user
+                system += cpu.system
+            user = str(datetime.timedelta(seconds = user))
+            system = str(datetime.timedelta(seconds = system))
+            print " * %s user, %s system" % (user, system)
+            print " * %d threads, %d file descriptors." % (
+                proc.num_threads() + sum([c.num_threads() for c in proc.children(True)]),
+                proc.num_fds() + sum([c.num_fds() for c in proc.children(True)])
+            )
+            print " * CPU: %.2f %%." % proc.cpu_percent()
+            if len(proc.children(True)) > 0:
+                print " *   C: " + ", ".join(["%.2f %%" % c.cpu_percent() for c in proc.children(True)])
+            if "-c" in options or "--connections" in options:
+                def print_connection(pid, info):
+                    fd, family, type, laddr, raddr, status = info
+                    laddr = ":".join(map(str, laddr))
+                    raddr = ":".join(map(str, raddr))
+                    print "    %8s %15s %20s %20s" % (pid, status, laddr, raddr)
+                print " * Connections:"
+                print "    %8s %15s %20s %20s" % ("PID", "Status", "Local", "Remote")
+                for x in proc.connections(): print_connection(proc.pid, x)
+                for c in proc.children(True):
+                    for x in c.connections(): print_connection(c.pid, x)
+        else:
+            print "Service %s is stopped." % name
 
 shell_commands = { }
 def shell_command(f):
@@ -53,78 +107,71 @@ def shell_command(f):
         return function
     return shell_command_internal
 
-@shell_command("gunicorn.start")
-def cmd_start_gunicorn():
-    print "Starting gunicorn..."
-    if check_pid_file(path_gunicorn_pid_file):
-        print "  Error: gunicorn is already running."
-        return
-    cmd = "./ENV/bin/gunicorn -w %d -p %s --bind=%s --log-level=info --log-file=%s -D server.wsgi:application"
-    subprocess.call(cmd % (django_num_workers, path_gunicorn_pid_file, django_address, path_django_log_file), shell = True)
-    print "  [done]"
+# Check if a process exist with pid file f.
+def check_pid_file(f):
+    if os.path.isfile(f):
+        with open(f, 'r') as fp:
+            try:
+                pid = int(fp.read())
+            except:
+                return False
+            if psutil.pid_exists(pid): return pid
+    return False
 
-@shell_command("twistd.start")
-def cmd_start_twistd():
-    print "Starting twistd..."
-    if check_pid_file(path_twistd_pid_file):
-        print "  Error: twistd is already running."
-        return
-    cmd = "./ENV/bin/twistd --pidfile=%s --logfile=%s -y server.tac"
-    subprocess.call(cmd % (path_twistd_pid_file, path_twistd_log_file), shell = True)
-    print "  [done]"
+def kill_process_with_pidfile(f, p = None):
+    pid = check_pid_file(f)
+    if pid != False:
+        if p: p.message("Sending SIGTERM to process %d..." % pid)
+        if "-f" in options or "--force" in options:
+            os.kill(pid, signal.SIGKILL)
+        else:
+            os.kill(pid, signal.SIGTERM)
+        while check_pid_file(f):
+            time.sleep(0.5)
 
-@shell_command("gunicorn.stop")
-def cmd_stop_gunicorn():
-    print "Stopping gunicorn..."
-    kill_process_with_pidfile(path_gunicorn_pid_file)
-    print "  [done]"
+add_service(
+    "gunicorn",
+    "./ENV/bin/gunicorn -w %d -p %s --bind=%s --log-level=info --log-file=%s -D server.wsgi:application" %
+    (django_num_workers, path_gunicorn_pid_file, django_address, path_django_log_file),
+    path_gunicorn_pid_file
+)
 
-@shell_command("twistd.stop")
-def cmd_stop_twistd():
-    print "Stopping twistd..."
-    kill_process_with_pidfile(path_twistd_pid_file)
-    print "  [done]"
-
-@shell_command("gunicorn.restart")
-def cmd_restart_gunicorn():
-    cmd_stop_gunicorn()
-    cmd_start_gunicorn()
-
-@shell_command("twistd.restart")
-def cmd_restart_twistd():
-    cmd_stop_twistd()
-    cmd_start_twistd()
+add_service(
+    "twistd",
+    "./ENV/bin/twistd --pidfile=%s --logfile=%s -y server.tac" %
+    (path_twistd_pid_file, path_twistd_log_file),
+    path_twistd_pid_file
+)
 
 @shell_command("status")
 def cmd_status():
-    pid = check_pid_file(path_gunicorn_pid_file)
-    if pid:
-        print "gunicorn is running: %d." % pid
-    else:
-        print "gunicorn is not running."
-    pid = check_pid_file(path_twistd_pid_file)
-    if pid:
-        print "twistd is running: %d." % pid
-    else:
-        print "twistd is not running."
+    for service in services:
+        shell_commands[service + ".status"]()
 
 @shell_command("start")
 def cmd_start():
-    cmd_start_gunicorn()
-    cmd_start_twistd()
+    for service in services:
+        shell_commands[service + ".start"]()
 
 @shell_command("stop")
 def cmd_stop():
-    cmd_stop_gunicorn()
-    cmd_stop_twistd()
+    for service in services:
+        shell_commands[service + ".stop"]()
 
 @shell_command("restart")
 def cmd_restart():
-    cmd_stop()
-    cmd_start()
+    for service in services:
+        shell_commands[service + ".restart"]()
 
 if len(sys.argv) >= 2 and sys.argv[1] in shell_commands:
+    options = sys.argv[2:]
     shell_commands[sys.argv[1]]()
 else:
-    for cmd in shell_commands:
-        print cmd
+    print "iVisDesigner Backend Service Controller."
+    print "Usage:"
+    print "  controller command [options]"
+    print "Commands:"
+    commands = sorted([cmd for cmd in shell_commands])
+    print "\n".join(map(lambda x: "  " + x, commands))
+    print "Options:"
+    print "  -f, --force : Force termination, use SIGKILL instead of SIGTERM."
