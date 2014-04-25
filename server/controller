@@ -38,8 +38,11 @@ services = set()
 
 def add_service(name, cmd, pidfile):
     services.add(name)
+    path_started = os.path.join(path_run, "%s.started" % name)
     @shell_command(name + ".start")
     def cmd_start():
+        with open(path_started, 'w') as f:
+            f.write(str(time.time()))
         p = ProgressLine("Starting %s..." % name)
         if check_pid_file(pidfile):
             p.message("%s is already running." % name)
@@ -50,6 +53,8 @@ def add_service(name, cmd, pidfile):
 
     @shell_command(name + ".stop")
     def cmd_stop():
+        try: os.unlink(path_started)
+        except: pass
         p = ProgressLine("Stopping %s..." % name)
         kill_process_with_pidfile(pidfile, p)
         p.done()
@@ -58,6 +63,13 @@ def add_service(name, cmd, pidfile):
     def cmd_restart():
         cmd_stop()
         cmd_start()
+
+    @shell_command(name + ".watchdog")
+    def cmd_watchdog():
+        if os.path.isfile(path_started):
+            pid = check_pid_file(pidfile)
+            if not pid:
+                cmd_start()
 
     @shell_command(name + ".status")
     def cmd_status():
@@ -162,6 +174,11 @@ def cmd_stop():
 def cmd_restart():
     for service in services:
         shell_commands[service + ".restart"]()
+
+@shell_command("watchdog")
+def cmd_restart():
+    for service in services:
+        shell_commands[service + ".watchdog"]()
 
 if len(sys.argv) >= 2 and sys.argv[1] in shell_commands:
     options = sys.argv[2:]
