@@ -53,7 +53,7 @@ var build_style_property_item = function(name, act, key, type, args) {
             act[key] = val;
         },
         set_action: function(val) {
-            return new Actions.SetDirectly(act, key, val);
+            return new IV.actions.SetDirectly(act, key, val);
         }
     });
 };

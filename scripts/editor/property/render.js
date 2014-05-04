@@ -65,7 +65,7 @@ var property_clipboard = null;
 
 var make_set_action = function(item, val) {
     if(item.set_action) return item.set_action(val);
-    return new Actions.SetProperty(item, val);
+    return new IV.actions.SetProperty(item, val);
 };
 
 // Render a property field's value part.

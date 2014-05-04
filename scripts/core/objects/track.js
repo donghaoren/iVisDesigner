@@ -259,6 +259,7 @@ var Track = IV.extend(Objects.Object, function(info) {
                             var best_shift = { x: 0, y: 0 };
                             var accept_info = null;
                             var best_distance = 1e100;
+                            var actions = [];
 
                             for(var i = 0; i < move_targets.length; i++) {
                                 if(move_targets[i].type == "Plain") {
@@ -287,14 +288,18 @@ var Track = IV.extend(Objects.Object, function(info) {
                                     var p = p1.sub(p0).add(this.originals[i]);
                                     p.x += best_shift.x;
                                     p.y += best_shift.y;
-                                    move_targets[i].obj = p;
+                                    actions.push(new IV.actions.SetDirectly(move_targets[i], "obj", p));
                                 }
                                 if(move_targets[i].type == "PointOffset")
-                                    move_targets[i].offset = p1.sub(p0).add(this.originals[i]).add(
+                                    var new_offset = p1.sub(p0).add(this.originals[i]).add(
                                         new IV.Vector(best_shift.x, best_shift.y)
                                     );
+                                    actions.push(new IV.actions.SetDirectly(move_targets[i], "offset", p));
                             }
-                            return { trigger_render: "main,back,front" };
+                            return {
+                                actions: actions,
+                                trigger_render: "main,back,front"
+                            };
                         };
                     }
                 }

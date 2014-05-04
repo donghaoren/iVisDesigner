@@ -51,7 +51,7 @@ $(window).ready(function() {
     IV.raise("initialize");
     IV.raise("initialize:after");
     if(window.isAllosphere) {
-        window.hostCall('{"f":"initialize"}');
+
         return;
     }
     IV.server.reload_account(function() {

@@ -80,6 +80,7 @@ var load_dataset_from_server = function(info, callback) {
         IV.loadVisualization();
         IV.data = new IV.DataObject(ds.obj, ds.schema);
         IV.editor.setData(IV.data);
+        IV.raise("dataset:set", { data: jsyaml.load(info.data), schema: schema }); // TODO: restructure this code.
         callback();
     }
 }

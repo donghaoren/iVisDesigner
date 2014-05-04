@@ -172,6 +172,8 @@ Editor.renderSchemaFields = function(info, fields, previous_path) {
 
     results.find("span.key").each(function() {
         var span = $(this);
+        if(span.data().__attached__) return;
+        span.data().__attached__ = true;
         var path = span.data().path;
         var ref_target = span.data().ref_target;
         span.click(function(e) {

@@ -101,13 +101,16 @@ GoogleMapImage.prototype.getTileURL = function(x, y) {
         language: "en_US",
         visual_refresh: "true"
     };
-    return IV.server.getDelegateURL("https://maps.googleapis.com/", "maps/api/staticmap", params);
-    // var baseurl = "https://maps.googleapis.com/maps/api/staticmap";
-    // var params_array = [];
-    // for(var key in params) {
-    //     params_array.push(escape(key) + "=" + escape(params[key]));
-    // }
-    // return baseurl + "?" + params_array.join("&");
+    if(IV.server && IV.server.getDelegateURL) {
+        return IV.server.getDelegateURL("https://maps.googleapis.com/", "maps/api/staticmap", params);
+    } else {
+        var baseurl = "https://maps.googleapis.com/maps/api/staticmap";
+        var params_array = [];
+        for(var key in params) {
+            params_array.push(escape(key) + "=" + escape(params[key]));
+        }
+        return baseurl + "?" + params_array.join("&");
+    }
 };
 
 var GoogleMapStatic = function(lng, lat, zoom, size_x, size_y, maptype, scale) {

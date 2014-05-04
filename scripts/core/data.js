@@ -105,7 +105,7 @@ IV.DataObject.prototype.computeFullStatistics = function(path, context) {
 }
 
 IV.PlainDataset = function(obj, schema) {
-        // Preprocess object.
+    // Preprocess object.
     var process_subtree = function(obj, schema, parent, onobject) {
         if(!obj) return;
         onobject(obj, schema, parent);

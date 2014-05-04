@@ -63,6 +63,14 @@ Javascript("embed.js", [
     "scripts/embed/embed.js"
 ])
 
+Javascript("allosphere-slave.js", [
+    "scripts/utils/utils.js",
+    "scripts/core/core.js",
+    "scripts/embed/embed.js",
+    "scripts/client/ajax.js",
+    "scripts/allosphere/allosphere.js"
+])
+
 Image("favicon-64.png", "images/favicon-64.png")
 Image("favicon-512.png", "images/favicon-512.png")
 
@@ -71,6 +79,7 @@ Binary("datasets/test.schema", "datasets/test.yaml");
 Binary("datasets/test.data", "datasets/test.data.yaml");
 
 HTML("toolkit.html", "html/toolkit.html")
+HTML("allosphere-slave.html", "html/allosphere-slave.html")
 HTML("embed_test.html", "html/embed_test.html")
 env.Markdown("temp/credits.html", "CREDITS.md")
 env.Markdown("temp/license.html", "LICENSE.md")

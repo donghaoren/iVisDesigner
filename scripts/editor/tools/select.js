@@ -38,6 +38,12 @@ Tools.Select = {
                 $this.magnetics.threshold = 5 / e_down.offset.view_scale;
                 var handle_r = function(r) {
                     if(!r) return;
+                    if(r.actions) {
+                        r.actions.forEach(function(act) {
+                            Actions.add(act);
+                        });
+                        Actions.commit();
+                    }
                     if(r.trigger_render) Tools.triggerRender(r.trigger_render);
                 };
                 e_down.move(function(e_move) {

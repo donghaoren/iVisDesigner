@@ -59,6 +59,7 @@ IV.EmbeddedCanvas = IV.extend(Object, function(div, options) {
 
     var $this = this;
     setInterval(function() {
+        if(!$this.vis) return;
         $this.vis.timerTick($this.data);
         $this.vis.triggerRenderer($this.renderer);
         $this.renderer.render();

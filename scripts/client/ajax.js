@@ -95,15 +95,5 @@ IV.downloadFile = function(content, mime, filename, encoding) {
     if(IV_Config.url_websocket) url = IV_Config.url_websocket;
     var ws = new Wampy(url, { realm: "anonymous" });
 
-    ws.call('com.timeservice.now', null, {
-        onSuccess: function (stime) {
-            console.log('RPC successfully called');
-            console.log('Server time is ' + stime);
-        },
-        onError: function (err) {
-            console.log('RPC call failed with error ' + err);
-        }
-    });
     IV.server.wamp = ws;
-
 })();

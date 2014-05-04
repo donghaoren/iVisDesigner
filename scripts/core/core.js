@@ -4,6 +4,7 @@
 //. See LICENSE.md for more information.
 
 {{include: serializer.js}}
+{{include: actionmanager.js}}
 
 {{include: path.js}}
 {{include: data.js}}
