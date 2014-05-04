@@ -63,16 +63,26 @@ meta_strings = {
 # Global variables.
 output_directory = "deploy"
 temporary_directory = "temp"
+this_directory = "."
 
-this_directory_ = os.path.relpath(".", str(Dir("#")))
-if this_directory_ != "." and this_directory_ != "":
-    this_directory = this_directory_
+def Initialize(output = "deploy", temporary = None):
+    global output_directory, temporary_directory, this_directory
+    if not temporary:
+        temporary = ".swtemp.%s" % output
+    output_directory = output
+    temporary_directory = temporary
 
-if not os.path.exists(temporary_directory):
-    os.makedirs(temporary_directory)
+    this_directory_ = os.path.relpath(".", str(Dir("#")))
+    if this_directory_ != "." and this_directory_ != "":
+        this_directory = this_directory_
 
-if not os.path.exists(output_directory):
-    os.makedirs(output_directory)
+    if not os.path.exists(temporary_directory):
+        os.makedirs(temporary_directory)
+
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+
+Initialize()
 
 # Delimiters
 delim_L = "{{"

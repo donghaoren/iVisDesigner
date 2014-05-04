@@ -81,7 +81,7 @@ Binary("datasets/test.data", "datasets/test.data.yaml");
 HTML("toolkit.html", "html/toolkit.html")
 HTML("allosphere-slave.html", "html/allosphere-slave.html")
 HTML("embed_test.html", "html/embed_test.html")
-env.Markdown("temp/credits.html", "CREDITS.md")
-env.Markdown("temp/license.html", "LICENSE.md")
+env.Markdown(".swtemp.deploy/credits.html", "CREDITS.md")
+env.Markdown(".swtemp.deploy/license.html", "LICENSE.md")
 
 WriteDeployList("deploy_list")
