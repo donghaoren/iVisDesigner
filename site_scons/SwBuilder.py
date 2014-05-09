@@ -63,7 +63,6 @@ meta_strings = {
 # Global variables.
 output_directory = "deploy"
 temporary_directory = "temp"
-this_directory = "."
 
 def Initialize(output = "deploy", temporary = None):
     global output_directory, temporary_directory, this_directory

@@ -41,7 +41,7 @@ IV.EmbeddedCanvas = IV.extend(Object, function(div, options) {
         var c = document.createElement("canvas");
         div.append($(c).css({
             position: "absolute",
-            left: "0", right: "0"
+            left: "0", top: "0"
         }));
         return c;
     };

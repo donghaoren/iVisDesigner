@@ -49,13 +49,40 @@ if(IV_Config.allosphere_slave) {
             var vis_data = params.visualization;
             var vis = IV.serializer.deserialize(vis_data);
             embed.renderer.setVisualization(vis);
-            embed.redraw()
+            embed.redraw();
         };
+
+        if(IV.getQuery("load")) {
+            var vis_id = IV.getQuery("load");
+            IV.server.get("visualizations/" + vis_id + "/", function(err, data) {
+                data_content = jsyaml.load(data.dataset_info.data);
+                data_schema = jsyaml.load(data.dataset_info.schema);
+                var ds = new IV.PlainDataset(data_content, data_schema);
+                var dataobj = new IV.DataObject(ds.obj, ds.schema);
+                embed.renderer.setData(dataobj);
+                var vis_data = JSON.parse(data.content);
+                var vis = IV.serializer.deserialize(vis_data);
+                embed.renderer.setVisualization(vis);
+                embed.redraw();
+            });
+        }
+
         IV.server.wamp.subscribe("iv.allosphere.message", function(message) {
             var content = JSON.parse(message);
-            console.log(content);
             F[content.type](content);
         });
+        var fx = { };
+        IV.allosphere.fx = fx;
+
+        var prev_vp = "unknown";
+        fx.resize_render = function(x, y, width, height, shx, shy, scale) {
+            var desc = [x, y, width, height, shx, shy, scale].join(",");
+            if(desc == prev_vp) return;
+            prev_vp = desc;
+            embed.resize(width, height);
+            embed.renderer.setView(new IV.Vector(-x - width / 2 + shx, y + height / 2 - shy), scale);
+            embed.redraw();
+        };
     });
 }
 
