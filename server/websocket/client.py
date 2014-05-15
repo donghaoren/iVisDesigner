@@ -1,5 +1,4 @@
 from twisted.python import log
-from subscriptions import add_subscription_handler, remove_subscription_client
 from document import DocumentInfo
 import hmac, hashlib
 from twisted.internet import reactor
@@ -12,9 +11,9 @@ from db import open_redis, get_redis
 import redis
 
 def load_config(config):
-    global hmac_key
+    global hmac_key, allosphere_enabled
     hmac_key = config.get("authentication", "hmac_key")
-
+    allosphere_enabled = config.get("allosphere", "enabled") == "true"
     open_redis(config)
 
 class DocumentSession(wamp.ApplicationSession):
@@ -63,3 +62,9 @@ class DocumentSession(wamp.ApplicationSession):
 
         self.register(document_get, u'document.get')
         self.register(document_diff, u'document.diff')
+
+        if allosphere_enabled:
+            from allosphere import send_message
+            def on_allosphere_message(message):
+                send_message(message)
+            self.subscribe(on_allosphere_message, "iv.allosphere.message")
