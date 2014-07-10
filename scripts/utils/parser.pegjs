@@ -80,7 +80,7 @@ string
     { var str = JSON.parse(flatten(repr)); return function(ctx) { return str; } }
 
 selector
-  = str:([:$] name (":" name)*) {
+  = str:([:$] ([a-zA-Z_$\[\]\{\}\@][a-zA-Z0-9_$\[\]\{\}\@]*) (":" ([a-zA-Z_$\[\]\{\}\@][a-zA-Z0-9_$\[\]\{\}\@]*))*) {
         var s = flatten(str);
         return function(ctx) { return ctx.get(s); };
     }

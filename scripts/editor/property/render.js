@@ -68,8 +68,74 @@ var make_set_action = function(item, val) {
     return new IV.actions.SetProperty(item, val);
 };
 
+var render_property_field_array = function(item) {
+    var type = item.type.substr(1);
+    var target = IV._E("div", "field group");
+    var iName = IV._E("span", "name").append(
+        IV._E("span").text(item.name).click(function() {
+            var $this = $(this);
+            IV.popups.beginContextMenu($this, [ "Copy", "Paste", "Reference" ], function(val) {
+                if(val == "Copy") {
+                    property_clipboard = item.get();
+                }
+                if(val == "Paste" && property_clipboard) {
+                    item.set(property_clipboard.clone());
+                    reload_item();
+                    Editor.renderer.trigger();
+                    Editor.renderer.render();
+                }
+                if(val == "Reference" && property_clipboard) {
+                    item.set(property_clipboard);
+                    reload_item();
+                    Editor.renderer.trigger();
+                    Editor.renderer.render();
+                }
+            });
+        })
+    );
+
+    var iVal = IV._E("span", "val");
+    var reload_items = function() {
+        iVal.children().remove();
+        var array = item.get();
+        array.forEach(function(array_item, index) {
+            var element = render_object_value(array_item, item.args, function(new_value) {
+                array[index] = new_value;
+                reload_items();
+                Editor.renderer.trigger();
+                Editor.renderer.render();
+            });
+            var container = IV._E("div");
+            container.append(element);
+            container.append(IV._E("span", "multi btn", "x").click(function() {
+                array.splice(index, 1);
+                reload_items();
+                Editor.renderer.trigger();
+                Editor.renderer.render();
+            }));
+            iVal.append(container);
+        });
+        iVal.append(IV._E("div").append(IV._E("span", "btn", "+").click(function() {
+            if(type == "path")
+                array.push(new IV.Path());
+            reload_items();
+            Editor.renderer.trigger();
+            Editor.renderer.render();
+        })));
+    };
+    target.append(iName);
+    target.append(iVal);
+
+    reload_items();
+
+    return target;
+};
+
 // Render a property field's value part.
 var render_property_field = function(item) {
+    if(item.type[0] == "*") {
+        return render_property_field_array(item);
+    }
     var target = IV._E("div", "field group");
     var iName = IV._E("span", "name").append(
         IV._E("span").text(item.name).click(function() {

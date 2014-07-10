@@ -20,6 +20,7 @@ var Track = IV.extend(Objects.Object, function(info) {
     fillDefault: function() {
         if(this.tick_style === undefined) this.tick_style = new TickStyle();
         if(this.mapping === undefined) this.mapping = "linear";
+        //if(this.additional_paths === undefined) this.additional_paths = [];
     },
     postDeserialize: function() {
         this.fillDefault();
@@ -46,7 +47,12 @@ var Track = IV.extend(Objects.Object, function(info) {
         if(type == "anchor2") return p2;
         var min = this.min.get(context);
         var max = this.max.get(context);
-        var value = context.get(this.path).val();
+        var value;
+        if(type && type.constructor == IV.Path) {
+            value = context.get(type).val();
+        } else {
+            value = context.get(this.path).val();
+        }
         if(value === null || p1 === null || p2 === null || min === null || max === null) return null;
         if(this.mapping == "logarithmic") {
             if(value <= 0) value = -0.05;
@@ -64,6 +70,7 @@ var Track = IV.extend(Objects.Object, function(info) {
         return Objects.Object.prototype.getPropertyContext.call(this).concat([
             make_prop_ctx($this, "guide_path", "Selector", "Track", "path"),
             make_prop_ctx($this, "path", "Value", "Track", "path"),
+            //make_prop_ctx($this, "additional_paths", "Values", "Track", "*path"),
             make_prop_ctx($this, "min", "Min", "Track", "number"),
             make_prop_ctx($this, "max", "Max", "Track", "number"),
             make_prop_ctx($this, "anchor1", "Anchor1", "Track", "point"),
@@ -327,6 +334,28 @@ var Track = IV.extend(Objects.Object, function(info) {
         };
     }
 });
+
+// Point Offset.
+var TrackWrapper = IV.extend(Objects.Object, function(track, path) {
+    Objects.Object.call(this);
+    this.track = track;
+    this.path = path;
+    this.type = "TrackWrapper";
+}, {
+    get: function(context) {
+        var pt = this.track.get(context, this.path);
+        return pt;
+    },
+    can: function(cap) {
+        if(cap == "get-point") return true;
+        return false;
+    },
+    clone: function() {
+        return new TrackWrapper(this.track, this.path);
+    }
+});
+Objects.TrackWrapper = TrackWrapper;
+IV.serializer.registerObjectType("TrackWrapper", TrackWrapper);
 
 var Scatter = IV.extend(Objects.Object, function(info) {
     Objects.Object.call(this);

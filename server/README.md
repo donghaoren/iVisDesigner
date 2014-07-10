@@ -1,6 +1,7 @@
 Virtual ENV Packages:
 
 pip install Django
+pip install django-suit
 pip install mysql-python
 pip install django-filter
 pip install djangorestframework

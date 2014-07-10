@@ -43,6 +43,10 @@ config.set("database", "password", "")
 config.set("database", "host", "")
 config.set("database", "port", "")
 
+# Allosphere connection.
+config.add_section("allosphere")
+config.set("allosphere", "enabled", "false")
+
 config.read("config.ini")
 
 DEBUG = config.get("django", "debug") == "yes"

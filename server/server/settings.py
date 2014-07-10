@@ -71,11 +71,18 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'suit',
     'django.contrib.admin',
     'rest_framework',
     'corsheaders',
     'ivapp',
     'proxy'
+)
+
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
+
+TEMPLATE_CONTEXT_PROCESSORS = TCP + (
+    'django.core.context_processors.request',
 )
 
 REST_FRAMEWORK = {

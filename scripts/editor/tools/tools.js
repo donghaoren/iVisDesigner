@@ -126,6 +126,14 @@ Editor.tools = { };
             }
 
             var captured_object = function(obj) {
+                if(obj.type == "Track" && e.shift) {
+                    var path_select = IV.popups.PathSelect();
+                    path_select.show(e.page, 200, 150);
+                    path_select.onSelectPath = function(path) {
+                        captured_object(new IV.objects.TrackWrapper(obj, new IV.Path(path)));
+                    };
+                    return;
+                }
                 var ref_path = Editor.get("selected-reference");
                 var refd_path = Editor.get("selected-reference-target");
                 if(ref_path) f(new IV.objects.ReferenceWrapper(ref_path, refd_path, obj), e);
