@@ -16,7 +16,7 @@ images/iconfont/*.js
 *.dblite
 *.pyc
 *.gen
-linecount.sh
+linecount
 source_comments.py
 update_swbuilder.sh
 deploy_list

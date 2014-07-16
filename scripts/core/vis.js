@@ -1,6 +1,6 @@
 //. iVisDesigner - File: scripts/core/vis.js
 //. Copyright 2013-2014 Donghao Ren
-//. Peking University, University of California, Santa Barbara
+//. University of California, Santa Barbara, Peking University
 //. See LICENSE.md for more information.
 
 // The main class for a visualization design.

@@ -1,6 +1,6 @@
 //. iVisDesigner - File: scripts/core/objects/generators/brushingvalue.js
 //. Copyright 2013-2014 Donghao Ren
-//. Peking University, University of California, Santa Barbara
+//. University of California, Santa Barbara, Peking University
 //. See LICENSE.md for more information.
 
 Objects.BrushingValue = IV.extend(Objects.Object, function(info) {

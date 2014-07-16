@@ -1,6 +1,6 @@
 //. iVisDesigner - File: scripts/core/objects/utils.js
 //. Copyright 2013-2014 Donghao Ren
-//. Peking University, University of California, Santa Barbara
+//. University of California, Santa Barbara, Peking University
 //. See LICENSE.md for more information.
 
 // Take a selection context, a anchor object, and action, add dragging handlers to the context.
