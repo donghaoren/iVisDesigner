@@ -16,10 +16,15 @@ with open(sys.argv[1], 'rb') as csvfile:
             row = reader.next()
             obj = { }
             for k in keys:
-                obj[k] = row[keys[k]]
+                try:
+                    obj[k] = float(row[keys[k]])
+                except:
+                    obj[k] = row[keys[k]]
+                if row[keys[k]] == "":
+                    obj[k] = None
             result.append(obj)
         except StopIteration:
             break
     open(sys.argv[1] + ".json", "w").write(json.dumps({
         "rows": result
-    }))
+    }, indent = 2))

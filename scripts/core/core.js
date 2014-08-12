@@ -10,6 +10,8 @@
 {{include: data.js}}
 {{include: vis.js}}
 
+{{include: workspace.js}}
+
 {{include: objects/objects.js}}
 
 {{include: render.js}}
