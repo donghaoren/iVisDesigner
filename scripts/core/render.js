@@ -38,6 +38,8 @@ IV.CanvasManager.prototype.setResolutionRatio = function(ratio) {
 // Add a canvas.
 IV.CanvasManager.prototype.add = function(key, canvas, set_css) {
     this.canvas[key] = canvas;
+    canvas.width = this.ratio * this.width;
+    canvas.height = this.ratio * this.height;
 };
 
 // Get a canvas by name.
@@ -226,91 +228,100 @@ IV.Renderer.prototype.trigger = function(items) {
 };
 
 // Extend canvas render context.
+if(typeof(document) != "undefined") { // running in the browser, perform modifications.
+    CanvasRenderingContext2D.prototype.ivSave = function() {
+        this.save();
+        if(!this.iv_transform_stack) this.iv_transform_stack = [];
+        this.iv_transform_stack.push(this.iv_transform);
+    };
 
-CanvasRenderingContext2D.prototype.ivSave = function() {
-    this.save();
-    if(!this.iv_transform_stack) this.iv_transform_stack = [];
-    this.iv_transform_stack.push(this.iv_transform);
-};
+    CanvasRenderingContext2D.prototype.ivRestore = function() {
+        this.restore();
+        if(!this.iv_transform_stack) this.iv_transform_stack = [];
+        this.iv_transform = this.iv_transform_stack.pop();
+        //this.ivSetTransform(this.iv_transform_stack.pop());
+    };
 
-CanvasRenderingContext2D.prototype.ivRestore = function() {
-    this.restore();
-    if(!this.iv_transform_stack) this.iv_transform_stack = [];
-    this.iv_transform = this.iv_transform_stack.pop();
-    //this.ivSetTransform(this.iv_transform_stack.pop());
-};
+    // CanvasRenderingContext2D.prototype.ivSetTransform = function(tr) {
+    //     if(!tr) tr = new IV.affineTransform();
+    //     var r = this.iv_pre_ratio;
+    //     this.setTransform(r * tr.m[0], r * tr.m[1], r * tr.m[3], r * tr.m[4], r * tr.m[2], r * tr.m[5]);
+    //     this.iv_transform = tr;
+    // };
 
-// CanvasRenderingContext2D.prototype.ivSetTransform = function(tr) {
-//     if(!tr) tr = new IV.affineTransform();
-//     var r = this.iv_pre_ratio;
-//     this.setTransform(r * tr.m[0], r * tr.m[1], r * tr.m[3], r * tr.m[4], r * tr.m[2], r * tr.m[5]);
-//     this.iv_transform = tr;
-// };
+    CanvasRenderingContext2D.prototype.ivAppendTransform = function(tr) {
+        if(this.iv_transform)
+            this.iv_transform = this.iv_transform.concat(tr);
+        else
+            this.iv_transform = tr;
+        this.transform(tr.m[0], tr.m[1], tr.m[3], tr.m[4], tr.m[2], tr.m[5]);
+    };
 
-CanvasRenderingContext2D.prototype.ivAppendTransform = function(tr) {
-    if(this.iv_transform)
-        this.iv_transform = this.iv_transform.concat(tr);
-    else
-        this.iv_transform = tr;
-    this.transform(tr.m[0], tr.m[1], tr.m[3], tr.m[4], tr.m[2], tr.m[5]);
-};
+    CanvasRenderingContext2D.prototype.ivGetTransform = function(tr) {
+        if(this.iv_transform)
+            return this.iv_transform;
+        return new IV.affineTransform();
+    };
 
-CanvasRenderingContext2D.prototype.ivGetTransform = function(tr) {
-    if(this.iv_transform)
-        return this.iv_transform;
-    return new IV.affineTransform();
-};
+    CanvasRenderingContext2D.prototype.ivGetGuideWidth = function() {
+        return 1.0 / Math.sqrt(Math.abs(this.ivGetTransform().det()));
+    };
 
-CanvasRenderingContext2D.prototype.ivGetGuideWidth = function() {
-    return 1.0 / Math.sqrt(Math.abs(this.ivGetTransform().det()));
-};
+    CanvasRenderingContext2D.prototype.ivGuideLineWidth = function(scale) {
+        return this.lineWidth = this.ivGetGuideWidth() * (scale !== undefined ? scale : 1);
+    };
 
-CanvasRenderingContext2D.prototype.ivGuideLineWidth = function(scale) {
-    return this.lineWidth = this.ivGetGuideWidth() * (scale !== undefined ? scale : 1);
-};
+    CanvasRenderingContext2D.prototype.ivSetFont = function(font_info) {
+        var sz = font_info.size ? font_info.size : 12;
+        var f = font_info.family ? font_info.family : "Arial";
+        this.font = "36px " + f;
+        this._font_size = sz;
+    };
 
-CanvasRenderingContext2D.prototype.ivSetFont = function(font_info) {
-    var sz = font_info.size ? font_info.size : 12;
-    var f = font_info.family ? font_info.family : "Arial";
-    this.font = "36px " + f;
-    this._font_size = sz;
-};
+    CanvasRenderingContext2D.prototype.ivMeasureText = function(s) {
+        var r = this.measureText(s);
+        return { width: r.width / 36 * this._font_size };
+    };
 
-CanvasRenderingContext2D.prototype.ivMeasureText = function(s) {
-    var r = this.measureText(s);
-    return { width: r.width / 36 * this._font_size };
-};
-
-CanvasRenderingContext2D.prototype.ivFillText = function(s, x, y) {
-    this.save();
-    var scale = 1.0 / 36.0 * this._font_size;
-    this.translate(x, y);
-    this.scale(scale, -scale);
-    this.fillText(s, 0, 0);
-    this.restore();
-};
-CanvasRenderingContext2D.prototype.ivStrokeText = function(s, x, y) {
-    this.save();
-    var scale = 1.0 / 36.0 * this._font_size;
-    this.translate(x, y);
-    this.lineWidth /= this._font_size / 36;
-    this.scale(scale, -scale);
-    this.strokeText(s, 0, 0);
-    this.restore();
-};
+    CanvasRenderingContext2D.prototype.ivFillText = function(s, x, y) {
+        this.save();
+        var scale = 1.0 / 36.0 * this._font_size;
+        this.translate(x, y);
+        this.scale(scale, -scale);
+        this.fillText(s, 0, 0);
+        this.restore();
+    };
+    CanvasRenderingContext2D.prototype.ivStrokeText = function(s, x, y) {
+        this.save();
+        var scale = 1.0 / 36.0 * this._font_size;
+        this.translate(x, y);
+        this.lineWidth /= this._font_size / 36;
+        this.scale(scale, -scale);
+        this.strokeText(s, 0, 0);
+        this.restore();
+    };
+}
 
 IV.Renderer.prototype._set_transform = function(ctx) {
     //ctx.iv_pre_ratio = this.manager.ratio;
-    ctx.ivAppendTransform(new IV.affineTransform([
-        this.manager.ratio, 0, 0,
-        0, this.manager.ratio, 0,
-        0, 0, 1
-    ]));
-    ctx.ivAppendTransform(new IV.affineTransform([
-        this.scale, 0, this.center.x + this.manager.width / 2,
-        0, -this.scale, -this.center.y + this.manager.height / 2,
-        0, 0, 1
-    ]));
+    if(typeof(document) != "undefined") {
+        ctx.ivAppendTransform(new IV.affineTransform([
+            this.manager.ratio, 0, 0,
+            0, this.manager.ratio, 0,
+            0, 0, 1
+        ]));
+        ctx.ivAppendTransform(new IV.affineTransform([
+            this.scale, 0, this.center.x + this.manager.width / 2,
+            0, -this.scale, -this.center.y + this.manager.height / 2,
+            0, 0, 1
+        ]));
+    } else {
+        ctx.ivAppendTransform(new IV.affineTransform([
+            this.scale, 0, -this.center.x,
+            0, this.scale, -this.center.y,
+            0, 0, 1
+        ]));
+    }
 };
 
 IV.Renderer.prototype._perform_render = function(key) {

@@ -17,16 +17,16 @@ IV.serializer.registerObjectType("VisualizationWorkspace", IV.VisualizationWorks
 IV.implement(IV.EventSource, IV.VisualizationWorkspace);
 
 // Serialization support.
-IV.Visualization.prototype.serializeFields = function() {
+IV.VisualizationWorkspace.prototype.serializeFields = function() {
     return [ "canvases", "objects", "uuid" ];
 };
 
-IV.Visualization.prototype.postDeserialize = function() {
+IV.VisualizationWorkspace.prototype.postDeserialize = function() {
     IV.EventSource.call(this);
 };
 
 // Canvas management.
-IV.Visualization.prototype.addCanvas = function(info) {
+IV.VisualizationWorkspace.prototype.addCanvas = function(info) {
     // info = {
     //    name: "Canvas Name"
     //    visualization: <IV.Visualization object>
@@ -35,13 +35,13 @@ IV.Visualization.prototype.addCanvas = function(info) {
     this.canvases.push(info);
 };
 
-IV.Visualization.prototype.getCanvas = function(name) {
+IV.VisualizationWorkspace.prototype.getCanvas = function(name) {
 };
 
-IV.Visualization.prototype.removeCanvas = function(name) {
+IV.VisualizationWorkspace.prototype.removeCanvas = function(name) {
 };
 
-IV.Visualization.prototype.validate = function(data) {
+IV.VisualizationWorkspace.prototype.validate = function(data) {
     this.canvases.forEach(function(canvas) {
         canvas.visualization.validate(data);
     });

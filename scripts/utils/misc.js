@@ -17,7 +17,12 @@ NS.buildQuery = function(params) {
     return params_array.join("&");
 };
 
-var tmp_canvas = document.createElement("canvas");
+var tmp_canvas;
+if(typeof(document) != "undefined") {
+    tmp_canvas = document.createElement("canvas");
+} else {
+    tmp_canvas = IVWrappers.CreateCanvas();
+}
 NS.measureText = function(text, font) {
     var tc = tmp_canvas.getContext("2d");
     tc.font = font;

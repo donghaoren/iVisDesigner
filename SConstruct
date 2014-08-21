@@ -63,12 +63,11 @@ Javascript("embed.js", [
     "scripts/embed/embed.js"
 ])
 
-Javascript("allosphere-slave.js", [
+Javascript("renderslave.js", [
+    "scripts/node/wrappers.js",
     "scripts/utils/utils.js",
     "scripts/core/core.js",
-    "scripts/embed/embed.js",
-    "scripts/client/ajax.js",
-    "scripts/allosphere/allosphere.js"
+    "scripts/node/renderslave.js"
 ])
 
 Image("favicon-64.png", "images/favicon-64.png")

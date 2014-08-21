@@ -43,14 +43,16 @@ NS.storageKeys = function() {
     return keys;
 };
 
-window.addEventListener("storage", function(e) {
-    if(!e) e = window.event;
-    if(e.key.substr(0, NS.localStoragePrefix.length) == NS.localStoragePrefix) {
-        var key = e.key.substr(NS.localStoragePrefix.length);
-        NS.raiseEvent("storage", {
-            key: key,
-            old_value: JSON.parse(e.oldValue),
-            new_value: JSON.parse(e.newValue),
-            url: e.url });
-    }
-}, false);
+if(typeof(window) != "undefined") {
+    window.addEventListener("storage", function(e) {
+        if(!e) e = window.event;
+        if(e.key.substr(0, NS.localStoragePrefix.length) == NS.localStoragePrefix) {
+            var key = e.key.substr(NS.localStoragePrefix.length);
+            NS.raiseEvent("storage", {
+                key: key,
+                old_value: JSON.parse(e.oldValue),
+                new_value: JSON.parse(e.newValue),
+                url: e.url });
+        }
+    }, false);
+}
