@@ -35,6 +35,7 @@ def get_allosphere_service(config):
     return TCPServer(int(config.get("allosphere", "socket_port")), current_factory)
 
 def send_message(message):
+    global current_factory
     info = message.encode("utf-8")
     info = struct.pack("i", len(info)) + info
     for client in current_factory.clients:
