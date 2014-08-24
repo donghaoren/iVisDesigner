@@ -10,6 +10,10 @@ var IV = (function() {
 // The namespace to output.
 var NS = { };
 
+// Are we running in a browser?
+NS.isBrowser = (typeof(document) != "undefined");
+NS.isNodejs = !NS.isBrowser;
+
 // ======== Utility Functions ========
 
 {{include: uuid.js}}

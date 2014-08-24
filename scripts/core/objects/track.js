@@ -483,6 +483,7 @@ var Scatter = IV.extend(Objects.Object, function(info) {
             var p = d1.scale(q1.sub(p1).dot(d2r) / d1.dot(d2r)).add(p1);
             if($this.show_x_ticks) {
                 g.strokeStyle = $this.real_track1.tick_style.tick_color.toRGBA(0.1);
+                g.ivGuideLineWidth();
                 var ticks = scale1.ticks($this.real_track2.tick_style.tick_count).map(scale1);
                 for(var i = 0; i < ticks.length; i++) {
                     var s = p.add(d2.scale(ticks[i]));
@@ -495,6 +496,7 @@ var Scatter = IV.extend(Objects.Object, function(info) {
             }
             if($this.show_y_ticks) {
                 g.strokeStyle = $this.real_track2.tick_style.tick_color.toRGBA(0.1);
+                g.ivGuideLineWidth();
                 var ticks = scale2.ticks($this.real_track2.tick_style.tick_count).map(scale2);
                 for(var i = 0; i < ticks.length; i++) {
                     var s = p.add(d1.scale(ticks[i]));

@@ -3,17 +3,21 @@
 //. University of California, Santa Barbara, Peking University
 //. See LICENSE.md for more information.
 
-IV.getOptimalRatio = function() {
-    var canvas = document.createElement("canvas");
-    var g = canvas.getContext("2d");
-    var dev_ratio = window.devicePixelRatio || 1;
-    var backing_ratio = g.webkitBackingStorePixelRatio ||
-                        g.mozBackingStorePixelRatio ||
-                        g.msBackingStorePixelRatio ||
-                        g.oBackingStorePixelRatio ||
-                        g.backingStorePixelRatio || 1;
-    return dev_ratio / backing_ratio;
-};
+if(IV.isBrowser) {
+    IV.getOptimalRatio = function() {
+        var canvas = document.createElement("canvas");
+        var g = canvas.getContext("2d");
+        var dev_ratio = window.devicePixelRatio || 1;
+        var backing_ratio = g.webkitBackingStorePixelRatio ||
+                            g.mozBackingStorePixelRatio ||
+                            g.msBackingStorePixelRatio ||
+                            g.oBackingStorePixelRatio ||
+                            g.backingStorePixelRatio || 1;
+        return dev_ratio / backing_ratio;
+    };
+} else {
+    IV.getOptimalRatio = function() { return 1; }
+}
 
 // Class: IV.CanvasManager
 // Class to manage canvases.
@@ -227,7 +231,7 @@ IV.Renderer.prototype.trigger = function(items) {
         this.needs_render[items[i]] = true;
 };
 
-if(typeof(document) != "undefined") {
+if(IV.isBrowser) {
     CanvasRenderingContext2D.prototype.ivSave = function() {
         this.save();
         if(!this.iv_transform_stack) this.iv_transform_stack = [];
@@ -303,7 +307,7 @@ if(typeof(document) != "undefined") {
 
 IV.Renderer.prototype._set_transform = function(ctx) {
     //ctx.iv_pre_ratio = this.manager.ratio;
-    if(typeof(document) != "undefined") {
+    if(IV.isBrowser) {
         ctx.ivAppendTransform(new IV.affineTransform([
             this.manager.ratio, 0, 0,
             0, this.manager.ratio, 0,
@@ -340,11 +344,14 @@ IV.Renderer.prototype._perform_render = function(key) {
 
 // Render the visualizaion.
 IV.Renderer.prototype.render = function() {
+    var rendered = false;
     for(var key in this.needs_render) {
         if(!this.needs_render[key]) continue;
         this._perform_render(key);
+        rendered = true;
         this.needs_render[key] = false;
     }
+    return rendered;
 };
 
 IV.Renderer.prototype.renderSVG = function() {

@@ -48,32 +48,36 @@ Canvas.prototype.savePNG = function(filename) {
     return this.__surface.save(filename);
 };
 
+Canvas.prototype.uploadTexture = function() {
+    this.__context.__g.flush();
+    this.__surface.uploadTexture();
+};
+
 var CanvasRenderingContext2D = function(surface) {
     this.__surface = surface;
     this.__g = new graphics.GraphicalContext2D(this.__surface);
     this.__paint = this.__g.paint();
+    this.__paint_stack = [];
 };
 
 (function() {
 
     var _p = CanvasRenderingContext2D.prototype;
 
-    _p.__setColor = function(rgba) {
-        var t = rgba.split("(")[1].split(")")[0];
-        var s = t.split(",").map(parseFloat);
-        this.__paint.setColor(s[0], s[1], s[2], s[3]);
-    };
-
+    // TODO: clearRect will clear the entire canvas instead, the parameters won't work.
     _p.clearRect = function(x, y, w, h) {
-        //this.__g.clear(255, 255, 255, 1);
+        this.__g.clear(0, 0, 0, 0);
     };
 
     _p.save = function() {
         this.__g.save();
+        this.__paint_stack.push(this.__paint);
+        this.__paint = this.__paint.clone();
     };
 
     _p.restore = function() {
         this.__g.restore();
+        this.__paint = this.__paint_stack.pop();
     };
 
     _p.transform = function(a, b, c, d, e, f) {
@@ -104,7 +108,7 @@ var CanvasRenderingContext2D = function(surface) {
 
     _p.strokeText = function(text, x, y) {
         this.__paint.setMode(graphics.PAINTMODE_STROKE);
-        this.__setColor(this.strokeStyle);
+        this.__paint.setColor(this.__strokeColor[0], this.__strokeColor[1], this.__strokeColor[2], this.__strokeColor[3]);
         if(this.textAlign == "center") {
            this.__paint.setTextAlign(graphics.TEXTALIGN_CENTER);
         } else if(this.textAlign == "right") {
@@ -116,7 +120,7 @@ var CanvasRenderingContext2D = function(surface) {
     };
     _p.fillText = function(text, x, y) {
         this.__paint.setMode(graphics.PAINTMODE_FILL);
-        this.__setColor(this.fillStyle);
+        this.__paint.setColor(this.__fillColor[0], this.__fillColor[1], this.__fillColor[2], this.__fillColor[3]);
         if(this.textAlign == "center") {
            this.__paint.setTextAlign(graphics.TEXTALIGN_CENTER);
         } else if(this.textAlign == "right") {
@@ -186,6 +190,12 @@ var CanvasRenderingContext2D = function(surface) {
         }
     };
 
+    // var parse_color_string2 = parse_color_string;
+    // parse_color_string = function(s) {
+    //     var r = parse_color_string2(s);
+    //     return [ 255 - r[0], 255 - r[1], 255, r[3] ];
+    // };
+
     Object.defineProperty(_p, "strokeStyle", {
         get: function() {
             return this.__strokeStyle;
@@ -222,8 +232,9 @@ var CanvasRenderingContext2D = function(surface) {
         this.transform(tr.m[0], tr.m[1], tr.m[3], tr.m[4], tr.m[2], tr.m[5]);
     };
 
-    _p.ivGetTransform = function(tr) {
-        return new IV.affineTransform();
+    _p.ivGetTransform = function() {
+        var t = this.__g.getTransform();
+        return new IV.affineTransform([t[0], t[2], t[4], t[1], t[3], t[5], 0, 0, 1]);
     };
 
     _p.ivGetGuideWidth = function() {
