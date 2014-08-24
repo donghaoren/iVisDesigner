@@ -3,6 +3,9 @@
 //. University of California, Santa Barbara, Peking University
 //. See LICENSE.md for more information.
 
+var allosphere = require("node_allosphere");
+allosphere.initialize();
+
 IV.getOptimalRatio = function() { return 1; };
 
 var prefix = "/Users/donghao/Documents/Projects/iVisDesignerNative/test/data";
@@ -35,8 +38,13 @@ renderer.setVisualization(vis);
 
 renderer.autoView(vis);
 
+renderer.trigger();
+renderer.render();
+renderer.trigger();
+renderer.render();
+
 var t0 = new Date().getTime();
-var trails = 1;
+var trails = 10;
 for(var i = 0; i < trails; i++) {
     renderer.trigger();
     renderer.render();
@@ -45,7 +53,6 @@ var t1 = new Date().getTime();
 console.log((t1 - t0) / trails);
 
 main.__surface.uploadTexture();
-
 
 var GL = allosphere.OpenGL;
 
@@ -61,6 +68,12 @@ allosphere.onDraw(function() {
     allosphere.shaderUniformi("texture0", 2);
     allosphere.shaderUniformf("lighting", 0.1);
 
+    GL.begin(GL.QUADS);
+    GL.texCoord2f(0, 0); GL.normal3f(0, 0, 1); GL.vertex3f(-1,  1, 1);
+    GL.texCoord2f(0, 1); GL.normal3f(0, 0, 1); GL.vertex3f(-1, -1, 1);
+    GL.texCoord2f(1, 1); GL.normal3f(0, 0, 1); GL.vertex3f( 1, -1, 1);
+    GL.texCoord2f(1, 0); GL.normal3f(0, 0, 1); GL.vertex3f( 1,  1, 1);
+    GL.end();
 
 
     GL.begin(GL.QUADS);

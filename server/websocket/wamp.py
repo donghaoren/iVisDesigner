@@ -1,4 +1,3 @@
-from autobahn.wamp import router
 from autobahn.twisted import wamp, websocket
 from twisted.application import internet
 from twisted.internet.defer import inlineCallbacks
@@ -19,7 +18,7 @@ def get_wamp_service(config):
     debug = config.get("websocket", "debug") == "true"
     client.load_config(config)
 
-    router_factory = router.RouterFactory()
+    router_factory = wamp.RouterFactory()
     session_factory = wamp.RouterSessionFactory(router_factory)
     session_factory.session = IVRouterSession
 

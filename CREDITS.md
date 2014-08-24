@@ -3,8 +3,8 @@ jQuery
 
 Homepage: <http://jquery.com>
 
-Copyright 2013 jQuery Foundation and other contributors
-<http://jquery.com/>
+    Copyright 2013 jQuery Foundation and other contributors
+    http://jquery.com/
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the
@@ -30,8 +30,8 @@ D3.js
 
 Homepage: <http://d3js.org>
 
-Copyright (c) 2013, Michael Bostock
-All rights reserved.
+    Copyright (c) 2013, Michael Bostock
+    All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
@@ -63,7 +63,7 @@ JS-YAML
 
 Homepage: <https://github.com/nodeca/js-yaml>
 
-Copyright (C) 2011, 2013 by Vitaly Puzrin
+    Copyright (C) 2011, 2013 by Vitaly Puzrin
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -88,8 +88,8 @@ Chroma.js
 
 chroma.js - JavaScript library for color conversions
 
-Copyright (c) 2011-2013, Gregor Aisch
-All rights reserved.
+    Copyright (c) 2011-2013, Gregor Aisch
+    All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
@@ -120,7 +120,7 @@ Numeric Javascript
 
 Homepage: <http://www.numericjs.com/>
 
-Copyright (C) 2011 by Sébastien Loisel
+    Copyright (C) 2011 by Sébastien Loisel
 
     Numeric Javascript
     Copyright (C) 2011 by Sébastien Loisel
@@ -146,7 +146,7 @@ Copyright (C) 2011 by Sébastien Loisel
 jQuery Mouse Wheel Plugin
 ====
 
-Copyright (c) 2013, Brandon Aaron (<http://brandonaaron.net/>)
+    Copyright (c) 2013, Brandon Aaron (<http://brandonaaron.net/>)
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the
@@ -177,7 +177,7 @@ Icon font created by fontello: <http://fontello.com/>
     Copyright (C) 2012 by Dave Gandy
 
     Author:    Dave Gandy
-    License:   SIL ()
+    License:   SIL (http://scripts.sil.org/OFL)
     Homepage:  http://fortawesome.github.com/Font-Awesome/
 
 ## Elusive
@@ -193,7 +193,7 @@ Icon font created by fontello: <http://fontello.com/>
     Copyright (C) 2012 by Daniel Bruce
 
     Author:    Daniel Bruce
-    License:   CC BY-SA (http://creativecommons.org/licenses/by-sa/2.0/)
+    License:   SIL (http://scripts.sil.org/OFL)
     Homepage:  http://www.entypo.com
 
 ## Brandico
@@ -206,18 +206,32 @@ Icon font created by fontello: <http://fontello.com/>
 Static Website Builder
 ====
 
-Static Website Builder
-A simple and lightweight static website building script based on SCons.
-Author: Donghao Ren
+    Static Website Builder
+    A simple and lightweight static website building script based on SCons.
+    Author: Donghao Ren
 
-Copyright (C) 2012 Donghao Ren
+    Copyright (C) 2012-2014 Donghao Ren
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+        * Redistributions of source code must retain the above copyright
+          notice, this list of conditions and the following disclaimer.
+
+        * Redistributions in binary form must reproduce the above copyright
+          notice, this list of conditions and the following disclaimer in the
+          documentation and/or other materials provided with the distribution.
+
+        * The name of Donghao Ren may not be used to endorse or promote products
+          derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
