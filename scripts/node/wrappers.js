@@ -49,7 +49,6 @@ Canvas.prototype.savePNG = function(filename) {
 };
 
 Canvas.prototype.uploadTexture = function() {
-    this.__context.__g.flush();
     this.__surface.uploadTexture();
 };
 
