@@ -1,10 +1,33 @@
-//. iVisDesigner - File: scripts/core/workspace.js
-//. Copyright 2013-2014 Donghao Ren
-//. University of California, Santa Barbara, Peking University
-//. See LICENSE.md for more information.
+// iVisDesigner - File: scripts/core/workspace.js
+// Copyright (c) 2013-2014, Donghao Ren
+// University of California Santa Barbara, Peking University
+// Advised by Prof. Tobias Hollerer and previously by Prof. Xiaoru Yuan.
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+// IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// The more general visualization workspace class.
-IV.VisualizationWorkspace = function() {
+IV.Workspace = function() {
     this.uuid = IV.generateUUID();
     // All objects of the visualization, ordered in an array.
     this.canvases = [];
@@ -13,36 +36,46 @@ IV.VisualizationWorkspace = function() {
     IV.EventSource.call(this);
 };
 
-IV.serializer.registerObjectType("VisualizationWorkspace", IV.VisualizationWorkspace);
-IV.implement(IV.EventSource, IV.VisualizationWorkspace);
+IV.serializer.registerObjectType("Workspace", IV.Workspace);
+IV.implement(IV.EventSource, IV.Workspace);
 
 // Serialization support.
-IV.VisualizationWorkspace.prototype.serializeFields = function() {
+IV.Workspace.prototype.serializeFields = function() {
     return [ "canvases", "objects", "uuid" ];
 };
 
-IV.VisualizationWorkspace.prototype.postDeserialize = function() {
+IV.Workspace.prototype.postDeserialize = function() {
     IV.EventSource.call(this);
 };
 
 // Canvas management.
-IV.VisualizationWorkspace.prototype.addCanvas = function(info) {
-    // info = {
-    //    name: "Canvas Name"
-    //    visualization: <IV.Visualization object>
-    //    pose: <some structure for the canvas location in the sphere>
-    // }
+IV.Workspace.prototype.addCanvas = function(info) {
+    /* info = {
+     *    name: "Canvas Name"
+     *    visualization: <IV.Visualization object>
+     *    pose: { // for allosphere.
+     *      center: <Vector3>
+     *      normal: <Vector3>
+     *      up: <Vector3>
+     *      width: <Vector3>
+     *    }
+     * }
+     */
     this.canvases.push(info);
 };
 
-IV.VisualizationWorkspace.prototype.getCanvas = function(name) {
+IV.Workspace.prototype.removeCanvas = function(info) {
+    var index = this.canvases.indexOf(info);
+    if(index >= 0) {
+        this.canvases.splice(index, 1);
+    }
 };
 
-IV.VisualizationWorkspace.prototype.removeCanvas = function(name) {
-};
-
-IV.VisualizationWorkspace.prototype.validate = function(data) {
+IV.Workspace.prototype.validateAll = function(data) {
     this.canvases.forEach(function(canvas) {
+        canvas.visualization.validate(data);
+    });
+    this.objects.forEach(function(canvas) {
         canvas.visualization.validate(data);
     });
 };
