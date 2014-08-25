@@ -31,6 +31,7 @@ var MessageTransportTCP = function(host, port) {
         client = net.connect(port, host);
         console.log("Connecting to:", host, port);
         client.on("data", function(data) {
+            // var t0 = new Date().getTime();
             temporary = Buffer.concat([temporary, data]);
             while(temporary.length >= 4) {
                 var length = temporary.readUInt32LE(0);
@@ -46,6 +47,8 @@ var MessageTransportTCP = function(host, port) {
                     break;
                 }
             }
+            // var t1 = new Date().getTime();
+            // console.log("on_data:", t1 - t0);
         });
         client.on("end", function() {
             do_connect();
@@ -56,31 +59,34 @@ var MessageTransportTCP = function(host, port) {
 
 var dataset, vis;
 
-var prefix = "/Users/donghao/Documents/Projects/iVisDesignerNative/test/data";
-var data = require(prefix + '/graph.json');
-var schema = require(prefix + '/graph.schema.json');
-var vis_data = require(prefix + '/graph.vis.inverted.json');
-var ds = new IV.PlainDataset(data, schema);
-dataset = new IV.DataObject(ds.obj, ds.schema);
-vis = IV.serializer.deserialize(vis_data);
+try {
+    var prefix = "/Users/donghao/Documents/Projects/iVisDesignerNative/test/data";
+    var data = require(prefix + '/graph.json');
+    var schema = require(prefix + '/graph.schema.json');
+    var vis_data = require(prefix + '/graph.vis.inverted.json');
+    var ds = new IV.PlainDataset(data, schema);
+    dataset = new IV.DataObject(ds.obj, ds.schema);
+    vis = IV.serializer.deserialize(vis_data);
 
-renderer.setData(dataset);
-renderer.setVisualization(vis);
-renderer.autoView(vis);
-renderer.trigger();
-renderer.render();
-main.uploadTexture();
+    renderer.setData(dataset);
+    renderer.setVisualization(vis);
+    renderer.autoView(vis);
+    renderer.trigger();
+    renderer.render();
+    main.uploadTexture();
+} catch(e) {
+}
 
 var connection = new MessageTransportTCP("ilab-115.cs.ucsb.edu", 60100);
 var index = 0;
 connection.onMessage = function(object) {
     console.log(index++, object.type);
+    // var t0 = new Date().getTime();
     if(object.type == "visualization.set") {
         vis = IV.serializer.deserialize(object.visualization);
         renderer.setVisualization(vis);
         renderer.autoView(vis);
         renderer.trigger("main");
-        main.uploadTexture();
     }
     if(object.type == "data.set") {
         var ds = new IV.PlainDataset(object.data, object.schema);
@@ -88,21 +94,25 @@ connection.onMessage = function(object) {
         renderer.setData(dataset);
         renderer.setVisualization(vis);
         renderer.trigger("main");
-        main.uploadTexture();
     }
+    // var t1 = new Date().getTime();
+    // console.log("onmessage:", t1 - t0);
 };
 
 var GL = allosphere.OpenGL;
 
 // This is called before each frame.
 allosphere.onFrame(function() {
+    var t0 = new Date().getTime();
+    if(renderer.render()) {
+        main.uploadTexture();
+        var t1 = new Date().getTime();
+        console.log("render + upload:", t1 - t0);
+    }
 });
 
 // Draw your stuff with OpenGL.
 allosphere.onDraw(function() {
-    if(renderer.render()) {
-        main.uploadTexture();
-    }
 
     GL.enable(GL.BLEND);
     GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);

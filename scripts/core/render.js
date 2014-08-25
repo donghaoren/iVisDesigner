@@ -242,15 +242,14 @@ if(IV.isBrowser) {
         this.restore();
         if(!this.iv_transform_stack) this.iv_transform_stack = [];
         this.iv_transform = this.iv_transform_stack.pop();
-        this.ivSetTransform(this.iv_transform_stack.pop());
     };
 
-    CanvasRenderingContext2D.prototype.ivSetTransform = function(tr) {
-        if(!tr) tr = new IV.affineTransform();
-        var r = this.iv_pre_ratio;
-        this.setTransform(r * tr.m[0], r * tr.m[1], r * tr.m[3], r * tr.m[4], r * tr.m[2], r * tr.m[5]);
-        this.iv_transform = tr;
-    };
+    // CanvasRenderingContext2D.prototype.ivSetTransform = function(tr) {
+    //     if(!tr) tr = new IV.affineTransform();
+    //     var r = this.iv_pre_ratio;
+    //     this.setTransform(r * tr.m[0], r * tr.m[1], r * tr.m[3], r * tr.m[4], r * tr.m[2], r * tr.m[5]);
+    //     this.iv_transform = tr;
+    // };
 
     CanvasRenderingContext2D.prototype.ivAppendTransform = function(tr) {
         if(this.iv_transform)
