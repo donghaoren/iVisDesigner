@@ -65,7 +65,7 @@ var CanvasRenderingContext2D = function(surface) {
 
     // TODO: clearRect will clear the entire canvas instead, the parameters won't work.
     _p.clearRect = function(x, y, w, h) {
-        this.__g.clear(0, 0, 0, 0);
+        this.__g.clear(255, 255, 255, 0);
     };
 
     _p.save = function() {

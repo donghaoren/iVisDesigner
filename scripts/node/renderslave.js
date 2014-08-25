@@ -108,6 +108,7 @@ allosphere.onFrame(function() {
         main.uploadTexture();
         var t1 = new Date().getTime();
         console.log("render + upload:", t1 - t0);
+        main.savePNG("test.png");
     }
 });
 
