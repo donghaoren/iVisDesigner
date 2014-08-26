@@ -204,6 +204,7 @@ Editor.bind("reset", function() {
 IV.set("visible-guide", true);
 IV.set("visible-grid", false);
 IV.set("render-2x", IV.getOptimalRatio() == 2);
+IV.set("colormode-black", false);
 
 IV.listen("visible-guide", function(val) {
     Editor.renderer.show_guide = val;
@@ -216,6 +217,18 @@ IV.listen("visible-grid", function(val) {
     Editor.renderer.frame_grid = val;
     Editor.renderer.trigger();
     Editor.renderer.render();
+});
+
+IV.listen("colormode-black", function(val) {
+    if(val) {
+        $("[data-href-black]").each(function() {
+            $(this).attr("href", $(this).attr("data-href-black"));
+        });
+    } else {
+        $("[data-href-black]").each(function() {
+            $(this).attr("href", $(this).attr("data-href-white"));
+        });
+    }
 });
 
 

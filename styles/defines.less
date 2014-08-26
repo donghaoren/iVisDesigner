@@ -2,19 +2,11 @@
 // Author: Donghao Ren, PKUVIS, Peking University, 2013.04
 // See LICENSE.txt for copyright information.
 
-@blue: #1754AD;
-@yellow: #FF7F0E;
-@gray: gray;
-@active_color: @blue;
-@active_color_warm: @yellow;
-
 @menubar_height: 30px;
 @statusbar_height: 18px;
 
 @main_font: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 @mono_font: "Lucida Console", Monaco, monospace;
-
-@panel_titlecolor: #666;
 
 .select_none {
     -webkit-user-select: none;
@@ -31,10 +23,7 @@
 
 .panel_background {
     //background: url("imgs/panel.png");
-    background: #F8F8F8;
-}
-.drop_shadow {
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    background: @panel_background;
 }
 
 .gradient_background(@color, @val: 10%) {

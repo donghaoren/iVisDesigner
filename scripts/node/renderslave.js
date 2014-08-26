@@ -31,7 +31,7 @@ var allosphere = require("node_allosphere");
 allosphere.initialize();
 
 // Setup canvas and renderer.
-var manager = new IV.CanvasManager(1600, 1600);
+var manager = new IV.CanvasManager(2000, 2000);
 var renderer = new IV.Renderer();
 
 renderer.setCanvasManager(manager);
@@ -101,7 +101,7 @@ try {
 } catch(e) {
 }
 
-var connection = new MessageTransportTCP("ilab-115.cs.ucsb.edu", 60100);
+var connection = new MessageTransportTCP("localhost", 60100);
 var index = 0;
 connection.onMessage = function(object) {
     console.log(index++, object.type);
@@ -128,6 +128,10 @@ var GL = allosphere.OpenGL;
 // This is called before each frame.
 allosphere.onFrame(function() {
     var t0 = new Date().getTime();
+    if(vis && dataset) {
+        vis.timerTick(dataset);
+        vis.triggerRenderer(renderer);
+    }
     if(renderer.render()) {
         main.uploadTexture();
         var t1 = new Date().getTime();
@@ -140,7 +144,8 @@ allosphere.onFrame(function() {
 allosphere.onDraw(function() {
 
     GL.enable(GL.BLEND);
-    GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+    // The texture output is in premultiplied alpha!
+    GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
 
     main.__surface.bindTexture(2);
 

@@ -3,7 +3,7 @@
     position: fixed;
     left: 0; right: 0; top: 0;
     height: @menubar_height;
-    border-bottom: 1px solid #AAA;
+    border-bottom: 1px solid @menu_border_color;
     z-index: 100;
     .panel_background();
     .drop_shadow();
@@ -36,7 +36,7 @@
         line-height: @menubar_height;
     }
     &:hover > span {
-        .gradient_background(#CCC, 5%);
+        .gradient_background(@active_color_gray, 5%);
     }
     &.active > span {
         .gradient_background(@active_color);
@@ -50,7 +50,7 @@
     white-space: nowrap;
     .panel_background();
     display: none;
-    border: 1px solid #AAA;
+    border: 1px solid @menu_border_color;
     border-top: none;
     padding: 4px 0;
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);

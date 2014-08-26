@@ -29,6 +29,11 @@
 
 var d3 = require("d3");
 var graphics = require("node_graphics");
+var request = require('request');
+
+var TODO_not_implemented_yet = function() {
+    console.log("TODO_not_implemented_yet");
+};
 
 var IV_Config = {
 };
@@ -89,7 +94,7 @@ var CanvasRenderingContext2D = function(surface) {
 
     // TODO: clearRect will clear the entire canvas instead, the parameters won't work.
     _p.clearRect = function(x, y, w, h) {
-        this.__g.clear(255, 255, 255, 0);
+        this.__g.clear(0, 0, 0, 0);
     };
 
     _p.save = function() {
@@ -126,8 +131,7 @@ var CanvasRenderingContext2D = function(surface) {
         return r;
     };
 
-    _p.strokeRect = function() {
-    };
+    _p.strokeRect = TODO_not_implemented_yet;
 
     _p.strokeText = function(text, x, y) {
         this.__paint.setMode(graphics.PAINTMODE_STROKE);
@@ -239,6 +243,16 @@ var CanvasRenderingContext2D = function(surface) {
         }
     });
 
+    Object.defineProperty(_p, "globalAlpha", {
+        get: function() {
+            return this.__globalAlpha;
+        },
+        set: function(value) {
+            this.__globalAlpha = value;
+            this.__paint.setColorMatrixScaleAlpha(value);
+        }
+    });
+
     _p.ivSave = function() {
         this.save();
     };
@@ -294,7 +308,55 @@ var CanvasRenderingContext2D = function(surface) {
         this.restore();
     };
 
+    _p.drawImage = function() {
+        if(arguments.length == 9) {
+            if(!arguments[0].__surface) return;
+            this.__g.drawSurface(
+                arguments[0].__surface,
+                arguments[1], arguments[2], arguments[3], arguments[4],
+                arguments[5], arguments[6], arguments[7], arguments[8],
+                this.__paint
+            );
+        }
+        if(arguments.length == 3) {
+            if(!arguments[0].__surface) return;
+            this.__g.drawSurface(arguments[0].__surface, arguments[1], arguments[2], this.__paint);
+        }
+    };
+
 })();
+
+var Image = function() {
+    this.__surface = null;
+};
+
+Image.__cache = { };
+
+Object.defineProperty(Image.prototype, "src", {
+    get: function() {
+        return this.__src;
+    },
+    set: function(value) {
+        var self = this;
+        this.__src = value;
+        if(Image.__cache[value]) {
+            self.__surface = Image.__cache[value];
+            setTimeout(function() {
+                if(self.onload) self.onload();
+            }, 1);
+        } else {
+            request({ url: value, encoding: null }, function(error, response, body) {
+                if(!error) {
+                    self.__surface = new graphics.Surface2D(body);
+                    Image.__cache[value] = self.__surface;
+                    if(self.onload) self.onload();
+                } else {
+                    if(self.onerror) self.onerror();
+                }
+            });
+        }
+    }
+});
 
 var IVWrappers = {
     CreateCanvas: function() {

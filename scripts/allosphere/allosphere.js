@@ -29,6 +29,8 @@
 
 if(IV.getQuery("allosphere") == "true" || IV_Config.allosphere_slave) {(function() {
 
+IV.set("colormode-black", true);
+
 IV.allosphere = { };
 IV.allosphere.F = { };
 

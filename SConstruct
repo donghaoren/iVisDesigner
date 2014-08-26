@@ -16,9 +16,17 @@ from version import IV_version, IV_rev
 Meta("version", IV_version)
 Meta("revision", IV_rev.upper())
 
-CSS("toolkit.css", ["styles/toolkit.less",
-                    "styles/fontello.css",
-                    "images/iconfont/ivfont.css"])
+CSS("toolkit.css", [
+    "styles/toolkit.less",
+    "styles/fontello.css",
+    "images/iconfont/ivfont.css"
+])
+
+CSS("toolkit-black.css", [
+    "styles/toolkit-black.less",
+    "styles/fontello.css",
+    "images/iconfont/ivfont.css"
+])
 
 env.IconFont("images/iconfont/ivfont.css",
              FindFiles("tools_*.svg", "images/iconfont"),
