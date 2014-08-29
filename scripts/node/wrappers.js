@@ -173,8 +173,13 @@ var CanvasRenderingContext2D = function(surface) {
     _p.bezierCurveTo = function(c1x, c1y, c2x, c2y, x, y) {
         this.__path.bezierCurveTo(c1x, c1y, c2x, c2y, x, y);
     };
-    _p.quadraticCurveTo = function() {
+
+    _p.quadraticCurveTo = TODO_not_implemented_yet;
+
+    _p.closePath = function() {
+        this.__path.close();
     };
+
     _p.stroke = function() {
         this.__paint.setMode(graphics.PAINTMODE_STROKE);
         this.__paint.setColor(this.__strokeColor[0], this.__strokeColor[1], this.__strokeColor[2], this.__strokeColor[3]);

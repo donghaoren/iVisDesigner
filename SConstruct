@@ -72,10 +72,19 @@ Javascript("embed.js", [
 ])
 
 Javascript("renderslave.js", [
+    "scripts/node/shmconfig.js",
     "scripts/node/wrappers.js",
     "scripts/utils/utils.js",
     "scripts/core/core.js",
     "scripts/node/renderslave.js"
+])
+
+Javascript("allomain.js", [
+    "scripts/node/shmconfig.js",
+    "scripts/node/wrappers.js",
+    "scripts/utils/utils.js",
+    "scripts/core/core.js",
+    "scripts/node/allomain.js"
 ])
 
 Image("favicon-64.png", "images/favicon-64.png")

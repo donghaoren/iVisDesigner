@@ -27,8 +27,8 @@
 // OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var allosphere = require("node_allosphere");
-allosphere.initialize();
+// Initialize SHM.
+SHMConfig.init(false); // create SHM object.
 
 // Setup canvas and renderer.
 var manager = new IV.CanvasManager(2000, 2000);
@@ -95,13 +95,12 @@ try {
     renderer.setData(dataset);
     renderer.setVisualization(vis);
     renderer.autoView(vis);
-    renderer.trigger();
-    renderer.render();
-    main.uploadTexture();
+    renderer.trigger("main");
 } catch(e) {
+    console.trace(e);
 }
 
-var connection = new MessageTransportTCP("localhost", 60100);
+var connection = new MessageTransportTCP("ilab-121.cs.ucsb.edu", 60100);
 var index = 0;
 connection.onMessage = function(object) {
     console.log(index++, object.type);
@@ -119,63 +118,20 @@ connection.onMessage = function(object) {
         renderer.setVisualization(vis);
         renderer.trigger("main");
     }
-    // var t1 = new Date().getTime();
-    // console.log("onmessage:", t1 - t0);
 };
 
-var GL = allosphere.OpenGL;
-
 // This is called before each frame.
-allosphere.onFrame(function() {
+setInterval(function() {
     var t0 = new Date().getTime();
     if(vis && dataset) {
         vis.timerTick(dataset);
         vis.triggerRenderer(renderer);
     }
     if(renderer.render()) {
-        main.uploadTexture();
-        var t1 = new Date().getTime();
-        console.log("render + upload:", t1 - t0);
-        main.savePNG("test.png");
+        var tex = SHMConfig.textures.T0;
+        tex.shm.writeLock();
+        tex.setTimestamp(new Date().getTime());
+        main.__surface.pixels().copy(tex.buffer);
+        tex.shm.writeUnlock();
     }
-});
-
-// Draw your stuff with OpenGL.
-allosphere.onDraw(function() {
-
-    GL.enable(GL.BLEND);
-    // The texture output is in premultiplied alpha!
-    GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
-
-    main.__surface.bindTexture(2);
-
-    allosphere.shaderUniformf("texture", 1.0);
-    allosphere.shaderUniformi("texture0", 2);
-    allosphere.shaderUniformf("lighting", 0);
-
-    GL.begin(GL.QUADS);
-    GL.texCoord2f(0, 0); GL.normal3f(0, 0, 1); GL.vertex3f(-1,  1, 1);
-    GL.texCoord2f(0, 1); GL.normal3f(0, 0, 1); GL.vertex3f(-1, -1, 1);
-    GL.texCoord2f(1, 1); GL.normal3f(0, 0, 1); GL.vertex3f( 1, -1, 1);
-    GL.texCoord2f(1, 0); GL.normal3f(0, 0, 1); GL.vertex3f( 1,  1, 1);
-    GL.end();
-
-
-    GL.begin(GL.QUADS);
-    GL.texCoord2f(0, 0); GL.normal3f(0, 0, 1); GL.vertex3f(-1,  1, -1);
-    GL.texCoord2f(0, 1); GL.normal3f(0, 0, 1); GL.vertex3f(-1, -1, -1);
-    GL.texCoord2f(1, 1); GL.normal3f(0, 0, 1); GL.vertex3f( 1, -1, -1);
-    GL.texCoord2f(1, 0); GL.normal3f(0, 0, 1); GL.vertex3f( 1,  1, -1);
-    GL.end();
-
-    main.__surface.unbindTexture(2);
-
-    GL.flush();
-});
-
-
-
-// Main event loop.
-setInterval(function() {
-    allosphere.tick();
-}, 10);
+}, 30);
