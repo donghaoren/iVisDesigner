@@ -36,6 +36,7 @@ IV.addListener("command:panels.reset", function() {
     $("#panel-style").IVPanel({ right: 10, top: 10, width: 200, height: 300 }).IVPanel("show");
     $("#panel-property").IVPanel({ right: 10, top: 320, width: 200, bottom: 10 }).IVPanel("show");
     $("#panel-inspector").IVPanel({ right: 220, bottom: 10, width: 200, height: 200 }).IVPanel("hide");
+    $("#panel-pose").IVPanel({ right: 220, bottom: 10, width: 200, height: 200 }).IVPanel("hide");
 });
 IV.raiseEvent("command:panels.reset");
 
@@ -43,6 +44,7 @@ IV.add("status", "string");
 IV.listen("status", function(s) {
     $(".status-text").text(s);
 });
+
 
 (function() {
     // Mouse events.

@@ -92,6 +92,7 @@ Editor.doAddObject = function(obj) {
 
 {{include: objectlist.js}}
 {{include: schemaview.js}}
+{{include: workspace.js}}
 
 {{include: popups/popups.js}}
 
@@ -100,6 +101,8 @@ Editor.doAddObject = function(obj) {
 {{include: ui.js}}
 
 {{include: tools/tools.js}}
+
+{{include: panels/poseeditor.js}}
 
 {{include: actionmanager.js}}
 
@@ -118,6 +121,31 @@ Editor.setData = function(data) {
     if(Editor.vis) {
         Editor.vis.data = Editor.data;
     }
+};
+
+Editor.setWorkspace = function(w) {
+    Editor.unsetWorkspace();
+    Editor.workspace = w;
+    if(w.default_canvas) {
+        Editor.workspaceSwitchCanvas(w.default_canvas);
+    }
+    Editor.renderWorkspaceMenu();
+};
+
+Editor.unsetWorkspace = function() {
+    Editor.unsetVisualization();
+    Editor.workspace = null;
+};
+
+Editor.workspaceSwitchCanvas = function(canvas) {
+    Editor.setVisualization(canvas.visualization);
+    Editor.workspace.default_canvas = canvas;
+    Editor.pose_editor.setPose(canvas.pose);
+    Editor.pose_editor.onPoseChanged = function(pose) {
+        canvas.pose = pose;
+        if(IV.SyncAllosphere) IV.SyncAllosphere();
+    };
+    Editor.renderWorkspaceMenu();
 };
 
 Editor.setVisualization = function(vis) {

@@ -138,6 +138,11 @@ IV_version = {
           </span>
         </li>
         <li>
+          <span data-toggle="#panel-pose">Pose View
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
           <span data-toggle="#panel-log">Log
             <span class="toggle-indicator"><i class="xicon-mark"></i></span>
           </span>
@@ -153,6 +158,11 @@ IV_version = {
     </li>
   </ul>
   <ul class="menu menu-right">
+    <li>
+      <span>Workspace</span>
+      <ul id="workspace-container">
+      </ul>
+    </li>
     <li>
       <span><i class="icon-user"></i> <span class="user-name"></span></span>
       <ul>
@@ -299,10 +309,17 @@ IV_version = {
       <ul></ul>
     </div>
   </div>
-  <!-- Log Panel -->
+  <!-- Inspector Panel -->
   <div id="panel-inspector" class="panel" data-title="Log">
     <div class="scrollview">
       <div id="data-inspector"></div>
+    </div>
+  </div>
+  <!-- 3D Pose Panel -->
+  <div id="panel-pose" class="panel" data-title="Pose">
+    <div class="scrollview">
+      <div id="pose-view">
+      </div>
     </div>
   </div>
   <!-- Page Panel -->

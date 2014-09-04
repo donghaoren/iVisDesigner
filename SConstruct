@@ -72,7 +72,7 @@ Javascript("embed.js", [
 ])
 
 Javascript("renderslave.js", [
-    "scripts/node/shmconfig.js",
+    "scripts/node/sharedtexture.js",
     "scripts/node/wrappers.js",
     "scripts/utils/utils.js",
     "scripts/core/core.js",
@@ -80,7 +80,7 @@ Javascript("renderslave.js", [
 ])
 
 Javascript("allomain.js", [
-    "scripts/node/shmconfig.js",
+    "scripts/node/sharedtexture.js",
     "scripts/node/wrappers.js",
     "scripts/utils/utils.js",
     "scripts/core/core.js",

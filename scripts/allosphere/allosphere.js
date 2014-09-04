@@ -40,13 +40,14 @@ window.isAllosphereMaster = IV.getQuery("allosphere-master") == "true";
 
 var SyncAllosphere = function() {
     IV.server.wamp.publish("iv.allosphere.message", JSON.stringify({
-        type: "visualization.set",
-        visualization: IV.serializer.serialize(IV.editor.vis)
+        type: "workspace.set",
+        workspace: IV.serializer.serialize(IV.editor.workspace)
     }));
 };
 
 if(window.isAllosphereMaster) {
     IV.editor.renderer.bind("main", SyncAllosphere);
+    IV.SyncAllosphere = SyncAllosphere;
     IV.on("dataset:set", function(c) {
         IV.server.wamp.publish("iv.allosphere.message", JSON.stringify({
             type: "data.set",

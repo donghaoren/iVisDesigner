@@ -196,7 +196,6 @@ IV.on("command:toolkit.start", function() {
                                                         var vis = IV.serializer.deserialize(vis_data);
                                                         IV.loadVisualization(vis);
                                                         IV.dataset_id = data.dataset_info.id;
-                                                        vis.clearSelection();
                                                         ctx.close();
                                                     });
                                                 });
@@ -253,7 +252,7 @@ IV.on("command:toolkit.save", function() {
             user: IV.get("user").id,
             created_at: new Date().toISOString(),
             dataset: IV.dataset_id,
-            content: JSON.stringify(IV.serializer.serialize(IV.editor.vis)),
+            content: JSON.stringify(IV.serializer.serialize(IV.editor.workspace)),
             description: description,
             uuid: IV.editor.vis.uuid
         }, function(err, data) {
@@ -270,7 +269,7 @@ IV.on("command:toolkit.save", function() {
                 user: IV.get("user").id,
                 created_at: new Date().toISOString(),
                 dataset: IV.dataset_id,
-                content: JSON.stringify(IV.serializer.serialize(IV.editor.vis)),
+                content: JSON.stringify(IV.serializer.serialize(IV.editor.workspace)),
                 description: description,
                 uuid: IV.editor.vis.uuid
             }, function(err, data) {
@@ -286,7 +285,7 @@ IV.on("command:toolkit.save", function() {
     var running_request = false;
     setInterval(function() {
         if(!IV.editor.data || !IV.editor.vis) return;
-        content = JSON.stringify(IV.serializer.serialize(IV.editor.vis));
+        content = JSON.stringify(IV.serializer.serialize(IV.editor.workspace));
         if(content == previous_content || running_request) return;
         running_request = true;
         IV.server.post("visualizations/", {

@@ -27,8 +27,13 @@
 // OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// Initialize SHM.
-SHMConfig.init(false); // create SHM object.
+{{include: transport.js}}
+
+var configuration = require("./alloconfig");
+var args = JSON.parse(process.argv[2]);
+var SharedMemory = require("node_sharedmemory").SharedMemory;
+var texture = new SharedTexture(args);
+
 
 // Setup canvas and renderer.
 var manager = new IV.CanvasManager(2000, 2000);
@@ -46,42 +51,7 @@ manager.add("back", add_canvas());
 manager.add("overlay", add_canvas());
 
 
-var MessageTransportTCP = function(host, port) {
-    var self = this;
-    var net = require("net");
-    var client;
-    var do_connect = function() {
-        temporary = new Buffer(0);
-        client = net.connect(port, host);
-        console.log("Connecting to:", host, port);
-        client.on("data", function(data) {
-            // var t0 = new Date().getTime();
-            temporary = Buffer.concat([temporary, data]);
-            while(temporary.length >= 4) {
-                var length = temporary.readUInt32LE(0);
-                if(temporary.length >= 4 + length) {
-                    var message = temporary.slice(4, 4 + length);
-                    if(self.onMessage) {
-                        try {
-                            self.onMessage(JSON.parse(message.toString("utf8")));
-                        } catch(e) { console.trace(e); }
-                    }
-                    temporary = temporary.slice(4 + length);
-                } else {
-                    break;
-                }
-            }
-            // var t1 = new Date().getTime();
-            // console.log("on_data:", t1 - t0);
-        });
-        client.on("end", function() {
-            do_connect();
-        });
-    };
-    do_connect();
-};
-
-var dataset, vis;
+var dataset, workspace, vis;
 
 try {
     var prefix = "/Users/donghao/Documents/Projects/iVisDesignerNative/test/data";
@@ -100,7 +70,7 @@ try {
     console.trace(e);
 }
 
-var connection = new MessageTransportTCP("ilab-121.cs.ucsb.edu", 60100);
+var connection = new MessageTransportTCP(configuration, true);
 var index = 0;
 connection.onMessage = function(object) {
     console.log(index++, object.type);
@@ -110,6 +80,15 @@ connection.onMessage = function(object) {
         renderer.setVisualization(vis);
         renderer.autoView(vis);
         renderer.trigger("main");
+    }
+    if(object.type == "workspace.set") {
+        workspace = IV.serializer.deserialize(object.workspace);
+        if(workspace && workspace.canvases[args.index]) {
+            vis = workspace.canvases[args.index].visualization;
+            renderer.setVisualization(vis);
+            renderer.autoView(vis);
+            renderer.trigger("main");
+        }
     }
     if(object.type == "data.set") {
         var ds = new IV.PlainDataset(object.data, object.schema);
@@ -121,17 +100,30 @@ connection.onMessage = function(object) {
 };
 
 // This is called before each frame.
-setInterval(function() {
+var timer = setInterval(function() {
     var t0 = new Date().getTime();
     if(vis && dataset) {
         vis.timerTick(dataset);
         vis.triggerRenderer(renderer);
     }
     if(renderer.render()) {
-        var tex = SHMConfig.textures.T0;
-        tex.shm.writeLock();
-        tex.setTimestamp(new Date().getTime());
-        main.__surface.pixels().copy(tex.buffer);
-        tex.shm.writeUnlock();
+        texture.shm.writeLock();
+        texture.setTimestamp(new Date().getTime());
+        main.__surface.pixels().copy(texture.buffer);
+        texture.shm.writeUnlock();
     }
 }, 30);
+
+function safe_exit() {
+    clearInterval(timer);
+    connection.close();
+};
+
+process.on("SIGHUP", safe_exit);
+process.on("SIGINT", safe_exit);
+process.on("SIGTERM", safe_exit);
+process.on("uncaughtException", function(error) {
+    console.log('Caught exception: ');
+    console.trace(error);
+    safe_exit();
+});

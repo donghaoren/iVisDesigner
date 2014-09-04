@@ -28,10 +28,12 @@
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 IV.Workspace = function() {
+    this.type = "Workspace";
     this.uuid = IV.generateUUID();
     // All objects of the visualization, ordered in an array.
     this.canvases = [];
     this.objects = [];
+    this.default_canvas = null;
     // Selected objects.
     IV.EventSource.call(this);
 };
@@ -41,7 +43,7 @@ IV.implement(IV.EventSource, IV.Workspace);
 
 // Serialization support.
 IV.Workspace.prototype.serializeFields = function() {
-    return [ "canvases", "objects", "uuid" ];
+    return [ "canvases", "objects", "uuid", "default_canvas" ];
 };
 
 IV.Workspace.prototype.postDeserialize = function() {
@@ -61,6 +63,22 @@ IV.Workspace.prototype.addCanvas = function(info) {
      *    }
      * }
      */
+    if(!info.pose) {
+        info.pose = {
+            center: new IV.Vector3(1, 0, 0),
+            normal: new IV.Vector3(-1, 0, 0),
+            up: new IV.Vector3(0, 0, 1),
+            width: 0.5
+        };
+    }
+    if(!info.visualization) info.visualization = new IV.Visualization();
+    if(!info.name) {
+        var index = 1;
+        var names = { };
+        this.canvases.forEach(function(c) { names[c.name] = true; });
+        while(names["Canvas" + index]) index += 1;
+        info.name = "Canvas" + index;
+    }
     this.canvases.push(info);
 };
 

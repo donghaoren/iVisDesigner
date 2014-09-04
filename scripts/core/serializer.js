@@ -149,6 +149,10 @@ IV.serializer.registerDeserializer("Vector", function(item) {
     return new IV.Vector(item.x, item.y);
 });
 
+IV.serializer.registerDeserializer("Vector3", function(item) {
+    return new IV.Vector3(item.x, item.y, item.z);
+});
+
 IV.serializer.registerDeserializer("Rectangle", function(item) {
     return new IV.Rectangle(item.x0, item.y0, item.width, item.height, item.angle);
 });

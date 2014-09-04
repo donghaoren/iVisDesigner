@@ -36,8 +36,23 @@ IV.config = $.extend({
 {{include: client/client.js}}
 
 IV.loadVisualization = function(vis) {
-    if(!vis) IV.editor.unsetVisualization();
-    else IV.editor.setVisualization(vis);
+    if(!vis) {
+        IV.editor.unsetVisualization();
+        IV.editor.unsetWorkspace();
+    } else {
+        var workspace = vis;
+        if(vis instanceof IV.Visualization) {
+            IV.editor.setVisualization(vis);
+            workspace = new IV.Workspace();
+            var canvas = {
+                name: "Canvas1",
+                visualization: vis
+            };
+            workspace.addCanvas(canvas);
+            workspace.default_canvas = canvas;
+        }
+        IV.editor.setWorkspace(workspace);
+    }
 };
 
 IV.newVisualization = function() {
