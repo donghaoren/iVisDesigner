@@ -87,6 +87,10 @@ Javascript("allomain.js", [
     "scripts/node/allomain.js"
 ])
 
+Javascript("boardcast_test.js", [
+    "scripts/node/boardcast_test.js"
+])
+
 Image("favicon-64.png", "images/favicon-64.png")
 Image("favicon-512.png", "images/favicon-512.png")
 

@@ -7,14 +7,18 @@ var MessageTransportTCP = function(config, is_renderer) {
     bcast.onMessage(function(message) {
         if(self.onMessage) {
             try {
-                self.onMessage(JSON.parse(message.toString("utf8")));
-            } catch(e) { console.trace(e); }
+                var str = message.toString("utf8");
+                self.onMessage(JSON.parse(str));
+            } catch(e) {
+                console.trace(e);
+            }
         }
     });
     this.close = function() {
         bcast.stop();
     };
 };
+
 // var MessageTransportTCP = function(host, port) {
 //     var self = this;
 //     var net = require("net");
