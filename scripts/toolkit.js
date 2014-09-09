@@ -57,8 +57,9 @@ IV.loadVisualization = function(vis) {
 
 IV.newVisualization = function() {
     // Just construct one for testing.
-    var vis = new IV.Visualization;
-    IV.editor.setVisualization(vis);
+    var workspace = new IV.Workspace();
+    workspace.addCanvas();
+    IV.editor.setWorkspace(workspace);
 };
 
 // ------------------------------------------------------------------------

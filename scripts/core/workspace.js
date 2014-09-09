@@ -63,6 +63,7 @@ IV.Workspace.prototype.addCanvas = function(info) {
      *    }
      * }
      */
+     if(!info) info = { };
     if(!info.pose) {
         info.pose = {
             center: new IV.Vector3(1, 0, 0),
@@ -80,6 +81,7 @@ IV.Workspace.prototype.addCanvas = function(info) {
         info.name = "Canvas" + index;
     }
     this.canvases.push(info);
+    if(this.default_canvas == null) this.default_canvas = info;
 };
 
 IV.Workspace.prototype.removeCanvas = function(info) {

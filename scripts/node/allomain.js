@@ -69,7 +69,8 @@ RenderSlaveProcess.prototype.stop = function() {
 
 var slave_processes = [
     new RenderSlaveProcess({ script: "renderslave.js", index: 0 }),
-    new RenderSlaveProcess({ script: "renderslave.js", index: 1 })
+    new RenderSlaveProcess({ script: "renderslave.js", index: 1 }),
+    new RenderSlaveProcess({ script: "renderslave.js", index: 2 })
 ];
 
 var connection = new MessageTransportTCP(configuration, false);
