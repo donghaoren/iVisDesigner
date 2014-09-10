@@ -1,4 +1,4 @@
-// iVisDesigner - File: scripts/node/shmconfig.js
+// iVisDesigner - File: scripts/node/sharedtexture.js
 // Copyright (c) 2013-2014, Donghao Ren
 // University of California Santa Barbara, Peking University
 // Advised by Prof. Tobias Hollerer and previously by Prof. Xiaoru Yuan.
