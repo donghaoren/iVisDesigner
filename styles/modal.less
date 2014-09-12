@@ -2,7 +2,7 @@
     z-index: 1000000;
     position: fixed;
     display: none;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: fade(@cBackground, 70%);
     left: 0; right: 0; top: 0; bottom: 0;
 }
 
@@ -20,18 +20,17 @@
 
     li .dataset-info {
         cursor: pointer;
-
         margin: 5px 0;
         padding: 5px;
-        background-color: #fbfbfb;
-
+        background-color: @dataset_background;
         .name {
             font-size: 13px;
             font-weight: bold;
             display: block;
             margin: 5px 0;
         }
-        .description { font-size: 11px;
+        .description {
+            font-size: 11px;
             font-style: italic;
             display: block;
             margin: 5px 0;
@@ -41,13 +40,12 @@
             float: right;
             margin: 3px 3px;
         }
-
         // border-bottom: 1px solid #CCC;
         // border-top: 1px solid #CCC;
-        border-left: 2px solid #CCC;
+        border-left: 2px solid mix(@cBackground, #888, 50%);
         &:hover {
             border-left: 2px solid @active_color;
-            background-color: mix(@active_color, white, 5%);
+            background-color: mix(@active_color, @dataset_background, 5%);
             // border-bottom: 1px solid @active_color;
             // border-top: 1px solid @active_color;
         }
@@ -55,10 +53,10 @@
 
     ul.visualizations {
         li {
-            border-left: 2px solid #CCC;
+            border-left: 2px solid mix(@cBackground, #888, 50%);
             margin: 5px 0;
             margin-left: 10px;
-            background-color: #fbfbfb;
+            background-color: @dataset_background;
             padding: 3px;
             cursor: pointer;
             .description {
@@ -72,13 +70,12 @@
                 margin: 5px 0;
                 display: block;
             }
-
             .actions {
                 margin: 3px 3px;
             }
             &:hover {
-                background-color: mix(@active_color, white, 5%);
                 border-left: 2px solid @active_color;
+                background-color: mix(@active_color, @dataset_background, 5%);
             }
         }
     }

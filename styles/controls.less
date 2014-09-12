@@ -95,7 +95,7 @@ select {
     display: inline-block;
     vertical-align: top;
     width: 17px; height: 17px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid fade(@cMainText, 20%);
     cursor: pointer;
     &.empty {
         background-color: transparent !important;
@@ -119,12 +119,12 @@ select {
         position: absolute;
         right: 0; top: 0; bottom: 0;
         width: @width;
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: fade(@cMainText, 10%);
         .guide {
             position: absolute;
             right: 0;
             width: @width;
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: fade(@cMainText, 20%);
             height: 10px;
             display: none;
         }

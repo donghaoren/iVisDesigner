@@ -1,7 +1,7 @@
 #data-schema, .data-schema {
     line-height: 20px;
     font-size: 12px;
-    background: white;
+    background: @cBackground;
 
     li > span {
         display: block;
@@ -9,7 +9,7 @@
         cursor: pointer;
         padding-left: 7px;
         //border-top:1px solid @panel_titlecolor;
-        border-bottom:1px solid white;
+        border-bottom:1px solid @cBackground;
         .panel_background();
 
         &:hover {
@@ -50,7 +50,7 @@
             height: 11px;
             margin: 3px;
             margin-left: 0;
-            .gradient_background(rgba(0, 0, 0, 0.05));
+            .gradient_background(fade(@cMainText, 5%));
             &:hover {
                 .gradient_background(lighten(@active_color, 20%));
             }
