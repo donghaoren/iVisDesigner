@@ -28,6 +28,7 @@
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 {{include: transport.js}}
+{{include: panorama.js}}
 
 var configuration = require("./alloconfig");
 
@@ -67,6 +68,7 @@ RenderSlaveProcess.prototype.stop = function() {
     this.texture.shm.delete();
 };
 
+
 var slave_processes = [
     new RenderSlaveProcess({ script: "renderslave.js", index: 0 }),
     new RenderSlaveProcess({ script: "renderslave.js", index: 1 }),
@@ -80,11 +82,19 @@ connection.onMessage = function(object) {
     if(object.type == "workspace.set") {
         workspace = IV.serializer.deserialize(object.workspace);
     }
+    if(object.type == "panorama.load") {
+        panorama_texture.submitImageFile(object.filename, object.is_stereo);
+    }
 };
 
 if(configuration.allosphere) {
     var allosphere = require("node_allosphere");
     allosphere.initialize();
+
+
+    var panorama_renderer = new EquirectangularRenderer(allosphere);
+    var panorama_texture = new EquirectangularTexture(allosphere, false);
+
     var GL = allosphere.OpenGL;
 
     // This is called before each frame.
@@ -102,7 +112,12 @@ if(configuration.allosphere) {
     });
 
     // Draw your stuff with OpenGL.
-    allosphere.onDraw(function() {
+    allosphere.onDraw(function(info) {
+        GL.enable(GL.BLEND);
+        // The texture output is in premultiplied alpha!
+        GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
+
+        panorama_renderer.render(panorama_texture, info);
         var index = 0;
         slave_processes.forEach(function(slave_process) {
             if(!workspace) return;
@@ -111,9 +126,7 @@ if(configuration.allosphere) {
 
             var tex = slave_process.texture;
 
-            GL.enable(GL.BLEND);
-            // The texture output is in premultiplied alpha!
-            GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
+            allosphere.shaderBegin(allosphere.shaderDefault());
 
             tex.surface.bindTexture(2);
 
@@ -145,6 +158,8 @@ if(configuration.allosphere) {
 
             tex.surface.unbindTexture(2);
 
+            allosphere.shaderEnd(allosphere.shaderDefault());
+
             index += 1;
         });
 
@@ -158,7 +173,9 @@ if(configuration.allosphere) {
 
 }
 
+var should_exit = false;
 var safe_exit = function() {
+    should_exit = true;
     clearInterval(timer);
     slave_processes.forEach(function(p) {
         p.stop();

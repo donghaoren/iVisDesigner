@@ -48,13 +48,27 @@ var SyncAllosphere = function() {
 if(window.isAllosphereMaster) {
     IV.editor.renderer.bind("main", SyncAllosphere);
     IV.SyncAllosphere = SyncAllosphere;
+    IV.allosphere.postMessage = function(data) {
+        IV.server.wamp.publish("iv.allosphere.message", JSON.stringify(data));
+    };
     IV.on("dataset:set", function(c) {
-        IV.server.wamp.publish("iv.allosphere.message", JSON.stringify({
+        IV.allosphere.postMessage({
             type: "data.set",
             data: c.data,
             schema: c.schema
-        }));
+        });
     });
+
+    IV.allosphere.loadPanorama = function(path, is_stereo) {
+        IV.allosphere.postMessage({
+            type: "panorama.load",
+            filename: path,
+            is_stereo: is_stereo
+        });
+    };
+    IV.allosphere.loopPanorama = function(template, index_start, index_end) {
+
+    };
 }
 
 if(IV_Config.allosphere_slave) {
