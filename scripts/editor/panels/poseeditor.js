@@ -1,3 +1,8 @@
+// iVisDesigner - scripts/editor/panels/poseeditor.js
+// Author: Donghao Ren
+//
+// LICENSE
+//
 // Copyright (c) 2014, The Regents of the University of California
 // All rights reserved.
 //
