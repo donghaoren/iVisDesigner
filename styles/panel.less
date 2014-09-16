@@ -166,11 +166,15 @@
     font-size: 13px;
     line-height: 19px;
 
+    @separator_color: extract(fade(@cForeground, 5%) black, @colorscheme_index);
+    @caption_background: fade(@cForeground, extract(2% 5%, @colorscheme_index));
+    @input_background: fade(@cBackground, 50%);
+
     .item-caption {
-        background-color: rgba(0, 0, 0, 0.02);
+        background-color: @caption_background;
         padding-left: 5px;
         font-size: 11px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid @separator_color;
         cursor: pointer;
         i {
             text-align: center;
@@ -187,8 +191,8 @@
     .item-tools {
         text-align: right;
         font-size: 11px;
-        background-color: rgba(0, 0, 0, 0.02);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        background-color: @caption_background;
+        border-bottom: 1px solid @separator_color;
     }
 
     .item-divider {
@@ -198,10 +202,10 @@
 
     .item-action {
         .nested-caption {
-            background-color: rgba(0, 0, 0, 0.02);
+            background-color: @caption_background;
             padding-left: 5px;
             font-size: 11px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid @separator_color;
             cursor: pointer;
             i {
                 text-align: center;
@@ -213,7 +217,7 @@
             padding-left: 10px;
         }
         .field {
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid @separator_color;
             white-space: nowrap;
             .name {
                 float: left;
@@ -283,7 +287,8 @@
         background: none;
         width: calc(~"100% - 6px");
         height: 19px;
-        background-color: rgba(255, 255, 255, 0.5);
+        background-color: @input_background;
+        vertical-align: top;
         &.dirty {
             color: @active_color;
         }
@@ -294,10 +299,12 @@
             padding: 0;
             margin: 0;
             text-align: center;
-            background-color: rgba(255, 255, 255, 0.5);
+            background-color: @input_background;
+            vertical-align: top;
         }
         input {
             width: calc(~"100% - 16px");
+            vertical-align: top;
         }
     }
     table.linear-ftf {

@@ -78,6 +78,7 @@ var slave_processes = [
 var connection = new MessageTransportTCP(configuration, false);
 var index = 0;
 var workspace = null;
+
 connection.onMessage = function(object) {
     if(object.type == "workspace.set") {
         workspace = IV.serializer.deserialize(object.workspace);
@@ -85,12 +86,17 @@ connection.onMessage = function(object) {
     if(object.type == "panorama.load") {
         panorama_texture.submitImageFile(object.filename, object.is_stereo);
     }
+    if(object.type == "eval") {
+        try {
+            eval(object.script);
+        } catch(e) {
+        }
+    }
 };
 
 if(configuration.allosphere) {
     var allosphere = require("node_allosphere");
     allosphere.initialize();
-
 
     var panorama_renderer = new EquirectangularRenderer(allosphere);
     var panorama_texture = new EquirectangularTexture(allosphere, false);

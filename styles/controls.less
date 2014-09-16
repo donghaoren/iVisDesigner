@@ -17,8 +17,8 @@
 }
 
 .btn-s {
-    .gradient_background(#F0F0F0);
-    box-shadow: 0 0 1px #AAA;
+    .gradient_background(extract(#F0F0F0 #202020, @colorscheme_index));
+    box-shadow: 0 0 1px extract(#AAA #000, @colorscheme_index);
 }
 
 .pull-left { float: left; }
@@ -76,10 +76,12 @@ select {
             outline: none;
         }
         vertical-align: top;
+
+        background-color: @cBackground;
     }
     span {
         .btn();
-        background-color: white;
+        background-color: @cBackground;
         padding: 0px 2px;
         display: inline-block;
         font-size: 12px;
@@ -95,7 +97,7 @@ select {
     display: inline-block;
     vertical-align: top;
     width: 17px; height: 17px;
-    border: 1px solid fade(@cMainText, 20%);
+    border: 1px solid fade(@cForeground, 20%);
     cursor: pointer;
     &.empty {
         background-color: transparent !important;
@@ -119,12 +121,12 @@ select {
         position: absolute;
         right: 0; top: 0; bottom: 0;
         width: @width;
-        background-color: fade(@cMainText, 10%);
+        background-color: fade(@cForeground, extract(10% 5%, @colorscheme_index));
         .guide {
             position: absolute;
             right: 0;
             width: @width;
-            background-color: fade(@cMainText, 20%);
+            background-color: fade(@cForeground, extract(20% 10%, @colorscheme_index));
             height: 10px;
             display: none;
         }
@@ -168,7 +170,11 @@ select {
 .xicon-cross:before { .xicon_content("✕"); }
 .xicon-mark:before { .xicon_content("✓"); }
 
-input, textarea { font-size: 12px; }
+input, textarea {
+    font-size: 12px;
+    color: @cMainText;
+    background: @cBackground;
+}
 
 form {
     .input-group {
@@ -183,7 +189,7 @@ form {
         div {
             display: block;
             input {
-                background-color: white;
+                background-color: @cBackground;
                 font-family: @main_font;
                 font-size: 12px;
                 &:hover, &:active, &:focus {
@@ -194,12 +200,12 @@ form {
                 width: calc(~"100% - 14px");
                 height: 17px;
                 border: 0;
-                border-left: 2px solid #CCC;
+                border-left: 2px solid extract(#CCC #444, @colorscheme_index);
                 margin: 0;
                 padding: 3px 6px;
             }
             textarea {
-                background-color: white;
+                background-color: @cBackground;
                 font-family: @main_font;
                 font-size: 12px;
                 &:hover, &:active, &:focus {
@@ -210,7 +216,7 @@ form {
                 width: calc(~"100% - 14px");
                 height: 80px;
                 border: 0;
-                border-left: 2px solid #CCC;
+                border-left: 2px solid extract(#CCC #444, @colorscheme_index);
                 margin: 0;
                 padding: 3px 6px;
             }

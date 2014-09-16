@@ -27,7 +27,7 @@ EquirectangularTexture.prototype.submitImageFile = function(filename, is_stereo)
 
 EquirectangularTexture.prototype.get = function(eye) {
     if(this.is_stereo) {
-        return this.textures[eye > 0 ? 1 : 0];
+        return this.textures[eye > 0 ? 0 : 1];
     } else {
         return this.textures[0];
     }
