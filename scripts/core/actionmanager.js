@@ -1,31 +1,30 @@
-// iVisDesigner - File: scripts/core/actionmanager.js
-// Copyright (c) 2013-2014, Donghao Ren
-// University of California Santa Barbara, Peking University
-// Advised by Prof. Tobias Hollerer and previously by Prof. Xiaoru Yuan.
-//
+// Copyright (c) 2014, The Regents of the University of California
 // All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
+// Redistribution and use in source and binary forms, with or without modification,
+// are permitted provided that the following conditions are met:
 //
-// 1. Redistributions of source code must retain the above copyright notice,
-//    this list of conditions and the following disclaimer.
+// 1. Redistributions of source code must retain the above copyright notice, this
+//    list of conditions and the following disclaimer.
 //
-// 2. Redistributions in binary form must reproduce the above copyright
-//    notice, this list of conditions and the following disclaimer in the
-//    documentation and/or other materials provided with the distribution.
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-// IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// 3. Neither the name of the copyright holder nor the names of its contributors
+//    may be used to endorse or promote products derived from this software without
+//    specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+// OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+// OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (function() {
 
@@ -37,7 +36,10 @@ IV.ActionManager = function(root) {
     this.action_cache = [];
     this.action_log = [];
     this.undo_stack = [];
+    IV.EventSource.call(this);
 };
+
+IV.implement(IV.EventSource, IV.ActionManager);
 
 IV.ActionManager.prototype.perform = function(act) {
 };
@@ -89,7 +91,7 @@ IV.ActionManager.prototype.redo = function() {
 // Action types:
 
 actions.SetProperty = IV.extend(Object, function(p1, p2, p3) {
-    this.type = "SetProperty";
+    this.type = "action.SetProperty";
     if(p3 === undefined) {
         this.obj = p1.owner;
         this.field = p1.property;
@@ -108,10 +110,11 @@ actions.SetProperty = IV.extend(Object, function(p1, p2, p3) {
         this.obj["_set_" + this.field](this.original);
     }
 });
+IV.serializer.registerObjectType("action.SetProperty", actions.SetProperty);
 
 // set index val; splice index howmany vals; push val; pop
 actions.SetArrayDirectly = IV.extend(Object, function(obj, field, action, p1, p2, p3) {
-    this.type = "SetArrayProperty";
+    this.type = "action.SetArrayDirectly";
     this.obj = obj;
     this.field = field;
     this.action = action;
@@ -153,9 +156,10 @@ actions.SetArrayDirectly = IV.extend(Object, function(obj, field, action, p1, p2
         IV.raiseObjectEvent(this.obj, "set:" + this.field, this.action);
     }
 });
+IV.serializer.registerObjectType("action.SetArrayDirectly", actions.SetArrayDirectly);
 
 actions.SetDirectly = IV.extend(Object, function(obj, field, val) {
-    this.type = "SetDirectly";
+    this.type = "action.SetDirectly";
     this.obj = obj;
     this.field = field;
     this.val = val;
@@ -170,5 +174,22 @@ actions.SetDirectly = IV.extend(Object, function(obj, field, val) {
         IV.raiseObjectEvent(this.obj, "set:" + this.field, this.original);
     }
 });
+IV.serializer.registerObjectType("action.SetDirectly", actions.SetDirectly);
+
+actions.Add = IV.extend(Object, function(obj, f_add, f_remove, item) {
+    this.type = "action.Add";
+    this.obj = obj;
+    this.function_add = f_add;
+    this.function_remove = f_remove;
+    this.item = item;
+}, {
+    perform: function() {
+        this.obj[this.function_add](this.item);
+    },
+    rollback: function() {
+        this.obj[this.function_remove](this.item);
+    }
+});
+IV.serializer.registerObjectType("action.Add", actions.Add);
 
 })();
