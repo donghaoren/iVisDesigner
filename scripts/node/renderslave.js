@@ -121,6 +121,7 @@ var timer = setInterval(function() {
 function safe_exit() {
     clearInterval(timer);
     connection.close();
+    process.exit();
 };
 
 process.on("SIGHUP", safe_exit);

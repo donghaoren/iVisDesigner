@@ -143,6 +143,11 @@ IV_version = {
           </span>
         </li>
         <li>
+          <span data-toggle="#panel-code-editor">Code Editor
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
           <span data-toggle="#panel-log">Log
             <span class="toggle-indicator"><i class="xicon-mark"></i></span>
           </span>
@@ -321,6 +326,14 @@ IV_version = {
       <div id="pose-view">
       </div>
     </div>
+  </div>
+  <!-- Code Editor Panel -->
+  <div id="panel-code-editor" class="panel" data-title="Code Editor">
+    <div class="buttons" style="padding: 3px;">
+      <span id="code-editor-remote-run" class="btn btn-s">Run Remote</span>
+      <span id="code-editor-local-run"class="btn btn-s">Run Local</span>
+    </div>
+    <div id="code-editor-container"></div>
   </div>
   <!-- Page Panel -->
   <div id="panel-page" class="panel full-title" data-title="Page">

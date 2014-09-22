@@ -19,13 +19,19 @@ Meta("revision", IV_rev.upper())
 CSS("toolkit.css", [
     "styles/toolkit.less",
     "styles/fontello.css",
-    "images/iconfont/ivfont.css"
+    "images/iconfont/ivfont.css",
+    "libraries/codemirror/codemirror.css",
+    "libraries/codemirror/elegant.css",
+    "libraries/codemirror/monokai.css"
 ])
 
 CSS("toolkit-black.css", [
     "styles/toolkit-black.less",
     "styles/fontello.css",
-    "images/iconfont/ivfont.css"
+    "images/iconfont/ivfont.css",
+    "libraries/codemirror/codemirror.css",
+    "libraries/codemirror/elegant.css",
+    "libraries/codemirror/monokai.css"
 ])
 
 env.IconFont("images/iconfont/ivfont.css",
@@ -43,7 +49,8 @@ Javascript("libraries.js", [
     "libraries/chroma.js",
     "libraries/numeric-1.2.6.js",
     "libraries/canvas2svg.js",
-    "libraries/wampy-all.min.js"
+    "libraries/wampy-all.min.js",
+    "libraries/codemirror/codemirror.js"
 ])
 
 YAML2DataJavascript("strings.js", [

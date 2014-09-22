@@ -41,6 +41,7 @@ IV.addListener("command:panels.reset", function() {
     $("#panel-property").IVPanel({ right: 10, top: 320, width: 200, bottom: 10 }).IVPanel("show");
     $("#panel-inspector").IVPanel({ right: 220, bottom: 10, width: 200, height: 200 }).IVPanel("hide");
     $("#panel-pose").IVPanel({ right: 220, bottom: 10, width: 200, height: 200 }).IVPanel("hide");
+    $("#panel-code-editor").IVPanel({ left: 200, bottom: 10, right: 220, height: 200 }).IVPanel("hide");
 });
 IV.raiseEvent("command:panels.reset");
 
@@ -202,5 +203,29 @@ IV.listen("status", function(s) {
     });
     $(document).bind('touchmove', function(e) {
         e.preventDefault();
+    });
+
+    var codemirror = CodeMirror(document.getElementById("code-editor-container"), {
+        value: "// Input Javascript code here.\n",
+        lineNumbers: true,
+        indentUnit: 4,
+        tabSize: 4,
+        keyMap: "sublime",
+        theme: "monokai",
+        lineNumbers: true,
+        matchBrackets: true,
+        showCursorWhenSelecting: true,
+        mode: "javascript"
+    });
+    $("#code-editor-remote-run").click(function() {
+        var code = codemirror.getSelection();
+        IV.allosphere.postMessage({
+            type: "eval",
+            script: code
+        });
+    });
+    $("#code-editor-local-run").click(function() {
+        var code = codemirror.getSelection();
+        eval(code);
     });
 })();

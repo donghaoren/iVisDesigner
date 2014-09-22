@@ -156,13 +156,13 @@ var render = function() {
             if(s == "Fill") {
                 actions.push({
                     type: "fill",
-                    color: new IV.objects.Plain(new IV.Color(128, 128, 128, 1))
+                    color: new IV.objects.Plain(IV.colors.default_fill)
                 });
             }
             if(s == "Stroke") {
                 actions.push({
                     type: "stroke",
-                    color: new IV.objects.Plain(new IV.Color(0, 0, 0, 1)),
+                    color: new IV.objects.Plain(IV.colors.default_stroke),
                     width: new IV.objects.Plain(1),
                     join: new IV.objects.Plain("round"),
                     cap: new IV.objects.Plain("round")

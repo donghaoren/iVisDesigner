@@ -36,6 +36,7 @@ function EquirectangularTexture(allosphere) {
     var texture_left = allosphere.textureCreate();
     var texture_right = allosphere.textureCreate();
     this.textures = [ texture_left, texture_right ];
+    this.preloaded_images = { };
 }
 
 EquirectangularTexture.prototype.submit = function(image, is_stereo) {
@@ -52,10 +53,25 @@ EquirectangularTexture.prototype.submit = function(image, is_stereo) {
 };
 
 EquirectangularTexture.prototype.submitImageFile = function(filename, is_stereo) {
+    var image = this.preloaded_images[filename];
+    if(!image) {
+        var fs = require("fs");
+        if(!fs.existsSync(filename)) return;
+        image = graphics.loadImageData(fs.readFileSync(filename));
+    }
+    this.submit(image, is_stereo);
+};
+
+EquirectangularTexture.prototype.preloadImageFile = function(filename) {
+    if(this.preloaded_images[filename]) return;
     var fs = require("fs");
     if(!fs.existsSync(filename)) return;
-    var image = graphics.loadImageData(fs.readFileSync(filename));
-    this.submit(image, is_stereo);
+    image = graphics.loadImageData(fs.readFileSync(filename));
+    this.preloaded_images[filename] = image;
+};
+
+EquirectangularTexture.prototype.unloadImageFile = function(key, filename) {
+    delete this.preloaded_images[key];
 };
 
 EquirectangularTexture.prototype.get = function(eye) {
@@ -73,8 +89,11 @@ EquirectangularTexture.prototype.free = function() {
 
 function EquirectangularRenderer(allosphere) {
     var vertex_shader = [
+    "    vec4 iv_to_al(in vec4 v) {",
+    "        return vec4(v.y, v.z, v.x, v.w);",
+    "    }",
     "    void main() {",
-    "        vec4 vertex = gl_ModelViewMatrix * gl_Vertex;",
+    "        vec4 vertex = gl_ModelViewMatrix * iv_to_al(gl_Vertex);",
     "        gl_TexCoord[0] = gl_MultiTexCoord0;",
     "        gl_Position = omni_render(vertex);",
     "    }"
@@ -83,12 +102,12 @@ function EquirectangularRenderer(allosphere) {
     "    uniform sampler2D texture0;",
     "    const float PI = 3.141592653589793238462643383;",
     "    void main() {",
-    "        vec3 position = -gl_TexCoord[0].zxy;",
+    "        vec3 position = gl_TexCoord[0].xyz;",
     "        float phi = atan(position.y, position.x);",
     "        float theta = atan(position.z, length(position.xy));",
     "        vec2 st;",
-    "        st.x = -phi / PI / 2.0 + 0.5;",
-    "        st.y = theta / PI + 0.5;",
+    "        st.x = phi / PI / 2.0 + 0.5;",
+    "        st.y = -theta / PI + 0.5;",
     "        vec4 textureColor = texture2D(texture0, st);",
     "        gl_FragColor = textureColor;",
     "    }"
@@ -107,7 +126,7 @@ EquirectangularRenderer.prototype.render = function(texture, info) {
     var vertices = [    //           7------4      z
         [ +s, +s, +s ], // 0        /|     /|      ^
         [ +s, +s, -s ], // 1       3-|----0 |      + > y
-        [ +s, -s, -s ], // 2       | 6----|-5
+        [ +s, -s, -s ], // 2       | 6----|-5      x
         [ +s, -s, +s ], // 3       |/     |/
         [ -s, +s, +s ], // 4       2------1
         [ -s, +s, -s ], // 5

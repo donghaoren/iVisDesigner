@@ -152,6 +152,14 @@ NS.Vector3.prototype = {
     }
 };
 
+NS.Quaternion = function(v, w) {
+    this.v = v !== undefined ? v : new NS.Vector3(0, 0, 0);
+    this.w = w === undefined ? 0 : w;
+};
+NS.Quaternion.rotation = function(axis, angle) {
+    return new NS.Quaternion(axis.normalize().scale(Math.sin(angle / 2)), Math.cos(angle / 2));
+};
+
 NS.geometry = { };
 
 NS.geometry.pointLineSegmentDistance = function(pt, p1, p2) {

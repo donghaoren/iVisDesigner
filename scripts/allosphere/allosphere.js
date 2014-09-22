@@ -62,7 +62,18 @@ if(window.isAllosphereMaster) {
             schema: c.schema
         });
     });
-
+    IV.allosphere.preloadPanorama = function(path) {
+        IV.allosphere.postMessage({
+            type: "panorama.preload",
+            filename: path
+        });
+    };
+    IV.allosphere.unloadPanorama = function(path) {
+        IV.allosphere.postMessage({
+            type: "panorama.preload",
+            filename: path
+        });
+    };
     IV.allosphere.loadPanorama = function(path, is_stereo) {
         IV.allosphere.postMessage({
             type: "panorama.load",
@@ -70,8 +81,39 @@ if(window.isAllosphereMaster) {
             is_stereo: is_stereo
         });
     };
-    IV.allosphere.loopPanorama = function(template, index_start, index_end) {
-
+    var loop_timer = null;
+    IV.allosphere.preloadPanoramas = function(info) {
+        if(!info.start) info.start = 0;
+        if(!info.end) info.end = 100;
+        if(!info.step) info.step = 1;
+        for(var index = info.start; index <= info.end; index++) {
+            var file = info.template.replace("$index", d3.format("04d")(index));
+            IV.allosphere.preloadPanorama(file);
+        }
+    };
+    IV.allosphere.unloadPanoramas = function(info) {
+        if(!info.start) info.start = 0;
+        if(!info.end) info.end = 100;
+        if(!info.step) info.step = 1;
+        for(var index = info.start; index <= info.end; index++) {
+            var file = info.template.replace("$index", d3.format("04d")(index));
+            IV.allosphere.unloadPanorama(file);
+        }
+    };
+    IV.allosphere.loopPanoramas = function(info) {
+        if(loop_timer) { clearInterval(loop_timer); loop_timer = null; }
+        if(!info.interval) info.interval = 100;
+        if(!info.start) info.start = 0;
+        if(!info.end) info.end = 100;
+        if(!info.step) info.step = 1;
+        var index = info.start;
+        loop_timer = setInterval(function() {
+            var file = info.template.replace("$index", d3.format("04d")(index));
+            IV.allosphere.loadPanorama(file, info.is_stereo);
+            index += info.step;
+            if(index > info.end) index = info.start;
+            if(index < info.start) index = info.end;
+        }, info.interval ? info.interval : 100);
     };
 }
 

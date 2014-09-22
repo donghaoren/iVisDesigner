@@ -90,10 +90,17 @@ connection.onMessage = function(object) {
     if(object.type == "panorama.load") {
         panorama_texture.submitImageFile(object.filename, object.is_stereo);
     }
+    if(object.type == "panorama.preload") {
+        panorama_texture.preloadImageFile(object.filename);
+    }
+    if(object.type == "panorama.unload") {
+        panorama_texture.unloadImageFile(object.filename);
+    }
     if(object.type == "eval") {
         try {
             eval(object.script);
         } catch(e) {
+            console.trace(e);
         }
     }
 };
@@ -128,6 +135,7 @@ if(configuration.allosphere) {
         GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
 
         panorama_renderer.render(panorama_texture, info);
+
         var index = 0;
         slave_processes.forEach(function(slave_process) {
             if(!workspace) return;
@@ -154,16 +162,10 @@ if(configuration.allosphere) {
             var p3 = pose.center.add(ex).sub(ey);
             var p4 = pose.center.add(ex).add(ey);
             GL.begin(GL.QUADS);
-            // Allosphere uses y, z, x coordinate system, while we use x, y, z (z = up).
-            GL.texCoord2f(0, 0); GL.normal3f(pose.normal.y, pose.normal.z, pose.normal.x); GL.vertex3f(p1.y, p1.z, p1.x);
-            GL.texCoord2f(0, 1); GL.normal3f(pose.normal.y, pose.normal.z, pose.normal.x); GL.vertex3f(p2.y, p2.z, p2.x);
-            GL.texCoord2f(1, 1); GL.normal3f(pose.normal.y, pose.normal.z, pose.normal.x); GL.vertex3f(p3.y, p3.z, p3.x);
-            GL.texCoord2f(1, 0); GL.normal3f(pose.normal.y, pose.normal.z, pose.normal.x); GL.vertex3f(p4.y, p4.z, p4.x);
-            // debug only.
-            // GL.texCoord2f(0, 0); GL.normal3f(0, 0, 1); GL.vertex3f(-1,  1, -1);
-            // GL.texCoord2f(0, 1); GL.normal3f(0, 0, 1); GL.vertex3f(-1, -1, -1);
-            // GL.texCoord2f(1, 1); GL.normal3f(0, 0, 1); GL.vertex3f( 1, -1, -1);
-            // GL.texCoord2f(1, 0); GL.normal3f(0, 0, 1); GL.vertex3f( 1,  1, -1);
+            GL.texCoord2f(0, 0); GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z); GL.vertex3f(p1.x, p1.y, p1.z);
+            GL.texCoord2f(0, 1); GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z); GL.vertex3f(p2.x, p2.y, p2.z);
+            GL.texCoord2f(1, 1); GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z); GL.vertex3f(p3.x, p3.y, p3.z);
+            GL.texCoord2f(1, 0); GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z); GL.vertex3f(p4.x, p4.y, p4.z);
             GL.end();
 
             tex.surface.unbindTexture(2);
@@ -192,6 +194,7 @@ var safe_exit = function() {
     });
     connection.close();
     console.log("SIGTERM");
+    process.exit();
 };
 
 process.on("SIGHUP", safe_exit);

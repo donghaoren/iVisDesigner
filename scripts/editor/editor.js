@@ -256,14 +256,18 @@ IV.listen("visible-grid", function(val) {
 
 IV.listen("colormode-black", function(val) {
     if(val) {
+        IV.colors = IV.colors_black;
         $("[data-href-black]").each(function() {
             $(this).attr("href", $(this).attr("data-href-black"));
         });
     } else {
+        IV.colors = IV.colors_white;
         $("[data-href-black]").each(function() {
             $(this).attr("href", $(this).attr("data-href-white"));
         });
     }
+    Editor.renderer.trigger();
+    Editor.renderer.render();
 });
 
 

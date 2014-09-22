@@ -47,7 +47,26 @@
 // ------------------------------------------------------------------------
 // Global Colors
 // ------------------------------------------------------------------------
-IV.colors = {
+IV.colors_white = {
     selection: IV.parseColorHEX("1754AD"),
-    guide: new IV.Color(0, 0, 0, 0.03)
+    guide: new IV.Color(0, 0, 0, 0.03),
+    foreground: new IV.Color(0, 0, 0, 1),
+    background: new IV.Color(255, 255, 255, 1),
+    default_fill: new IV.Color(0, 0, 0, 1),
+    default_halffill: new IV.Color(128, 128, 128, 1),
+    default_stroke: new IV.Color(0, 0, 0, 1),
+    default_guide: new IV.Color(0, 0, 0, 1)
 };
+
+IV.colors_black = {
+    selection: IV.parseColorHEX("1754AD"),
+    guide: new IV.Color(255, 255, 255, 0.3),
+    foreground: new IV.Color(255, 255, 255, 1),
+    background: new IV.Color(0, 0, 0, 1),
+    default_fill: new IV.Color(255, 255, 255, 1),
+    default_halffill: new IV.Color(128, 128, 128, 1),
+    default_stroke: new IV.Color(255, 255, 255, 1),
+    default_guide: new IV.Color(255, 255, 255, 1)
+};
+
+IV.colors = IV.colors_white;

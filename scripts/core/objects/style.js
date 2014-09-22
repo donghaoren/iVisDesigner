@@ -37,14 +37,14 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
         this.actions = [
             {
                 type: "fill",
-                color: new Objects.Plain(new IV.Color(0, 0, 0, 1))
+                color: new Objects.Plain(IV.colors.default_fill)
             }
         ];
     } else if(type == "Line" || type == "Arc" || type == "Polyline" || type == "LineThrough") {
         this.actions = [
             {
                 type: "stroke",
-                color: new Objects.Plain(new IV.Color(0, 0, 0, 1)),
+                color: new Objects.Plain(IV.colors.default_stroke),
                 width: new Objects.Plain(1),
                 join: new Objects.Plain("bevel"),
                 cap: new Objects.Plain("butt")
@@ -55,11 +55,11 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
         this.actions = [
             {
                 type: "fill",
-                color: new Objects.Plain(new IV.Color(128, 128, 128, 1))
+                color: new Objects.Plain(IV.colors.default_halffill)
             },
             {
                 type: "stroke",
-                color: new Objects.Plain(new IV.Color(0, 0, 0, 1)),
+                color: new Objects.Plain(IV.colors.default_stroke),
                 width: new Objects.Plain(1),
                 join: new Objects.Plain("bevel"),
                 cap: new Objects.Plain("butt")
@@ -80,7 +80,7 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
         });
     },
     renderGuide: function(context, g, path) {
-        g.strokeStyle = "#888";
+        g.strokeStyle = IV.colors.guide.toRGBA();
         g.lineCap = "butt";
         g.lineJoin = "bevel";
         g.ivGuideLineWidth();
@@ -302,7 +302,7 @@ var TickStyle = IV.extend(Objects.Object, function(info) {
         if(this.tick_width === undefined) this.tick_width = 1;
         if(this.tick_size === undefined) this.tick_size = 2;
         if(this.tick_count === undefined) this.tick_count = 5;
-        if(this.tick_color === undefined) this.tick_color = new IV.Color(0, 0, 0, 1);
+        if(this.tick_color === undefined) this.tick_color = IV.colors.default_guide;
         if(this.tick_format === undefined) this.tick_format = "g";
         if(this.rotation === undefined) this.rotation = 0;
         if(this.font === undefined) this.font = new FontStyle();

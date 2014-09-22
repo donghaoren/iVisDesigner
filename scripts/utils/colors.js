@@ -105,8 +105,11 @@ NS.Color.prototype = {
         r.a = this.a + s * (dest.a - this.a);
         return r;
     },
-    clone: function() {
-        return new NS.Color(this.r, this.g, this.b, this.a);
+    clone: function(alpha) {
+        if(alpha !== undefined)
+            return new NS.Color(this.r, this.g, this.b, alpha);
+        else
+            return new NS.Color(this.r, this.g, this.b, this.a);
     },
     equals: function(c) {
         return this.r == c.r && this.g == c.g && this.b == c.b && this.a == c.a;

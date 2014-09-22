@@ -39,6 +39,7 @@ var beginSelectingRectangle = function(callback) {
     var p0 = null, p1 = null;
     Editor.tools.beginOverlay({
         renderOverlay: function(g) {
+            g.strokeStyle = IV.colors.guide.toRGBA();
             if(p0 && p1) {
                 g.beginPath();
                 g.rect(Math.min(p0.x, p1.x), Math.min(p0.y, p1.y), Math.abs(p0.x - p1.x), Math.abs(p0.y - p1.y));
@@ -104,7 +105,7 @@ templates.Scatterplot = function() {
             });
             circle.style.actions = [{
                 type: "fill",
-                color: new IV.objects.Plain(new IV.Color(0, 0, 0, 1))
+                color: new IV.objects.Plain(IV.colors.default_fill)
             }];
             Editor.doAddObject(track_x);
             Editor.doAddObject(track_y);
@@ -160,7 +161,7 @@ templates.Timeline = function() {
             });
             line.style.actions = [{
                 type: "stroke",
-                color: new IV.objects.Plain(new IV.Color(0, 0, 0, 1)),
+                color: new IV.objects.Plain(IV.colors.default_stroke),
                 width: new IV.objects.Plain(1),
                 join: new IV.objects.Plain("bevel"),
                 cap: new IV.objects.Plain("butt")
@@ -231,11 +232,11 @@ templates.Graph = function() {
             });
             circle.style.actions = [{
                 type: "fill",
-                color: new IV.objects.Plain(new IV.Color(0, 0, 0, 1))
+                color: new IV.objects.Plain(IV.colors.default_fill)
             }];
             line.style.actions = [{
                 type: "stroke",
-                color: new IV.objects.Plain(new IV.Color(0, 0, 0, 0.2)),
+                color: new IV.objects.Plain(IV.colors.default_stroke.clone(0.2)),
                 width: new IV.objects.Plain(1),
                 join: new IV.objects.Plain("bevel"),
                 cap: new IV.objects.Plain("butt")

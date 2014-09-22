@@ -235,16 +235,16 @@ var render_property_field = function(item) {
     if(type == "color") {
         make_switch_button([ "Plain", "Linear", "Categorical", "Expression", "Equals"], function(val) {
             if(val == "Plain") {
-                reload_item(new IV.objects.Plain(new IV.Color(0, 0, 0, 1)));
+                reload_item(new IV.objects.Plain(IV.colors.foreground));
             }
             if(val == "Linear") {
-                reload_item(new IV.objects.ColorLinear(new IV.Path(), new IV.Color(0, 0, 0, 1), new IV.Color(255, 255, 255, 1)));
+                reload_item(new IV.objects.ColorLinear(new IV.Path(), IV.colors.background, IV.colors.foreground));
             }
             if(val == "Categorical") {
-                reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], new IV.Color(0, 0, 0, 1), "color"));
+                reload_item(new IV.objects.CategoricalMapping(new IV.Path(), [], IV.colors.foreground, "color"));
             }
             if(val == "Expression") {
-                reload_item(new IV.objects.MappingExpression(new IV.Path(), "rgb(0, 0, 0)"));
+                reload_item(new IV.objects.MappingExpression(new IV.Path(), IV.colors.foreground.toRGB()));
             }
             if(val == "Equals") {
                 reload_item(new IV.objects.PassThrough(new IV.Path()));
