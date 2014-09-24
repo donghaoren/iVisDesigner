@@ -33,6 +33,7 @@
 
 {{include: transport.js}}
 {{include: panorama.js}}
+{{include: workspace_sync.js}}
 
 var configuration = require("./alloconfig");
 
@@ -83,10 +84,15 @@ var connection = new MessageTransportTCP(configuration, false);
 var index = 0;
 var workspace = null;
 
+var workspace_sync = new WorkspaceSync();
+workspace_sync.onUpdate = function() {
+    workspace = workspace_sync.workspace;
+};
+
 connection.onMessage = function(object) {
-    if(object.type == "workspace.set") {
-        workspace = IV.serializer.deserialize(object.workspace);
-    }
+    // if(object.type == "workspace.set") {
+    //     workspace = IV.serializer.deserialize(object.workspace);
+    // }
     if(object.type == "panorama.load") {
         panorama_texture.submitImageFile(object.filename, object.is_stereo);
     }
@@ -103,6 +109,7 @@ connection.onMessage = function(object) {
             console.trace(e);
         }
     }
+    workspace_sync.processMessage(object);
 };
 
 if(configuration.allosphere) {

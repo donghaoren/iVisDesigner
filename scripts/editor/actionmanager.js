@@ -31,8 +31,12 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var Actions = new IV.ActionManager;
+var Actions = new IV.ActionManager();
 Editor.actions = Actions;
+
+Actions.bind("perform", function(actions) {
+    if(IV.allosphere) IV.allosphere.sync.perform(actions);
+});
 
 IV.on("command:editor.undo", function() {
     Actions.undo();

@@ -53,6 +53,7 @@ var load_dataset_from_server = function(info, callback) {
         if(schema.source.name) {
             var name = schema.source.name;
             var obj = new IV.server.SyncedObject(name);
+            IV.raise("dataset:set", { type: "synced", data: obj, schema: schema });
             var data_obj = null;
             obj.onUpdate = function(data) {
                 var ds = new IV.PlainDataset(data, schema);
@@ -66,6 +67,18 @@ var load_dataset_from_server = function(info, callback) {
                     data_obj.raise("update");
                 }
             };
+        } else if(schema.source.mysql) {
+            IV.server.wamp.call("dataset.mysql", [ schema.source.mysql ], {
+                onSuccess: function(result) {
+                    var content = result[0];
+                    var data = content.data;
+                    var ds = new IV.PlainDataset(data, schema);
+                    IV.loadVisualization();
+                    IV.data = new IV.DataObject(ds.obj, ds.schema);
+                    IV.editor.setData(IV.data);
+                    callback();
+                }
+            });
         } else if(schema.source.url) {
             var url = schema.source.url;
             if(schema.source.type == "jsonp") {
@@ -108,7 +121,7 @@ var load_dataset_from_server = function(info, callback) {
         IV.loadVisualization();
         IV.data = new IV.DataObject(ds.obj, ds.schema);
         IV.editor.setData(IV.data);
-        IV.raise("dataset:set", { data: jsyaml.load(info.data), schema: schema }); // TODO: restructure this code.
+        IV.raise("dataset:set", { type: "plain", data: jsyaml.load(info.data), schema: schema }); // TODO: restructure this code.
         callback();
     }
 }

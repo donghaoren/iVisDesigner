@@ -32,6 +32,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 {{include: transport.js}}
+{{include: workspace_sync.js}}
 
 var configuration = require("./alloconfig");
 var args = JSON.parse(process.argv[2]);
@@ -55,7 +56,7 @@ manager.add("back", add_canvas());
 manager.add("overlay", add_canvas());
 
 
-var dataset, workspace, vis;
+var dataset, workspace, vis, synced_object;
 
 try {
     var prefix = "/Users/donghao/Documents/Projects/iVisDesignerNative/test/data";
@@ -85,20 +86,51 @@ connection.onMessage = function(object) {
         renderer.autoView(vis);
         renderer.trigger("main");
     }
-    if(object.type == "workspace.set") {
-        workspace = IV.serializer.deserialize(object.workspace);
-        if(workspace && workspace.canvases[args.index]) {
-            vis = workspace.canvases[args.index].visualization;
-            renderer.setVisualization(vis);
-            renderer.autoView(vis);
-            renderer.trigger("main");
-        }
-    }
+    // if(object.type == "workspace.set") {
+    //     workspace = IV.serializer.deserialize(object.workspace);
+    //     if(workspace && workspace.canvases[args.index]) {
+    //         vis = workspace.canvases[args.index].visualization;
+    //         renderer.setVisualization(vis);
+    //         renderer.autoView(vis);
+    //         renderer.trigger("main");
+    //     }
+    // }
     if(object.type == "data.set") {
         var ds = new IV.PlainDataset(object.data, object.schema);
         dataset = new IV.DataObject(ds.obj, ds.schema);
         renderer.setData(dataset);
         renderer.setVisualization(vis);
+        renderer.trigger("main");
+    }
+    if(object.type == "data.set.synced") {
+        synced_object = new IV.SyncedObjectClient(object.name);
+        synced_object.onUpdate = function(data) {
+            var ds = new IV.PlainDataset(data, object.schema);
+            var data_obj = null;
+            if(!data_obj) {
+                data_obj = new IV.DataObject(ds.obj, ds.schema);
+                renderer.setData(data_obj);
+                renderer.setVisualization(vis);
+                renderer.trigger("main");
+            } else {
+                data_obj.updateRoot(ds.obj);
+                data_obj.raise("update");
+            }
+        };
+    }
+    if(object.type == "data.set.synced.message") {
+        synced_object.processMessage(object.message);
+    }
+    workspace_sync.processMessage(object);
+};
+
+var workspace_sync = new WorkspaceSync();
+workspace_sync.onUpdate = function() {
+    workspace = workspace_sync.workspace;
+    if(workspace && workspace.canvases[args.index]) {
+        vis = workspace.canvases[args.index].visualization;
+        renderer.setVisualization(vis);
+        renderer.autoView(vis);
         renderer.trigger("main");
     }
 };
@@ -109,13 +141,13 @@ var timer = setInterval(function() {
     if(vis && dataset) {
         vis.timerTick(dataset);
         vis.triggerRenderer(renderer);
-    }
-    if(renderer.render()) {
-        texture.shm.writeLock();
-        texture.setTimestamp(new Date().getTime());
-        main.__surface.pixels().copy(texture.buffer);
-        texture.shm.writeUnlock();
-    }
+        if(renderer.render()) {
+            texture.shm.writeLock();
+            texture.setTimestamp(new Date().getTime());
+            main.__surface.pixels().copy(texture.buffer);
+            texture.shm.writeUnlock();
+        }
+}
 }, 30);
 
 function safe_exit() {

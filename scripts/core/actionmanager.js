@@ -55,6 +55,7 @@ IV.ActionManager.prototype.add = function(act) {
 
 IV.ActionManager.prototype.commit = function() {
     if(this.action_cache.length == 0) return;
+    this.raise("perform", this.action_cache);
     for(var i = 0; i < this.action_cache.length; i++) {
         if(this.action_cache[i].perform)
             this.action_cache[i].perform();

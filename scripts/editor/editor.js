@@ -137,6 +137,7 @@ Editor.setWorkspace = function(w) {
         Editor.workspaceSwitchCanvas(w.default_canvas);
     }
     Editor.renderWorkspaceMenu();
+    if(IV.allosphere) IV.allosphere.sync.startup();
 };
 
 Editor.unsetWorkspace = function() {
@@ -149,8 +150,8 @@ Editor.workspaceSwitchCanvas = function(canvas) {
     Editor.workspace.default_canvas = canvas;
     Editor.pose_editor.setPose(canvas.pose);
     Editor.pose_editor.onPoseChanged = function(pose) {
-        canvas.pose = pose;
-        if(IV.SyncAllosphere) IV.SyncAllosphere();
+        Editor.actions.add(new IV.actions.SetDirectly(canvas, "pose", pose));
+        Editor.actions.commit();
     };
     Editor.renderWorkspaceMenu();
 };

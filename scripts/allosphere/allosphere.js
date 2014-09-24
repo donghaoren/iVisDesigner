@@ -39,14 +39,15 @@ IV.allosphere = { };
 IV.allosphere.F = { };
 
 $("body").addClass("allosphere");
+
 window.isAllosphere = true;
 window.isAllosphereMaster = IV.getQuery("allosphere-master") == "true";
 
 var SyncAllosphere = function() {
-    IV.server.wamp.publish("iv.allosphere.message", JSON.stringify({
-        type: "workspace.set",
-        workspace: IV.serializer.serialize(IV.editor.workspace)
-    }));
+    // IV.server.wamp.publish("iv.allosphere.message", JSON.stringify({
+    //     type: "workspace.set",
+    //     workspace: IV.serializer.serialize(IV.editor.workspace)
+    // }));
 };
 
 if(window.isAllosphereMaster) {
@@ -55,13 +56,15 @@ if(window.isAllosphereMaster) {
     IV.allosphere.postMessage = function(data) {
         IV.server.wamp.publish("iv.allosphere.message", JSON.stringify(data));
     };
-    IV.on("dataset:set", function(c) {
-        IV.allosphere.postMessage({
-            type: "data.set",
-            data: c.data,
-            schema: c.schema
-        });
-    });
+    // IV.on("dataset:set", function(c) {
+    //     if(c.type == "plain") {
+    //         IV.allosphere.postMessage({
+    //             type: "data.set",
+    //             data: c.data,
+    //             schema: c.schema
+    //         });
+    //     }
+    // });
     IV.allosphere.preloadPanorama = function(path) {
         IV.allosphere.postMessage({
             type: "panorama.preload",
@@ -115,60 +118,122 @@ if(window.isAllosphereMaster) {
             if(index < info.start) index = info.end;
         }, info.interval ? info.interval : 100);
     };
-}
 
-if(IV_Config.allosphere_slave) {
-    $(window).load(function() {
-        var embed = new IV.EmbeddedCanvas($("#container"), {
-            width: $("#container").width(),
-            height: $("#container").height()
-        });
-        F = { };
-        F['data.set'] = function(params) {
-            var ds = new IV.PlainDataset(params.data, params.schema);
-            embed.renderer.setData(new IV.DataObject(ds.obj, ds.schema));
-            embed.redraw();
-        };
-
-        F['visualization.set'] = function(params) {
-            var vis_data = params.visualization;
-            var vis = IV.serializer.deserialize(vis_data);
-            embed.renderer.setVisualization(vis);
-            embed.redraw();
-        };
-
-        if(IV.getQuery("load")) {
-            var vis_id = IV.getQuery("load");
-            IV.server.get("visualizations/" + vis_id + "/", function(err, data) {
-                data_content = jsyaml.load(data.dataset_info.data);
-                data_schema = jsyaml.load(data.dataset_info.schema);
-                var ds = new IV.PlainDataset(data_content, data_schema);
-                var dataobj = new IV.DataObject(ds.obj, ds.schema);
-                embed.renderer.setData(dataobj);
-                var vis_data = JSON.parse(data.content);
-                var vis = IV.serializer.deserialize(vis_data);
-                embed.renderer.setVisualization(vis);
-                embed.redraw();
+    IV.allosphere.sync = { };
+    // Dataset.
+    IV.on("dataset:set", function(c) {
+        IV.allosphere.sync.setData(c);
+    });
+    IV.allosphere.sync.setData = function(c) {
+        if(c.type == "synced") {
+            IV.allosphere.postMessage({
+                type: "data.set.synced",
+                name: c.name,
+                schema: c.schema
+            });
+            c.data.onMessage = function(msg) {
+                IV.allosphere.postMessage({
+                    type: "data.set.synced.message",
+                    message: msg
+                });
+            };
+        } else if(c.type == "plain") {
+            IV.allosphere.postMessage({
+                type: "data.set",
+                data: c.data,
+                schema: c.schema
             });
         }
-
-        IV.server.wamp.subscribe("iv.allosphere.message", function(message) {
-            var content = JSON.parse(message);
-            F[content.type](content);
+    };
+    IV.allosphere.sync.setDynamicData = function() {
+    };
+    // Incremental synchronization.
+    var current_serializer = new IV.Serializer();
+    IV.allosphere.sync.startup = function() {
+        current_serializer = new IV.Serializer();
+        var data = current_serializer.serialize(IV.editor.workspace);
+        IV.allosphere.postMessage({
+            type: "sync.startup",
+            workspace: data
         });
-        var fx = { };
-        IV.allosphere.fx = fx;
-
-        var prev_vp = "unknown";
-        fx.resize_render = function(x, y, width, height, shx, shy, scale) {
-            var desc = [x, y, width, height, shx, shy, scale].join(",");
-            if(desc == prev_vp) return;
-            prev_vp = desc;
-            embed.resize(width, height);
-            embed.renderer.setView(new IV.Vector(-x - width / 2 + shx, y + height / 2 - shy), scale);
-            embed.redraw();
-        };
-    });
+    };
+    IV.allosphere.sync.perform = function(actions) {
+        var actions = current_serializer.serialize({ "actions": actions });
+        IV.allosphere.postMessage({
+            type: "sync.perform",
+            actions: actions
+        });
+    };
+    IV.allosphere.sync.rollback = function(actions) {
+        var actions = current_serializer.serialize({ "actions": actions });
+        IV.allosphere.postMessage({
+            type: "sync.rollback",
+            actions: actions
+        });
+    };
 }
+
+// This code is obsolete!
+//
+// if(IV_Config.allosphere_slave) {
+//     $(window).load(function() {
+//         var embed = new IV.EmbeddedCanvas($("#container"), {
+//             width: $("#container").width(),
+//             height: $("#container").height()
+//         });
+//         F = { };
+//         F['data.set'] = function(params) {
+//             var ds = new IV.PlainDataset(params.data, params.schema);
+//             embed.renderer.setData(new IV.DataObject(ds.obj, ds.schema));
+//             embed.redraw();
+//         };
+
+//         F['visualization.set'] = function(params) {
+//             var vis_data = params.visualization;
+//             var vis = IV.serializer.deserialize(vis_data);
+//             embed.renderer.setVisualization(vis);
+//             embed.redraw();
+//         };
+
+//         F['workspace.set'] = function(params) {
+//             var vis_data = params.visualization;
+//             var vis = IV.serializer.deserialize(vis_data);
+//             embed.renderer.setVisualization(vis);
+//             embed.redraw();
+//         };
+
+//         if(IV.getQuery("load")) {
+//             var vis_id = IV.getQuery("load");
+//             IV.server.get("visualizations/" + vis_id + "/", function(err, data) {
+//                 data_content = jsyaml.load(data.dataset_info.data);
+//                 data_schema = jsyaml.load(data.dataset_info.schema);
+//                 var ds = new IV.PlainDataset(data_content, data_schema);
+//                 var dataobj = new IV.DataObject(ds.obj, ds.schema);
+//                 embed.renderer.setData(dataobj);
+//                 var vis_data = JSON.parse(data.content);
+//                 var vis = IV.serializer.deserialize(vis_data);
+//                 embed.renderer.setVisualization(vis);
+//                 embed.redraw();
+//             });
+//         }
+
+//         IV.server.wamp.subscribe("iv.allosphere.message", function(message) {
+//             var content = JSON.parse(message);
+//             F[content.type](content);
+//         });
+//         var fx = { };
+//         IV.allosphere.fx = fx;
+
+//         var prev_vp = "unknown";
+//         fx.resize_render = function(x, y, width, height, shx, shy, scale) {
+//             var desc = [x, y, width, height, shx, shy, scale].join(",");
+//             if(desc == prev_vp) return;
+//             prev_vp = desc;
+//             embed.resize(width, height);
+//             embed.renderer.setView(new IV.Vector(-x - width / 2 + shx, y + height / 2 - shy), scale);
+//             embed.redraw();
+//         };
+//     });
+// }
 
 })();}

@@ -33,6 +33,7 @@
 
 {{include: serializer.js}}
 {{include: actionmanager.js}}
+{{include: syncedobject.js}}
 
 {{include: path.js}}
 {{include: data.js}}
