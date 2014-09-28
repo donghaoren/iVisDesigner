@@ -34,6 +34,7 @@
 if(IV.getQuery("allosphere") == "true" || IV_Config.allosphere_slave) {(function() {
 
 IV.set("colormode-black", true);
+$("#pose-view-toggle").click();
 
 IV.allosphere = { };
 IV.allosphere.F = { };
@@ -123,6 +124,9 @@ if(window.isAllosphereMaster) {
     // Dataset.
     IV.on("dataset:set", function(c) {
         IV.allosphere.sync.setData(c);
+    });
+    IV.on("command:allosphere.sync", function() {
+        IV.allosphere.sync.startup();
     });
     IV.allosphere.sync.setData = function(c) {
         if(c.type == "synced") {

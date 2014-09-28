@@ -149,6 +149,21 @@ Editor.workspaceSwitchCanvas = function(canvas) {
     Editor.setVisualization(canvas.visualization);
     Editor.workspace.default_canvas = canvas;
     Editor.pose_editor.setPose(canvas.pose);
+    if(canvas.visualization.background) {
+        $("#view").css("background-color", canvas.visualization.background.toRGBA());
+    } else {
+        $("#view").css("background-color", IV.colors.background);
+    }
+    $("#pose-color-selector").IVColorPicker(canvas.visualization.background ? canvas.visualization.background : IV.colors.background);
+    $("#pose-color-selector").data().changed = function(value) {
+        Editor.actions.add(new IV.actions.SetDirectly(canvas.visualization, "background", value));
+        Editor.actions.commit();
+        if(canvas.visualization.background) {
+            $("#view").css("background-color", canvas.visualization.background.toRGBA());
+        } else {
+            $("#view").css("background-color", IV.colors.background);
+        }
+    };
     Editor.pose_editor.onPoseChanged = function(pose) {
         Editor.actions.add(new IV.actions.SetDirectly(canvas, "pose", pose));
         Editor.actions.commit();
@@ -267,6 +282,7 @@ IV.listen("colormode-black", function(val) {
             $(this).attr("href", $(this).attr("data-href-white"));
         });
     }
+    Editor.pose_editor.render();
     Editor.renderer.trigger();
     Editor.renderer.render();
 });

@@ -72,22 +72,22 @@
 
     IV.PoseEditor = PoseEditor;
 
-    var sphere_center = { x: 60, y: 60 };
+    var sphere_center = { x: 65, y: 55 };
     var sphere_spacing = 5;
     var sphere_radius = 40;
     var handle_size = 10;
-    var altitude_center = { x: 130, y: 60 };
+    var altitude_center = { x: 130, y: 55 };
     var distance_slider_y = 130
     var distance_slider_begin = 10;
     var distance_slider_end = 190;
     var distance_slider_size = 6;
-    var distance_max = 2;
+    var distance_max = 10;
 
     var width_slider_y = 160
     var width_slider_begin = 10;
     var width_slider_end = 190;
     var width_slider_size = 6;
-    var width_max = 2;
+    var width_max = 10;
 
     PoseEditor.prototype.fromEventCoordinates = function(e) {
         var x = e.pageX - $(this.canvas).offset().left;
@@ -123,7 +123,7 @@
 
         ctx.save();
 
-        ctx.strokeStyle = "white";
+        ctx.strokeStyle = IV.colors.foreground.toRGBA();
 
         // Draw allosphere.
         ctx.lineWidth = 1;
@@ -204,13 +204,16 @@
             ctx.moveTo(distance_slider_begin, distance_slider_y);
             ctx.lineTo(distance_slider_end, distance_slider_y);
             ctx.lineWidth = 1;
-            ctx.strokeStyle = "white";
+            ctx.strokeStyle = IV.colors.foreground.toRGBA();
+            ctx.fillStyle = IV.colors.foreground.toRGBA();
             ctx.stroke();
             var pos_x = self.distance / distance_max * (distance_slider_end - distance_slider_begin) + distance_slider_begin;
             ctx.beginPath();
             ctx.arc(pos_x, distance_slider_y, distance_slider_size, 0, Math.PI * 2);
-            ctx.fillStyle = "white";
+            ctx.fillStyle = IV.colors.foreground.toRGBA();
             ctx.fill();
+
+            ctx.fillText("Distance", distance_slider_begin, distance_slider_y - distance_slider_size - 4);
 
             self._handlers.distance = function(p) {
                 if((p.x - pos_x) * (p.x - pos_x) + (p.y - distance_slider_y) * (p.y - distance_slider_y) < distance_slider_size * distance_slider_size) {
@@ -232,13 +235,16 @@
             ctx.moveTo(width_slider_begin, width_slider_y);
             ctx.lineTo(width_slider_end, width_slider_y);
             ctx.lineWidth = 1;
-            ctx.strokeStyle = "white";
+            ctx.strokeStyle = IV.colors.foreground.toRGBA();
+            ctx.fillStyle = IV.colors.foreground.toRGBA();
             ctx.stroke();
             var pos_x = self.texture_width / width_max * (width_slider_end - width_slider_begin) + width_slider_begin;
             ctx.beginPath();
             ctx.arc(pos_x, width_slider_y, width_slider_size, 0, Math.PI * 2);
-            ctx.fillStyle = "white";
+            ctx.fillStyle = IV.colors.foreground.toRGBA();
             ctx.fill();
+
+            ctx.fillText("Width", width_slider_begin, width_slider_y - width_slider_size - 4);
 
             self._handlers.width = function(p) {
                 if((p.x - pos_x) * (p.x - pos_x) + (p.y - width_slider_y) * (p.y - width_slider_y) < width_slider_size * width_slider_size) {

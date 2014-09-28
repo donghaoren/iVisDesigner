@@ -95,6 +95,7 @@ connection.onMessage = function(object) {
     // }
     if(object.type == "panorama.load") {
         panorama_texture.submitImageFile(object.filename, object.is_stereo);
+        panorama_texture_loaded = true;
     }
     if(object.type == "panorama.preload") {
         panorama_texture.preloadImageFile(object.filename);
@@ -118,6 +119,7 @@ if(configuration.allosphere) {
 
     var panorama_renderer = new EquirectangularRenderer(allosphere);
     var panorama_texture = new EquirectangularTexture(allosphere, false);
+    var panorama_texture_loaded = false;
 
     var GL = allosphere.OpenGL;
 
@@ -141,7 +143,8 @@ if(configuration.allosphere) {
         // The texture output is in premultiplied alpha!
         GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
 
-        panorama_renderer.render(panorama_texture, info);
+        if(panorama_texture_loaded)
+            panorama_renderer.render(panorama_texture, info);
 
         var index = 0;
         slave_processes.forEach(function(slave_process) {

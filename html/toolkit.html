@@ -138,7 +138,7 @@ IV_version = {
           </span>
         </li>
         <li>
-          <span data-toggle="#panel-pose">Pose View
+          <span data-toggle="#panel-pose" id="pose-view-toggle">Pose View
             <span class="toggle-indicator"><i class="xicon-mark"></i></span>
           </span>
         </li>
@@ -322,7 +322,11 @@ IV_version = {
   </div>
   <!-- 3D Pose Panel -->
   <div id="panel-pose" class="panel" data-title="Pose">
-    <div class="scrollview">
+    <div id="panel-pose-wrapper">
+      <div class="buttons" style="padding: 3px;">
+        <span data-command="allosphere.sync" class="btn btn-s">ForceSync</span>
+        <span class="color-selector" id="pose-color-selector"></span>
+      </div>
       <div id="pose-view">
       </div>
     </div>

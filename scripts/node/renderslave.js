@@ -135,6 +135,11 @@ workspace_sync.onUpdate = function() {
     }
 };
 
+renderer.bind("main:before", function(data, context) {
+    var color = vis.background ? vis.background : new IV.Color(0, 0, 0, 0);
+    context.__g.clear(color.r, color.g, color.b, color.a);
+});
+
 // This is called before each frame.
 var timer = setInterval(function() {
     var t0 = new Date().getTime();
