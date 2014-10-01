@@ -156,6 +156,18 @@ NS.Quaternion = function(v, w) {
     this.v = v !== undefined ? v : new NS.Vector3(0, 0, 0);
     this.w = w === undefined ? 0 : w;
 };
+NS.Quaternion.prototype.conj = function() {
+    return new NS.Quaternion(this.v.scale(-1), this.w);
+};
+NS.Quaternion.prototype.mul = function(q2) {
+    var w = this.w * q2.w - this.v.dot(q2.v);
+    var v = q2.v.scale(this.w).add(this.v.scale(q2.w)).add(this.v.cross(q2.v));
+    return new NS.Quaternion(v, w);
+};
+NS.Quaternion.prototype.rotate = function(vector) {
+    var vq = new NS.Quaternion(vector, 0);
+    return this.mul(vq).mul(this.conj()).v;
+};
 NS.Quaternion.rotation = function(axis, angle) {
     return new NS.Quaternion(axis.normalize().scale(Math.sin(angle / 2)), Math.cos(angle / 2));
 };

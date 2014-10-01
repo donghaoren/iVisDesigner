@@ -149,6 +149,9 @@ Editor.workspaceSwitchCanvas = function(canvas) {
     Editor.setVisualization(canvas.visualization);
     Editor.workspace.default_canvas = canvas;
     Editor.pose_editor.setPose(canvas.pose);
+    Editor._tmp_onUpdatePose = function() {
+        Editor.pose_editor.setPose(canvas.pose);
+    };
     if(canvas.visualization.background) {
         $("#view").css("background-color", canvas.visualization.background.toRGBA());
     } else {

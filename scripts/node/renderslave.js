@@ -32,7 +32,6 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 {{include: transport.js}}
-{{include: workspace_sync.js}}
 
 var configuration = require("./alloconfig");
 var args = JSON.parse(process.argv[2]);
@@ -58,43 +57,16 @@ manager.add("overlay", add_canvas());
 
 var dataset, workspace, vis, synced_object;
 
-try {
-    var prefix = "/Users/donghao/Documents/Projects/iVisDesignerNative/test/data";
-    var data = require(prefix + '/graph.json');
-    var schema = require(prefix + '/graph.schema.json');
-    var vis_data = require(prefix + '/graph.vis.inverted.json');
-    var ds = new IV.PlainDataset(data, schema);
-    dataset = new IV.DataObject(ds.obj, ds.schema);
-    vis = IV.serializer.deserialize(vis_data);
-
-    renderer.setData(dataset);
-    renderer.setVisualization(vis);
-    renderer.autoView(vis);
-    renderer.trigger("main");
-} catch(e) {
-    console.trace(e);
-}
-
 var connection = new MessageTransportTCP(configuration, true);
 var index = 0;
 connection.onMessage = function(object) {
     console.log(index++, object.type);
-    // var t0 = new Date().getTime();
     if(object.type == "visualization.set") {
         vis = IV.serializer.deserialize(object.visualization);
         renderer.setVisualization(vis);
         renderer.autoView(vis);
         renderer.trigger("main");
     }
-    // if(object.type == "workspace.set") {
-    //     workspace = IV.serializer.deserialize(object.workspace);
-    //     if(workspace && workspace.canvases[args.index]) {
-    //         vis = workspace.canvases[args.index].visualization;
-    //         renderer.setVisualization(vis);
-    //         renderer.autoView(vis);
-    //         renderer.trigger("main");
-    //     }
-    // }
     if(object.type == "data.set") {
         var ds = new IV.PlainDataset(object.data, object.schema);
         dataset = new IV.DataObject(ds.obj, ds.schema);

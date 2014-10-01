@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!--
+iVisDesigner
+See ./license.html for copyright information.
+-->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>iVisDesigner Allosphere Controller</title>
+
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <style id="style-dimensions" type="text/css"></style>
+    <link rel="icon" href="{{ref:favicon-512.png}}" sizes="512x512" />
+    <link rel="icon" href="{{ref:favicon-64.png}}" sizes="64x64" />
+    <style type="text/css">
+    body {
+      overflow: hidden;
+      margin: 0; padding: 0;
+    }
+    #container {
+      position: absolute;
+      margin: 0; padding: 0;
+      left: 0; right: 0; top: 0; bottom: 0
+    }
+    </style>
+</head>
+<body>
+<div id="container">
+  <canvas id="webgl-view" width="640" height="480">
+</div>
+<script type="text/javascript">
+IV_version = {
+  "version": "{{version}}",
+  "revision": "r{{revision}}",
+  "build_time": new Date("{{build_time_iso}}")
+};
+</script>
+<!-- Scripts -->
+<script type="text/javascript" src="{{js:libraries.js}}"></script>
+<script type="text/javascript" src="{{js:config.js}}"></script>
+<script id="shader-wireframe-vertex" type="x-shader/x-vertex">
+  attribute vec3 aVertexPosition;
+  uniform mat4 uMVMatrix, uPMatrix;
+  void main(void) {
+    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+  }
+</script>
+<script id="shader-wireframe-fragment" type="x-shader/x-fragment">
+  void main(void) {
+    gl_FragColor = vec4(1, 1, 1, 0.2);
+  }
+</script>
+<script id="shader-quad-vertex" type="x-shader/x-vertex">
+  attribute vec3 aVertexPosition;
+  uniform vec3 uCenter, uNormal, uUp;
+  uniform float uWidth;
+  uniform mat4 uMVMatrix, uPMatrix;
+
+  varying highp vec2 texCoord;
+
+  void main(void) {
+    vec3 ex = normalize(cross(uUp, uNormal));
+    vec3 ey = normalize(cross(uNormal, ex));
+    ex *= uWidth / 2.0;
+    ey *= uWidth / 2.0;
+    vec3 p = uCenter + ex * aVertexPosition.x + ey * aVertexPosition.y;
+    texCoord.x = (aVertexPosition.x + 1.0) / 2.0;
+    texCoord.y = (aVertexPosition.y + 1.0) / 2.0;
+    gl_Position = uPMatrix * uMVMatrix * vec4(p, 1.0);
+  }
+</script>
+<script id="shader-quad-fragment" type="x-shader/x-fragment">
+  uniform sampler2D uSampler;
+  varying highp vec2 texCoord;
+
+  void main(void) {
+    gl_FragColor = texture2D(uSampler, texCoord);
+  }
+</script>
+
+<script id="shader-cubemap-vertex" type="x-shader/x-vertex">
+  attribute vec3 aVertexPosition;
+  varying highp vec2 texCoord;
+
+  void main(void) {
+    texCoord = aVertexPosition.xy;
+    gl_Position = vec4(aVertexPosition, 1.0);
+  }
+</script>
+<script id="shader-cubemap-fragment" type="x-shader/x-fragment">
+  varying highp vec2 texCoord;
+  uniform samplerCube uSampler;
+
+  void main(void) {
+    highp float l = length(texCoord);
+    if(l < 1.0) {
+      highp float phi = atan(texCoord.y, texCoord.x);
+      highp float theta = (l - 0.5) * 2.0;
+      highp vec3 pos;
+      pos.x = cos(phi) * cos(theta);
+      pos.y = sin(phi) * cos(theta);
+      pos.z = sin(theta);
+      gl_FragColor = textureCube(uSampler, pos);
+    } else {
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+    }
+
+  }
+</script>
+
+<script type="text/javascript">
+IV_Config = $.extend({
+  version: IV_version.version,
+  revision: IV_version.revision,
+  build_time: IV_version.build_time
+}, IV_Config);
+</script>
+
+<script type="text/javascript" src="{{js:allocontroller.js}}"></script>
+</body>
+</html>

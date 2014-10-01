@@ -66,6 +66,7 @@ Tools.Select = {
                 $this.magnetics.threshold = 5 / e_down.offset.view_scale;
                 var handle_r = function(r) {
                     if(!r) return;
+                    console.log(r);
                     if(r.actions) {
                         r.actions.forEach(function(act) {
                             Actions.add(act);

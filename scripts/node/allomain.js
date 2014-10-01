@@ -33,7 +33,6 @@
 
 {{include: transport.js}}
 {{include: panorama.js}}
-{{include: workspace_sync.js}}
 
 var configuration = require("./alloconfig");
 
@@ -50,6 +49,7 @@ var RenderSlaveProcess = function(info) {
     tex.surface = new graphics.Surface2D(info.width, info.height, tex.buffer);
     tex.timestamp = null;
     this.texture = tex;
+    this.index = info.index;
 
     var spawn = require('child_process').spawn;
     this.process = spawn("node", [__dirname + "/" + info.script, JSON.stringify(info)]);
@@ -72,7 +72,6 @@ RenderSlaveProcess.prototype.stop = function() {
     this.process.kill("SIGTERM");
     this.texture.shm.delete();
 };
-
 
 var slave_processes = [
     new RenderSlaveProcess({ script: "renderslave.js", index: 0 }),
@@ -113,6 +112,8 @@ connection.onMessage = function(object) {
     workspace_sync.processMessage(object);
 };
 
+var before_render, after_render;
+
 if(configuration.allosphere) {
     var allosphere = require("node_allosphere");
     allosphere.initialize();
@@ -146,10 +147,15 @@ if(configuration.allosphere) {
         if(panorama_texture_loaded)
             panorama_renderer.render(panorama_texture, info);
 
-        var index = 0;
+        if(before_render) {
+            try {
+                before_render();
+            } catch(e) { }
+        }
+
         slave_processes.forEach(function(slave_process) {
             if(!workspace) return;
-            var canvas = workspace.canvases[index];
+            var canvas = workspace.canvases[slave_process.index];
             if(!canvas) return;
 
             var tex = slave_process.texture;
@@ -181,10 +187,13 @@ if(configuration.allosphere) {
             tex.surface.unbindTexture(2);
 
             allosphere.shaderEnd(allosphere.shaderDefault());
-
-            index += 1;
         });
 
+        if(after_render) {
+            try {
+                after_render();
+            } catch(e) { }
+        }
         GL.flush();
     });
 

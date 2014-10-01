@@ -40,6 +40,7 @@ IV.Visualization = function() {
     this._needs_render = true;
     this.type = "Visualization";
     this.artboard = new IV.Rectangle(-600, -400, 1200, 800);
+    this.background = null;
     IV.EventSource.call(this);
 };
 
@@ -49,7 +50,7 @@ IV.implement(IV.EventSource, IV.Visualization);
 
 // Serialization support.
 IV.Visualization.prototype.serializeFields = function() {
-    return [ "objects", "artboard", "uuid" ];
+    return [ "objects", "artboard", "uuid", "background" ];
 };
 
 IV.Visualization.prototype.postDeserialize = function() {

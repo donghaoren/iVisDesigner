@@ -175,6 +175,16 @@ if(window.isAllosphereMaster) {
             actions: actions
         });
     };
+    IV.server.wamp.subscribe("iv.allosphere.message", function(message) {
+        var content = JSON.parse(message);
+        if(content.type == "sync.perform") {
+            var actions = current_serializer.deserialize(content.actions);
+            actions.actions.forEach(function(action) {
+                action.perform();
+            });
+            IV.editor._tmp_onUpdatePose();
+        }
+    });
 }
 
 // This code is obsolete!

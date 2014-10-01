@@ -36,21 +36,23 @@ var make_anchor_move_context = function(rslt, anchor, action) {
         if(anchor.type == "Plain") {
             rslt.original = anchor.obj;
             rslt.onMove = function(p0, p1, magnetics) {
-                anchor.obj = rslt.original.sub(p0).add(p1);
-                var np = magnetics.modify(anchor.obj.x, anchor.obj.y);
+                var new_pos = rslt.original.sub(p0).add(p1);
+                var np = magnetics.modify(new_pos.x, new_pos.y);
                 if(np) {
-                    anchor.obj.x = np.x;
-                    anchor.obj.y = np.y;
-                    magnetics.accept(np, anchor.obj.x, anchor.obj.y);
+                    new_pos.x = np.x;
+                    new_pos.y = np.y;
+                    magnetics.accept(np, new_pos.x, new_pos.y);
                 }
-                return { trigger_render: "main,front,back" };
+                var actions = [ new IV.actions.SetDirectly(anchor, "obj", new_pos) ];
+                return { trigger_render: "main,front,back", actions: actions };
             };
         }
         if(anchor.type == "PointOffset") {
             rslt.original = anchor.offset;
             rslt.onMove = function(p0, p1) {
-                anchor.offset = rslt.original.sub(p0).add(p1);
-                return { trigger_render: "main,front,back" };
+                var new_offset = rslt.original.sub(p0).add(p1);
+                var actions = [ new IV.actions.SetDirectly(anchor, "offset", new_offset) ];
+                return { trigger_render: "main,front,back", actions: actions };
             };
         }
     }
