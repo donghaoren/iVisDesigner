@@ -93,7 +93,7 @@ connection.onMessage = function(object) {
     //     workspace = IV.serializer.deserialize(object.workspace);
     // }
     if(object.type == "panorama.load") {
-        panorama_texture.submitImageFile(object.filename, object.is_stereo);
+        panorama_texture.submitImageFile(object.filename, object.stereo_mode);
         panorama_texture_loaded = true;
     }
     if(object.type == "panorama.preload") {
@@ -101,6 +101,14 @@ connection.onMessage = function(object) {
     }
     if(object.type == "panorama.unload") {
         panorama_texture.unloadImageFile(object.filename);
+    }
+    if(object.type == "panorama.video.load") {
+        loaded_video = new graphics.VideoSurface2D(object.filename);
+    }
+    if(object.type == "panorama.video.next") {
+        loaded_video.nextFrame();
+        panorama_texture_loaded = true;
+        panorama_texture.submit(loaded_video, object.stereo_mode);
     }
     if(object.type == "eval") {
         try {
@@ -120,6 +128,7 @@ if(configuration.allosphere) {
 
     var panorama_renderer = new EquirectangularRenderer(allosphere);
     var panorama_texture = new EquirectangularTexture(allosphere, false);
+    var loaded_video = null;
     var panorama_texture_loaded = false;
 
     var GL = allosphere.OpenGL;

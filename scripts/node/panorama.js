@@ -39,27 +39,48 @@ function EquirectangularTexture(allosphere) {
     this.preloaded_images = { };
 }
 
-EquirectangularTexture.prototype.submit = function(image, is_stereo) {
-    this.is_stereo = is_stereo ? true : false;
-    if(this.is_stereo) {
+EquirectangularTexture.prototype.submit = function(image, stereo_mode) {
+    console.log(image.width(), image.height(), stereo_mode);
+    if(!stereo_mode) stereo_mode = "mono";
+    this.stereo_mode = stereo_mode;
+    if(this.stereo_mode == "mono") {
+        this.allosphere.textureBind(this.textures[0], 0);
+        this.allosphere.textureSubmit(image.width(), image.height(), image.pixels());
+    } else if(this.stereo_mode == "top-bottom") {
         this.allosphere.textureBind(this.textures[0], 0);
         this.allosphere.textureSubmit(image.width(), image.height() / 2, image.pixels());
         this.allosphere.textureBind(this.textures[1], 0);
         this.allosphere.textureSubmit(image.width(), image.height() / 2, image.pixels().slice(image.width() * image.height() / 2 * 4));
-    } else {
+    } else if(this.stereo_mode == "bottom-top") {
+        this.allosphere.textureBind(this.textures[1], 0);
+        this.allosphere.textureSubmit(image.width(), image.height() / 2, image.pixels());
         this.allosphere.textureBind(this.textures[0], 0);
-        this.allosphere.textureSubmit(image.width(), image.height(), image.pixels());
+        this.allosphere.textureSubmit(image.width(), image.height() / 2, image.pixels().slice(image.width() * image.height() / 2 * 4));
+    } else if(this.stereo_mode == "left-right") {
+        GL.pixelStorei(GL.UNPACK_ROW_LENGTH, image.width());
+        this.allosphere.textureBind(this.textures[0], 0);
+        this.allosphere.textureSubmit(image.width() / 2, image.height(), image.pixels());
+        this.allosphere.textureBind(this.textures[1], 0);
+        this.allosphere.textureSubmit(image.width() / 2, image.height(), image.pixels().slice(image.width() / 2 * 4));
+        GL.pixelStorei(GL.UNPACK_ROW_LENGTH, 0);
+    } else if(this.stereo_mode == "right-left") {
+        GL.pixelStorei(GL.UNPACK_ROW_LENGTH, image.width());
+        this.allosphere.textureBind(this.textures[1], 0);
+        this.allosphere.textureSubmit(image.width() / 2, image.height(), image.pixels());
+        this.allosphere.textureBind(this.textures[0], 0);
+        this.allosphere.textureSubmit(image.width() / 2, image.height(), image.pixels().slice(image.width() / 2 * 4));
+        GL.pixelStorei(GL.UNPACK_ROW_LENGTH, 0);
     }
 };
 
-EquirectangularTexture.prototype.submitImageFile = function(filename, is_stereo) {
+EquirectangularTexture.prototype.submitImageFile = function(filename, stereo_mode) {
     var image = this.preloaded_images[filename];
     if(!image) {
         var fs = require("fs");
         if(!fs.existsSync(filename)) return;
         image = graphics.loadImageData(fs.readFileSync(filename));
     }
-    this.submit(image, is_stereo);
+    this.submit(image, stereo_mode);
 };
 
 EquirectangularTexture.prototype.preloadImageFile = function(filename) {
@@ -75,8 +96,8 @@ EquirectangularTexture.prototype.unloadImageFile = function(key, filename) {
 };
 
 EquirectangularTexture.prototype.get = function(eye) {
-    if(this.is_stereo) {
-        return this.textures[eye > 0 ? 0 : 1];
+    if(this.stereo_mode != "mono") {
+        return this.textures[eye < 0 ? 0 : 1];
     } else {
         return this.textures[0];
     }

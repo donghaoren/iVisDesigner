@@ -33,10 +33,10 @@
 
 var MessageTransportTCP = function(config, is_renderer) {
     var self = this;
-    var bcast = require("node_boardcaster");
+    var bcast = require("node_broadcaster");
     var hostname = require("os").hostname();
     if(is_renderer) hostname = "renderer";
-    bcast.start(hostname, "boardcaster.conf");
+    bcast.start(hostname, "broadcaster.conf");
     bcast.onMessage(function(message) {
         if(self.onMessage) {
             try {

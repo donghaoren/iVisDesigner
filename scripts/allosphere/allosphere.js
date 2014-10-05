@@ -78,11 +78,25 @@ if(window.isAllosphereMaster) {
             filename: path
         });
     };
-    IV.allosphere.loadPanorama = function(path, is_stereo) {
+    IV.allosphere.loadPanorama = function(path, stereo_mode) {
         IV.allosphere.postMessage({
             type: "panorama.load",
             filename: path,
-            is_stereo: is_stereo
+            stereo_mode: stereo_mode
+        });
+    };
+    IV.allosphere.loadVideo = function(path, stereo_mode) {
+        IV.allosphere.postMessage({
+            type: "panorama.video.load",
+            filename: path,
+            stereo_mode: stereo_mode
+        });
+    };
+    IV.allosphere.nextFrame = function(path, stereo_mode) {
+        IV.allosphere.postMessage({
+            type: "panorama.video.next",
+            filename: path,
+            stereo_mode: stereo_mode
         });
     };
     var loop_timer = null;
@@ -113,7 +127,7 @@ if(window.isAllosphereMaster) {
         var index = info.start;
         loop_timer = setInterval(function() {
             var file = info.template.replace("$index", d3.format("04d")(index));
-            IV.allosphere.loadPanorama(file, info.is_stereo);
+            IV.allosphere.loadPanorama(file, info.stereo_mode);
             index += info.step;
             if(index > info.end) index = info.start;
             if(index < info.start) index = info.end;
