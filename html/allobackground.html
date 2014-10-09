@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!--
+iVisDesigner
+See ./license.html for copyright information.
+-->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>iVisDesigner Allosphere Background Controller</title>
+
+    <link rel="stylesheet" type="text/css" href="{{css:toolkit-black.css}}" />
+
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <style id="style-dimensions" type="text/css"></style>
+    <link rel="icon" href="{{ref:favicon-512.png}}" sizes="512x512" />
+    <link rel="icon" href="{{ref:favicon-64.png}}" sizes="64x64" />
+    <style type="text/css">
+    body {
+      overflow: hidden;
+      margin: 0; padding: 0;
+    }
+    #container {
+      position: absolute;
+      margin: 0; padding: 0;
+      left: 0; right: 0; top: 0; bottom: 0;
+      text-align: center;
+    }
+    #main-panel {
+      text-align: left;
+      width: 800px;
+      height: 400px;
+      margin-top: 100px;
+      display: inline-block;
+      position: relative;
+      .container {
+        padding: 10px;
+      }
+    }
+    </style>
+</head>
+<body>
+<div id="container">
+
+<div id="main-panel" class="basic panel full-title">
+  <div class="content-wrapper">
+    <form>
+      <div class="input-group"><label>File Path</label><div><input id="input-path" type="text" /></div></div>
+      <div class="input-group"><label>Stereo Mode</label><div><input id="input-stereo-mode" type="text" /></div></div>
+      <div class="input-group"><label>Image Display</label>
+        <div>
+          <span id="btn-show-image" class="btn btn-s">Show Image</span>
+        </div>
+      </div>
+      <div class="input-group"><label>Video Display</label>
+        <div>
+          <span id="btn-load-video" class="btn btn-s">Load Video</span>
+          <span id="btn-next-frame" class="btn btn-s">Next Frame</span>
+          <span id="btn-play-video" class="btn btn-s">Play Video</span>
+          <span id="btn-stop-video" class="btn btn-s">Stop Video</span>
+          <span>Framerate: </span><input id="input-framerate" type="text" style="width: 40px" value="20" />
+          <span id="btn-seek-video" class="btn btn-s">Seek Video</span>
+          <span>Timestamp: </span><input id="input-timestamp" type="text" style="width: 40px" value="0" />
+        </div>
+      </div>
+      <div class="input-group"><label>Files</label>
+        <div>
+          <ul>
+            <li><a class="anchor-file" href="#" data-path="/home/sphere/donghao/panoramas/set1_dens_volume_rendering.mp4" data-stereo-mode="top-bottom">set1_dens_volume_rendering.mp4</a></li>
+            <li><a class="anchor-file" href="#" data-path="/home/sphere/donghao/panoramas/set2_Density_volume_rendering.mp4" data-stereo-mode="top-bottom">set2_Density_volume_rendering.mp4</a></li>
+            <li><a class="anchor-file" href="#" data-path="/home/sphere/donghao/panoramas/set3_AbsDivV_volume_rendering.mp4" data-stereo-mode="top-bottom">set3_AbsDivV_volume_rendering.mp4</a></li>
+            <li><a class="anchor-file" href="#" data-path="/home/sphere/donghao/panoramas/3DH-Take1-Side-By-Side-4000x2000.mp4" data-stereo-mode="right-left">3DH-Take1-Side-By-Side-4000x2000.mp4</a></li>
+            <li><a class="anchor-file" href="#" data-path="/home/sphere/donghao/panoramas/360heros_Beautiful_places_of_Kaunas_and_Vilnius.mp4" data-stereo-mode="mono">360heros_Beautiful_places_of_Kaunas_and_Vilnius.mp4</a></li>
+            <li><a class="anchor-file" href="#" data-path="/home/sphere/donghao/panoramas/360heros_OMSI_Bridge_in_Portland.mp4" data-stereo-mode="mono">360heros_OMSI_Bridge_in_Portland.mp4</a></li>
+            <li><a class="anchor-file" href="#" data-path="/home/sphere/donghao/panoramas/kolor-paragliding-icare-4k.mp4" data-stereo-mode="mono">kolor-paragliding-icare-4k</a></li>
+            <li><a class="anchor-file" href="#" data-path="/home/sphere/donghao/panoramas/kolor-fighter-aircraft-4k.mp4" data-stereo-mode="mono">kolor-fighter-aircraft-4k</a></li>
+          </ul>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="title-wrapper">
+    <div class="title">Background Controller</div>
+  </div>
+</div>
+
+</div>
+<script type="text/javascript">
+IV_version = {
+  "version": "{{version}}",
+  "revision": "r{{revision}}",
+  "build_time": new Date("{{build_time_iso}}")
+};
+</script>
+<!-- Scripts -->
+<script type="text/javascript" src="{{js:libraries.js}}"></script>
+<script type="text/javascript" src="{{js:config.js}}"></script>
+
+<script type="text/javascript">
+IV_Config = $.extend({
+  version: IV_version.version,
+  revision: IV_version.revision,
+  build_time: IV_version.build_time
+}, IV_Config);
+</script>
+
+<script type="text/javascript" src="{{js:allobackground.js}}"></script>
+</body>
+</html>

@@ -104,11 +104,15 @@ connection.onMessage = function(object) {
     }
     if(object.type == "panorama.video.load") {
         loaded_video = new graphics.VideoSurface2D(object.filename);
+        loaded_video.stereo_mode = object.stereo_mode;
     }
     if(object.type == "panorama.video.next") {
         loaded_video.nextFrame();
         panorama_texture_loaded = true;
-        panorama_texture.submit(loaded_video, object.stereo_mode);
+        panorama_texture.submit(loaded_video, loaded_video.stereo_mode);
+    }
+    if(object.type == "panorama.video.seek") {
+        loaded_video.seek(object.timestamp);
     }
     if(object.type == "eval") {
         try {

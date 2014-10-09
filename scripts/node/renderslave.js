@@ -60,7 +60,7 @@ var dataset, workspace, vis, synced_object;
 var connection = new MessageTransportTCP(configuration, true);
 var index = 0;
 connection.onMessage = function(object) {
-    console.log(index++, object.type);
+    //console.log(index++, object.type);
     if(object.type == "visualization.set") {
         vis = IV.serializer.deserialize(object.visualization);
         renderer.setVisualization(vis);

@@ -40,7 +40,6 @@ function EquirectangularTexture(allosphere) {
 }
 
 EquirectangularTexture.prototype.submit = function(image, stereo_mode) {
-    console.log(image.width(), image.height(), stereo_mode);
     if(!stereo_mode) stereo_mode = "mono";
     this.stereo_mode = stereo_mode;
     if(this.stereo_mode == "mono") {
@@ -127,7 +126,7 @@ function EquirectangularRenderer(allosphere) {
     "        float phi = atan(position.y, position.x);",
     "        float theta = atan(position.z, length(position.xy));",
     "        vec2 st;",
-    "        st.x = phi / PI / 2.0 + 0.5;",
+    "        st.x = -phi / PI / 2.0 + 0.5;",
     "        st.y = -theta / PI + 0.5;",
     "        vec4 textureColor = texture2D(texture0, st);",
     "        gl_FragColor = textureColor;",

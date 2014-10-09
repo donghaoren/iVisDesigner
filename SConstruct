@@ -101,6 +101,13 @@ Javascript("allocontroller.js", [
     "scripts/node/allocontroller.js"
 ])
 
+Javascript("allobackground.js", [
+    #"libraries/hammer.js",
+    "scripts/utils/utils.js",
+    "scripts/core/core.js",
+    "scripts/node/allobackground.js"
+])
+
 Javascript("boardcast_test.js", [
     "scripts/node/boardcast_test.js"
 ])
@@ -114,6 +121,7 @@ Binary("datasets/test.data", "datasets/test.data.yaml");
 
 HTML("toolkit.html", "html/toolkit.html")
 HTML("allocontroller.html", "html/allocontroller.html")
+HTML("allobackground.html", "html/allobackground.html")
 HTML("embed_test.html", "html/embed_test.html")
 env.Markdown(".swtemp.deploy/credits.html", "CREDITS.md")
 env.Markdown(".swtemp.deploy/license.html", "LICENSE.md")
