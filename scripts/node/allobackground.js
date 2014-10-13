@@ -35,6 +35,7 @@ $(".anchor-file").each(function() {
     $(this).click(function() {
         $("#input-path").val($(this).attr("data-path"));
         $("#input-stereo-mode").val($(this).attr("data-stereo-mode"));
+        return false;
     });
 });
 

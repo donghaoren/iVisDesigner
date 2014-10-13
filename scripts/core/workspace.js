@@ -119,7 +119,7 @@ WorkspaceSync.prototype.processMessage = function(msg) {
         actions.actions.forEach(function(action) {
             if(action.perform) action.perform();
         });
-        if(this.onUpdate) this.onUpdate();
+        if(this.onUpdate) this.onUpdate(msg.parameters);
     } else if(msg.type == "sync.rollback") {
     } else return;
     //console.log(msg);

@@ -173,3 +173,14 @@ NS.fillDefault = function(obj, defaults) {
         if(obj[key] === undefined) obj[key] = defaults[key];
     }
 };
+
+(function() {
+    var multiline_regex = /\/\*!?(?:\@preserve)?[ \t]*(?:\r\n|\n)([\s\S]*?)(?:\r\n|\n)\s*\*\//;
+    NS.multiline = function(fn) {
+        var match = multiline_regex.exec(fn.toString());
+        if(!match) {
+            throw new TypeError('Multiline comment missing.');
+        }
+        return match[1];
+    };
+})();

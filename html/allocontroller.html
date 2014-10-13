@@ -9,6 +9,8 @@ See ./license.html for copyright information.
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>iVisDesigner Allosphere Controller</title>
 
+    <link rel="stylesheet" type="text/css" href="{{css:toolkit-black.css}}" />
+
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
@@ -19,17 +21,48 @@ See ./license.html for copyright information.
     body {
       overflow: hidden;
       margin: 0; padding: 0;
+      background-color: black;
+      color: #AAA;
     }
     #container {
       position: absolute;
       margin: 0; padding: 0;
-      left: 0; right: 0; top: 0; bottom: 0
+      left: 0; right: 0; top: 0; bottom: 0;
+    }
+    #controls {
+      position: absolute;
+      margin: 0; padding: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 20%;
+    }
+    #controls-wrapper { margin: 10px; }
+    #viewport-control-area {
+      position: absolute;
+      width: 20%;
+      height: 40%;
+      bottom: 0;
+      right: 0;
+      border: 1px solid #222;
     }
     </style>
 </head>
 <body>
 <div id="container">
-  <canvas id="webgl-view" width="640" height="480">
+  <canvas id="webgl-view" width="640" height="480"></canvas>
+  <div id="controls">
+    <div id="controls-wrapper" class="basic" style="text-align: center;">
+      <p>View Mode</p>
+      <p><span id="btn-load-video" class="btn btn-s" data-switch="view-mode" data-view-mode="circular-inverse">Circular Top</span></p>
+      <p><span id="btn-load-video" class="btn btn-s active" data-switch="view-mode" data-view-mode="circular">Circular Bottom</span></p>
+      <p><span id="btn-load-video" class="btn btn-s" data-switch="view-mode" data-view-mode="fisheye-top">Fisheye Top</span></p>
+      <p><span id="btn-load-video" class="btn btn-s" data-switch="view-mode" data-view-mode="fisheye-bottom">Fisheye Bottom</span></p>
+      <p><span id="btn-load-video" class="btn btn-s" data-switch="view-mode" data-view-mode="perspective">Perspective</span></p>
+      <p><span id="btn-load-video" class="btn btn-s" data-switch="view-mode" data-view-mode="mercator">Mercator</span></p>
+    </div>
+  </div>
+  <div id="viewport-control-area"></div>
 </div>
 <script type="text/javascript">
 IV_version = {
@@ -41,75 +74,6 @@ IV_version = {
 <!-- Scripts -->
 <script type="text/javascript" src="{{js:libraries.js}}"></script>
 <script type="text/javascript" src="{{js:config.js}}"></script>
-<script id="shader-wireframe-vertex" type="x-shader/x-vertex">
-  attribute vec3 aVertexPosition;
-  uniform mat4 uMVMatrix, uPMatrix;
-  void main(void) {
-    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-  }
-</script>
-<script id="shader-wireframe-fragment" type="x-shader/x-fragment">
-  void main(void) {
-    gl_FragColor = vec4(1, 1, 1, 0.2);
-  }
-</script>
-<script id="shader-quad-vertex" type="x-shader/x-vertex">
-  attribute vec3 aVertexPosition;
-  uniform vec3 uCenter, uNormal, uUp;
-  uniform float uWidth;
-  uniform mat4 uMVMatrix, uPMatrix;
-
-  varying highp vec2 texCoord;
-
-  void main(void) {
-    vec3 ex = normalize(cross(uUp, uNormal));
-    vec3 ey = normalize(cross(uNormal, ex));
-    ex *= uWidth / 2.0;
-    ey *= uWidth / 2.0;
-    vec3 p = uCenter + ex * aVertexPosition.x + ey * aVertexPosition.y;
-    texCoord.x = (aVertexPosition.x + 1.0) / 2.0;
-    texCoord.y = (aVertexPosition.y + 1.0) / 2.0;
-    gl_Position = uPMatrix * uMVMatrix * vec4(p, 1.0);
-  }
-</script>
-<script id="shader-quad-fragment" type="x-shader/x-fragment">
-  uniform sampler2D uSampler;
-  varying highp vec2 texCoord;
-
-  void main(void) {
-    gl_FragColor = texture2D(uSampler, texCoord);
-  }
-</script>
-
-<script id="shader-cubemap-vertex" type="x-shader/x-vertex">
-  attribute vec3 aVertexPosition;
-  varying highp vec2 texCoord;
-
-  void main(void) {
-    texCoord = aVertexPosition.xy;
-    gl_Position = vec4(aVertexPosition, 1.0);
-  }
-</script>
-<script id="shader-cubemap-fragment" type="x-shader/x-fragment">
-  varying highp vec2 texCoord;
-  uniform samplerCube uSampler;
-
-  void main(void) {
-    highp float l = length(texCoord);
-    if(l < 1.0) {
-      highp float phi = atan(texCoord.y, texCoord.x);
-      highp float theta = (l - 0.5) * 2.0;
-      highp vec3 pos;
-      pos.x = cos(phi) * cos(theta);
-      pos.y = sin(phi) * cos(theta);
-      pos.z = sin(theta);
-      gl_FragColor = textureCube(uSampler, pos);
-    } else {
-      gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-    }
-
-  }
-</script>
 
 <script type="text/javascript">
 IV_Config = $.extend({

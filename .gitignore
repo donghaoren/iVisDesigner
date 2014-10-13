@@ -23,3 +23,4 @@ deploy_list
 *.backup*
 videos/
 datasets/
+nodejs/
