@@ -42,8 +42,8 @@ var SharedTexture = function(info, is_create) {
     } else {
         this.shm = new SharedMemory(info.shm_id, info.sem_id, info.shm_size, false);
     }
-    this.metadata = this.shm.buffer(0, 32);
-    this.buffer = this.shm.buffer(32);
+    this.metadata = this.shm.buffer(0, 1024);
+    this.buffer = this.shm.buffer(1024);
     var self = this;
     this.getTimestamp = function() { return self.metadata.readDoubleLE(0); };
     this.setTimestamp = function(value) { self.metadata.writeDoubleLE(value, 0); };
