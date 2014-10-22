@@ -92,7 +92,7 @@ Tools.Arc = {
                     path: path,
                     point1: $this.loc1,
                     point2: $this.loc2,
-                    radius: new IV.objects.Plain(0.75)
+                    radius: new IV.objects.Plain(0.5)
                 });
                 Editor.doAddObject(arc);
                 $this.loc1 = null;

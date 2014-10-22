@@ -52,6 +52,7 @@ var CanvasRenderer = function(index) {
     GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
     GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
     GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR_MIPMAP_LINEAR);
+    GL.bindTexture(GL.TEXTURE_2D, null);
     this.renderer.bind("main:before", function(data, context) {
         if(!self.vis) return;
         var color = self.vis.background ? self.vis.background : new IV.Color(0, 0, 0, 0);
@@ -81,6 +82,7 @@ CanvasRenderer.prototype.render = function(vis, data) {
         GL.bindTexture(GL.TEXTURE_2D, this.texture);
         GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, this.canvas);
         GL.generateMipmap(GL.TEXTURE_2D);
+        GL.bindTexture(GL.TEXTURE_2D, null);
     }
     return r;
 };
@@ -92,10 +94,63 @@ CanvasRenderer.prototype.bind = function(index) {
     GL.activeTexture(GL.TEXTURE0);
 };
 
+CanvasRenderer.prototype.unbind = function(index) {
+    if(index === undefined) index = 0;
+    GL.activeTexture(GL.TEXTURE0 + index);
+    GL.bindTexture(GL.TEXTURE_2D, null);
+    GL.activeTexture(GL.TEXTURE0);
+};
+
+var PlaceholderRenderer = function(name, key) {
+    this.canvas = document.createElement("canvas");
+    this.canvas.width = 512;
+    this.canvas.height = 512;
+    var context = this.canvas.getContext("2d");
+    context.textAlign = "center";
+    context.fillStyle = "rgba(128, 128, 128, 0.5)";
+    context.rect(0, 0, 512, 512);
+    context.fill();
+    context.fillStyle = "white";
+    context.font = "64px Arial";
+    context.fillText(name, 256, 220);
+    context.fillText(key, 256, 300);
+    this.texture = GL.createTexture();
+    GL.bindTexture(GL.TEXTURE_2D, this.texture);
+    GL.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, true);
+    GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+    GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
+    GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
+    GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR_MIPMAP_LINEAR);
+    GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, this.canvas);
+    GL.generateMipmap(GL.TEXTURE_2D);
+    GL.bindTexture(GL.TEXTURE_2D, null);
+};
+
+PlaceholderRenderer.prototype.bind = function(index) {
+    if(index === undefined) index = 0;
+    GL.activeTexture(GL.TEXTURE0 + index);
+    GL.bindTexture(GL.TEXTURE_2D, this.texture);
+    GL.activeTexture(GL.TEXTURE0);
+};
+
+PlaceholderRenderer.prototype.unbind = function(index) {
+    if(index === undefined) index = 0;
+    GL.activeTexture(GL.TEXTURE0 + index);
+    GL.bindTexture(GL.TEXTURE_2D, null);
+    GL.activeTexture(GL.TEXTURE0);
+};
+
 var renders = [];
 function getRenderer(index) {
     if(!renders[index]) renders[index] = new CanvasRenderer();
     return renders[index];
+}
+
+var placeholders = { };
+function getViewportPlaceholder(name, key) {
+    var idx = name + "." + key;
+    if(!placeholders[idx]) placeholders[idx] = new PlaceholderRenderer(name, key);
+    return placeholders[idx];
 }
 
 var QuadRenderer = function() {
@@ -210,8 +265,18 @@ function render_scene(info) {
     if(workspace) {
         for(var c in workspace.canvases) {
             var canvas = workspace.canvases[c];
-            getRenderer(c).bind(2);
+            var canvas_texture = getRenderer(c);
+            canvas_texture.bind(2);
             quad_renderer.render(info, canvas.pose);
+            canvas_texture.unbind(2);
+        }
+        if(workspace.viewport_poses) {
+            workspace.viewport_poses.forEach(function(item) {
+                var canvas_texture = getViewportPlaceholder(item.name, item.key);
+                canvas_texture.bind(2);
+                quad_renderer.render(info, item.pose);
+                canvas_texture.unbind(2);
+            });
         }
     }
 }
@@ -385,7 +450,12 @@ function ensure_distance(pose) {
     var multitouch_input = new Hammer(document.getElementById("webgl-view"), {});
     multitouch_input.get('pinch').set({ enable: true });
 
+    function get_coordinates(event) {
+        return new IV.Vector(event.center.x, event.center.y);
+    }
+
     var find_canvas = function(center, direction) {
+        if(!workspace) return null;
         var tmin = 1e10;
         var candidate = null;
         for(var c in workspace.canvases) {
@@ -395,6 +465,15 @@ function ensure_distance(pose) {
                 tmin = t;
                 candidate = canvas;
             }
+        }
+        if(workspace.viewport_poses) {
+            workspace.viewport_poses.forEach(function(item) {
+                var t = quad_renderer.select(center, direction, item.pose);
+                if(t !== null && t < tmin) {
+                    tmin = t;
+                    candidate = item;
+                }
+            });
         }
         return candidate;
     };
@@ -440,18 +519,42 @@ function ensure_distance(pose) {
                     postActions(actions, { is_pose_update: true });
                     render_webgl_view();
                 };
-            } else {
-
+                return true;
             }
         }
     };
+
+    var viewport_pan_initial = function(pos, event) {
+        pos = get_coordinates(event);
+        var pos0 = pos;
+        pan_move = function(pos2, event) {
+            pos2 = get_coordinates(event);
+            var ey = cubemap_renderer.view_up;
+            var ex = cubemap_renderer.view_direction.cross(cubemap_renderer.view_up).normalize();
+            var s = 0.005;
+            var phi = Math.atan2(cubemap_renderer.view_direction.y, cubemap_renderer.view_direction.x);
+            var theta = Math.atan2(cubemap_renderer.view_direction.z, new IV.Vector(cubemap_renderer.view_direction.x, cubemap_renderer.view_direction.y).length());
+            phi += s * (pos2.x - pos0.x);
+            theta += s * (pos2.y - pos0.y);
+            theta = Math.min(Math.PI / 2 * 0.99, Math.max(-Math.PI / 2 * 0.99, theta));
+            cubemap_renderer.view_direction = new IV.Vector3(Math.cos(phi) * Math.cos(theta), Math.sin(phi) * Math.cos(theta), Math.sin(theta));
+            pos0 = pos2;
+            render_webgl_view();
+        };
+        pan_end = function() {
+            pan_move = null;
+            pan_end = null;
+        };
+    };
+
     multitouch_input.on('panstart', function(event) {
         var xy = get_viewport_coordinates_hammer(event);
-        pan_initial(xy);
+        if(pan_initial(xy, event)) return;
+        viewport_pan_initial(xy, event);
     });
     multitouch_input.on('panmove', function(event) {
         var xy = get_viewport_coordinates_hammer(event);
-        if(pan_move) pan_move(xy);
+        if(pan_move) pan_move(xy, event);
     });
     multitouch_input.on('panend', function(event) {
         if(pan_end) pan_end();
@@ -483,16 +586,31 @@ function ensure_distance(pose) {
                 postActions(actions, { is_pose_update: true });
                 render_webgl_view();
             };
+            return true;
         }
+    };
+
+    var viewport_pinch_initial = function() {
+        var angle0 = cubemap_renderer.view_angle;
+        pinch_move = function(xy, scale) {
+            cubemap_renderer.view_angle = angle0 / scale;
+            if(cubemap_renderer.view_angle > Math.PI * 0.9) cubemap_renderer.view_angle = Math.PI * 0.9;
+            render_webgl_view();
+        };
+        pinch_end = function() {
+            pinch_move = null;
+            pinch_end = null;
+        };
     };
 
     multitouch_input.on('pinchstart', function(event) {
         var xy = get_viewport_coordinates_hammer(event);
-        pinch_initial(xy, event.scale);
+        if(pinch_initial(xy, event.scale, event)) return;
+        viewport_pinch_initial(xy, event.scale, event);
     });
     multitouch_input.on('pinchmove', function(event) {
         var xy = get_viewport_coordinates_hammer(event);
-        if(pinch_move) pinch_move(xy, event.scale);
+        if(pinch_move) pinch_move(xy, event.scale, event);
     });
     multitouch_input.on('pinchend', function(event) {
         var xy = get_viewport_coordinates_hammer(event);
@@ -517,9 +635,13 @@ function ensure_distance(pose) {
         pan_move = function(pos2) {
             var ey = cubemap_renderer.view_up;
             var ex = cubemap_renderer.view_direction.cross(cubemap_renderer.view_up).normalize();
-            var s = 0.01;
-            cubemap_renderer.view_direction = IV.Quaternion.rotation(ey, s * (pos2.x - pos0.x)).rotate(cubemap_renderer.view_direction);
-            cubemap_renderer.view_direction = IV.Quaternion.rotation(ex, s * (pos2.y - pos0.y)).rotate(cubemap_renderer.view_direction);
+            var s = 0.005;
+            var phi = Math.atan2(cubemap_renderer.view_direction.y, cubemap_renderer.view_direction.x);
+            var theta = Math.atan2(cubemap_renderer.view_direction.z, new IV.Vector(cubemap_renderer.view_direction.x, cubemap_renderer.view_direction.y).length());
+            phi += s * (pos2.x - pos0.x);
+            theta += s * (pos2.y - pos0.y);
+            theta = Math.min(Math.PI / 2 * 0.99, Math.max(-Math.PI / 2 * 0.99, theta));
+            cubemap_renderer.view_direction = new IV.Vector3(Math.cos(phi) * Math.cos(theta), Math.sin(phi) * Math.cos(theta), Math.sin(theta));
             pos0 = pos2;
             render_webgl_view();
         };

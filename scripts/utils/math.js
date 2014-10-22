@@ -174,6 +174,12 @@ NS.Quaternion.rotation = function(axis, angle) {
 
 NS.geometry = { };
 
+NS.geometry.normalizeAngle = function(angle) {
+    // ensure angle in [0, 2pi]
+    if(angle >= 0) return angle % (2 * Math.PI);
+    return angle % (2 * Math.PI) + 2 * Math.PI;
+};
+
 NS.geometry.pointLineSegmentDistance = function(pt, p1, p2) {
     var d = p2.sub(p1);
     var t = pt.sub(p1).dot(d) / d.dot(d);
@@ -183,6 +189,23 @@ NS.geometry.pointLineSegmentDistance = function(pt, p1, p2) {
         return pt.distance(p2);
     var pfoot = p1.interp(p2, t);
     return pt.distance(pfoot);
+};
+
+NS.geometry.pointArcDistance = function(pt, center, radius, angle1, angle2) {
+    var offset = pt.sub(center);
+    var len = offset.length();
+    if(len / radius < 1e-6) return radius - len;
+    var angle = Math.atan2(offset.y, offset.x);
+    if(angle < 0) angle += Math.PI * 2;
+    angle1 = NS.geometry.normalizeAngle(angle1);
+    angle2 = NS.geometry.normalizeAngle(angle2);
+    if( (angle1 < angle && angle < angle2) ||
+        ((angle < angle2 || angle1 < angle) && (angle2 < angle1)) ) {
+        return Math.abs(radius - len);
+    }
+    var d1 = new IV.Vector(Math.cos(angle1) * radius, Math.sin(angle1) * radius).distance(pt);
+    var d2 = new IV.Vector(Math.cos(angle2) * radius, Math.sin(angle2) * radius).distance(pt);
+    return Math.min(d1, d2);
 };
 
 NS.geometry.insidePolygon = function(poly, pt) {

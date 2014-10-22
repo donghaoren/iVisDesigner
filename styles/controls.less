@@ -32,10 +32,11 @@ select {
     border: none;
     margin: 0; padding: 0;
     font-family: @main_font;
+    color: @cMainText;
     .btn();
     border-radius: 0;
     background-color: transparent;
-    background-image: @icon_arrowdown;
+    background-image: extract(@icon_arrowdown @icon_arrowdown_w, @colorscheme_index);
     background-size: 12px 12px;
     background-position: right center;
     background-repeat: no-repeat;
@@ -43,7 +44,7 @@ select {
     &:hover, &.active, &:active {
         @color: @active_color;
         @val: 10%;
-        .gradient_background_append(@icon_arrowdown_w, @active_color);
+        .gradient_background_append(extract(@icon_arrowdown_w @icon_arrowdown_w, @colorscheme_index), @active_color);
         background-size: 12px 12px, auto;
         background-position: right center;
         background-repeat: no-repeat;

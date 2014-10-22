@@ -298,15 +298,13 @@ Objects.Arc = IV.extend(Objects.Shape, function(info) {
         var p2 = this.point2.getPoint(context);
         var r = this.radius.get(context);
         if(p1 === null || p2 === null || r === null) return null;
-        if(Math.abs(r) < 0.5) return null;
         var dp = p2.sub(p1);
         var len = dp.length();
         var direction = dp.rotate90().scale(1.0 / len);
-        r = len * r;
-        direction = direction.scale(Math.sqrt(r * r - len * len / 4));
-        var o;
-        if(r > 0) o = p1.add(p2).scale(0.5).sub(direction);
-        else o = p1.add(p2).scale(0.5).add(direction);
+        var h = r * len;
+        r = h / 2 + len * len / 8 / h;
+        direction = direction.scale(h - r);
+        o = p1.add(p2).scale(0.5).add(direction);
         var dp1 = p1.sub(o);
         var dp2 = p2.sub(o);
         var angle1 = Math.atan2(dp1.y, dp1.x);
@@ -347,7 +345,10 @@ Objects.Arc = IV.extend(Objects.Shape, function(info) {
                 make_anchor_move_context(rslt, $this.point2, action);
                 anchor_selected = true;
             }
-            d = IV.geometry.pointLineSegmentDistance(pt, p1, p2);
+            var arcinfo = $this.getArc(context);
+            if(arcinfo) {
+                d = IV.geometry.pointArcDistance(pt, arcinfo[0], arcinfo[1], arcinfo[2], arcinfo[3]);
+            }
             if(!anchor_selected && d < threshold && (!rslt || rslt.distance > d)) {
                 rslt = { distance: d, context: context.clone() };
             }

@@ -53,24 +53,83 @@ var RenderSlaveProcess = function(info) {
 
     var spawn = require('child_process').spawn;
     this.process = spawn("node", [__dirname + "/" + info.script, JSON.stringify(info)]);
-    this.process.stdout.on('data', function (data) {
+    this.process.stdout.on('data', function(data) {
         var prefix = 'renderer(' + info.index + '): stdout > ';
         console.log(prefix_string(prefix, data.toString("utf8").trim()));
     });
 
-    this.process.stderr.on('data', function (data) {
+    this.process.stderr.on('data', function(data) {
         var prefix = 'renderer(' + info.index + '): stderr > ';
         console.log(prefix_string(prefix, data.toString("utf8").trim()));
     });
 
-    this.process.on('close', function (code, signal) {
-      console.log('render(' + info.index + '): terminated with code ' + code + ' signal ' + signal);
+    this.process.on('close', function(code, signal) {
+      console.log('renderer(' + info.index + '): terminated with code ' + code + ' signal ' + signal);
     });
 };
 
 RenderSlaveProcess.prototype.stop = function() {
     this.process.kill("SIGTERM");
     this.texture.shm.delete();
+};
+
+var RenderViewportProcess = function(info) {
+    var SharedMemory = require("node_sharedmemory").SharedMemory;
+    var ivtexture_args = [];
+    var textures = { };
+
+    info.textures.forEach(function(desc) {
+        var texture_info = { };
+        texture_info.width = desc.width;
+        texture_info.height = desc.height;
+        texture_info.key = desc.key;
+
+        if(!texture_info.width) texture_info.width = 2000;
+        if(!texture_info.height) texture_info.height = 2000;
+        var shminfo = { width: texture_info.width, height: texture_info.height };
+        var tex = new SharedTexture(shminfo, true);
+        tex.surface = new graphics.Surface2D(texture_info.width, texture_info.height, tex.buffer);
+        texture_info.texture = tex;
+        texture_info.timestamp = null;
+        ivtexture_args.push("-ivTexture"
+            + ":"
+            + texture_info.key
+            + "=" + shminfo.shm_id
+            + "," + shminfo.sem_id
+            + "," + shminfo.shm_size
+            + "," + shminfo.width
+            + "," + shminfo.height
+        );
+        textures[desc.key] = texture_info;
+    });
+
+    this.textures = textures;
+
+    var spawn = require('child_process').spawn;
+
+    if(!info.arguments) info.arguments = [];
+    this.process = spawn(info.command, info.arguments.concat(ivtexture_args), info.options);
+
+    this.process.stdout.on('data', function(data) {
+        var prefix = info.name + ': stdout > ';
+        console.log(prefix_string(prefix, data.toString("utf8").trim()));
+    });
+
+    this.process.stderr.on('data', function(data) {
+        var prefix = info.name + ': stderr > ';
+        console.log(prefix_string(prefix, data.toString("utf8").trim()));
+    });
+
+    this.process.on('close', function(code, signal) {
+      console.log(info.name + ': terminated with code ' + code + ' signal ' + signal);
+    });
+};
+
+RenderViewportProcess.prototype.stop = function() {
+    this.process.kill("SIGTERM");
+    for(var key in this.textures) {
+        this.textures[key].texture.shm.delete();
+    }
 };
 
 var slave_processes = [
@@ -83,6 +142,8 @@ var connection = new MessageTransportTCP(configuration, false);
 var index = 0;
 var workspace = null;
 
+var viewport_processes = { };
+
 var workspace_sync = new WorkspaceSync();
 workspace_sync.onUpdate = function() {
     workspace = workspace_sync.workspace;
@@ -92,6 +153,23 @@ connection.onMessage = function(object) {
     // if(object.type == "workspace.set") {
     //     workspace = IV.serializer.deserialize(object.workspace);
     // }
+    if(object.type == "viewport.launch") {
+        // {
+        //   name: "process-name",
+        //   command: "command-to-launch",
+        //   arguments: ["arg1", "arg2", ...],
+        //   options: { env: { ... }, cwd: }
+        // }
+        if(viewport_processes[object.name]) {
+            viewport_processes[object.name].stop();
+        }
+        viewport_processes[object.name] = new RenderViewportProcess(object);
+    }
+    if(object.type == "viewport.stop") {
+        if(viewport_processes[object.name]) {
+            viewport_processes[object.name].stop();
+        }
+    }
     if(object.type == "panorama.load") {
         panorama_texture.submitImageFile(object.filename, object.stereo_mode);
         panorama_texture_loaded = true;
@@ -126,6 +204,39 @@ connection.onMessage = function(object) {
 
 var before_render, after_render;
 
+var draw_quad_with_pose = function(pose) {
+    var ex = pose.up.cross(pose.normal).normalize();
+    var ey = pose.normal.cross(ex).normalize();
+
+    ex = ex.scale(pose.width / 2);
+    ey = ey.scale(pose.width / 2);
+
+    var p1 = pose.center.sub(ex).add(ey);
+    var p2 = pose.center.sub(ex).sub(ey);
+    var p3 = pose.center.add(ex).sub(ey);
+    var p4 = pose.center.add(ex).add(ey);
+
+    GL.begin(GL.QUADS);
+
+    GL.texCoord2f(0, 0);
+    GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
+    GL.vertex3f(p1.x, p1.y, p1.z);
+
+    GL.texCoord2f(0, 1);
+    GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
+    GL.vertex3f(p2.x, p2.y, p2.z);
+
+    GL.texCoord2f(1, 1);
+    GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
+    GL.vertex3f(p3.x, p3.y, p3.z);
+
+    GL.texCoord2f(1, 0);
+    GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
+    GL.vertex3f(p4.x, p4.y, p4.z);
+
+    GL.end();
+};
+
 if(configuration.allosphere) {
     var allosphere = require("node_allosphere");
     allosphere.initialize();
@@ -149,10 +260,21 @@ if(configuration.allosphere) {
             }
             tex.shm.readUnlock();
         });
+        if(workspace && workspace.viewport_poses) {
+            workspace.viewport_poses.forEach(function(item) {
+                var tex = viewport_processes[item.name].textures[item.key].texture;
+                tex.shm.readLock();
+                if(tex.timestamp != tex.getTimestamp()) {
+                    tex.surface.uploadTexture();
+                    tex.timestamp = tex.getTimestamp();
+                }
+                tex.shm.readUnlock();
+            });
+        }
     });
 
     // Draw your stuff with OpenGL.
-    allosphere.onDraw(function(info) {
+    var safe_ondraw = function(info) {
         GL.enable(GL.BLEND);
         // The texture output is in premultiplied alpha!
         GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
@@ -164,6 +286,25 @@ if(configuration.allosphere) {
             try {
                 before_render();
             } catch(e) { }
+        }
+
+        if(workspace && workspace.viewport_poses) {
+            workspace.viewport_poses.forEach(function(item) {
+                var tex = viewport_processes[item.name].textures[item.key].texture;
+                allosphere.shaderBegin(allosphere.shaderDefault());
+
+                tex.surface.bindTexture(2);
+
+                allosphere.shaderUniformf("texture", 1.0);
+                allosphere.shaderUniformi("texture0", 2);
+                allosphere.shaderUniformf("lighting", 0);
+
+                draw_quad_with_pose(item.pose);
+
+                tex.surface.unbindTexture(2);
+
+                allosphere.shaderEnd(allosphere.shaderDefault());
+            });
         }
 
         slave_processes.forEach(function(slave_process) {
@@ -181,21 +322,7 @@ if(configuration.allosphere) {
             allosphere.shaderUniformi("texture0", 2);
             allosphere.shaderUniformf("lighting", 0);
 
-            var pose = canvas.pose;
-            var ex = pose.up.cross(pose.normal).normalize();
-            var ey = pose.normal.cross(ex).normalize();
-            ex = ex.scale(pose.width / 2);
-            ey = ey.scale(pose.width / 2);
-            var p1 = pose.center.sub(ex).add(ey);
-            var p2 = pose.center.sub(ex).sub(ey);
-            var p3 = pose.center.add(ex).sub(ey);
-            var p4 = pose.center.add(ex).add(ey);
-            GL.begin(GL.QUADS);
-            GL.texCoord2f(0, 0); GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z); GL.vertex3f(p1.x, p1.y, p1.z);
-            GL.texCoord2f(0, 1); GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z); GL.vertex3f(p2.x, p2.y, p2.z);
-            GL.texCoord2f(1, 1); GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z); GL.vertex3f(p3.x, p3.y, p3.z);
-            GL.texCoord2f(1, 0); GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z); GL.vertex3f(p4.x, p4.y, p4.z);
-            GL.end();
+            draw_quad_with_pose(canvas.pose);
 
             tex.surface.unbindTexture(2);
 
@@ -208,6 +335,14 @@ if(configuration.allosphere) {
             } catch(e) { }
         }
         GL.flush();
+    };
+
+    allosphere.onDraw(function() {
+        try {
+            safe_ondraw();
+        } catch(e) {
+            console.trace(e);
+        }
     });
 
     // Main event loop.
@@ -224,6 +359,9 @@ var safe_exit = function() {
     slave_processes.forEach(function(p) {
         p.stop();
     });
+    for(var name in viewport_processes) {
+        viewport_processes[name].stop();
+    }
     connection.close();
     console.log("SIGTERM");
     process.exit();

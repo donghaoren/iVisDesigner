@@ -32,7 +32,7 @@ class ServerFactory(Factory):
 def get_allosphere_service(config):
     global current_factory
     current_factory = ServerFactory()
-    return TCPServer(int(config.get("allosphere", "socket_port")), current_factory)
+    return TCPServer(int(config.get("allosphere", "socket_port")), current_factory, interface = config.get("allosphere", "interface"))
 
 def send_message(message):
     global current_factory

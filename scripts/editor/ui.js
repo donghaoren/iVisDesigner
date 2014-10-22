@@ -228,4 +228,41 @@ IV.listen("status", function(s) {
         var code = codemirror.getSelection();
         eval(code);
     });
+    var predefined_codes = { };
+    predefined_codes["sample"] = { name: "Sample", code: "alert('Hello World!');" };
+    predefined_codes["launch-test"] = { name: "Launch Test", code: IV.multiline(function() {/*
+        IV.allosphere.postMessage({
+            type: "viewport.launch",
+            name: "test",
+            command: "java",
+            options: {
+                cwd: "/Users/donghao/Documents/Projects/iVisDesigner/nodejs/allosphere/jni"
+            },
+            arguments: ["Test"],
+            textures: [
+              { key: "test", width: 100, height: 100 }
+            ]
+        });
+
+        IV.editor.actions.add(new IV.actions.SetDirectly(IV.editor.workspace, "viewport_poses", [
+          {
+            name: "test",
+            key: "test",
+            pose: {
+              center: new IV.Vector3(5, 0, 0),
+              normal: new IV.Vector3(-1, 0, 0),
+              up: new IV.Vector3(0, 0, 1),
+              width: 4
+            }
+          }
+        ])); IV.editor.actions.commit();
+    */}) };
+    for(var id in predefined_codes) {
+        var name = predefined_codes[id].name;
+        $("#code-editor-predefined").append(IV._E("option").attr("value", id).text(name));
+    }
+    $("#code-editor-predefined").change(function() {
+        codemirror.setValue(predefined_codes[$(this).val()].code);
+        codemirror.execCommand("selectAll");
+    });
 })();

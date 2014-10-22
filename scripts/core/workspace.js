@@ -50,8 +50,12 @@ IV.Workspace.prototype.serializeFields = function() {
     return [ "canvases", "objects", "uuid", "default_canvas" ];
 };
 
+IV.Workspace.prototype.fillDefault = function() {
+};
+
 IV.Workspace.prototype.postDeserialize = function() {
     IV.EventSource.call(this);
+    this.fillDefault();
 };
 
 // Canvas management.

@@ -46,6 +46,8 @@ config.set("database", "port", "")
 # Allosphere connection.
 config.add_section("allosphere")
 config.set("allosphere", "enabled", "false")
+config.set("allosphere", "interface", "")
+config.set("allosphere", "socket_port", 60100)
 
 config.read("config.ini")
 

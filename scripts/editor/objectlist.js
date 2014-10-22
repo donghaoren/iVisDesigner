@@ -55,6 +55,7 @@ Editor.bind("reset", function() {
 var object_icons = {
     "Track": "xicon-tools-track",
     "Scatter": "xicon-tools-scatter",
+    "Arc": "xicon-tools-arc",
     "Circle": "xicon-tools-circle",
     "Line": "xicon-tools-line",
     "Polyline": "xicon-tools-polyline",
