@@ -63,16 +63,29 @@
                     color: white;
                 }
             }
-
-            &:hover {
-                .gradient_background(lighten(@active_color, 50%), 5%);
+            .background_def(@id) when(@id = 1) { // white
+                &:hover {
+                    .gradient_background(lighten(@active_color, 50%), 5%);
+                }
+                &:active, &.selected {
+                    .gradient_background_inv(lighten(@active_color, 50%), 5%);
+                }
+                &.target {
+                    .gradient_background_inv(lighten(@active_color_warm, 10%));
+                }
             }
-            &:active, &.selected {
-                .gradient_background_inv(lighten(@active_color, 50%), 5%);
+            .background_def(@id) when(@id = 2) { // black
+                &:hover {
+                    .gradient_background(darken(@active_color, 10%), 5%);
+                }
+                &:active, &.selected {
+                    .gradient_background_inv(darken(@active_color, 10%), 5%);
+                }
+                &.target {
+                    .gradient_background_inv(darken(@active_color_warm, 10%));
+                }
             }
-            &.target {
-                .gradient_background_inv(lighten(@active_color_warm, 10%));
-            }
+            .background_def(@colorscheme_index);
         }
     }
 
