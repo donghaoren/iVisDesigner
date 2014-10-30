@@ -307,18 +307,21 @@ $(window).resize(function() {
 var synced_object, dataset, workspace;
 
 var scene_updated = false;
+var update_blocker = 0;
 var updateHandler = function() {
-    if(scene_updated) {
-        scene_updated = false;
-        try {
-            if(workspace) {
-                for(var c in workspace.canvases) {
-                    var canvas = workspace.canvases[c];
-                    if(dataset) getRenderer(c).render(canvas.visualization, dataset);
+    if(update_blocker == 0) {
+        if(scene_updated) {
+            scene_updated = false;
+            try {
+                if(workspace) {
+                    for(var c in workspace.canvases) {
+                        var canvas = workspace.canvases[c];
+                        if(dataset) getRenderer(c).render(canvas.visualization, dataset);
+                    }
                 }
-            }
-            render_webgl_view();
-        } catch(e) { }
+                render_webgl_view();
+            } catch(e) { }
+        }
     }
     setTimeout(updateHandler, 200);
 };
@@ -548,6 +551,7 @@ function ensure_distance(pose) {
     };
 
     multitouch_input.on('panstart', function(event) {
+        update_blocker += 1;
         var xy = get_viewport_coordinates_hammer(event);
         if(pan_initial(xy, event)) return;
         viewport_pan_initial(xy, event);
@@ -557,6 +561,7 @@ function ensure_distance(pose) {
         if(pan_move) pan_move(xy, event);
     });
     multitouch_input.on('panend', function(event) {
+        update_blocker -= 1;
         if(pan_end) pan_end();
         pan_move = null;
         pan_end = null;
@@ -586,6 +591,10 @@ function ensure_distance(pose) {
                 postActions(actions, { is_pose_update: true });
                 render_webgl_view();
             };
+            pinch_end = function() {
+                pinch_move = null;
+                pinch_end = null;
+            }
             return true;
         }
     };
@@ -604,6 +613,7 @@ function ensure_distance(pose) {
     };
 
     multitouch_input.on('pinchstart', function(event) {
+        update_blocker += 1;
         var xy = get_viewport_coordinates_hammer(event);
         if(pinch_initial(xy, event.scale, event)) return;
         viewport_pinch_initial(xy, event.scale, event);
@@ -613,6 +623,7 @@ function ensure_distance(pose) {
         if(pinch_move) pinch_move(xy, event.scale, event);
     });
     multitouch_input.on('pinchend', function(event) {
+        update_blocker -= 1;
         var xy = get_viewport_coordinates_hammer(event);
         if(pinch_end) pinch_end();
         pinch_move = null;
@@ -648,7 +659,9 @@ function ensure_distance(pose) {
         pan_end = function() {
             pan_move = null;
             pan_end = null;
+            update_blocker -= 1;
         };
+        update_blocker += 1;
     };
 
     var pinch_move = null;
@@ -663,10 +676,13 @@ function ensure_distance(pose) {
         pinch_end = function() {
             pinch_move = null;
             pinch_end = null;
+            update_blocker -= 1;
         };
+        update_blocker += 1;
     };
 
     multitouch_input.on('panstart', function(event) {
+        update_blocker += 1;
         var xy = get_coordinates(event);
         pan_initial(xy);
     });
@@ -675,11 +691,13 @@ function ensure_distance(pose) {
         if(pan_move) pan_move(xy);
     });
     multitouch_input.on('panend', function(event) {
+        update_blocker -= 1;
         if(pan_end) pan_end();
         pan_move = null;
         pan_end = null;
     });
     multitouch_input.on('pinchstart', function(event) {
+        update_blocker += 1;
         var xy = get_coordinates(event);
         pinch_initial(xy, event.scale);
     });
@@ -688,6 +706,7 @@ function ensure_distance(pose) {
         if(pinch_move) pinch_move(xy, event.scale);
     });
     multitouch_input.on('pinchend', function(event) {
+        update_blocker -= 1;
         var xy = get_coordinates(event);
         if(pinch_end) pinch_end();
         pinch_move = null;

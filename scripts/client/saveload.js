@@ -55,7 +55,7 @@ var load_dataset_from_server = function(info, callback) {
             var obj = new IV.server.SyncedObject(name);
             IV.raise("dataset:set", { type: "synced", data: obj, schema: schema });
             var data_obj = null;
-            obj.onUpdate = function(data) {
+            obj.onUpdate = function(data, revision) {
                 var ds = new IV.PlainDataset(data, schema);
                 if(!data_obj) {
                     data_obj = new IV.DataObject(ds.obj, ds.schema);
@@ -63,6 +63,7 @@ var load_dataset_from_server = function(info, callback) {
                     IV.editor.setData(IV.data);
                     callback();
                 } else {
+                    data_obj.revision = revision;
                     data_obj.updateRoot(ds.obj);
                     data_obj.raise("update");
                 }

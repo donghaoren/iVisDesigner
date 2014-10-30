@@ -135,7 +135,8 @@ RenderViewportProcess.prototype.stop = function() {
 var slave_processes = [
     new RenderSlaveProcess({ script: "renderslave.js", index: 0 }),
     new RenderSlaveProcess({ script: "renderslave.js", index: 1 }),
-    new RenderSlaveProcess({ script: "renderslave.js", index: 2 })
+    new RenderSlaveProcess({ script: "renderslave.js", index: 2 }),
+    new RenderSlaveProcess({ script: "renderslave.js", index: 3 })
 ];
 
 var connection = new MessageTransportTCP(configuration, false);
@@ -337,9 +338,9 @@ if(configuration.allosphere) {
         GL.flush();
     };
 
-    allosphere.onDraw(function() {
+    allosphere.onDraw(function(info) {
         try {
-            safe_ondraw();
+            safe_ondraw(info);
         } catch(e) {
             console.trace(e);
         }

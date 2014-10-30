@@ -122,6 +122,7 @@ Editor.setData = function(data) {
     data.bind("update", function() {
         Editor.computeDataStatistics();
         Editor.renderDataSchema(Editor.schema);
+        if(Editor.vis) Editor.vis.validate(data);
         Editor.renderer.trigger();
         Editor.renderer.render();
     });

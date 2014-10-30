@@ -83,6 +83,7 @@ connection.onMessage = function(object) {
                 data_obj = new IV.DataObject(ds.obj, ds.schema);
                 renderer.setData(data_obj);
                 renderer.setVisualization(vis);
+                dataset = data_obj;
                 renderer.trigger("main");
             } else {
                 data_obj.updateRoot(ds.obj);

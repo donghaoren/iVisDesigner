@@ -171,6 +171,7 @@ Editor.renderSchemaFields = function(info, fields, previous_path) {
             span.attr("draggable", true);
             span.bind("dragstart", function(e) {
                 e.originalEvent.dataTransfer.setData("iv/path", this_path);
+                e.originalEvent.dataTransfer.setData("text/plain", this_path);
             });
         })(this_path);
         if(field.type == "collection" || field.type == "object" || field.type == "sequence")

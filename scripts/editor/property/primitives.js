@@ -76,6 +76,15 @@ primitives.String = function(get, set, args) {
                     $(this).addClass("dirty");
                 }
             });
+            // .bind("drop", function(e) {
+            //     var xfer = e.originalEvent.dataTransfer;
+            //     if(xfer.getData("iv/path")) {
+            //         var cursor = $(this).get(0).selectionStart;
+            //         var current_text = $(this).val();
+            //         var txtToAdd = xfer.getData("iv/path");
+            //         $(this).val(current_text.substring(0, cursor) + txtToAdd + current_text.substring(cursor));
+            //     }
+            // });
         var reload = function() {
             val0 = get();
             r.val(val0);

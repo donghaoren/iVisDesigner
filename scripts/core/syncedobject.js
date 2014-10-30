@@ -55,7 +55,7 @@ IV.SyncedObjectBase = IV.extend(Object, function(name) {
         this.call_callback();
     },
     call_callback: function() {
-        if(this.onUpdate) this.onUpdate(this.data);
+        if(this.onUpdate) this.onUpdate(this.data, this.rev);
     },
     index_object: function(obj) {
         if(!obj) return obj;
