@@ -257,6 +257,44 @@ IV.listen("status", function(s) {
           }
         ])); IV.editor.actions.commit();
     */}) };
+    predefined_codes["CyberViz"] = { name: "CyberViz Launch", code: IV.multiline(function() {/*
+        IV.allosphere.postMessage({
+            type: "viewport.launch",
+            name: "cybaviz",
+            command: "/alloshare/donghao/nodejs/ivisdesigner/java/cyberviz.sh",
+            options: {
+                cwd: "/alloshare/donghao/nodejs/ivisdesigner/java"
+            },
+            arguments: [],
+            textures: [
+              { key: "services", width: 2000, height: 2000 },
+              { key: "missions", width: 2000, height: 2000 }
+            ]
+        });
+
+        IV.editor.actions.add(new IV.actions.SetDirectly(IV.editor.workspace, "viewport_poses", [
+          {
+            name: "cybaviz",
+            key: "services",
+            pose: {
+              center: new IV.Vector3(5, 0, 0),
+              normal: new IV.Vector3(-1, 0, 0),
+              up: new IV.Vector3(0, 0, 1),
+              width: 4
+            }
+          },
+          {
+            name: "cybaviz",
+            key: "missions",
+            pose: {
+              center: new IV.Vector3(-5, 0, 0),
+              normal: new IV.Vector3(1, 0, 0),
+              up: new IV.Vector3(0, 0, 1),
+              width: 4
+            }
+          }
+        ])); IV.editor.actions.commit();
+    */}); }
     for(var id in predefined_codes) {
         var name = predefined_codes[id].name;
         $("#code-editor-predefined").append(IV._E("option").attr("value", id).text(name));
