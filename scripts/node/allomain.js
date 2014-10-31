@@ -205,12 +205,17 @@ connection.onMessage = function(object) {
 
 var before_render, after_render;
 
-var draw_quad_with_pose = function(pose) {
+var draw_quad_with_pose = function(pose, texture_info) {
     var ex = pose.up.cross(pose.normal).normalize();
     var ey = pose.normal.cross(ex).normalize();
 
+    if(!texture_info) texture_info = { };
+    // aspect_ratio = width / height.
+    if(texture_info.aspect_ratio === undefined) texture_info.aspect_ratio = 1;
+
     ex = ex.scale(pose.width / 2);
-    ey = ey.scale(pose.width / 2);
+    ey = ey.scale(pose.width / texture_info.aspect_ratio / 2);
+    if(texture_info.flip_y) ey = ey.scale(-1);
 
     var p1 = pose.center.sub(ex).add(ey);
     var p2 = pose.center.sub(ex).sub(ey);
@@ -300,7 +305,10 @@ if(configuration.allosphere) {
                 allosphere.shaderUniformi("texture0", 2);
                 allosphere.shaderUniformf("lighting", 0);
 
-                draw_quad_with_pose(item.pose);
+                draw_quad_with_pose(item.pose, {
+                    aspect_ratio: 1,
+                    flip_y: true
+                });
 
                 tex.surface.unbindTexture(2);
 
