@@ -294,7 +294,7 @@ IV.listen("status", function(s) {
             }
           }
         ])); IV.editor.actions.commit();
-    */}); }
+    */}) };
     for(var id in predefined_codes) {
         var name = predefined_codes[id].name;
         $("#code-editor-predefined").append(IV._E("option").attr("value", id).text(name));
