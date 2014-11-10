@@ -202,8 +202,8 @@ var PointOffset = IV.extend(Objects.Object, function(point, offset) {
         if(cap == "get-point") return true;
         return false;
     },
-    beginMoveElement: function(context) {
-        var rc = this.point.beginMoveElement(context);
+    beginMoveElement: function(context, path) {
+        var rc = this.point.beginMoveElement(context, path);
         var $this = this;
         return {
             onMove: function(p0, p1) {

@@ -342,7 +342,8 @@ var Track = IV.extend(Objects.Object, function(info) {
         });
         return rslt;
     },
-    beginMoveElement: function(context, d) {
+    beginMoveElement: function(context, d, path) {
+        if(!path) path = this.path;
         var $this = this;
         var a1 = this.anchor1.getPoint(context);
         var a2 = this.anchor2.getPoint(context);
@@ -357,7 +358,7 @@ var Track = IV.extend(Objects.Object, function(info) {
                 } else {
                     new_value = new_value * (max - min) + min;
                 }
-                context.set($this.path, new_value);
+                context.set(path, new_value);
             }
         };
     }
@@ -373,6 +374,9 @@ var TrackWrapper = IV.extend(Objects.Object, function(track, path) {
     get: function(context) {
         var pt = this.track.get(context, this.path);
         return pt;
+    },
+    beginMoveElement: function(context) {
+        return this.track.beginMoveElement(context, null, this.path);
     },
     can: function(cap) {
         if(cap == "get-point") return true;

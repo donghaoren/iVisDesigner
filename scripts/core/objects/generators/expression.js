@@ -53,7 +53,6 @@ Objects.Expression = IV.extend(Objects.Object, function(info) {
         this.vis = vis;
     },
     validate: function(data) {
-        this._validated = false;
         if(data.revision !== this._revision) {
             this._validated = false;
         }
