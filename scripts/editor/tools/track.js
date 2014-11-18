@@ -66,7 +66,7 @@ Tools.Track = {
                             min: new IV.objects.Plain(stat.min),
                             max: new IV.objects.Plain(stat.max)
                         });
-                        if(path.components.length > 2) {
+                        if(stat.count > 100) {
                             track.tick_style.show_ticks = false;
                         }
                         Editor.doAddObject(track);

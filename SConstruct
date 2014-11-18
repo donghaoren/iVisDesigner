@@ -120,6 +120,7 @@ Binary("datasets/test.schema", "datasets/test.yaml");
 Binary("datasets/test.data", "datasets/test.data.yaml");
 
 HTML("toolkit.html", "html/toolkit.html")
+HTML("dataframe.html", "html/dataframe.html")
 HTML("allocontroller.html", "html/allocontroller.html")
 HTML("allobackground.html", "html/allobackground.html")
 HTML("embed_test.html", "html/embed_test.html")

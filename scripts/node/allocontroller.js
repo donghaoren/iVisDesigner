@@ -444,8 +444,8 @@ var beginTrackMouse = function(on_down, on_free_move) {
 
 function ensure_distance(pose) {
     sphere_radius = 5;
-    var angle = Math.atan(pose.width / 2 / pose.center.length());
-    pose.width = sphere_radius * Math.sin(angle) * 2;
+    var angle = Math.atan(Math.sqrt(2) * pose.width / 2 / pose.center.length());
+    pose.width = sphere_radius * Math.sin(angle) * 2 / Math.sqrt(2);
     pose.center = pose.center.normalize().scale(sphere_radius * Math.cos(angle));
 };
 
