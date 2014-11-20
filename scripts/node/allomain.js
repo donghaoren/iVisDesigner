@@ -284,6 +284,7 @@ if(configuration.allosphere) {
         GL.enable(GL.BLEND);
         // The texture output is in premultiplied alpha!
         GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
+        GL.disable(GL.DEPTH_TEST);
 
         if(panorama_texture_loaded)
             panorama_renderer.render(panorama_texture, info);
@@ -294,25 +295,32 @@ if(configuration.allosphere) {
             } catch(e) { }
         }
 
+        var quad_renderers = [];
+
         if(workspace && workspace.viewport_poses) {
             workspace.viewport_poses.forEach(function(item) {
-                var tex = viewport_processes[item.name].textures[item.key].texture;
-                allosphere.shaderBegin(allosphere.shaderDefault());
+                quad_renderers.push({
+                    distance: item.pose.center.length(),
+                    render: function() {
+                        var tex = viewport_processes[item.name].textures[item.key].texture;
+                        allosphere.shaderBegin(allosphere.shaderDefault());
 
-                tex.surface.bindTexture(2);
+                        tex.surface.bindTexture(2);
 
-                allosphere.shaderUniformf("texture", 1.0);
-                allosphere.shaderUniformi("texture0", 2);
-                allosphere.shaderUniformf("lighting", 0);
+                        allosphere.shaderUniformf("texture", 1.0);
+                        allosphere.shaderUniformi("texture0", 2);
+                        allosphere.shaderUniformf("lighting", 0);
 
-                draw_quad_with_pose(item.pose, {
-                    aspect_ratio: 1,
-                    flip_y: true
+                        draw_quad_with_pose(item.pose, {
+                            aspect_ratio: 1,
+                            flip_y: true
+                        });
+
+                        tex.surface.unbindTexture(2);
+
+                        allosphere.shaderEnd(allosphere.shaderDefault());
+                    }
                 });
-
-                tex.surface.unbindTexture(2);
-
-                allosphere.shaderEnd(allosphere.shaderDefault());
             });
         }
 
@@ -321,21 +329,30 @@ if(configuration.allosphere) {
             var canvas = workspace.canvases[slave_process.index];
             if(!canvas) return;
 
-            var tex = slave_process.texture;
+            quad_renderers.push({
+                distance: canvas.pose.center.length(),
+                render: function() {
+                    var tex = slave_process.texture;
 
-            allosphere.shaderBegin(allosphere.shaderDefault());
+                    allosphere.shaderBegin(allosphere.shaderDefault());
 
-            tex.surface.bindTexture(2);
+                    tex.surface.bindTexture(2);
 
-            allosphere.shaderUniformf("texture", 1.0);
-            allosphere.shaderUniformi("texture0", 2);
-            allosphere.shaderUniformf("lighting", 0);
+                    allosphere.shaderUniformf("texture", 1.0);
+                    allosphere.shaderUniformi("texture0", 2);
+                    allosphere.shaderUniformf("lighting", 0);
 
-            draw_quad_with_pose(canvas.pose);
+                    draw_quad_with_pose(canvas.pose);
 
-            tex.surface.unbindTexture(2);
+                    tex.surface.unbindTexture(2);
 
-            allosphere.shaderEnd(allosphere.shaderDefault());
+                    allosphere.shaderEnd(allosphere.shaderDefault());
+                }
+            });
+        });
+
+        quad_renderers.forEach(function(r) {
+            r.render();
         });
 
         if(after_render) {

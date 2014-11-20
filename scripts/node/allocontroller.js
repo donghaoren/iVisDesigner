@@ -256,7 +256,7 @@ var allosphere_model = new AllosphereModel();
 var view_mode = "cubemap";
 
 function render_scene(info) {
-    GL.clearColor(0, 0, 0, 1);
+    GL.clearColor(1, 1, 1, 1);
     GL.enable(GL.DEPTH_TEST);
     GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
     GL.enable(GL.BLEND);
