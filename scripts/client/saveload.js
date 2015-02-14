@@ -141,6 +141,61 @@ IV.loadVisualizationById = function(id, callback) {
     });
 };
 
+IV.on("command:toolkit.instant", function() {
+    var ctx = IV.modals.constructModal({
+        html: IV.strings("modal_instant_dataset"),
+        title: "Instant Dataset",
+        width: $(window).width() * 0.6,
+        height: $(window).height() * 0.8
+    });
+    ctx.i_content.height($(window).height() * 0.8 - 200);
+    ctx.open.click(function() {
+        var data;
+        if(ctx.i_datatype.val() == "csv") data = d3.csv.parse(ctx.i_content.val());
+        if(ctx.i_datatype.val() == "yaml") data = jsyaml.parse(ctx.i_content.val());
+        var schema = {
+            type: "object",
+            fields: {
+                rows: {
+                    type: "collection",
+                    fields: { }
+                }
+            }
+        };
+        for(var field in data[0]) {
+            if(data[0].hasOwnProperty(field)) {
+                var type = "string";
+                var is_number = true;
+                data.forEach(function(d) {
+                    var num = d[field];
+                    try {
+                        var val = parseFloat(num);
+                        if(val != val) is_number = false;
+                    } catch(e) { is_number = false; }
+                });
+                if(is_number) type = "number";
+                if(type == "number") {
+                    data.forEach(function(d) {
+                        var num = d[field];
+                        d[field] = parseFloat(num);
+                    });
+                }
+                schema.fields.rows.fields[field] = { type: type };
+            }
+        }
+        data = { "rows": data };
+        console.log(data, schema);
+
+        var ds = new IV.PlainDataset(data, schema);
+        IV.loadVisualization();
+        IV.data = new IV.DataObject(ds.obj, ds.schema);
+        IV.editor.setData(IV.data);
+        IV.newVisualization();
+
+        ctx.close();
+    });
+});
+
 IV.on("command:toolkit.start", function() {
     var ctx = IV.modals.constructModal({
         html: IV.strings("modal_load_dataset"),
@@ -148,7 +203,7 @@ IV.on("command:toolkit.start", function() {
         width: $(window).width() * 0.6,
         height: $(window).height() * 0.8
     });
-    var page_size = 30;
+    var page_size = 10;
     var load_page = function(page_index) {
         IV.server.get("datasets/", { page: page_index, page_size: page_size }, function(err, data) {
             ctx.datasets.children().remove();
@@ -302,7 +357,7 @@ IV.on("command:toolkit.save", function() {
     var previous_content = null;
     var running_request = false;
     setInterval(function() {
-        if(!IV.editor.data || !IV.editor.vis) return;
+        if(!IV.editor.data || !IV.editor.vis || IV.dataset_id === undefined || IV.dataset_id === null || IV.dataset_id < 0) return;
         content = JSON.stringify(IV.serializer.serialize(IV.editor.workspace));
         if(content == previous_content || running_request) return;
         running_request = true;

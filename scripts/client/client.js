@@ -38,5 +38,6 @@
 {{include: user.js}}
 {{include: saveload.js}}
 {{include: twisted.js}}
+{{include: nested.js}}
 
 })();

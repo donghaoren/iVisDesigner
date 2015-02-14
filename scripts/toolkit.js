@@ -91,7 +91,7 @@ $(window).ready(function() {
     IV.raise("initialize:after");
 
     IV.server.reload_account(function() {
-        if(window.isAllosphere) {
+        if(window.isAllosphere || window.isNested) {
             return;
         }
         if(IV.get("user") && !IV.get("user").anonymous) IV.raise("command:toolkit.start");

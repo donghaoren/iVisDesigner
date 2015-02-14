@@ -34,6 +34,26 @@
 (function() {
 
 Tools.Track = {
+    magneticsLocation2: function(loc, e) {
+        var $this = this;
+        if(loc.type == "Plain") {
+            var magnetics = Tools.createMagnetics();
+            magnetics.threshold = 5 / e.offset.view_scale;
+            if($this.loc1) {
+                $this.loc1.getPath().enumerate(Editor.data, function(context) {
+                    $this.overlay_p1 = $this.loc1.getPoint(context);
+                    return false;
+                });
+                magnetics.points.push($this.overlay_p1);
+            }
+            var new_pos = new IV.Vector(loc.obj.x, loc.obj.y);
+            var np = magnetics.modify(new_pos.x, new_pos.y);
+            if(np) {
+                loc.obj.x = np.x;
+                loc.obj.y = np.y;
+            }
+        }
+    },
     onActive: function() {
         var $this = this;
         $this.loc1 = null;
@@ -52,6 +72,7 @@ Tools.Track = {
                     Editor.status.append("B: [please select]");
                     return;
                 } else {
+                    $this.magneticsLocation2(loc, mouse_event);
                     $this.loc2 = loc;
                     var path = new IV.Path(selected_path);
                     if(true) {
@@ -66,7 +87,9 @@ Tools.Track = {
                             min: new IV.objects.Plain(stat.min),
                             max: new IV.objects.Plain(stat.max)
                         });
-                        if(stat.count > 100) {
+                        guide_count = 0;
+                        var num = track.enumerateGuide(Editor.data, function() { guide_count += 1; });
+                        if(guide_count > 10) {
                             track.tick_style.show_ticks = false;
                         }
                         Editor.doAddObject(track);
@@ -83,7 +106,17 @@ Tools.Track = {
                         $this.overlay_p1 = $this.loc1.getPoint(context);
                         return false;
                     });
-                    $this.overlay_p2 = e.offset;
+                    var magnetics = Tools.createMagnetics();
+                    magnetics.threshold = 5 / e.offset.view_scale;
+                    magnetics.points.push($this.overlay_p1);
+                    var new_pos = new IV.Vector(e.offset.x, e.offset.y);
+                    var np = magnetics.modify(new_pos.x, new_pos.y);
+                    if(np) {
+                        new_pos.x = np.x;
+                        new_pos.y = np.y;
+                        magnetics.accept(np, new_pos.x, new_pos.y);
+                    }
+                    $this.overlay_p2 = new_pos;
                 }
             });
         };

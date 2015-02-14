@@ -301,6 +301,25 @@ modal_load_dataset: |
     </div>
   </div></div>
 
+modal_instant_dataset: |
+  <form>
+    <div class="input-group group">
+      <label>Type</label>
+      <div><select data-for="i_datatype">
+        <option value="csv">CSV</option>
+        <option value="yaml">JSON / YAML</option>
+      </select></div>
+    </div>
+    <div class="input-group group">
+      <label>Content</label>
+      <div><textarea data-for="i_content" class></textarea></div>
+    </div>
+    <div class="input-group group">
+      <label></label>
+      <div><span class="btn btn-s" data-for="open">Open</span></div>
+    </div>
+  </form>
+
 modal_save_visualization: |
   <form>
     <div class="input-group group">
