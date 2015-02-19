@@ -91,5 +91,6 @@ Objects.Object.prototype = {
 {{include: map.js}}
 {{include: generators/generators.js}}
 {{include: component.js}}
+{{include: 3d/3d.js}}
 
 })();

@@ -150,6 +150,8 @@ workspace_sync.onUpdate = function() {
     workspace = workspace_sync.workspace;
 };
 
+var dataset, synced_object;
+
 connection.onMessage = function(object) {
     // if(object.type == "workspace.set") {
     //     workspace = IV.serializer.deserialize(object.workspace);
@@ -192,6 +194,27 @@ connection.onMessage = function(object) {
     }
     if(object.type == "panorama.video.seek") {
         loaded_video.seek(object.timestamp);
+    }
+    if(object.type == "data.set") {
+        var ds = new IV.PlainDataset(object.data, object.schema);
+        dataset = new IV.DataObject(ds.obj, ds.schema);
+    }
+    if(object.type == "data.set.synced") {
+        synced_object = new IV.SyncedObjectClient(object.name);
+        synced_object.onUpdate = function(data) {
+            var ds = new IV.PlainDataset(data, object.schema);
+            var data_obj = null;
+            if(!data_obj) {
+                data_obj = new IV.DataObject(ds.obj, ds.schema);
+                dataset = data_obj;
+            } else {
+                data_obj.updateRoot(ds.obj);
+                data_obj.raise("update");
+            }
+        };
+    }
+    if(object.type == "data.set.synced.message") {
+        synced_object.processMessage(object.message);
     }
     if(object.type == "eval") {
         try {
@@ -354,6 +377,25 @@ if(configuration.allosphere) {
         quad_renderers.forEach(function(r) {
             r.render();
         });
+
+        // Render 3D objects.
+        if(workspace && workspace.objects) {
+            workspace.objects.forEach(function(obj) {
+                try {
+                    allosphere.shaderBegin(allosphere.shaderDefault());
+                    allosphere.shaderUniformf("lighting", 1);
+                    allosphere.shaderUniformf("texture", 0);
+                    GL.shadeModel(GL.SMOOTH);
+                    GL.hint(GL.LINE_SMOOTH_HINT, GL.NICEST);
+                    GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+                    GL.enable(GL.DEPTH_TEST);
+                    GL.lightfv(GL.LIGHT0, GL.POSITION, [ 0, 0, 2 ]);
+                    GL.lightfv(GL.LIGHT0, GL.AMBIENT, [ 1, 1, 1, 1 ]);
+                    obj.render({ GL: GL }, dataset);
+                    allosphere.shaderEnd(allosphere.shaderDefault());
+                } catch(e) { }
+            });
+        }
 
         if(after_render) {
             try {

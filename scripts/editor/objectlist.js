@@ -95,7 +95,10 @@ Editor.generateObjectList = function() {
 
     for(var p in staged_paths) classes[p] = [];
 
-    vis.objects.forEach(function(obj) {
+    var all_objects = vis.objects.slice();
+    if(Editor.workspace.objects) all_objects = all_objects.concat(Editor.workspace.objects);
+
+    all_objects.forEach(function(obj) {
         var p = obj.getPath();
         if(!p) p = new IV.Path();
         p = p.toEntityPath();
@@ -186,7 +189,7 @@ Editor.generateObjectList = function() {
             }
         });
         li.contextmenu(function(e) {
-            var parent_collection = parents.length == 0 ? Editor.vis.objects : parents[parents.length - 1].objects;
+            var parent_collection = parents.length == 0 ? all_objects : parents[parents.length - 1].objects;
             IV.popups.beginContextMenu(new IV.Vector(e.pageX, e.pageY), [
               { name: "F", display: "Bring to front" },
               { name: "-", display: "Bring forward" },

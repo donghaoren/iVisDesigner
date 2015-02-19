@@ -92,6 +92,9 @@ Objects.Circle = IV.extend(Objects.Shape, function(info) {
     get: function(context) {
         return this.center.getPoint(context);
     },
+    getPoint: function(context) {
+        return this.center.getPoint(context);
+    },
     getPropertyContext: function() {
         var $this = this;
         return Objects.Shape.prototype.getPropertyContext.call(this).concat([

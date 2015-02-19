@@ -1,4 +1,4 @@
-// iVisDesigner - scripts/api/common.js
+// iVisDesigner - scripts/core/objects/3d/3d.js
 // Author: Donghao Ren
 //
 // LICENSE
@@ -31,15 +31,4 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-IVApi = (function() {
-var NS = { };
-
-NS.setDataset = function(schema, data) {
-
-};
-
-NS.startStreaming = function(schema, data) {
-};
-
-return NS;
-})();
+{{include: line3d.js}}
