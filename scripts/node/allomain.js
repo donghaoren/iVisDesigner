@@ -143,6 +143,8 @@ var connection = new MessageTransportTCP(configuration, false);
 var index = 0;
 var workspace = null;
 
+var light_position = new IV.Vector3(0, 0, 0);
+
 var viewport_processes = { };
 
 var workspace_sync = new WorkspaceSync();
@@ -222,6 +224,16 @@ connection.onMessage = function(object) {
         } catch(e) {
             console.trace(e);
         }
+    }
+    if(object.type == "pose.set_rotation_z") {
+        var q = IV.Quaternion.rotation(new IV.Vector3(0, 0, 1), object.angle);
+        allosphere.setPose(0, 0, 0, q.v.x, q.v.y, q.v.z, q.w);
+    }
+    if(object.type == "light.set_position") {
+        light_position.x = object.x;
+        light_position.y = object.y;
+        light_position.z = object.z;
+
     }
     workspace_sync.processMessage(object);
 };
@@ -307,7 +319,7 @@ if(configuration.allosphere) {
         GL.enable(GL.BLEND);
         // The texture output is in premultiplied alpha!
         GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
-        GL.disable(GL.DEPTH_TEST);
+        GL.enable(GL.DEPTH_TEST);
 
         if(panorama_texture_loaded)
             panorama_renderer.render(panorama_texture, info);
@@ -374,25 +386,40 @@ if(configuration.allosphere) {
             });
         });
 
+        // Render 3D objects.
+        if(workspace && workspace.objects) {
+            workspace.canvases.forEach(function(obj) {
+                obj.visualization.validate(dataset);
+            });
+            workspace.objects.forEach(function(obj) {
+                try {
+                    GL.shadeModel(GL.SMOOTH);
+                    GL.lightfv(GL.LIGHT0, GL.POSITION, [ light_position.x, light_position.y, light_position.z ]);
+                    GL.lightfv(GL.LIGHT0, GL.AMBIENT, [ 0.3, 0.3, 0.3, 1 ]);
+                    GL.lightfv(GL.LIGHT0, GL.DIFFUSE, [ 0.7, 0.7, 0.7, 1 ]);
+                    GL.lightfv(GL.LIGHT0, GL.SPECULAR, [ 1, 1, 1, 1 ]);
+                    obj.render({ GL: GL, allosphere: allosphere, order: "back" }, dataset);
+                } catch(e) { }
+            });
+        }
+
         quad_renderers.forEach(function(r) {
             r.render();
         });
 
         // Render 3D objects.
         if(workspace && workspace.objects) {
+            workspace.canvases.forEach(function(obj) {
+                obj.visualization.validate(dataset);
+            });
             workspace.objects.forEach(function(obj) {
                 try {
-                    allosphere.shaderBegin(allosphere.shaderDefault());
-                    allosphere.shaderUniformf("lighting", 1);
-                    allosphere.shaderUniformf("texture", 0);
                     GL.shadeModel(GL.SMOOTH);
-                    GL.hint(GL.LINE_SMOOTH_HINT, GL.NICEST);
-                    GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-                    GL.enable(GL.DEPTH_TEST);
-                    GL.lightfv(GL.LIGHT0, GL.POSITION, [ 0, 0, 2 ]);
-                    GL.lightfv(GL.LIGHT0, GL.AMBIENT, [ 1, 1, 1, 1 ]);
-                    obj.render({ GL: GL }, dataset);
-                    allosphere.shaderEnd(allosphere.shaderDefault());
+                    GL.lightfv(GL.LIGHT0, GL.POSITION, [ light_position.x, light_position.y, light_position.z ]);
+                    GL.lightfv(GL.LIGHT0, GL.AMBIENT, [ 0.3, 0.3, 0.3, 1 ]);
+                    GL.lightfv(GL.LIGHT0, GL.DIFFUSE, [ 0.7, 0.7, 0.7, 1 ]);
+                    GL.lightfv(GL.LIGHT0, GL.SPECULAR, [ 1, 1, 1, 1 ]);
+                    obj.render({ GL: GL, allosphere: allosphere, order: "front" }, dataset);
                 } catch(e) { }
             });
         }

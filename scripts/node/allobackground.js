@@ -130,6 +130,28 @@ $("#btn-seek-video").click(function() {
     });
 });
 
+var rotation_timer = null;
+var rotation_angle = 0;
+function do_rotation(speed) {
+    // Rotation with Z.
+    if(rotation_timer) clearInterval(rotation_timer);
+    var angle0 = rotation_angle;
+    var t0 = new Date().getTime();
+    rotation_timer = setInterval(function() {
+        var t = new Date().getTime() - t0;
+        t /= 1000;
+        rotation_angle = angle0 + t * speed;
+        IV.allosphere.postMessage({
+            type: "pose.set_rotation_z",
+            angle: rotation_angle
+        });
+    }, 30);
+}
+
+function stop_rotation(speed) {
+    if(rotation_timer) clearInterval(rotation_timer);
+}
+
 document.body.addEventListener('touchmove', function(event) {
     event.preventDefault();
 }, false);

@@ -96,7 +96,7 @@ Editor.generateObjectList = function() {
     for(var p in staged_paths) classes[p] = [];
 
     var all_objects = vis.objects.slice();
-    if(Editor.workspace.objects) all_objects = all_objects.concat(Editor.workspace.objects);
+    if(Editor.workspace && Editor.workspace.objects) all_objects = all_objects.concat(Editor.workspace.objects);
 
     all_objects.forEach(function(obj) {
         var p = obj.getPath();

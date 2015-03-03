@@ -254,9 +254,10 @@ var cubemap = new CubemapRenderTarget();
 var cubemap_renderer = new CubemapRenderer();
 var allosphere_model = new AllosphereModel();
 var view_mode = "cubemap";
+var background_color = [0, 0, 0, 1];
 
 function render_scene(info) {
-    GL.clearColor(1, 1, 1, 1);
+    GL.clearColor(background_color[0], background_color[1], background_color[2], background_color[3]);
     GL.enable(GL.DEPTH_TEST);
     GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
     GL.enable(GL.BLEND);
@@ -726,3 +727,39 @@ $('[data-switch="view-mode"]').each(function() {
         render_webgl_view();
     });
 });
+
+$('[data-switch="background-mode"]').each(function() {
+    $(this).click(function() {
+        background_color = $(this).attr("data-background-mode") == "black" ? [0, 0, 0, 1] : [1, 1, 1, 1];
+        $('[data-switch="background-mode"]').removeClass("active");
+        $(this).addClass("active");
+        render_webgl_view();
+    });
+});
+
+$('[data-switch="lighting-mode"]').each(function() {
+    $(this).click(function() {
+        lighting_mode($(this).attr("data-lighting-mode"));
+        $('[data-switch="lighting-mode"]').removeClass("active");
+        $(this).addClass("active");
+        render_webgl_view();
+    });
+});
+
+var lighting_timer = null;
+function lighting_mode(mode) {
+    if(lighting_timer) clearInterval(lighting_timer);
+    if(mode == "motion") {
+        var t0 = new Date().getTime() / 1000;
+        lighting_timer = setInterval(function() {
+            var t = new Date().getTime() / 1000 - t0;
+            var x = 2 * Math.sin(t);
+            var y = 2 * Math.cos(t);
+            var z = 0;
+            postMessage({"type":"light.set_position", x: x, y: y, z: z });
+        }, 30);
+    }
+    if(mode == "center") {
+        postMessage({"type":"light.set_position", x: 0, y: 0, z: 0 });
+    }
+}

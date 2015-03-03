@@ -22,6 +22,8 @@ See ./license.html for copyright information.
       overflow: hidden;
       margin: 0; padding: 0;
       background-color: black;
+      -webkit-user-select: none;
+      user-select: none;
       color: #AAA;
     }
     #container {
@@ -52,7 +54,7 @@ See ./license.html for copyright information.
 <div id="container">
   <canvas id="webgl-view" width="640" height="480"></canvas>
   <div id="controls">
-    <div id="controls-wrapper" class="basic" style="text-align: center;">
+    <div id="controls-wrapper" class="basic" style="text-align: left;">
       <p>View Mode</p>
       <p><span id="btn-load-video" class="btn btn-s" data-switch="view-mode" data-view-mode="circular-inverse">Circular Top</span></p>
       <p><span id="btn-load-video" class="btn btn-s active" data-switch="view-mode" data-view-mode="circular">Circular Bottom</span></p>
@@ -60,6 +62,10 @@ See ./license.html for copyright information.
       <p><span id="btn-load-video" class="btn btn-s" data-switch="view-mode" data-view-mode="fisheye-bottom">Fisheye Bottom</span></p>
       <p><span id="btn-load-video" class="btn btn-s" data-switch="view-mode" data-view-mode="perspective">Perspective</span></p>
       <p><span id="btn-load-video" class="btn btn-s" data-switch="view-mode" data-view-mode="mercator">Mercator</span></p>
+      <p>Background</p>
+      <p><span id="btn-load-video" class="btn btn-s active" data-switch="background-mode" data-background-mode="black">Black</span> <span id="btn-load-video" class="btn btn-s" data-switch="background-mode" data-background-mode="white">White</span></p>
+      <p>Lighting</p>
+      <p><span id="btn-load-video" class="btn btn-s active" data-switch="lighting-mode" data-lighting-mode="center">Center</span> <span id="btn-load-video" class="btn btn-s" data-switch="lighting-mode" data-lighting-mode="motion">Motion</span></p>
     </div>
   </div>
   <div id="viewport-control-area"></div>
