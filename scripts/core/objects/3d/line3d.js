@@ -59,6 +59,7 @@ Objects.CanvasWrapper3D = IV.extend(Objects.Object, function(canvas, point) {
         ex = ex.scale(pose.width / 2000);
         ey = ey.scale(pose.width / 2000);
         var p = pose.center.add(ex.scale(pt.x - 0.5)).add(ey.scale(pt.y - 0.5));
+        p = p.scale(5 / p.length());
         p.normal = pose.normal.normalize();
         return p;
     },
@@ -77,6 +78,7 @@ varying in vec4 colors[2];
 varying in vec3 normals[2];
 varying out vec4 color;
 varying out vec3 line_direction, light_direction, eye_vector;
+varying float specular_boost;
 
 uniform int line_type;
 uniform float curveness;
@@ -86,7 +88,7 @@ vec3 iv_to_al_3(in vec3 v) {
 }
 
 void bezierCurve(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
-    int tick_count = 50;
+    int tick_count = 40;
     int i;
     for(i = 0; i <= tick_count; i++) {
         float t = float(i) / float(tick_count);
@@ -105,6 +107,7 @@ void bezierCurve(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
         gl_Position = omni_render(vec4(p, 1.0f));
         light_direction = normalize(iv_to_al_3(gl_LightSource[0].position.xyz) - p);
         eye_vector = normalize(-p);
+        specular_boost = max(max(0.0, 1.0 - 5.0 * t), max(0.0, 1.0 - 5.0 * (1.0 - t)));
         EmitVertex();
     }
     EndPrimitive();
@@ -120,9 +123,31 @@ void line(vec3 p1, vec3 p2) {
         gl_Position = omni_render(vec4(p, 1.0f));
         light_direction = normalize(gl_LightSource[0].position.xyz - p);
         eye_vector = normalize(-p);
+        specular_boost = max(max(0.0, 1.0 - 5.0 * t), max(0.0, 1.0 - 5.0 * (1.0 - t)));
         EmitVertex();
     }
     EndPrimitive();
+}
+
+void line2(vec3 p1, vec3 p2) {
+    int tick_count = 10;
+    int i;
+    line_direction = normalize(p2 - p1);
+    for(i = 0; i <= tick_count; i++) {
+        float t = float(i) / float(tick_count);
+        vec3 p = p1 + (p2 - p1) * t;
+        gl_Position = omni_render(vec4(p, 1.0f));
+        light_direction = normalize(gl_LightSource[0].position.xyz - p);
+        eye_vector = normalize(-p);
+        EmitVertex();
+    }
+    EndPrimitive();
+}
+
+void bezierCurve2(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
+    line2(p1, p2);
+    line2(p2, p3);
+    line2(p3, p4);
 }
 
 void main() {
@@ -137,6 +162,7 @@ void main() {
         float scale = curveness / 6.0f;
         float s = length(p2 - p1) * scale;
         vec3 d = p2 - p1;
+        d = vec3(0, 0, 0);
         bezierCurve(p1, p1 + n1 * s + d * abs(scale), p2 + n2 * s - d * abs(scale), p2);
     }
 }
@@ -162,13 +188,15 @@ void main() {
     gl_Position = vertex;
 }
 */console.log});
+
 var lineShader_FragmentCode = IV.multiline(function() {/*@preserve
 uniform float specular_term;
 varying vec4 color;
 varying vec3 line_direction, light_direction, eye_vector;
+varying float specular_boost;
 void main() {
     vec4 colorMixed = color;
-    vec4 final_color = colorMixed * gl_LightSource[0].ambient;
+    vec4 final_color = colorMixed * (gl_LightSource[0].ambient);
     vec3 T = line_direction; // tangent direction.
     vec3 L = light_direction;
     vec3 LN = normalize(L - T * dot(L, T));
@@ -176,7 +204,7 @@ void main() {
     final_color += gl_LightSource[0].diffuse * colorMixed * lambertTerm;
     vec3 E = eye_vector;
     vec3 R = reflect(-L, LN);
-    float spec = pow(max(dot(R, E), 0.0), specular_term);
+    float spec = pow(max(dot(R, E), 0.0), specular_term) + specular_boost;
     final_color += gl_LightSource[0].specular * spec;
     gl_FragColor = final_color;
 }
@@ -192,6 +220,7 @@ var lineShader_begin = function(g, specular, line_type, curveness) {
     g.allosphere.shaderUniformi("line_type", line_type);
     g.allosphere.shaderUniformf("curveness", curveness);
 };
+
 var lineShader_end = function(g) {
     g.allosphere.shaderEnd(lineShader);
 };

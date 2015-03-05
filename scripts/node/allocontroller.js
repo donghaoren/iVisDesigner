@@ -255,6 +255,7 @@ var cubemap_renderer = new CubemapRenderer();
 var allosphere_model = new AllosphereModel();
 var view_mode = "cubemap";
 var background_color = [0, 0, 0, 1];
+var control_mode = "move";
 
 function render_scene(info) {
     GL.clearColor(background_color[0], background_color[1], background_color[2], background_color[3]);
@@ -741,6 +742,15 @@ $('[data-switch="lighting-mode"]').each(function() {
     $(this).click(function() {
         lighting_mode($(this).attr("data-lighting-mode"));
         $('[data-switch="lighting-mode"]').removeClass("active");
+        $(this).addClass("active");
+        render_webgl_view();
+    });
+});
+
+$('[data-switch="control-mode"]').each(function() {
+    $(this).click(function() {
+        control_mode = $(this).attr("data-control-mode");
+        $('[data-switch="control-mode"]').removeClass("active");
         $(this).addClass("active");
         render_webgl_view();
     });

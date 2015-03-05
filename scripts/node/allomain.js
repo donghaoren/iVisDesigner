@@ -238,6 +238,70 @@ connection.onMessage = function(object) {
     workspace_sync.processMessage(object);
 };
 
+var draw_quad_shader = null;
+
+function draw_quad_shader_create() {
+    draw_quad_shader = allosphere.shaderCreate(
+        IV.multiline(function() {/*@preserve
+            varying vec4 color;
+            varying vec3 normal, light_direction, eye_vector;
+            varying vec4 clip_position;
+            vec4 iv_to_al(in vec4 v) {
+                return vec4(v.y, v.z, v.x, v.w);
+            }
+            vec3 iv_to_al_3(in vec3 v) {
+                return vec3(v.y, v.z, v.x);
+            }
+            void main() {
+                color = gl_Color;
+                vec4 vertex = gl_ModelViewMatrix * iv_to_al(gl_Vertex);
+                normal = gl_NormalMatrix * iv_to_al_3(gl_Normal);
+                vec3 V = vertex.xyz;
+                eye_vector = normalize(-V);
+                light_direction = normalize(vec3(iv_to_al_3(gl_LightSource[0].position.xyz) - V));
+                gl_TexCoord[0] = gl_MultiTexCoord0;
+                gl_Position = omni_render(vertex);
+                clip_position = gl_Position;
+            }
+        */console.log}), IV.multiline(function() {/*@preserve
+            uniform float lighting;
+            uniform float texture;
+            uniform float omni_near, omni_far;
+            uniform sampler2D texture0;
+            varying vec4 color;
+            varying vec3 normal, light_direction, eye_vector;
+            varying vec4 clip_position;
+            void main() {
+                // Shading.
+                vec4 colorMixed;
+                if(texture > 0.0) {
+                  vec4 textureColor = texture2D(texture0, gl_TexCoord[0].st);
+                  colorMixed = mix(color, textureColor, texture);
+                } else {
+                  colorMixed = color;
+                }
+                vec4 final_color = colorMixed * gl_LightSource[0].ambient;
+                vec3 N = normalize(normal);
+                vec3 L = light_direction;
+                float lambertTerm = max(dot(N, L), 0.0);
+                final_color += gl_LightSource[0].diffuse * colorMixed * lambertTerm;
+                vec3 E = eye_vector;
+                vec3 R = reflect(-L, N);
+                float spec = pow(max(dot(R, E), 0.0), 0.9 + 1e-20);
+                final_color += gl_LightSource[0].specular * spec;
+                gl_FragColor = mix(colorMixed, final_color, lighting);
+                // Depth adjustments.
+                vec3 pixel_position;
+                pixel_position.xy = clip_position.xy;
+                pixel_position.z = -clip_position.w;
+                pixel_position = pixel_position * (5.0 / length(pixel_position));
+                float z2 = (pixel_position.z * (omni_far + omni_near) + omni_far * omni_near * 2.0f) / (omni_near - omni_far);
+                gl_FragDepth = (z2 / -pixel_position.z * 0.5 + 0.5);
+            }
+        */console.log})
+    );
+}
+
 var before_render, after_render;
 
 var draw_quad_with_pose = function(pose, texture_info) {
@@ -289,6 +353,8 @@ if(configuration.allosphere) {
 
     var GL = allosphere.OpenGL;
 
+    draw_quad_shader_create();
+
     // This is called before each frame.
     allosphere.onFrame(function() {
         // Upload textures if necessary.
@@ -338,7 +404,7 @@ if(configuration.allosphere) {
                     distance: item.pose.center.length(),
                     render: function() {
                         var tex = viewport_processes[item.name].textures[item.key].texture;
-                        allosphere.shaderBegin(allosphere.shaderDefault());
+                        allosphere.shaderBegin(draw_quad_shader);
 
                         tex.surface.bindTexture(2);
 
@@ -353,7 +419,7 @@ if(configuration.allosphere) {
 
                         tex.surface.unbindTexture(2);
 
-                        allosphere.shaderEnd(allosphere.shaderDefault());
+                        allosphere.shaderEnd(draw_quad_shader);
                     }
                 });
             });
@@ -369,7 +435,7 @@ if(configuration.allosphere) {
                 render: function() {
                     var tex = slave_process.texture;
 
-                    allosphere.shaderBegin(allosphere.shaderDefault());
+                    allosphere.shaderBegin(draw_quad_shader);
 
                     tex.surface.bindTexture(2);
 
@@ -381,7 +447,7 @@ if(configuration.allosphere) {
 
                     tex.surface.unbindTexture(2);
 
-                    allosphere.shaderEnd(allosphere.shaderDefault());
+                    allosphere.shaderEnd(draw_quad_shader);
                 }
             });
         });
@@ -403,6 +469,7 @@ if(configuration.allosphere) {
             });
         }
 
+        GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
         quad_renderers.forEach(function(r) {
             r.render();
         });
