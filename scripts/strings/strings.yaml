@@ -200,6 +200,40 @@ popup_create_map: |
     </div>
   </div>
 
+popup_create_link3d: |
+  <div class="tab" data-default="line3d">
+    <div class="header">
+      <span data-tab="line3d">Line3D</span>
+    </div>
+    <div class="tabs">
+      <div data-tab="line3d">
+        <div class="property-list">
+          <div class="item-caption">Line3D</div>
+          <div class="item-action">
+            <div class="field group">
+              <span class="name"><span>Path</span></span>
+              <span class="val">
+                <span data-field="path" class="input-path btn plain-path"></span>
+              </span>
+            </div>
+            <div class="field group">
+              <span class="name"><span>Anchor1</span></span>
+              <span class="val">
+                <span data-field="anchor1" class="input-object btn plain-object"></span>
+              </span>
+            </div>
+            <div class="field group">
+              <span class="name"><span>Anchor2</span></span>
+              <span class="val">
+                <span data-field="anchor2" class="input-object btn plain-object"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div><!-- line3d -->
+    </div>
+  </div>
+
 popup_color_select: |
   <div class="tab" data-default="predefined">
     <div class="header">

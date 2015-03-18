@@ -97,6 +97,15 @@ Editor.doAddObject = function(obj) {
     }
 };
 
+Editor.doAddWorkspaceObject = function(obj) {
+    if(Editor.vis) {
+        var act = new IV.actions.SetArrayDirectly(Editor.workspace, "objects", "push", obj);
+        Actions.add(act);
+        Actions.commit();
+    }
+};
+
+
 {{include: objectlist.js}}
 {{include: schemaview.js}}
 {{include: workspace.js}}

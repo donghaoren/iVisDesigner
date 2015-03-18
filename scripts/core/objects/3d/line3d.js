@@ -59,7 +59,6 @@ Objects.CanvasWrapper3D = IV.extend(Objects.Object, function(canvas, point) {
         ex = ex.scale(pose.width / 2000);
         ey = ey.scale(pose.width / 2000);
         var p = pose.center.add(ex.scale(pt.x - 0.5)).add(ey.scale(pt.y - 0.5));
-        p = p.scale(5 / p.length());
         p.normal = pose.normal.normalize();
         return p;
     },
@@ -354,7 +353,7 @@ Objects.Line3D = IV.extend(Objects.Shape, function(info) {
     postDeserialize: function() {
         this.fillDefault();
     },
-    render: function(g, data) {
+    render3D: function(g, data) {
         var $this = this;
         if(g.order == "front") return;
         // if($this.line_type == "curve") {
@@ -375,6 +374,14 @@ Objects.Line3D = IV.extend(Objects.Shape, function(info) {
             var p2 = $this.point2.get(context);
             var width = $this.width.get(context);
             if(!p1 || !p2 || !width) return;
+            if(g.chart_mode == "mono") {
+                var p1n = p1.normal;
+                var p2n = p2.normal;
+                p1 = p1.scale(5 / p1.length());
+                p2 = p2.scale(5 / p2.length());
+                p1.normal = p1n;
+                p2.normal = p2n;
+            }
             var color;
             if($this.color) color = $this.color.get(context);
             else color = new IV.Color(255, 255, 255, 1);

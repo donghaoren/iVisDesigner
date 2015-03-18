@@ -229,6 +229,57 @@ $.fn.IVInputPath = function(str) {
 };
 IV.registerObjectType(".input-path", $.fn.IVInputPath);
 
+$.fn.IVInputObject = function(str) {
+    var $this = this;
+    var data = $this.data();
+    if(!data.is_created) {
+        var input = $('<span />');
+        data.path = null;
+        data.ref = null;
+        var fire = function() {
+            if(data.changed) data.changed(data.get());
+        };
+        $this.append(input);
+        input.click(function() {
+            var $this = $(this);
+            if($this.is(".active")) return;
+            var popup = IV.popups.ObjectSelect();
+            popup.onSelectObject = function(canvas, object) {
+                data.set(canvas, object);
+                fire();
+                $this.removeClass("active");
+            };
+            popup.onHide = function() {
+                $this.removeClass("active");
+            };
+            popup.show($this, 200, 150);
+            $this.addClass("active");
+        });
+        data.get = function() {
+            return [data.canvas, data.object];
+        };
+        data.set = function(canvas, object) {
+            data.canvas = canvas;
+            data.object = object;
+            if(!canvas || !object) input.text("None");
+            else input.text(canvas.name + "/" + object.name);
+        };
+        data.set(null, null);
+        data.is_created = true;
+    }
+    if(str !== undefined) {
+        if(typeof(str) == "function") {
+            data.changed = str;
+        } else {
+            data.set(arguments[0], arguments[1]);
+        }
+        return this;
+    } else {
+        return data.get();
+    }
+};
+IV.registerObjectType(".input-object", $.fn.IVInputObject);
+
 // ### IVColorPicker
 // Color selectors.
 

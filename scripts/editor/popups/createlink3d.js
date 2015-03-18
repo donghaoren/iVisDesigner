@@ -1,4 +1,4 @@
-// iVisDesigner - scripts/editor/popups/popups.js
+// iVisDesigner - scripts/editor/popups/creategenerator.js
 // Author: Donghao Ren
 //
 // LICENSE
@@ -31,10 +31,48 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-{{include: pathselect.js}}
-{{include: objectselect.js}}
-{{include: createlayout.js}}
-{{include: createmap.js}}
-{{include: creategenerator.js}}
-{{include: createlink3d.js}}
-{{include: templates.js}}
+IV.popups.CreateLink3D = function() {
+    // We put statistics and generators together.
+    var data = IV.popups.create();
+    data.addActions([ "ok", "cancel" ]);
+
+    var p = data.selector;
+    p.children(".content").html(IV.strings("popup_create_link3d"));
+
+    p.default_width = 400;
+    p.default_height = 130;
+    var data = p.data();
+
+    p.find(".input-numeric").each(function() {
+        var t = $(this);
+        var def = t.attr("data-default");
+        if(def !== undefined) {
+            t.IVInputNumeric(parseFloat(def));
+        } else {
+            t.IVInputNumeric();
+        }
+    });
+
+    data.onOk = function() {
+        var active_tab = p.find(".tab").data().current;
+        if(active_tab == "line3d") {
+            var tab = p.find('[data-tab="line3d"]');
+            var path = tab.find('[data-field="path"]').data().get();
+            var obj1 = tab.find('[data-field="anchor1"]').data().get();
+            var obj2 = tab.find('[data-field="anchor2"]').data().get();
+            var wrapper1 = new IV.objects.CanvasWrapper3D(obj1[0], obj1[1]);
+            var wrapper2 = new IV.objects.CanvasWrapper3D(obj2[0], obj2[1]);
+            var line = new IV.objects.Line3D({
+                path: path,
+                point1: wrapper1,
+                point2: wrapper2
+            });
+            IV.editor.doAddWorkspaceObject(line);
+        }
+        data.hide();
+    };
+    data.onCancel = function() {
+        data.hide();
+    };
+    return data;
+};

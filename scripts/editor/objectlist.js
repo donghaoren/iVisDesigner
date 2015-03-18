@@ -67,7 +67,10 @@ var object_icons = {
     "BrushingValue": "xicon-tools-brushing",
     "ForceLayout": "xicon-tools-graph-layout",
     "GoogleMap": "xicon-tools-map",
+    "Line3D": "xicon-tools-line3d"
 };
+
+IV.editor.object_icons = object_icons;
 
 var generate_prefix_tree = function(paths) {
     var root = { name: "[ROOT]", children: { } };
@@ -131,8 +134,13 @@ Editor.generateObjectList = function() {
             vis.clearSelection();
             e.stopPropagation();
             if(parents.length == 0) {
-                Actions.add(new IV.actions.Add(vis, "removeObject", "addObject", obj));
-                Actions.commit();
+                if(vis.objects.indexOf(obj) >= 0) {
+                    Actions.add(new IV.actions.Add(vis, "removeObject", "addObject", obj));
+                    Actions.commit();
+                } else if(Editor.workspace.objects.indexOf(obj) >= 0) {
+                    var idx = Editor.workspace.objects.indexOf(obj);
+                    console.log("Remove from workspace.objects", obj, idx);
+                }
             } else {
                 var parent_collection = parents[parents.length - 1].objects;
                 var idx = parent_collection.indexOf(obj);

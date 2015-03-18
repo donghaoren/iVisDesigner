@@ -249,6 +249,13 @@ QuadRenderer.prototype.movePose = function(center, d0, d1, pose0) {
     };
 };
 
+QuadRenderer.prototype.rotateNormal = function(d0, d1, normal0) {
+    var angle = Math.acos(d0.normalize().dot(d1.normalize()));
+    var axis = d0.cross(d1).normalize();
+    var q = IV.Quaternion.rotation(axis, angle * -2);
+    return q.rotate(normal0);
+};
+
 var quad_renderer = new QuadRenderer();
 var cubemap = new CubemapRenderTarget();
 var cubemap_renderer = new CubemapRenderer();
@@ -497,32 +504,51 @@ function ensure_distance(pose) {
                 var pose0 = canvas.pose;
                 var pose_new;
                 var center_new;
+                var my_control_mode = control_mode;
                 pan_move = function(xy_new) {
                     var ray_new = cubemap_renderer.inverse(xy_new[0], xy_new[1]);
                     var direction_new = new IV.Vector3(ray_new[0], ray_new[1], ray_new[2]);
-                    if(direction.sub(direction_new).length() < 1e-10) return;
-                    pose_new = quad_renderer.movePose(center, direction, direction_new, pose0);
-                    ensure_distance(pose_new);
-                    center_new = pose_new.center;
-                    pose_new.center = pose_new.center.scale(0.9);
-                    var actions = [new IV.actions.SetDirectly(canvas, "pose", pose_new)];
-                    postActions(actions, { is_pose_update: true });
-                    render_webgl_view();
-                    pose_new.center = center_new;
-                    pose0 = pose_new;
-                    direction = direction_new;
+                    if(my_control_mode == "move") {
+                        if(direction.sub(direction_new).length() < 1e-10) return;
+                        pose_new = quad_renderer.movePose(center, direction, direction_new, pose0);
+                        ensure_distance(pose_new);
+                        center_new = pose_new.center;
+                        pose_new.center = pose_new.center.scale(0.9);
+                        var actions = [new IV.actions.SetDirectly(canvas, "pose", pose_new)];
+                        postActions(actions, { is_pose_update: true });
+                        render_webgl_view();
+                        pose_new.center = center_new;
+                        pose0 = pose_new;
+                        direction = direction_new;
+                    }
+                    if(my_control_mode == "rotate") {
+                        pose_new = {
+                            center: pose0.center,
+                            normal: quad_renderer.rotateNormal(direction, direction_new, pose0.normal),
+                            up: quad_renderer.rotateNormal(direction, direction_new, pose0.up),
+                            width: pose0.width
+                        };
+                        console.log(pose_new);
+                        var actions = [new IV.actions.SetDirectly(canvas, "pose", pose_new)];
+                        postActions(actions, { is_pose_update: true });
+                        render_webgl_view();
+                    }
                 };
                 pan_end = function() {
-                    pose_new = {
-                        center: center_new,
-                        normal: pose_new.normal,
-                        up: pose_new.up,
-                        width: pose_new.width
-                    };
-                    ensure_distance(pose_new);
-                    var actions = [new IV.actions.SetDirectly(canvas, "pose", pose_new)];
-                    postActions(actions, { is_pose_update: true });
-                    render_webgl_view();
+                    if(my_control_mode == "move") {
+                        pose_new = {
+                            center: center_new,
+                            normal: pose_new.normal,
+                            up: pose_new.up,
+                            width: pose_new.width
+                        };
+                        ensure_distance(pose_new);
+                        var actions = [new IV.actions.SetDirectly(canvas, "pose", pose_new)];
+                        postActions(actions, { is_pose_update: true });
+                        render_webgl_view();
+                    }
+                    if(my_control_mode == "rotate") {
+                    }
                 };
                 return true;
             }
@@ -750,6 +776,11 @@ $('[data-switch="lighting-mode"]').each(function() {
 $('[data-switch="control-mode"]').each(function() {
     $(this).click(function() {
         control_mode = $(this).attr("data-control-mode");
+        if(control_mode == "rotate") {
+            postMessage({"type":"chart.mode", mode: "stereo" });
+        } else {
+            postMessage({"type":"chart.mode", mode: "mono" });
+        }
         $('[data-switch="control-mode"]').removeClass("active");
         $(this).addClass("active");
         render_webgl_view();

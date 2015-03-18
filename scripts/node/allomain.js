@@ -144,6 +144,7 @@ var index = 0;
 var workspace = null;
 
 var light_position = new IV.Vector3(0, 0, 0);
+var chart_mode = "mono";
 
 var viewport_processes = { };
 
@@ -233,7 +234,10 @@ connection.onMessage = function(object) {
         light_position.x = object.x;
         light_position.y = object.y;
         light_position.z = object.z;
-
+    }
+    if(object.type == "chart.mode") {
+        // mono or stereo.
+        chart_mode = object.mode;
     }
     workspace_sync.processMessage(object);
 };
@@ -243,9 +247,10 @@ var draw_quad_shader = null;
 function draw_quad_shader_create() {
     draw_quad_shader = allosphere.shaderCreate(
         IV.multiline(function() {/*@preserve
-            varying vec4 color;
-            varying vec3 normal, light_direction, eye_vector;
+            uniform vec3 uCenter, uEx, uEy;
+            uniform int tweak_depth;
             varying vec4 clip_position;
+
             vec4 iv_to_al(in vec4 v) {
                 return vec4(v.y, v.z, v.x, v.w);
             }
@@ -253,50 +258,36 @@ function draw_quad_shader_create() {
                 return vec3(v.y, v.z, v.x);
             }
             void main() {
-                color = gl_Color;
-                vec4 vertex = gl_ModelViewMatrix * iv_to_al(gl_Vertex);
-                normal = gl_NormalMatrix * iv_to_al_3(gl_Normal);
-                vec3 V = vertex.xyz;
-                eye_vector = normalize(-V);
-                light_direction = normalize(vec3(iv_to_al_3(gl_LightSource[0].position.xyz) - V));
-                gl_TexCoord[0] = gl_MultiTexCoord0;
+                vec2 T = gl_Vertex.xy;
+                vec3 position = uCenter + uEx * (T.x * 2.0 - 1.0) + uEy * (1.0 - T.y * 2.0);
+                if(tweak_depth == 1) {
+                    position = position * 5.0 / length(position);
+                }
+                vec4 vertex = gl_ModelViewMatrix * iv_to_al(vec4(position, 1.0));
+                gl_TexCoord[0].st = T.xy;
                 gl_Position = omni_render(vertex);
                 clip_position = gl_Position;
             }
         */console.log}), IV.multiline(function() {/*@preserve
-            uniform float lighting;
             uniform float texture;
             uniform float omni_near, omni_far;
+            uniform int tweak_depth;
             uniform sampler2D texture0;
-            varying vec4 color;
-            varying vec3 normal, light_direction, eye_vector;
             varying vec4 clip_position;
             void main() {
                 // Shading.
-                vec4 colorMixed;
-                if(texture > 0.0) {
-                  vec4 textureColor = texture2D(texture0, gl_TexCoord[0].st);
-                  colorMixed = mix(color, textureColor, texture);
-                } else {
-                  colorMixed = color;
-                }
-                vec4 final_color = colorMixed * gl_LightSource[0].ambient;
-                vec3 N = normalize(normal);
-                vec3 L = light_direction;
-                float lambertTerm = max(dot(N, L), 0.0);
-                final_color += gl_LightSource[0].diffuse * colorMixed * lambertTerm;
-                vec3 E = eye_vector;
-                vec3 R = reflect(-L, N);
-                float spec = pow(max(dot(R, E), 0.0), 0.9 + 1e-20);
-                final_color += gl_LightSource[0].specular * spec;
-                gl_FragColor = mix(colorMixed, final_color, lighting);
+                gl_FragColor = texture2D(texture0, gl_TexCoord[0].st);
                 // Depth adjustments.
-                vec3 pixel_position;
-                pixel_position.xy = clip_position.xy;
-                pixel_position.z = -clip_position.w;
-                pixel_position = pixel_position * (5.0 / length(pixel_position));
-                float z2 = (pixel_position.z * (omni_far + omni_near) + omni_far * omni_near * 2.0f) / (omni_near - omni_far);
-                gl_FragDepth = (z2 / -pixel_position.z * 0.5 + 0.5);
+                if(tweak_depth == 1) {
+                    vec3 pixel_position;
+                    pixel_position.xy = clip_position.xy;
+                    pixel_position.z = -clip_position.w;
+                    pixel_position = pixel_position * (5.0 / length(pixel_position));
+                    float z2 = (pixel_position.z * (omni_far + omni_near) + omni_far * omni_near * 2.0f) / (omni_near - omni_far);
+                    gl_FragDepth = (z2 / -pixel_position.z * 0.5 + 0.5);
+                } else {
+                    gl_FragDepth = gl_FragCoord.z;
+                }
             }
         */console.log})
     );
@@ -304,7 +295,48 @@ function draw_quad_shader_create() {
 
 var before_render, after_render;
 
+var draw_quad_with_pose_array = null;
+var draw_quad_with_pose_array_slices = 50;
+function draw_quad_with_pose_build_array() {
+    if(draw_quad_with_pose_array == null) {
+        var ptr = [ null ];
+        GL.genBuffers(1, ptr);
+        draw_quad_with_pose_array = ptr[0];
+        GL.bindBuffer(GL.ARRAY_BUFFER, draw_quad_with_pose_array);
+        var slices = draw_quad_with_pose_array_slices;
+        var idx = 0;
+        var array_data = new Float32Array(slices * slices * 12);
+        for(var x = 0; x < slices; x++) {
+            for(var y = 0; y < slices; y++) {
+                var xk1 = x / slices;
+                var yk1 = y / slices;
+                var xk2 = (x + 1) / slices;
+                var yk2 = (y + 1) / slices;
+                array_data[idx++] = xk1;
+                array_data[idx++] = yk1;
+                array_data[idx++] = xk1;
+                array_data[idx++] = yk2;
+                array_data[idx++] = xk2;
+                array_data[idx++] = yk2;
+
+                array_data[idx++] = xk1;
+                array_data[idx++] = yk1;
+                array_data[idx++] = xk2;
+                array_data[idx++] = yk2;
+                array_data[idx++] = xk2;
+                array_data[idx++] = yk1;
+            }
+        }
+        //var buf = new Buffer(array_data);
+        //console.log(buf.length, array_data.length, idx);
+        GL.bufferData(GL.ARRAY_BUFFER, 4 * array_data.length, array_data, GL.STATIC_DRAW);
+        GL.bindBuffer(GL.ARRAY_BUFFER, 0);
+    }
+}
+
 var draw_quad_with_pose = function(pose, texture_info) {
+    draw_quad_with_pose_build_array();
+
     var ex = pose.up.cross(pose.normal).normalize();
     var ey = pose.normal.cross(ex).normalize();
 
@@ -316,30 +348,73 @@ var draw_quad_with_pose = function(pose, texture_info) {
     ey = ey.scale(pose.width / texture_info.aspect_ratio / 2);
     if(texture_info.flip_y) ey = ey.scale(-1);
 
-    var p1 = pose.center.sub(ex).add(ey);
-    var p2 = pose.center.sub(ex).sub(ey);
-    var p3 = pose.center.add(ex).sub(ey);
-    var p4 = pose.center.add(ex).add(ey);
+    allosphere.shaderUniform3f("uCenter", pose.center.x, pose.center.y, pose.center.z);
+    allosphere.shaderUniform3f("uEx", ex.x, ex.y, ex.z);
+    allosphere.shaderUniform3f("uEy", ey.x, ey.y, ey.z);
+    //allosphere.shaderUniform3f("uNormal", pose.normal.x, pose.normal.y, pose.normal.z);
 
-    GL.begin(GL.QUADS);
+    // GL.begin(GL.QUADS);
+    // GL.vertex2f(0, 0);
+    // GL.vertex2f(0, 1);
+    // GL.vertex2f(1, 1);
+    // GL.vertex2f(1, 0);
+    // GL.end(GL.QUADS);
 
-    GL.texCoord2f(0, 0);
-    GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
-    GL.vertex3f(p1.x, p1.y, p1.z);
+    GL.disableClientState(GL.NORMAL_ARRAY);
+    GL.disableClientState(GL.TEXTURE_COORD_ARRAY);
+    GL.disableClientState(GL.COLOR_ARRAY);
+    GL.disableClientState(GL.INDEX_ARRAY);
 
-    GL.texCoord2f(0, 1);
-    GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
-    GL.vertex3f(p2.x, p2.y, p2.z);
 
-    GL.texCoord2f(1, 1);
-    GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
-    GL.vertex3f(p3.x, p3.y, p3.z);
+    GL.enableClientState(GL.VERTEX_ARRAY);
+    GL.bindBuffer(GL.ARRAY_BUFFER, draw_quad_with_pose_array);
 
-    GL.texCoord2f(1, 0);
-    GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
-    GL.vertex3f(p4.x, p4.y, p4.z);
+    GL.vertexPointer(2, GL.FLOAT, 0, null);
+    GL.drawArrays(GL.TRIANGLES, 0, draw_quad_with_pose_array_slices * draw_quad_with_pose_array_slices * 6);
+    GL.disableClientState(GL.VERTEX_ARRAY);
+    GL.bindBuffer(GL.ARRAY_BUFFER, 0);
 
-    GL.end();
+    // GL.begin(GL.QUADS);
+
+    // var subdiv = 30;
+    // //if(chart_mode == "stereo") subdiv = 10;
+
+    // for(var x = 0; x < subdiv; x++) {
+    //     for(var y = 0; y < subdiv; y++) {
+    //         var tx1 = x / subdiv;
+    //         var ty1 = y / subdiv;
+    //         var tx2 = (x + 1) / subdiv;
+    //         var ty2 = (y + 1) / subdiv;
+    //         var p1 = pose.center.add(ex.scale(tx1 * 2 - 1)).add(ey.scale(1 - ty1 * 2));
+    //         var p2 = pose.center.add(ex.scale(tx1 * 2 - 1)).add(ey.scale(1 - ty2 * 2));
+    //         var p3 = pose.center.add(ex.scale(tx2 * 2 - 1)).add(ey.scale(1 - ty2 * 2));
+    //         var p4 = pose.center.add(ex.scale(tx2 * 2 - 1)).add(ey.scale(1 - ty1 * 2));
+
+    //         if(chart_mode == "mono") {
+    //             p1 = p1.scale(5 / p1.length());
+    //             p2 = p2.scale(5 / p2.length());
+    //             p3 = p3.scale(5 / p3.length());
+    //             p4 = p4.scale(5 / p4.length());
+    //         }
+
+    //         GL.texCoord2f(tx1, ty1);
+    //         GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
+    //         GL.vertex3f(p1.x, p1.y, p1.z);
+
+    //         GL.texCoord2f(tx1, ty2);
+    //         GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
+    //         GL.vertex3f(p2.x, p2.y, p2.z);
+
+    //         GL.texCoord2f(tx2, ty2);
+    //         GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
+    //         GL.vertex3f(p3.x, p3.y, p3.z);
+
+    //         GL.texCoord2f(tx2, ty1);
+    //         GL.normal3f(pose.normal.x, pose.normal.y, pose.normal.z);
+    //         GL.vertex3f(p4.x, p4.y, p4.z);
+    //     }
+    // }
+    // GL.end();
 };
 
 if(configuration.allosphere) {
@@ -408,9 +483,8 @@ if(configuration.allosphere) {
 
                         tex.surface.bindTexture(2);
 
-                        allosphere.shaderUniformf("texture", 1.0);
                         allosphere.shaderUniformi("texture0", 2);
-                        allosphere.shaderUniformf("lighting", 0);
+                        allosphere.shaderUniformi("tweak_depth", chart_mode == "mono" ? 1 : 0);
 
                         draw_quad_with_pose(item.pose, {
                             aspect_ratio: 1,
@@ -439,9 +513,8 @@ if(configuration.allosphere) {
 
                     tex.surface.bindTexture(2);
 
-                    allosphere.shaderUniformf("texture", 1.0);
                     allosphere.shaderUniformi("texture0", 2);
-                    allosphere.shaderUniformf("lighting", 0);
+                    allosphere.shaderUniformi("tweak_depth", chart_mode == "mono" ? 1 : 0);
 
                     draw_quad_with_pose(canvas.pose);
 
@@ -464,15 +537,17 @@ if(configuration.allosphere) {
                     GL.lightfv(GL.LIGHT0, GL.AMBIENT, [ 0.3, 0.3, 0.3, 1 ]);
                     GL.lightfv(GL.LIGHT0, GL.DIFFUSE, [ 0.7, 0.7, 0.7, 1 ]);
                     GL.lightfv(GL.LIGHT0, GL.SPECULAR, [ 1, 1, 1, 1 ]);
-                    obj.render({ GL: GL, allosphere: allosphere, order: "back" }, dataset);
+                    obj.render3D({ GL: GL, allosphere: allosphere, order: "back", chart_mode: chart_mode }, dataset);
                 } catch(e) { }
             });
         }
 
         GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
+        GL.depthMask(GL.FALSE);
         quad_renderers.forEach(function(r) {
             r.render();
         });
+        GL.depthMask(GL.TRUE);
 
         // Render 3D objects.
         if(workspace && workspace.objects) {
@@ -486,7 +561,7 @@ if(configuration.allosphere) {
                     GL.lightfv(GL.LIGHT0, GL.AMBIENT, [ 0.3, 0.3, 0.3, 1 ]);
                     GL.lightfv(GL.LIGHT0, GL.DIFFUSE, [ 0.7, 0.7, 0.7, 1 ]);
                     GL.lightfv(GL.LIGHT0, GL.SPECULAR, [ 1, 1, 1, 1 ]);
-                    obj.render({ GL: GL, allosphere: allosphere, order: "front" }, dataset);
+                    obj.render3D({ GL: GL, allosphere: allosphere, order: "front", chart_mode: chart_mode }, dataset);
                 } catch(e) { }
             });
         }
