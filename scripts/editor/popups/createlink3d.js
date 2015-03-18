@@ -1,4 +1,4 @@
-// iVisDesigner - scripts/editor/popups/creategenerator.js
+// iVisDesigner - scripts/editor/popups/createlink3d.js
 // Author: Donghao Ren
 //
 // LICENSE
