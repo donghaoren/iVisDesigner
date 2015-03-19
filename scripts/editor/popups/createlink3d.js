@@ -39,8 +39,8 @@ IV.popups.CreateLink3D = function() {
     var p = data.selector;
     p.children(".content").html(IV.strings("popup_create_link3d"));
 
-    p.default_width = 400;
-    p.default_height = 130;
+    p.default_width = 300;
+    p.default_height = 230;
     var data = p.data();
 
     p.find(".input-numeric").each(function() {
@@ -60,13 +60,24 @@ IV.popups.CreateLink3D = function() {
             var path = tab.find('[data-field="path"]').data().get();
             var obj1 = tab.find('[data-field="anchor1"]').data().get();
             var obj2 = tab.find('[data-field="anchor2"]').data().get();
-            var wrapper1 = new IV.objects.CanvasWrapper3D(obj1[0], obj1[1]);
-            var wrapper2 = new IV.objects.CanvasWrapper3D(obj2[0], obj2[1]);
+            var wrapper1, wrapper2;
+            if(obj1[0] && obj1[1]) {
+                wrapper1 = new IV.objects.CanvasWrapper3D(obj1[0], obj1[1]);
+            } else {
+                wrapper1 = new IV.objects.PointFromData3D(tab.find('[data-field="anchor1-path"]').data().get());
+            }
+            if(obj2[0] && obj2[1]) {
+                wrapper2 = new IV.objects.CanvasWrapper3D(obj2[0], obj2[1]);
+            } else {
+                wrapper2 = new IV.objects.PointFromData3D(tab.find('[data-field="anchor2-path"]').data().get());
+            }
             var line = new IV.objects.Line3D({
                 path: path,
                 point1: wrapper1,
                 point2: wrapper2
             });
+            line.name = tab.find('[data-field="name"]').data().get();
+            if(!line.name || line.name == "") line.name = "Line3D";
             IV.editor.doAddWorkspaceObject(line);
         }
         data.hide();

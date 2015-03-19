@@ -74,10 +74,10 @@ IV.Workspace.prototype.addCanvas = function(info) {
      if(!info) info = { };
     if(!info.pose) {
         info.pose = {
-            center: new IV.Vector3(1, 0, 0),
+            center: new IV.Vector3(5, 0, 0),
             normal: new IV.Vector3(-1, 0, 0),
             up: new IV.Vector3(0, 0, 1),
-            width: 0.5
+            width: 1
         };
     }
     if(!info.visualization) info.visualization = new IV.Visualization();

@@ -35,6 +35,25 @@
 IV.editor.workspace.objects.push(new IV.objects.Line3D({ path: new IV.Path("[cars]"), point1: new IV.objects.CanvasWrapper3D(IV.editor.workspace.canvases[0], IV.editor.workspace.canvases[0].visualization.objects[5]), point2: new IV.objects.CanvasWrapper3D(IV.editor.workspace.canvases[1], IV.editor.workspace.canvases[0].visualization.objects[0]) }));
 */
 
+Objects.PointFromData3D = IV.extend(Objects.Object, function(path) {
+    this.path = path;
+    this.type = "PointFromData3D";
+}, {
+    get: function(context) {
+        var data = context.get(this.path).val();
+        if(!data) return null;
+        var pt = new IV.Vector3(data.x, data.y, data.z);
+        pt.normal = new IV.Vector3(data.nx, data.ny, data.nz).normalize();
+        return pt;
+    },
+    getPath: function() {
+        return this.path;
+    },
+    clone: function() {
+        return new Objects.PointFromData3D(this.path);
+    }
+});
+
 Objects.CanvasWrapper3D = IV.extend(Objects.Object, function(canvas, point) {
     this.type = "CanvasWrapper3D";
     this.canvas = canvas;
@@ -414,3 +433,4 @@ Objects.Line3D = IV.extend(Objects.Shape, function(info) {
 
 IV.serializer.registerObjectType("Line3D", Objects.Line3D);
 IV.serializer.registerObjectType("CanvasWrapper3D", Objects.CanvasWrapper3D);
+IV.serializer.registerObjectType("PointFromData3D", Objects.PointFromData3D);

@@ -211,21 +211,45 @@ popup_create_link3d: |
           <div class="item-caption">Line3D</div>
           <div class="item-action">
             <div class="field group">
+              <span class="name"><span>Name</span></span>
+              <span class="val">
+                <span data-field="name" class="input-string plain-string"></span>
+              </span>
+            </div>
+            <div class="field group">
               <span class="name"><span>Path</span></span>
               <span class="val">
                 <span data-field="path" class="input-path btn plain-path"></span>
               </span>
             </div>
+          </div>
+          <div class="item-caption">Anchor1</div>
+          <div class="item-action">
             <div class="field group">
-              <span class="name"><span>Anchor1</span></span>
+              <span class="name"><span>Object</span></span>
               <span class="val">
                 <span data-field="anchor1" class="input-object btn plain-object"></span>
               </span>
             </div>
             <div class="field group">
-              <span class="name"><span>Anchor2</span></span>
+              <span class="name"><span>Direct</span></span>
+              <span class="val">
+                <span data-field="anchor1-path" class="input-path btn plain-path"></span>
+              </span>
+            </div>
+          </div>
+          <div class="item-caption">Anchor2</div>
+          <div class="item-action">
+            <div class="field group">
+              <span class="name"><span>Object</span></span>
               <span class="val">
                 <span data-field="anchor2" class="input-object btn plain-object"></span>
+              </span>
+            </div>
+            <div class="field group">
+              <span class="name"><span>Direct</span></span>
+              <span class="val">
+                <span data-field="anchor2-path" class="input-path btn plain-path"></span>
               </span>
             </div>
           </div>
