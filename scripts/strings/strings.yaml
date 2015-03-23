@@ -200,6 +200,35 @@ popup_create_map: |
     </div>
   </div>
 
+popup_create_image: |
+  <div class="property-list">
+    <div class="item-caption">Image</div>
+    <div class="item-action">
+      <div class="field group">
+        <span class="name"><span>Path</span></span>
+        <span class="val">
+          <span data-field="path" class="input-path btn plain-path"></span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Scale</span></span>
+        <span class="val">
+          <span class="input-group">
+            <span data-field="scale" class="input-numeric" data-default="1"></span>
+          </span>
+        </span>
+      </div>
+      <div class="field group">
+        <span class="name"><span>Source</span></span>
+        <span class="val">
+          <span class="input-group">
+            <span data-field="source" class="input-string" data-default=""></span>
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+
 popup_create_link3d: |
   <div class="tab" data-default="line3d">
     <div class="header">

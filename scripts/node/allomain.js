@@ -457,6 +457,7 @@ if(configuration.allosphere) {
 
     // Draw your stuff with OpenGL.
     var safe_ondraw = function(info) {
+        GL.colorMask(GL.TRUE, GL.TRUE, GL.TRUE, GL.TRUE);
         GL.enable(GL.BLEND);
         // The texture output is in premultiplied alpha!
         GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
@@ -571,7 +572,66 @@ if(configuration.allosphere) {
                 after_render();
             } catch(e) { }
         }
+        GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
         GL.flush();
+    };
+
+    draw_cubes = function() {
+        GL.enable(GL.BLEND);
+        GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+
+        var id = allosphere.shaderDefault();
+        allosphere.shaderBegin(id);
+        allosphere.shaderUniformf("lighting", 1);
+
+        var draw_cube = function(x, y, z, scale) {
+            GL.begin(GL.QUADS);
+            GL.normal3f(+1, 0, 0);
+            GL.vertex3f(x + scale, y + scale, z + scale);
+            GL.vertex3f(x + scale, y - scale, z + scale);
+            GL.vertex3f(x + scale, y - scale, z - scale);
+            GL.vertex3f(x + scale, y + scale, z - scale);
+            GL.normal3f(-1, 0, 0);
+            GL.vertex3f(x - scale, y + scale, z + scale);
+            GL.vertex3f(x - scale, y + scale, z - scale);
+            GL.vertex3f(x - scale, y - scale, z - scale);
+            GL.vertex3f(x - scale, y - scale, z + scale);
+
+            GL.normal3f(0, +1, 0);
+            GL.vertex3f(x + scale, y + scale, z + scale);
+            GL.vertex3f(x + scale, y + scale, z - scale);
+            GL.vertex3f(x - scale, y + scale, z - scale);
+            GL.vertex3f(x - scale, y + scale, z + scale);
+            GL.normal3f(0, -1, 0);
+            GL.vertex3f(x + scale, y - scale, z + scale);
+            GL.vertex3f(x - scale, y - scale, z + scale);
+            GL.vertex3f(x - scale, y - scale, z - scale);
+            GL.vertex3f(x + scale, y - scale, z - scale);
+
+            GL.normal3f(0, 0, +1);
+            GL.vertex3f(x + scale, y + scale, z + scale);
+            GL.vertex3f(x - scale, y + scale, z + scale);
+            GL.vertex3f(x - scale, y - scale, z + scale);
+            GL.vertex3f(x + scale, y - scale, z + scale);
+            GL.normal3f(0, 0, -1);
+            GL.vertex3f(x + scale, y + scale, z - scale);
+            GL.vertex3f(x + scale, y - scale, z - scale);
+            GL.vertex3f(x - scale, y - scale, z - scale);
+            GL.vertex3f(x - scale, y + scale, z - scale);
+            GL.end(GL.QUADS);
+        };
+
+        var step = 2;
+        var scale = 0.05;
+        var count = 5;
+        for(var xt = -count; xt <= count; xt++)
+        for(var yt = -count; yt <= count; yt++)
+        for(var zt = -count; zt <= count; zt++) {
+            if(xt == 0 && yt == 0 && zt == 0) continue;
+            draw_cube(xt * step, yt * step, zt * step, scale);
+        }
+
+        allosphere.shaderEnd(id);
     };
 
     allosphere.onDraw(function(info) {

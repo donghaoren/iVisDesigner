@@ -89,6 +89,7 @@ Objects.Object.prototype = {
 {{include: text.js}}
 {{include: layout.js}}
 {{include: map.js}}
+{{include: image.js}}
 {{include: generators/generators.js}}
 {{include: component.js}}
 {{include: 3d/3d.js}}

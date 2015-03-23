@@ -350,6 +350,8 @@ Object.defineProperty(Image.prototype, "src", {
         this.__src = value;
         if(Image.__cache[value]) {
             self.__surface = Image.__cache[value];
+            self.width = self.__surface.width();
+            self.height = self.__surface.height();
             setTimeout(function() {
                 if(self.onload) self.onload();
             }, 1);
@@ -357,6 +359,8 @@ Object.defineProperty(Image.prototype, "src", {
             request({ url: value, encoding: null }, function(error, response, body) {
                 if(!error) {
                     self.__surface = new graphics.Surface2D(body);
+                    self.width = self.__surface.width();
+                    self.height = self.__surface.height();
                     Image.__cache[value] = self.__surface;
                     if(self.onload) self.onload();
                 } else {

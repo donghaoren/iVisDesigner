@@ -86,3 +86,58 @@ IV.popups.CreateMap = function() {
     };
     return data;
 };
+
+IV.popups.CreateImage = function() {
+    var data = IV.popups.create();
+    data.addActions([ "ok", "cancel" ]);
+
+    var p = data.selector;
+    p.children(".content").html(IV.strings("popup_create_image"));
+
+    p.default_width = 300;
+    p.default_height = 130;
+    var data = p.data();
+
+    p.find(".input-numeric").each(function() {
+        var t = $(this);
+        var def = t.attr("data-default");
+        if(def !== undefined) {
+            t.IVInputNumeric(parseFloat(def));
+        } else {
+            t.IVInputNumeric();
+        }
+    });
+
+    data.onOk = function() {
+        var info = {
+            path: p.find('[data-field="path"]').data().get(),
+            source: new IV.objects.Plain(p.find('[data-field="source"]').data().get()),
+            scale: new IV.objects.Plain(parseFloat(p.find('[data-field="scale"]').data().get()))
+        };
+        Editor.tools.beginSelectLocation(function(loc) {
+            info.position = loc;
+            var image = new IV.objects.Image(info);
+            Editor.doAddObject(image);
+            Editor.tools.endSelectLocation("tools:Image");
+            data.hide();
+            IV.set("tools:current", "Select");
+        }, "tools:Image");
+        /*
+        var vertex_path = p.find('[data-field="vertex-path"]').data().get();
+        var edgeA = p.find('[data-field="edge-a"]').data().get();
+        var edgeB = p.find('[data-field="edge-b"]').data().get();
+        var algo = p.find('[data-field="algorithm"]').data().get();
+        var obj = new IV.objects.ForceLayout({
+            path_nodes: vertex_path,
+            path_edgeA: edgeA,
+            path_edgeB: edgeB
+        });
+        Editor.doAddObject(obj);
+        data.hide();
+        */
+    };
+    data.onCancel = function() {
+        data.hide();
+    };
+    return data;
+};
