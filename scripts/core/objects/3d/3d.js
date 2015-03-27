@@ -32,3 +32,4 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 {{include: line3d.js}}
+{{include: sphere3d.js}}

@@ -78,6 +78,9 @@ Objects.CanvasWrapper3D = IV.extend(Objects.Object, function(canvas, point) {
         ex = ex.scale(pose.width / 2000);
         ey = ey.scale(pose.width / 2000);
         var p = pose.center.add(ex.scale(pt.x - 0.5)).add(ey.scale(pt.y - 0.5));
+        if(G_render_config.chart_mode == "mono") {
+            p = p.scale(G_render_config.radius / p.length());
+        }
         p.normal = pose.normal.normalize();
         return p;
     },
@@ -105,6 +108,10 @@ vec3 iv_to_al_3(in vec3 v) {
     return vec3(v.y, v.z, v.x);
 }
 
+vec4 iv_to_al(in vec4 v) {
+    return vec4(v.y, v.z, v.x, v.w);
+}
+
 void bezierCurve(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
     int tick_count = 40;
     int i;
@@ -123,7 +130,7 @@ void bezierCurve(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
         vec3 p = p1 * k1 + p2 * k2 + p3 * k3 + p4 * k4;
         line_direction = normalize(p1 * dk1 + p2 * dk2 + p3 * dk3 + p4 * dk4);
         gl_Position = omni_render(vec4(p, 1.0f));
-        light_direction = normalize(iv_to_al_3(gl_LightSource[0].position.xyz) - p);
+        light_direction = normalize((gl_ModelViewMatrix * iv_to_al(gl_LightSource[0].position)).xyz - p);
         eye_vector = normalize(-p);
         specular_boost = max(max(0.0, 1.0 - 5.0 * t), max(0.0, 1.0 - 5.0 * (1.0 - t)));
         EmitVertex();
@@ -139,7 +146,7 @@ void line(vec3 p1, vec3 p2) {
         float t = float(i) / float(tick_count);
         vec3 p = p1 + (p2 - p1) * t;
         gl_Position = omni_render(vec4(p, 1.0f));
-        light_direction = normalize(gl_LightSource[0].position.xyz - p);
+        light_direction = normalize((gl_ModelViewMatrix * iv_to_al(gl_LightSource[0].position)).xyz - p);
         eye_vector = normalize(-p);
         specular_boost = max(max(0.0, 1.0 - 5.0 * t), max(0.0, 1.0 - 5.0 * (1.0 - t)));
         EmitVertex();
@@ -155,7 +162,7 @@ void line2(vec3 p1, vec3 p2) {
         float t = float(i) / float(tick_count);
         vec3 p = p1 + (p2 - p1) * t;
         gl_Position = omni_render(vec4(p, 1.0f));
-        light_direction = normalize(gl_LightSource[0].position.xyz - p);
+        light_direction = normalize((gl_ModelViewMatrix * iv_to_al(gl_LightSource[0].position)).xyz - p);
         eye_vector = normalize(-p);
         EmitVertex();
     }
@@ -189,7 +196,6 @@ void main() {
 var lineShader_VertexCode = IV.multiline(function() {/*@preserve
 varying vec4 colors;
 varying vec3 normals;
-varying vec3 light_directions, eye_vectors;
 
 vec4 iv_to_al(in vec4 v) {
     return vec4(v.y, v.z, v.x, v.w);
@@ -215,8 +221,8 @@ varying float specular_boost;
 void main() {
     vec4 colorMixed = color;
     vec4 final_color = colorMixed * (gl_LightSource[0].ambient);
-    vec3 T = line_direction; // tangent direction.
-    vec3 L = light_direction;
+    vec3 T = normalize(line_direction); // tangent direction.
+    vec3 L = normalize(light_direction);
     vec3 LN = normalize(L - T * dot(L, T));
     float lambertTerm = max(dot(LN, L), 0.0);
     final_color += gl_LightSource[0].diffuse * colorMixed * lambertTerm;
@@ -224,6 +230,8 @@ void main() {
     vec3 R = reflect(-L, LN);
     float spec = pow(max(dot(R, E), 0.0), specular_term) + specular_boost;
     final_color += gl_LightSource[0].specular * spec;
+    final_color.a = color.a;
+    final_color.rgb *= final_color.a;
     gl_FragColor = final_color;
 }
 */console.log});
@@ -386,21 +394,13 @@ Objects.Line3D = IV.extend(Objects.Shape, function(info) {
         lineShader_begin(g, this.specular_term, line_type, $this.curveness);
         g.GL.enable(g.GL.LINE_SMOOTH);
         g.GL.hint(g.GL.LINE_SMOOTH_HINT, g.GL.NICEST);
-        g.GL.blendFunc(g.GL.SRC_ALPHA, g.GL.ONE_MINUS_SRC_ALPHA);
+        g.GL.blendFunc(g.GL.ONE, g.GL.ONE_MINUS_SRC_ALPHA);
         $this.path.enumerate(data, function(context) {
             if($this.filter && !$this.filter.get(context)) return;
             var p1 = $this.point1.get(context);
             var p2 = $this.point2.get(context);
             var width = $this.width.get(context);
             if(!p1 || !p2 || !width) return;
-            if(g.chart_mode == "mono") {
-                var p1n = p1.normal;
-                var p2n = p2.normal;
-                p1 = p1.scale(5 / p1.length());
-                p2 = p2.scale(5 / p2.length());
-                p1.normal = p1n;
-                p2.normal = p2n;
-            }
             var color;
             if($this.color) color = $this.color.get(context);
             else color = new IV.Color(255, 255, 255, 1);

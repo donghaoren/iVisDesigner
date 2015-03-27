@@ -87,3 +87,54 @@ IV.popups.CreateLink3D = function() {
     };
     return data;
 };
+
+IV.popups.CreateSphere3D = function() {
+    // We put statistics and generators together.
+    var data = IV.popups.create();
+    data.addActions([ "ok", "cancel" ]);
+
+    var p = data.selector;
+    p.children(".content").html(IV.strings("popup_create_sphere3d"));
+
+    p.default_width = 300;
+    p.default_height = 230;
+    var data = p.data();
+
+    p.find(".input-numeric").each(function() {
+        var t = $(this);
+        var def = t.attr("data-default");
+        if(def !== undefined) {
+            t.IVInputNumeric(parseFloat(def));
+        } else {
+            t.IVInputNumeric();
+        }
+    });
+
+    data.onOk = function() {
+        var active_tab = p.find(".tab").data().current;
+        if(active_tab == "sphere3d") {
+            var tab = p.find('[data-tab="sphere3d"]');
+            var path = tab.find('[data-field="path"]').data().get();
+            var obj1 = tab.find('[data-field="anchor1"]').data().get();
+            var wrapper1;
+            if(obj1[0] && obj1[1]) {
+                wrapper1 = new IV.objects.CanvasWrapper3D(obj1[0], obj1[1]);
+            } else {
+                wrapper1 = new IV.objects.PointFromData3D(tab.find('[data-field="anchor1-path"]').data().get());
+            }
+            var sphere = new IV.objects.Sphere3D({
+                path: path,
+                center: wrapper1,
+                radius: new IV.objects.Plain(0.2)
+            });
+            sphere.name = tab.find('[data-field="name"]').data().get();
+            if(!sphere.name || sphere.name == "") sphere.name = "Sphere3D";
+            IV.editor.doAddWorkspaceObject(sphere);
+        }
+        data.hide();
+    };
+    data.onCancel = function() {
+        data.hide();
+    };
+    return data;
+};

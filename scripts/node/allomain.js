@@ -36,6 +36,11 @@
 
 var configuration = require("./alloconfig");
 
+G_render_config = {
+    radius: 5,
+    chart_mode: "mono"
+};
+
 
 var prefix_string = function(prefix, str) {
     return prefix + str.replace(/[\r\n]/g, "\n").replace(/[\n]/g, "\n" + prefix);
@@ -144,7 +149,6 @@ var index = 0;
 var workspace = null;
 
 var light_position = new IV.Vector3(0, 0, 0);
-var chart_mode = "mono";
 
 var viewport_processes = { };
 
@@ -237,7 +241,7 @@ connection.onMessage = function(object) {
     }
     if(object.type == "chart.mode") {
         // mono or stereo.
-        chart_mode = object.mode;
+        G_render_config.chart_mode = object.mode;
     }
     workspace_sync.processMessage(object);
 };
@@ -270,7 +274,6 @@ function draw_quad_shader_create() {
             }
         */console.log}), IV.multiline(function() {/*@preserve
             uniform float texture;
-            uniform float omni_near, omni_far;
             uniform int tweak_depth;
             uniform sampler2D texture0;
             varying vec4 clip_position;
@@ -421,6 +424,13 @@ if(configuration.allosphere) {
     var allosphere = require("node_allosphere");
     allosphere.initialize();
 
+    if(configuration.test_mode) {
+        allosphere.setProjectionMode("perspective");
+        allosphere.setStereoMode("anaglyph_blend");
+        allosphere.enableWindowNavigation();
+        //allosphere.setLens(5.0 / 8.0, 5.0);
+    }
+
     var panorama_renderer = new EquirectangularRenderer(allosphere);
     var panorama_texture = new EquirectangularTexture(allosphere, false);
     var loaded_video = null;
@@ -485,7 +495,7 @@ if(configuration.allosphere) {
                         tex.surface.bindTexture(2);
 
                         allosphere.shaderUniformi("texture0", 2);
-                        allosphere.shaderUniformi("tweak_depth", chart_mode == "mono" ? 1 : 0);
+                        allosphere.shaderUniformi("tweak_depth", G_render_config.chart_mode == "mono" ? 1 : 0);
 
                         draw_quad_with_pose(item.pose, {
                             aspect_ratio: 1,
@@ -515,7 +525,7 @@ if(configuration.allosphere) {
                     tex.surface.bindTexture(2);
 
                     allosphere.shaderUniformi("texture0", 2);
-                    allosphere.shaderUniformi("tweak_depth", chart_mode == "mono" ? 1 : 0);
+                    allosphere.shaderUniformi("tweak_depth", G_render_config.chart_mode == "mono" ? 1 : 0);
 
                     draw_quad_with_pose(canvas.pose);
 
@@ -534,11 +544,11 @@ if(configuration.allosphere) {
             workspace.objects.forEach(function(obj) {
                 try {
                     GL.shadeModel(GL.SMOOTH);
-                    GL.lightfv(GL.LIGHT0, GL.POSITION, [ light_position.x, light_position.y, light_position.z ]);
+                    GL.lightfv(GL.LIGHT0, GL.POSITION, [ light_position.x, light_position.y, light_position.z, 1 ]);
                     GL.lightfv(GL.LIGHT0, GL.AMBIENT, [ 0.3, 0.3, 0.3, 1 ]);
                     GL.lightfv(GL.LIGHT0, GL.DIFFUSE, [ 0.7, 0.7, 0.7, 1 ]);
                     GL.lightfv(GL.LIGHT0, GL.SPECULAR, [ 1, 1, 1, 1 ]);
-                    obj.render3D({ GL: GL, allosphere: allosphere, order: "back", chart_mode: chart_mode }, dataset);
+                    obj.render3D({ GL: GL, allosphere: allosphere, order: "back" }, dataset);
                 } catch(e) { }
             });
         }
@@ -558,11 +568,11 @@ if(configuration.allosphere) {
             workspace.objects.forEach(function(obj) {
                 try {
                     GL.shadeModel(GL.SMOOTH);
-                    GL.lightfv(GL.LIGHT0, GL.POSITION, [ light_position.x, light_position.y, light_position.z ]);
+                    GL.lightfv(GL.LIGHT0, GL.POSITION, [ light_position.x, light_position.y, light_position.z, 1 ]);
                     GL.lightfv(GL.LIGHT0, GL.AMBIENT, [ 0.3, 0.3, 0.3, 1 ]);
                     GL.lightfv(GL.LIGHT0, GL.DIFFUSE, [ 0.7, 0.7, 0.7, 1 ]);
                     GL.lightfv(GL.LIGHT0, GL.SPECULAR, [ 1, 1, 1, 1 ]);
-                    obj.render3D({ GL: GL, allosphere: allosphere, order: "front", chart_mode: chart_mode }, dataset);
+                    obj.render3D({ GL: GL, allosphere: allosphere, order: "front" }, dataset);
                 } catch(e) { }
             });
         }

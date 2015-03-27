@@ -287,6 +287,49 @@ popup_create_link3d: |
     </div>
   </div>
 
+popup_create_sphere3d: |
+  <div class="tab" data-default="sphere3d">
+    <div class="header">
+      <span data-tab="sphere3d">Sphere3d</span>
+    </div>
+    <div class="tabs">
+      <div data-tab="sphere3d">
+        <div class="property-list">
+          <div class="item-caption">Line3D</div>
+          <div class="item-action">
+            <div class="field group">
+              <span class="name"><span>Name</span></span>
+              <span class="val">
+                <span data-field="name" class="input-string plain-string"></span>
+              </span>
+            </div>
+            <div class="field group">
+              <span class="name"><span>Path</span></span>
+              <span class="val">
+                <span data-field="path" class="input-path btn plain-path"></span>
+              </span>
+            </div>
+          </div>
+          <div class="item-caption">Anchor1</div>
+          <div class="item-action">
+            <div class="field group">
+              <span class="name"><span>Object</span></span>
+              <span class="val">
+                <span data-field="anchor1" class="input-object btn plain-object"></span>
+              </span>
+            </div>
+            <div class="field group">
+              <span class="name"><span>Direct</span></span>
+              <span class="val">
+                <span data-field="anchor1-path" class="input-path btn plain-path"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div><!-- sphere3d -->
+    </div>
+  </div>
+
 popup_color_select: |
   <div class="tab" data-default="predefined">
     <div class="header">
