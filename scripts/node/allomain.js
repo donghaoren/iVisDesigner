@@ -426,8 +426,13 @@ if(configuration.allosphere) {
 
     if(configuration.test_mode) {
         allosphere.setProjectionMode("perspective");
-        allosphere.setStereoMode("anaglyph_blend");
+        allosphere.setStereoMode("anaglyph");
         allosphere.enableWindowNavigation();
+        allosphere.capture = function(x, y, w, h, file) {
+            var buffer = allosphere.screenCapture(x, y, w, h);
+            var img = graphics.Surface2D(w, h, buffer);
+            img.save(file);
+        }
         //allosphere.setLens(5.0 / 8.0, 5.0);
     }
 
