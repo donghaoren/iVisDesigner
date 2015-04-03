@@ -281,7 +281,7 @@ function draw_quad_shader_create() {
                 // Shading.
                 gl_FragColor = texture2D(texture0, gl_TexCoord[0].st);
                 // Depth adjustments.
-                if(tweak_depth == 1) {
+                if(tweak_depth == 1 && tweak_depth == 0) {
                     vec3 pixel_position;
                     pixel_position.xy = clip_position.xy;
                     pixel_position.z = -clip_position.w;

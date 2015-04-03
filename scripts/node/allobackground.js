@@ -47,7 +47,7 @@ $(".anchor-file").each(function() {
         url = window.location.protocol.replace(/^http/, "ws") + "//" + window.location.host + IV_Config.api_base + "ws/";
     }
     if(IV_Config.url_websocket) url = IV_Config.url_websocket;
-    var ws = new Wampy(url, { realm: "anonymous" });
+    var ws = new Wampy(url, { realm: "anonymous", autoReconnect: false });
 
     ws.subscribe("iv.allosphere.message", function(message) {
         var content = JSON.parse(message);
