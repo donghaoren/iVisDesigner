@@ -293,6 +293,7 @@ Objects.GoogleMap = IV.extend(Objects.Object, function(info) {
         var lat = context.get(this.path_latitude).val();
         if(lng === null || lat === null) return null;
         var pt = this._map.lngLatToPixelCentered(lng, lat);
+        if(Math.abs(pt.x) >= this._map.size_x / 2 || Math.abs(pt.y) >= this._map.size_y / 2) return null;
         return pt.add(this.center_offset);
     },
     renderSelected: function(g, data) {
