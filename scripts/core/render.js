@@ -356,6 +356,7 @@ IV.Renderer.prototype._set_transform = function(ctx) {
 
 IV.Renderer.prototype._perform_render = function(key) {
     var canvas = this.manager.get(key);
+    if(!canvas) return;
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, this.manager.width * this.manager.ratio, this.manager.height * this.manager.ratio);
 

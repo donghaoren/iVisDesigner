@@ -79,6 +79,7 @@ CanvasRenderer.prototype.render = function(vis, data) {
     this.renderer.trigger("main");
     var r = this.renderer.render();
     if(r) {
+        GL.activeTexture(GL.TEXTURE0);
         GL.bindTexture(GL.TEXTURE_2D, this.texture);
         GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, this.canvas);
         GL.generateMipmap(GL.TEXTURE_2D);
@@ -318,6 +319,11 @@ var synced_object, dataset, workspace;
 var scene_updated = false;
 var update_blocker = 0;
 var updateHandler = function() {
+    if(workspace) {
+        for(var c in workspace.canvases) {
+            if(workspace.canvases[c].visualization._needs_render) scene_updated = true;
+        }
+    }
     if(update_blocker == 0) {
         if(scene_updated) {
             scene_updated = false;
@@ -325,11 +331,14 @@ var updateHandler = function() {
                 if(workspace) {
                     for(var c in workspace.canvases) {
                         var canvas = workspace.canvases[c];
-                        if(dataset) getRenderer(c).render(canvas.visualization, dataset);
+                        try {
+                            if(dataset) getRenderer(c).render(canvas.visualization, dataset);
+                        } catch(e) { }
                     }
                 }
                 render_webgl_view();
-            } catch(e) { }
+            } catch(e) {
+            }
         }
     }
     setTimeout(updateHandler, 200);
