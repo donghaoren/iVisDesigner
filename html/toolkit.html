@@ -271,7 +271,7 @@ IV_version = {
             <i class="xicon-tools-component"></i>
           </span>
           <span data-apply-children-resist="yes" class="btn btn-icon" title="Create Google Map." data-popup="CreateMap">
-            <i class="xicon-tools-map"></i>
+            <i class="xicon-tools-image"></i>
           </span>
           <span data-apply-children-resist="yes" class="btn btn-icon" title="Create Google Map." data-popup="CreateImage">
             <i class="xicon-tools-map"></i>
@@ -288,7 +288,7 @@ IV_version = {
           <i class="xicon-tools-line3d"></i>
         </span>
         <span class="btn btn-icon" title="Create 3D links." data-popup="CreateSphere3D">
-          <i class="xicon-tools-line3d"></i>
+          <i class="xicon-tools-sphere"></i>
         </span>
         <span data-apply-children-resist="yes" class="separator"></span>
         <span class="btn btn-icon" data-command="editor.undo" title="Undo.">
@@ -332,12 +332,31 @@ IV_version = {
   </div>
   <!-- 3D Pose Panel -->
   <div id="panel-pose" class="panel" data-title="Pose">
-    <div id="panel-pose-wrapper">
-      <div class="buttons" style="padding: 3px;">
-        <span data-command="allosphere.sync" class="btn btn-s">ForceSync</span>
-        <span class="color-selector" id="pose-color-selector"></span>
-      </div>
+    <div id="panel-pose-wrapper" style="position: relative">
       <div id="pose-view">
+      </div>
+      <div class="buttons basic" style="position: absolute; padding: 3px; top: 0; left: 200px">
+        <p>
+          <span class="color-selector" id="pose-color-selector"></span>
+          <span data-command="allosphere.sync" class="btn btn-s">Full Sync</span>
+        </p>
+        <h4>Stereo Mode</h4>
+        <p>
+          <span class="btn btn-s" data-switch="stereo-mode" data-value="mono">Mono</span>
+          <span class="btn btn-s" data-switch="stereo-mode" data-value="stereo">Stereo</span>
+          <span class="btn btn-s active" data-switch="stereo-mode" data-value="hybrid">Hybrid</span>
+        </p>
+        <h4>Lighting</h4>
+        <p>
+          <span class="btn btn-s active" data-switch="lighting-mode" data-value="center">Center</span>
+          <span class="btn btn-s" data-switch="lighting-mode" data-value="motion">Motion</span>
+        </p>
+        <h4>Background</h4>
+        <p>
+          <span class="btn btn-s active" data-switch="background-mode" data-value="black">Black</span>
+          <span class="btn btn-s" data-switch="background-mode" data-value="white">White</span>
+          <span class="btn btn-s" data-switch="background-mode" data-value="panorama">Panorama</span>
+        </p>
       </div>
     </div>
   </div>
