@@ -559,11 +559,9 @@ if(configuration.allosphere) {
         }
 
         GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
-        GL.depthMask(GL.FALSE);
         quad_renderers.forEach(function(r) {
             r.render();
         });
-        GL.depthMask(GL.TRUE);
 
         // Render 3D objects.
         if(workspace && workspace.objects) {
