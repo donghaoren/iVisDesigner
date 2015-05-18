@@ -32,7 +32,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var d3 = require("d3");
-var graphics = require("node_graphics");
+// var graphics = require("node_graphics");
+var graphics = require("allofw").graphics;
 var request = require('request');
 
 var TODO_not_implemented_yet = function() {

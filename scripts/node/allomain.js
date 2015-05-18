@@ -47,7 +47,7 @@ var prefix_string = function(prefix, str) {
 };
 
 var RenderSlaveProcess = function(info) {
-    var SharedMemory = require("node_sharedmemory").SharedMemory;
+    var SharedMemory = require("allofw").SharedMemory;
     if(!info.width) info.width = 2000;
     if(!info.height) info.height = 2000;
     var tex = new SharedTexture(info, true);
@@ -79,7 +79,7 @@ RenderSlaveProcess.prototype.stop = function() {
 };
 
 var RenderViewportProcess = function(info) {
-    var SharedMemory = require("node_sharedmemory").SharedMemory;
+    var SharedMemory = require("allofw").SharedMemory;
     var ivtexture_args = [];
     var textures = { };
 

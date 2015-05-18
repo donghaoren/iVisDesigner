@@ -33,11 +33,11 @@
 
 var MessageTransportTCP = function(config, is_renderer) {
     var self = this;
-    var bcast = require("node_broadcaster");
-    var hostname = require("os").hostname();
-    if(is_renderer) hostname = "renderer";
-    bcast.start(hostname, "broadcaster.conf");
-    bcast.onMessage(function(message) {
+    var zmq = require("zmq");
+    var sub = zmq.socket("sub");
+    sub.connect(config.broadcast);
+    sub.subscribe("");
+    sub.on("message", function(message) {
         if(self.onMessage) {
             try {
                 var str = message.toString("utf8");
@@ -48,7 +48,7 @@ var MessageTransportTCP = function(config, is_renderer) {
         }
     });
     this.close = function() {
-        bcast.stop();
+        sub.close();
     };
 };
 

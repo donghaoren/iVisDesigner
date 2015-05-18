@@ -32,7 +32,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var SharedTexture = function(info, is_create) {
-    var SharedMemory = require("node_sharedmemory").SharedMemory;
+    var SharedMemory = require("allofw").SharedMemory;
     if(is_create) {
         info.shm_size = info.width * info.height * 4 + 1024;
         var shm = new SharedMemory(0, 0, info.shm_size, true);
