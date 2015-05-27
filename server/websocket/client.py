@@ -82,7 +82,6 @@ class DocumentSession(wamp.ApplicationSession):
             try:
                 for msg in self.subs.listen():
                     if msg['type'] == 'pmessage':
-                        print "got a message"
                         reactor.callFromThread(document_changed, msg['channel'], msg['data'])
                     if not self.keep_running:
                         return

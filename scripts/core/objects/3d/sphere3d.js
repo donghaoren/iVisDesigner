@@ -1,4 +1,4 @@
-// iVisDesigner - scripts/core/objects/3d/line3d.js
+// iVisDesigner - scripts/core/objects/3d/sphere3d.js
 // Author: Donghao Ren
 //
 // LICENSE
@@ -36,29 +36,25 @@ IV.editor.workspace.objects.push(new IV.objects.Line3D({ path: new IV.Path("[car
 */
 
 var sphereShader = null;
+var sphereShader_Buffer = null;
+var sphereShader_VertexArray = null;
 
 var sphereShader_GeometryCode = IV.multiline(function() {/*@preserve
-varying in vec4 colors[1];
-varying in vec3 normals[1];
-varying in float radiuses[1];
+layout(points) in;
+layout(triangle_strip, max_vertices = 50) out;
+in vec4 colors[1];
+in float radiuses[1];
+in vec3 positions[1];
 
-varying out vec4 color;
-varying out float radius;
-varying out vec3 center;
-varying out vec3 p_prime;
-
-vec3 iv_to_al_3(in vec3 v) {
-    return vec3(v.y, v.z, v.x);
-}
-
-vec4 iv_to_al(in vec4 v) {
-    return vec4(v.y, v.z, v.x, v.w);
-}
+out vec4 color;
+out float radius;
+out vec3 center;
+out vec3 p_prime;
 
 void main() {
     color = colors[0];
     radius = radiuses[0];
-    center = gl_PositionIn[0].xyz;
+    center = positions[0];
 
     int sides = 24;
 
@@ -82,41 +78,41 @@ void main() {
         float t = float(i) / sides * 3.1415926535897932 * 2;
         vec3 p1 = center_prime + ex * cos(t) + ey * sin(t);
 
-        p_prime = center_prime; gl_Position = omni_render(vec4(p_prime, 1.0)); EmitVertex();
-        p_prime = p1; gl_Position = omni_render(vec4(p_prime, 1.0)); EmitVertex();
+        p_prime = center_prime; gl_Position = omni_render(p_prime); EmitVertex();
+        p_prime = p1; gl_Position = omni_render(p_prime); EmitVertex();
     }
     EndPrimitive();
 }
 */console.log});
 
 var sphereShader_VertexCode = IV.multiline(function() {/*@preserve
-varying vec4 colors;
-varying vec3 normals;
-varying float radiuses;
+layout(location = 0) in vec4 xyz_radius;
+layout(location = 1) in vec4 color;
 
-vec4 iv_to_al(in vec4 v) {
-    return vec4(v.y, v.z, v.x, v.w);
-}
-
-vec3 iv_to_al_3(in vec3 v) {
-    return vec3(v.y, v.z, v.x);
-}
+out vec4 colors;
+out float radiuses;
+out vec3 positions;
 
 void main() {
-    colors = gl_Color;
-    normals = gl_NormalMatrix * iv_to_al_3(gl_Normal);
-    vec4 vertex = gl_ModelViewMatrix * iv_to_al(vec4(gl_Vertex.xyz, 1.0));
-    radiuses = gl_Vertex.w;
-    gl_Position = vertex;
+    colors = color;
+    positions = omni_transform(xyz_radius.xyz);
+    radiuses = xyz_radius.w;
 }
 */console.log});
 
 var sphereShader_FragmentCode = IV.multiline(function() {/*@preserve
 uniform float specular_term;
-varying vec4 color;
-varying float radius;
-varying vec3 center;
-varying vec3 p_prime;
+uniform vec3 light_position = vec3(0, 0, 0);
+uniform vec4 light_ambient = vec4(0.3, 0.3, 0.3, 1.0);
+uniform vec4 light_diffuse = vec4(0.7, 0.7, 0.7, 1.0);
+uniform vec4 light_specular = vec4(1.0, 1.0, 1.0, 1.0);
+
+in vec4 color;
+in float radius;
+in vec3 center;
+in vec3 p_prime;
+
+layout(location = 0) out vec4 fragment_color;
 
 void main() {
     float qa = dot(p_prime, p_prime);
@@ -129,42 +125,59 @@ void main() {
     vec3 p = p_prime * t;
 
     vec3 N = normalize(p - center);
-    vec3 L = normalize((gl_ModelViewMatrix * (gl_LightSource[0].position.yzxw)).xyz - p);
+    vec3 L = normalize(omni_transform(light_position) - p);
     vec3 R = reflect(-L, N);
 
     vec4 colorMixed = color;
-    vec4 final_color = colorMixed * (gl_LightSource[0].ambient);
+    vec4 final_color = colorMixed * light_ambient;
 
     float lambertTerm = max(dot(N, L), 0.0);
-    final_color += gl_LightSource[0].diffuse * colorMixed * lambertTerm;
+    final_color += light_diffuse * colorMixed * lambertTerm;
     vec3 E = normalize(-p);
     float spec = pow(max(dot(R, E), 0.0), specular_term);
-    final_color += gl_LightSource[0].specular * spec;
+    final_color += light_specular * spec;
     final_color.a = color.a;
     final_color.rgb *= final_color.a;
-    gl_FragColor = final_color;
+    fragment_color = final_color;
 
-    vec4 clip_position = omni_render(vec4(p, 1.0));
+    vec4 clip_position = omni_render(p);
     vec3 pixel_position;
     pixel_position.xy = clip_position.xy;
     pixel_position.z = -clip_position.w;
     pixel_position = pixel_position * (length(p) / length(pixel_position));
-    float z2 = (pixel_position.z * (omni_far + omni_near) + omni_far * omni_near * 2.0f) / (omni_near - omni_far);
-    gl_FragDepth = (z2 / -pixel_position.z * 0.5 + 0.5);
+    // float z2 = (pixel_position.z * (omni_far + omni_near) + omni_far * omni_near * 2.0f) / (omni_near - omni_far);
+    // gl_FragDepth = (z2 / -pixel_position.z * 0.5 + 0.5);
 }
 */console.log});
 
 var sphereShader_begin = function(g, specular) {
-    if(!sphereShader) sphereShader = g.allosphere.shaderCreateWithGeometry(
-        sphereShader_VertexCode, sphereShader_FragmentCode,
-        sphereShader_GeometryCode, GL.POINTS, GL.TRIANGLE_STRIP, 50
-    );
-    g.allosphere.shaderBegin(sphereShader);
-    g.allosphere.shaderUniformf("specular_term", specular);
+    if(!sphereShader) {
+        sphereShader = compileShadersWithGeometry(GL,
+            "#version 330\n" + g.omnistereo.getShaderCode() + "\n" + sphereShader_VertexCode,
+            "#version 330\n" + g.omnistereo.getShaderCode() + "\n" + sphereShader_GeometryCode,
+            "#version 330\n" + g.omnistereo.getShaderCode() + "\n" + sphereShader_FragmentCode
+        );
+        sphereShader_VertexArray = new GL.VertexArray();
+        sphereShader_Buffer = new GL.Buffer();
+        GL.bindVertexArray(sphereShader_VertexArray);
+        GL.bindBuffer(GL.ARRAY_BUFFER, sphereShader_Buffer);
+        GL.enableVertexAttribArray(0)
+        GL.enableVertexAttribArray(1)
+        GL.vertexAttribPointer(0, 4, GL.FLOAT, GL.FALSE, 32, 0)
+        GL.vertexAttribPointer(1, 4, GL.FLOAT, GL.FALSE, 32, 16)
+        GL.bindBuffer(GL.ARRAY_BUFFER, 0);
+        GL.bindVertexArray(0);
+    }
+    GL.useProgram(sphereShader);
+    g.omnistereo.setUniforms(sphereShader.id());
+    GL.uniform1f(GL.getUniformLocation(sphereShader, "specular_term"), specular);
+    GL.uniform4f(GL.getUniformLocation(sphereShader, "light_ambient"), 0.3, 0.3, 0.3, 1.0);
+    GL.uniform4f(GL.getUniformLocation(sphereShader, "light_diffuse"), 0.7, 0.7, 0.7, 1.0);
+    GL.uniform4f(GL.getUniformLocation(sphereShader, "light_specular"), 1.0, 1.0, 1.0, 1.0);
 };
 
 var sphereShader_end = function(g) {
-    g.allosphere.shaderEnd(sphereShader);
+    GL.useProgram(0);
 };
 
 Objects.Sphere3D = IV.extend(Objects.Shape, function(info) {
@@ -194,8 +207,9 @@ Objects.Sphere3D = IV.extend(Objects.Shape, function(info) {
     render3D: function(g, data) {
         var $this = this;
         if(g.order == "front") return;
-        sphereShader_begin(g, this.specular_term);
-        g.GL.blendFunc(g.GL.ONE, g.GL.ONE_MINUS_SRC_ALPHA);
+        var spheredata = [];
+        var vp = 0;
+        // g.GL.blendFunc(g.GL.ONE, g.GL.ONE_MINUS_SRC_ALPHA);
         $this.path.enumerate(data, function(context) {
             if($this.filter && !$this.filter.get(context)) return;
             var center = $this.center.get(context);
@@ -204,12 +218,32 @@ Objects.Sphere3D = IV.extend(Objects.Shape, function(info) {
             var color;
             if($this.color) color = $this.color.get(context);
             else color = new IV.Color(255, 255, 255, 1);
-            g.GL.begin(g.GL.POINTS);
-            g.GL.color4f(color.r / 255.0, color.g / 255.0, color.b / 255.0, color.a);
-            g.GL.vertex4f(center.x, center.y, center.z, radius);
-            g.GL.end();
+            spheredata[vp * 8 + 0] = center.y;
+            spheredata[vp * 8 + 1] = center.z;
+            spheredata[vp * 8 + 2] = center.x;
+            spheredata[vp * 8 + 3] = radius;
+            spheredata[vp * 8 + 4] = color.r / 255.0;
+            spheredata[vp * 8 + 5] = color.g / 255.0;
+            spheredata[vp * 8 + 6] = color.b / 255.0;
+            spheredata[vp * 8 + 7] = color.a;
+            vp += 1;
         });
-        lineShader_end(g);
+        var buf = new Buffer(vp * 8 * 4);
+        for(var i = 0; i < vp * 8; i++) {
+            buf.writeFloatLE(spheredata[i], i * 4);
+        }
+        sphereShader_begin(g, this.specular_term);
+        var err = GL.getError(); if(err) console.log("GL Error:1", err);
+        GL.bindBuffer(GL.ARRAY_BUFFER, sphereShader_Buffer);
+        GL.bufferData(GL.ARRAY_BUFFER, vp * 4 * 8, buf, GL.STATIC_DRAW);
+        GL.bindBuffer(GL.ARRAY_BUFFER, 0);
+        var err = GL.getError(); if(err) console.log("GL Error:2", err);
+        GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
+        GL.bindVertexArray(sphereShader_VertexArray);
+        GL.drawArrays(GL.POINTS, 0, vp);
+        GL.bindVertexArray(0);
+        sphereShader_end(g);
+        var err = GL.getError(); if(err) console.log("GL Error:", err);
     },
     getPropertyContext: function() {
         var $this = this;

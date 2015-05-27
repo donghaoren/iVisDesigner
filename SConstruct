@@ -94,6 +94,11 @@ Javascript("allomain.js", [
     "scripts/node/allomain.js"
 ])
 
+Javascript("phasespace.js", [
+    "libraries/numeric-1.2.6.js",
+    "scripts/node/phasespace.js"
+])
+
 Javascript("allocontroller.js", [
     "libraries/hammer.js",
     "scripts/utils/utils.js",

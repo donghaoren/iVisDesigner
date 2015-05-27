@@ -93,27 +93,26 @@ Objects.CanvasWrapper3D = IV.extend(Objects.Object, function(canvas, point) {
 });
 
 var lineShader = null;
+var lineShader_VertexArray = null;
+var lineShader_Buffer = null;
 
 var lineShader_GeometryCode = IV.multiline(function() {/*@preserve
-varying in vec4 colors[2];
-varying in vec3 normals[2];
-varying out vec4 color;
-varying out vec3 line_direction, light_direction, eye_vector;
-varying float specular_boost;
+layout(lines) in;
+layout(triangle_strip, max_vertices = 56) out;
+in float thicknesses[2];
+in vec3 positions[2];
+in vec4 colors[2];
+in vec3 normals[2];
+out vec4 color;
+out vec3 line_direction, light_direction, eye_vector;
+out float specular_boost;
 
-uniform int line_type;
-uniform float curveness;
-
-vec3 iv_to_al_3(in vec3 v) {
-    return vec3(v.y, v.z, v.x);
-}
-
-vec4 iv_to_al(in vec4 v) {
-    return vec4(v.y, v.z, v.x, v.w);
-}
+uniform int line_type = 0;
+uniform float curveness = 0;
+uniform vec3 light_position = vec3(0, 0, 0);
 
 void bezierCurve(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
-    int tick_count = 40;
+    int tick_count = 27;
     int i;
     for(i = 0; i <= tick_count; i++) {
         float t = float(i) / float(tick_count);
@@ -129,56 +128,42 @@ void bezierCurve(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
         float dk4 = 3 * t2;
         vec3 p = p1 * k1 + p2 * k2 + p3 * k3 + p4 * k4;
         line_direction = normalize(p1 * dk1 + p2 * dk2 + p3 * dk3 + p4 * dk4);
-        gl_Position = omni_render(vec4(p, 1.0f));
-        light_direction = normalize((gl_ModelViewMatrix * iv_to_al(gl_LightSource[0].position)).xyz - p);
+        light_direction = normalize(omni_transform(light_position) - p);
         eye_vector = normalize(-p);
         specular_boost = max(max(0.0, 1.0 - 5.0 * t), max(0.0, 1.0 - 5.0 * (1.0 - t)));
+        vec3 vn = normalize(cross(line_direction, p)) * thicknesses[0];
+        gl_Position = omni_render(p + vn);
+        EmitVertex();
+        gl_Position = omni_render(p - vn);
         EmitVertex();
     }
     EndPrimitive();
 }
 
 void line(vec3 p1, vec3 p2) {
-    int tick_count = 50;
+    int tick_count = 31;
     int i;
     line_direction = normalize(p2 - p1);
     for(i = 0; i <= tick_count; i++) {
         float t = float(i) / float(tick_count);
         vec3 p = p1 + (p2 - p1) * t;
-        gl_Position = omni_render(vec4(p, 1.0f));
-        light_direction = normalize((gl_ModelViewMatrix * iv_to_al(gl_LightSource[0].position)).xyz - p);
+        gl_Position = omni_render(p);
+        light_direction = normalize(omni_transform(light_position) - p);
         eye_vector = normalize(-p);
         specular_boost = max(max(0.0, 1.0 - 5.0 * t), max(0.0, 1.0 - 5.0 * (1.0 - t)));
+        vec3 vn = normalize(cross(line_direction, p)) * thicknesses[0];
+        gl_Position = omni_render(p + vn);
+        EmitVertex();
+        gl_Position = omni_render(p - vn);
         EmitVertex();
     }
     EndPrimitive();
-}
-
-void line2(vec3 p1, vec3 p2) {
-    int tick_count = 10;
-    int i;
-    line_direction = normalize(p2 - p1);
-    for(i = 0; i <= tick_count; i++) {
-        float t = float(i) / float(tick_count);
-        vec3 p = p1 + (p2 - p1) * t;
-        gl_Position = omni_render(vec4(p, 1.0f));
-        light_direction = normalize((gl_ModelViewMatrix * iv_to_al(gl_LightSource[0].position)).xyz - p);
-        eye_vector = normalize(-p);
-        EmitVertex();
-    }
-    EndPrimitive();
-}
-
-void bezierCurve2(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
-    line2(p1, p2);
-    line2(p2, p3);
-    line2(p3, p4);
 }
 
 void main() {
     color = colors[0];
-    vec3 p1 = gl_PositionIn[0].xyz;
-    vec3 p2 = gl_PositionIn[1].xyz;
+    vec3 p1 = positions[0].xyz;
+    vec3 p2 = positions[1].xyz;
     vec3 n1 = normalize(normals[0]);
     vec3 n2 = normalize(normals[1]);
     if(line_type == 0) {
@@ -194,156 +179,83 @@ void main() {
 */console.log});
 
 var lineShader_VertexCode = IV.multiline(function() {/*@preserve
-varying vec4 colors;
-varying vec3 normals;
+layout(location = 0) in vec4 vertex_position_thickness;
+layout(location = 1) in vec3 vertex_normal;
+layout(location = 2) in vec4 vertex_color;
 
-vec4 iv_to_al(in vec4 v) {
-    return vec4(v.y, v.z, v.x, v.w);
-}
-
-vec3 iv_to_al_3(in vec3 v) {
-    return vec3(v.y, v.z, v.x);
-}
+out float thicknesses;
+out vec3 positions;
+out vec4 colors;
+out vec3 normals;
 
 void main() {
-    colors = gl_Color;
-    normals = gl_NormalMatrix * iv_to_al_3(gl_Normal);
-    vec4 vertex = gl_ModelViewMatrix * iv_to_al(gl_Vertex);
-    gl_Position = vertex;
+    colors = vertex_color;
+    normals = omni_transform_normal(vertex_normal);
+    positions = omni_transform(vertex_position_thickness.xyz);
+    thicknesses = vertex_position_thickness.w;
 }
 */console.log});
 
 var lineShader_FragmentCode = IV.multiline(function() {/*@preserve
-uniform float specular_term;
-varying vec4 color;
-varying vec3 line_direction, light_direction, eye_vector;
-varying float specular_boost;
+uniform float specular_term = 20;
+uniform vec4 light_ambient = vec4(0.3, 0.3, 0.3, 1.0);
+uniform vec4 light_diffuse = vec4(0.7, 0.7, 0.7, 1.0);
+uniform vec4 light_specular = vec4(1.0, 1.0, 1.0, 1.0);
+in vec4 color;
+in vec3 line_direction, light_direction, eye_vector;
+in float specular_boost;
+layout(location = 0) out vec4 fragment_color;
 void main() {
     vec4 colorMixed = color;
-    vec4 final_color = colorMixed * (gl_LightSource[0].ambient);
+    vec4 final_color = colorMixed * (light_ambient);
     vec3 T = normalize(line_direction); // tangent direction.
     vec3 L = normalize(light_direction);
     vec3 LN = normalize(L - T * dot(L, T));
     float lambertTerm = max(dot(LN, L), 0.0);
-    final_color += gl_LightSource[0].diffuse * colorMixed * lambertTerm;
+    final_color += light_diffuse * colorMixed * lambertTerm;
     vec3 E = eye_vector;
     vec3 R = reflect(-L, LN);
     float spec = pow(max(dot(R, E), 0.0), specular_term) + specular_boost;
-    final_color += gl_LightSource[0].specular * spec;
+    final_color += light_specular * spec;
     final_color.a = color.a;
     final_color.rgb *= final_color.a;
-    gl_FragColor = final_color;
+    fragment_color = final_color;
+    // fragment_color = vec4(1, 1, 1, 1);
 }
 */console.log});
 
 var lineShader_begin = function(g, specular, line_type, curveness) {
-    if(!lineShader) lineShader = g.allosphere.shaderCreateWithGeometry(
-        lineShader_VertexCode, lineShader_FragmentCode,
-        lineShader_GeometryCode, GL.LINES, GL.LINE_STRIP, 50
-    );
-    g.allosphere.shaderBegin(lineShader);
-    g.allosphere.shaderUniformf("specular_term", specular);
-    g.allosphere.shaderUniformi("line_type", line_type);
-    g.allosphere.shaderUniformf("curveness", curveness);
+    if(!lineShader) {
+        lineShader = compileShadersWithGeometry(GL,
+            "#version 330\n" + g.omnistereo.getShaderCode() + "\n" + lineShader_VertexCode,
+            "#version 330\n" + g.omnistereo.getShaderCode() + "\n" + lineShader_GeometryCode,
+            "#version 330\n" + g.omnistereo.getShaderCode() + "\n" + lineShader_FragmentCode
+        );
+        lineShader_VertexArray = new GL.VertexArray();
+        lineShader_Buffer = new GL.Buffer();
+        GL.bindVertexArray(lineShader_VertexArray);
+        GL.bindBuffer(GL.ARRAY_BUFFER, lineShader_Buffer);
+        GL.enableVertexAttribArray(0)
+        GL.enableVertexAttribArray(1)
+        GL.enableVertexAttribArray(2)
+        GL.vertexAttribPointer(0, 4, GL.FLOAT, GL.FALSE, 44, 0)
+        GL.vertexAttribPointer(1, 3, GL.FLOAT, GL.FALSE, 44, 16)
+        GL.vertexAttribPointer(2, 4, GL.FLOAT, GL.FALSE, 44, 28)
+        GL.bindBuffer(GL.ARRAY_BUFFER, 0);
+        GL.bindVertexArray(0);
+    }
+    GL.useProgram(lineShader);
+    g.omnistereo.setUniforms(lineShader.id());
+    GL.uniform1f(GL.getUniformLocation(lineShader, "specular_term"), specular);
+    GL.uniform1i(GL.getUniformLocation(lineShader, "line_type"), line_type);
+    GL.uniform1f(GL.getUniformLocation(lineShader, "curveness"), curveness);
+    GL.uniform4f(GL.getUniformLocation(lineShader, "light_ambient"), 0.3, 0.3, 0.3, 1.0);
+    GL.uniform4f(GL.getUniformLocation(lineShader, "light_diffuse"), 0.7, 0.7, 0.7, 1.0);
+    GL.uniform4f(GL.getUniformLocation(lineShader, "light_specular"), 1.0, 1.0, 1.0, 1.0);
 };
 
 var lineShader_end = function(g) {
-    g.allosphere.shaderEnd(lineShader);
-};
-
-var drawLineStraight = function(g, p1, p2) {
-    var tick_count = 10;
-    var n = p1.sub(p2);
-    g.GL.normal3f(n.x, n.y, n.z);
-    for(var tick = 0; tick < tick_count; tick++) {
-        var a = p1.interp(p2, tick / tick_count);
-        var b = p1.interp(p2, (tick + 1) / tick_count);
-        g.GL.vertex3f(a.x, a.y, a.z);
-        g.GL.vertex3f(b.x, b.y, b.z);
-    }
-};
-
-var drawLineCircular = function(g, p1, p2) {
-    var tick_count = 20;
-    var up = p1.normal.cross(p2.normal).normalize();
-    var ex = p1.normal.cross(up).normalize();
-    var ey = up.cross(ex).normalize();
-    var d = p1.distance(p2);
-    var theta = Math.acos(p1.normal.normalize().dot(p2.normal.normalize()));
-    var r = d / 2.0 / Math.sin((Math.PI - theta) / 2.0);
-    var O = p1.sub(ex.scale(r));
-    var r2 = p2.sub(O);
-    var r2x = r2.dot(ex);
-    var r2y = r2.dot(ey);
-    var r2theta = Math.atan2(r2y, r2x);
-    for(var i = 0; i < tick_count; i++) {
-        var angle1 = r2theta * i / tick_count;
-        var angle2 = r2theta * (i + 1) / tick_count;
-        var m1 = O.add(ex.scale(r * Math.cos(angle1))).add(ey.scale(r * Math.sin(angle1)));
-        var m2 = O.add(ex.scale(r * Math.cos(angle2))).add(ey.scale(r * Math.sin(angle2)));
-        var n = m1.sub(m2);
-        g.GL.normal3f(n.x, n.y, n.z);
-        g.GL.vertex3f(m1.x, m1.y, m1.z);
-        g.GL.vertex3f(m2.x, m2.y, m2.z);
-    }
-};
-
-var drawBezierCurve = function(g, p1, p2, p3, p4) {
-    var tick_count = 20;
-    var prev = p1;
-    for(var i = 1; i <= tick_count; i++) {
-        var t = i / tick_count;
-        var t2 = t * t;
-        var t3 = t2 * t;
-        var k1 = 1 - 3 * t + 3 * t2 - t3;
-        var k2 = 3 * t - 6 * t2 + 3 * t3;
-        var k3 = 3 * t2 - 3 * t3;
-        var k4 = t3;
-        var p = p1.scale(k1).add(p2.scale(k2)).add(p3.scale(k3)).add(p4.scale(k4));
-        var n = p.sub(prev);
-        g.GL.normal3f(n.x, n.y, n.z);
-        g.GL.vertex3f(prev.x, prev.y, prev.z);
-        g.GL.vertex3f(p.x, p.y, p.z);
-        prev = p;
-    }
-};
-
-var drawLineBezier = function(g, p1, p2) {
-    var d = p1.distance(p2);
-    drawBezierCurve(g, p1, p1.add(p1.normal.scale(d / 2)), p2.add(p2.normal.scale(d / 2)), p2);
-};
-
-var drawLineBezierBack = function(g, p1, p2) {
-    var d = p1.distance(p2);
-    drawBezierCurve(g, p1, p1.add(p1.normal.scale(-d / 2)), p2.add(p2.normal.scale(-d / 2)), p2);
-};
-
-var drawHermiteCurve = function(g, p1, p2, r1, r2) {
-    var tick_count = 20;
-    var prev = p1;
-    for(var i = 1; i <= tick_count; i++) {
-        var t = i / tick_count;
-        var t2 = t * t;
-        var t3 = t2 * t;
-        var k1 = 2 * t3 - 3 * t2 + 1;
-        var k2 = 3 * t2 - 2 * t3;
-        var k3 = t3 - 2 * t2 + t;
-        var k4 = t3 - t2;
-        var p = p1.scale(k1).add(p2.scale(k2)).add(r1.scale(k3)).add(r2.scale(k4));
-        var n = p.sub(prev);
-        g.GL.normal3f(n.x, n.y, n.z);
-        g.GL.vertex3f(prev.x, prev.y, prev.z);
-        g.GL.vertex3f(p.x, p.y, p.z);
-        prev = p;
-    }
-};
-
-var drawLineHermite = function(g, p1, p2) {
-    drawHermiteCurve(g, p1, p2, p1.normal.scale(2), p2.normal.scale(-2));
-};
-
-var drawLineHermiteBack = function(g, p1, p2) {
-    drawHermiteCurve(g, p1, p2, p1.normal.scale(-2), p2.normal.scale(2));
+    GL.useProgram(0);
 };
 
 Objects.Line3D = IV.extend(Objects.Shape, function(info) {
@@ -391,10 +303,8 @@ Objects.Line3D = IV.extend(Objects.Shape, function(info) {
         // }
         line_type = 0;
         if($this.line_type == "curve") line_type = 1;
-        lineShader_begin(g, this.specular_term, line_type, $this.curveness);
-        g.GL.enable(g.GL.LINE_SMOOTH);
-        g.GL.hint(g.GL.LINE_SMOOTH_HINT, g.GL.NICEST);
-        g.GL.blendFunc(g.GL.ONE, g.GL.ONE_MINUS_SRC_ALPHA);
+        var linedata = [];
+        var vp = 0;
         $this.path.enumerate(data, function(context) {
             if($this.filter && !$this.filter.get(context)) return;
             var p1 = $this.point1.get(context);
@@ -404,16 +314,46 @@ Objects.Line3D = IV.extend(Objects.Shape, function(info) {
             var color;
             if($this.color) color = $this.color.get(context);
             else color = new IV.Color(255, 255, 255, 1);
-            g.GL.lineWidth(width);
-            g.GL.begin(g.GL.LINES);
-            g.GL.color4f(color.r / 255.0, color.g / 255.0, color.b / 255.0, color.a);
-            g.GL.normal3f(p1.normal.x, p1.normal.y, p1.normal.z);
-            g.GL.vertex3f(p1.x, p1.y, p1.z);
-            g.GL.normal3f(p2.normal.x, p2.normal.y, p2.normal.z);
-            g.GL.vertex3f(p2.x, p2.y, p2.z);
-            g.GL.end();
+            linedata[vp * 11 + 0] = p1.y;
+            linedata[vp * 11 + 1] = p1.z;
+            linedata[vp * 11 + 2] = p1.x;
+            linedata[vp * 11 + 3] = width / 500;
+            linedata[vp * 11 + 4] = p1.normal.y;
+            linedata[vp * 11 + 5] = p1.normal.z;
+            linedata[vp * 11 + 6] = p1.normal.x;
+            linedata[vp * 11 + 7] = color.r / 255.0;
+            linedata[vp * 11 + 8] = color.g / 255.0;
+            linedata[vp * 11 + 9] = color.b / 255.0;
+            linedata[vp * 11 + 10] = color.a;
+            vp += 1;
+            linedata[vp * 11 + 0] = p2.y;
+            linedata[vp * 11 + 1] = p2.z;
+            linedata[vp * 11 + 2] = p2.x;
+            linedata[vp * 11 + 3] = width / 500;
+            linedata[vp * 11 + 4] = p2.normal.y;
+            linedata[vp * 11 + 5] = p2.normal.z;
+            linedata[vp * 11 + 6] = p2.normal.x;
+            linedata[vp * 11 + 7] = color.r / 255.0;
+            linedata[vp * 11 + 8] = color.g / 255.0;
+            linedata[vp * 11 + 9] = color.b / 255.0;
+            linedata[vp * 11 + 10] = color.a;
+            vp += 1;
         });
+        var buf = new Buffer(vp * 11 * 4);
+        for(var i = 0; i < vp * 11; i++) {
+            buf.writeFloatLE(linedata[i], i * 4);
+        }
+        lineShader_begin(g, this.specular_term, line_type, $this.curveness);
+        GL.bindBuffer(GL.ARRAY_BUFFER, lineShader_Buffer);
+        GL.bufferData(GL.ARRAY_BUFFER, vp * 4 * 11, buf, GL.STATIC_DRAW);
+        GL.bindBuffer(GL.ARRAY_BUFFER, 0);
+        GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
+        GL.bindVertexArray(lineShader_VertexArray);
+        GL.drawArrays(GL.LINES, 0, vp);
+        GL.bindVertexArray(0);
         lineShader_end(g);
+        var error = GL.getError();
+        if(error) console.log("GL Error:", error);
     },
     getPropertyContext: function() {
         var $this = this;

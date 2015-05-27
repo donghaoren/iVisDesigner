@@ -35,7 +35,7 @@ var MessageTransportTCP = function(config, is_renderer) {
     var self = this;
     var zmq = require("zmq");
     var sub = zmq.socket("sub");
-    sub.connect(config.broadcast);
+    sub.connect(config.broadcast[require("os").hostname()]);
     sub.subscribe("");
     sub.on("message", function(message) {
         if(self.onMessage) {

@@ -48,10 +48,21 @@ $(".anchor-file").each(function() {
     }
     if(IV_Config.url_websocket) url = IV_Config.url_websocket;
     var ws = new Wampy(url, { realm: "anonymous", autoReconnect: false });
+    ws.options({
+        onConnect: function () {
+            console.log("wampy connected.");
+        },
+        onClose: function () {
+            $("#connection-lost-warning").show();
+        },
+        onError: function () {
+            $("#connection-lost-warning").show();
+        }
+    });
 
     ws.subscribe("iv.allosphere.message", function(message) {
         var content = JSON.parse(message);
-        onMessage(content);
+        // onMessage(content);
     });
 
     if(!IV.allosphere) IV.allosphere = { };

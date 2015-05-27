@@ -35,7 +35,7 @@
 
 var configuration = require("./alloconfig");
 var args = JSON.parse(process.argv[2]);
-var SharedMemory = require("node_sharedmemory").SharedMemory;
+var SharedMemory = require("allofw").SharedMemory;
 var texture = new SharedTexture(args);
 
 

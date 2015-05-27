@@ -31,11 +31,18 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-function EquirectangularTexture(allosphere) {
-    this.allosphere = allosphere;
-    var texture_left = allosphere.textureCreate();
-    var texture_right = allosphere.textureCreate();
+function EquirectangularTexture() {
+    var texture_left = new GL.Texture();
+    var texture_right = new GL.Texture();
     this.textures = [ texture_left, texture_right ];
+    for(var i = 0; i < this.textures.length; i++) {
+        GL.bindTexture(GL.TEXTURE_2D, this.textures[i]);
+        GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.REPEAT);
+        GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
+        GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
+        GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
+        GL.bindTexture(GL.TEXTURE_2D, 0);
+    }
     this.preloaded_images = { };
 }
 
@@ -43,31 +50,31 @@ EquirectangularTexture.prototype.submit = function(image, stereo_mode) {
     if(!stereo_mode) stereo_mode = "mono";
     this.stereo_mode = stereo_mode;
     if(this.stereo_mode == "mono") {
-        this.allosphere.textureBind(this.textures[0], 0);
-        this.allosphere.textureSubmit(image.width(), image.height(), image.pixels());
+        GL.bindTexture(GL.TEXTURE_2D, this.textures[0]);
+        GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, image.width(), image.height(), 0, GL.RGBA, GL.UNSIGNED_BYTE, image.pixels());
     } else if(this.stereo_mode == "top-bottom") {
-        this.allosphere.textureBind(this.textures[0], 0);
-        this.allosphere.textureSubmit(image.width(), image.height() / 2, image.pixels());
-        this.allosphere.textureBind(this.textures[1], 0);
-        this.allosphere.textureSubmit(image.width(), image.height() / 2, image.pixels().slice(image.width() * image.height() / 2 * 4));
+        GL.bindTexture(GL.TEXTURE_2D, this.textures[0]);
+        GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, image.width(), image.height() / 2, 0, GL.RGBA, GL.UNSIGNED_BYTE, image.pixels());
+        GL.bindTexture(GL.TEXTURE_2D, this.textures[1]);
+        GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, image.width(), image.height() / 2, 0, GL.RGBA, GL.UNSIGNED_BYTE, image.pixels().slice(image.width() * image.height() / 2 * 4));
     } else if(this.stereo_mode == "bottom-top") {
-        this.allosphere.textureBind(this.textures[1], 0);
-        this.allosphere.textureSubmit(image.width(), image.height() / 2, image.pixels());
-        this.allosphere.textureBind(this.textures[0], 0);
-        this.allosphere.textureSubmit(image.width(), image.height() / 2, image.pixels().slice(image.width() * image.height() / 2 * 4));
+        GL.bindTexture(GL.TEXTURE_2D, this.textures[1]);
+        GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, image.width(), image.height() / 2, 0, GL.RGBA, GL.UNSIGNED_BYTE, image.pixels());
+        GL.bindTexture(GL.TEXTURE_2D, this.textures[0]);
+        GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, image.width(), image.height() / 2, 0, GL.RGBA, GL.UNSIGNED_BYTE, image.pixels().slice(image.width() * image.height() / 2 * 4));
     } else if(this.stereo_mode == "left-right") {
         GL.pixelStorei(GL.UNPACK_ROW_LENGTH, image.width());
-        this.allosphere.textureBind(this.textures[0], 0);
-        this.allosphere.textureSubmit(image.width() / 2, image.height(), image.pixels());
-        this.allosphere.textureBind(this.textures[1], 0);
-        this.allosphere.textureSubmit(image.width() / 2, image.height(), image.pixels().slice(image.width() / 2 * 4));
+        GL.bindTexture(GL.TEXTURE_2D, this.textures[0]);
+        GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, image.width() / 2, image.height(), 0, GL.RGBA, GL.UNSIGNED_BYTE, image.pixels());
+        GL.bindTexture(GL.TEXTURE_2D, this.textures[1]);
+        GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, image.width() / 2, image.height(), 0, GL.RGBA, GL.UNSIGNED_BYTE, image.pixels().slice(image.width() / 2 * 4));
         GL.pixelStorei(GL.UNPACK_ROW_LENGTH, 0);
     } else if(this.stereo_mode == "right-left") {
         GL.pixelStorei(GL.UNPACK_ROW_LENGTH, image.width());
-        this.allosphere.textureBind(this.textures[1], 0);
-        this.allosphere.textureSubmit(image.width() / 2, image.height(), image.pixels());
-        this.allosphere.textureBind(this.textures[0], 0);
-        this.allosphere.textureSubmit(image.width() / 2, image.height(), image.pixels().slice(image.width() / 2 * 4));
+        GL.bindTexture(GL.TEXTURE_2D, this.textures[1]);
+        GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, image.width() / 2, image.height(), 0, GL.RGBA, GL.UNSIGNED_BYTE, image.pixels());
+        GL.bindTexture(GL.TEXTURE_2D, this.textures[0]);
+        GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, image.width() / 2, image.height(), 0, GL.RGBA, GL.UNSIGNED_BYTE, image.pixels().slice(image.width() / 2 * 4));
         GL.pixelStorei(GL.UNPACK_ROW_LENGTH, 0);
     }
 };
@@ -96,15 +103,14 @@ EquirectangularTexture.prototype.unloadImageFile = function(key, filename) {
 
 EquirectangularTexture.prototype.get = function(eye) {
     if(this.stereo_mode != "mono") {
-        return this.textures[eye < 0 ? 0 : 1];
+        return this.textures[eye == 0 ? 0 : 1];
     } else {
         return this.textures[0];
     }
 }
 
 EquirectangularTexture.prototype.free = function() {
-    this.allosphere.textureDelete(this.textures[0]);
-    this.allosphere.textureDelete(this.textures[1]);
+    this.textures = [ null, null ];
 };
 
 function EquirectangularRenderer(allosphere) {
