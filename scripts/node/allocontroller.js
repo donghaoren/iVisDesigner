@@ -786,9 +786,9 @@ $('[data-switch="control-mode"]').each(function() {
     $(this).click(function() {
         control_mode = $(this).attr("data-control-mode");
         if(control_mode == "rotate") {
-            postMessage({"type":"chart.mode", mode: "stereo" });
+            postMessage({"type":"stereo.mode", mode: "stereo" });
         } else {
-            postMessage({"type":"chart.mode", mode: "mono" });
+            postMessage({"type":"stereo.mode", mode: "mono" });
         }
         $('[data-switch="control-mode"]').removeClass("active");
         $(this).addClass("active");
@@ -806,10 +806,10 @@ function lighting_mode(mode) {
             var x = 2 * Math.sin(t);
             var y = 2 * Math.cos(t);
             var z = 0;
-            postMessage({"type":"light.set_position", x: x, y: y, z: z });
+            postMessage({"type":"light.position", x: x, y: y, z: z });
         }, 30);
     }
     if(mode == "center") {
-        postMessage({"type":"light.set_position", x: 0, y: 0, z: 0 });
+        postMessage({"type":"light.position", x: 0, y: 0, z: 0 });
     }
 }

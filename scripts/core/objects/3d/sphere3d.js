@@ -145,8 +145,8 @@ void main() {
     pixel_position.xy = clip_position.xy;
     pixel_position.z = -clip_position.w;
     pixel_position = pixel_position * (length(p) / length(pixel_position));
-    // float z2 = (pixel_position.z * (omni_far + omni_near) + omni_far * omni_near * 2.0f) / (omni_near - omni_far);
-    // gl_FragDepth = (z2 / -pixel_position.z * 0.5 + 0.5);
+    float z2 = pixel_position.z * omni_viewport_projection.z + omni_viewport_projection.w;
+    gl_FragDepth = (z2 / -pixel_position.z * 0.5 + 0.5);
 }
 */console.log});
 

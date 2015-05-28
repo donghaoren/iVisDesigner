@@ -142,3 +142,5 @@ process.on("uncaughtException", function(error) {
     console.trace(error);
     safe_exit();
 });
+
+console.log("READY");

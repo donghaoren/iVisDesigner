@@ -42,6 +42,8 @@ G_render_config = {
     chart_mode: "mono"
 };
 
+G_viewport_restriction_socket = null;
+
 
 var prefix_string = function(prefix, str) {
     return prefix + str.replace(/[\r\n]/g, "\n").replace(/[\n]/g, "\n" + prefix);
@@ -244,6 +246,7 @@ connection.onMessage = function(object) {
             uniform vec3 viewport_y = vec3(0, 1, 0);
             uniform vec3 viewport_x = vec3(1, 0, 0);
             uniform int calibrate_mode = 0;
+            uniform int background_affected = 0;
 
             vec4 omni_composite_panorama_no_rotation() {
                 vec3 panov = warp;
@@ -275,48 +278,89 @@ connection.onMessage = function(object) {
             void main() {
                 omni_composite_init();
                 vec4 scene = omni_composite_scene();
-                scene = viewport_restrict(scene);
+                if(background_affected == 0) {
+                    scene = viewport_restrict(scene);
+                }
                 if((drawMask & kCompositeMask_Panorama) != 0) {
-                    vec4 panorama = omni_composite_panorama_no_rotation();
+                    vec4 panorama;
+                    if(background_affected == 0) {
+                        panorama = omni_composite_panorama_no_rotation();
+                    } else {
+                        panorama = omni_composite_panorama();
+                    }
                     scene = omni_blend_pm(scene, panorama);
                 }
-                // scene = viewport_restrict(scene);
+                if(background_affected != 0) {
+                    scene = viewport_restrict(scene);
+                }
                 omni_composite_final(scene);
             }
         */console.log});
-        var shader = omnistereo.compositeCustomizeShader(code);
-        var zmq = require("zmq");
-        var sub = zmq.socket("sub");
-        // sub.connect(configuration.broadcast_phasespace[require("os").hostname()]);
-        sub.connect("tcp://192.168.10.80:60155");
-        sub.subscribe("");
-        sub.on("message", function(msg) {
-            var data = JSON.parse(msg.toString("utf-8"));
-            if(data.type == "view_angles") {
-                GL.useProgram(shader);
-                GL.uniform2f(GL.getUniformLocation(shader, "viewport_angles"), data.x, data.y);
-                GL.useProgram(0);
-            }
-            if(data.type == "view_directions") {
-                GL.useProgram(shader);
-                GL.uniform3f(GL.getUniformLocation(shader, "viewport_x"), data.vp_x.x, data.vp_x.y, data.vp_x.z);
-                GL.uniform3f(GL.getUniformLocation(shader, "viewport_y"), data.vp_y.x, data.vp_y.y, data.vp_y.z);
-                GL.useProgram(0);
-                omnistereo.setPose(data.pose.x, data.pose.y, data.pose.z,
-                    data.pose.qx, data.pose.qy, data.pose.qz, data.pose.qw);
-            }
-            if(data.type == "calibrate_mode") {
-                GL.useProgram(shader);
-                GL.uniform1i(GL.getUniformLocation(shader, "calibrate_mode"), data.value);
-                GL.useProgram(0);
-            }
-        });
 
+        if(G_viewport_restriction_socket) {
+            G_viewport_restriction_socket.close();
+            G_viewport_restriction_socket = null;
+        }
+        if(object.mode == "disabled") {
+            omnistereo.compositeRestoreShader();
+        } else {
+            var shader = omnistereo.compositeCustomizeShader(code);
+            var zmq = require("zmq");
+            var sub = zmq.socket("sub");
+            // sub.connect(configuration.broadcast_phasespace[require("os").hostname()]);
+            sub.connect("tcp://192.168.10.80:60155");
+            sub.subscribe("");
+            sub.on("message", function(msg) {
+                var data = JSON.parse(msg.toString("utf-8"));
+                if(data.type == "view_angles") {
+                    GL.useProgram(shader);
+                    GL.uniform2f(GL.getUniformLocation(shader, "viewport_angles"), data.x, data.y);
+                    GL.useProgram(0);
+                }
+                if(data.type == "view_directions") {
+                    GL.useProgram(shader);
+                    GL.uniform3f(GL.getUniformLocation(shader, "viewport_x"), data.vp_x.x, data.vp_x.y, data.vp_x.z);
+                    GL.uniform3f(GL.getUniformLocation(shader, "viewport_y"), data.vp_y.x, data.vp_y.y, data.vp_y.z);
+                    GL.useProgram(0);
+                    omnistereo.setPose(data.pose.x, data.pose.y, data.pose.z,
+                        data.pose.qx, data.pose.qy, data.pose.qz, data.pose.qw);
+                }
+                if(data.type == "calibrate_mode") {
+                    GL.useProgram(shader);
+                    GL.uniform1i(GL.getUniformLocation(shader, "calibrate_mode"), data.value);
+                    GL.useProgram(0);
+                }
+            });
+            G_viewport_restriction_socket = sub;
+            if(object.mode == "content") {
+                GL.useProgram(shader);
+                GL.uniform1i(GL.getUniformLocation(shader, "background_affected"), 0);
+                GL.useProgram(0);
+            }
+            if(object.mode == "both") {
+                GL.useProgram(shader);
+                GL.uniform1i(GL.getUniformLocation(shader, "background_affected"), 1);
+                GL.useProgram(0);
+            }
+        }
     }
-    if(object.type == "light.set_position") {
+    if(object.type == "light.position") {
         light_position.x = object.x;
         light_position.y = object.y;
         light_position.z = object.z;
+    }
+    if(object.type == "stereo.mode") {
+        // mono or stereo.
+        if(object.mode == "stereo")
+            G_render_config.chart_mode = "stereo";
+        if(object.mode == "hybrid")
+            G_render_config.chart_mode = "mono";
+        if(object.mode == "mono") {
+            G_render_config.chart_mode = "mono";
+            omnistereo.setLens(0, 5);
+        } else {
+            omnistereo.setLens(0.065, 5);
+        }
     }
     if(object.type == "chart.mode") {
         // mono or stereo.
@@ -732,3 +776,5 @@ process.on("uncaughtException", function(error) {
     console.trace(error);
     safe_exit();
 });
+
+console.log("READY");
