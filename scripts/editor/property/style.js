@@ -180,6 +180,7 @@ var render = function() {
         if(act.type == "stroke") {
             container.append(make_caption("Stroke", act));
             target.append(build_style_property_item("Color", act, "color", "color"));
+            target.append(build_style_property_item("Opacity", act, "opacity", "number"));
             target.append(build_style_property_item("Width", act, "width", "number"));
             target.append(build_style_property_item("Join", act, "join", "list", [ "bevel", "round", "miter" ]));
             target.append(build_style_property_item("Cap", act, "cap", "list", [ "butt", "round", "square" ]));
@@ -187,6 +188,7 @@ var render = function() {
         if(act.type == "fill") {
             container.append(make_caption("Fill", act));
             target.append(build_style_property_item("Color", act, "color", "color"));
+            target.append(build_style_property_item("Opacity", act, "opacity", "number"));
         }
         container.append(target);
     });

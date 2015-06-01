@@ -35,7 +35,31 @@ var MessageTransportTCP = function(config, is_renderer) {
     var self = this;
     var zmq = require("zmq");
     var sub = zmq.socket("sub");
+    var pub = zmq.socket("pub");
+    pub.bind(config.broadcast_ipc);
     sub.connect(config.broadcast[require("os").hostname()]);
+    sub.subscribe("");
+    sub.on("message", function(message) {
+        pub.send(message);
+        if(self.onMessage) {
+            try {
+                var str = message.toString("utf8");
+                self.onMessage(JSON.parse(str));
+            } catch(e) {
+                console.trace(e);
+            }
+        }
+    });
+    this.close = function() {
+        sub.close();
+    };
+};
+
+var MessageTransportIPC = function(config, is_renderer) {
+    var self = this;
+    var zmq = require("zmq");
+    var sub = zmq.socket("sub");
+    sub.connect(config.broadcast_ipc);
     sub.subscribe("");
     sub.on("message", function(message) {
         if(self.onMessage) {

@@ -57,7 +57,7 @@ manager.add("overlay", add_canvas());
 
 var dataset, workspace, vis, synced_object;
 
-var connection = new MessageTransportTCP(configuration, true);
+var connection = new MessageTransportIPC(configuration, true);
 var index = 0;
 connection.onMessage = function(object) {
     //console.log(index++, object.type);

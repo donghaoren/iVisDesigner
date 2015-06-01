@@ -68,6 +68,18 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
     }
     this.type = "PathStyle";
 }, {
+    fillDefault: function() {
+        this.actions.forEach(function(act) {
+            if(act.type == "fill" || act.type == "stroke") {
+                if(!act.opacity) {
+                    act.opacity = new Objects.Plain(1);
+                }
+            }
+        });
+    },
+    postDeserialize: function() {
+        this.fillDefault();
+    },
     // path should be an array:
     // string: command, IV.Vector: location.
     renderPath: function(context, g, path) {
@@ -225,7 +237,7 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
     _perform_stroke: function(act, context, g, path) {
         var w = act.width.get(context);
         if(w <= 0) return;
-        var color = act.color.get(context).toRGBA();
+        var color = act.color.get(context).toRGBA(act.opacity.get(context));
         g.strokeStyle = color;
         g.lineWidth = w;
         g.lineCap = act.cap.get(context);
@@ -236,7 +248,7 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
         g.stroke();
     },
     _perform_fill: function(act, context, g, path) {
-        var color = act.color.get(context).toRGBA();
+        var color = act.color.get(context).toRGBA(act.opacity.get(context));
         g.fillStyle = color;
         g.beginPath();
         this._run_path(g, path);
@@ -245,7 +257,7 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
     _perform_stroke_text: function(act, context, g, text, x, y, font) {
         var w = act.width.get(context);
         if(w <= 0) return;
-        var color = act.color.get(context).toRGBA();
+        var color = act.color.get(context).toRGBA(act.opacity.get(context));
         g.strokeStyle = color;
         g.lineWidth = w;
         g.lineCap = act.cap.get(context);
@@ -255,7 +267,7 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
         g.ivStrokeText(text, x, y);
     },
     _perform_fill_text: function(act, context, g, text, x, y, font) {
-        var color = act.color.get(context).toRGBA();
+        var color = act.color.get(context).toRGBA(act.opacity.get(context));
         g.fillStyle = color;
         g.ivSetFont(font);
         g.ivFillText(text, x, y);

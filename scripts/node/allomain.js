@@ -286,7 +286,7 @@ connection.onMessage = function(object) {
                     if(background_affected == 0) {
                         panorama = omni_composite_panorama_no_rotation();
                     } else {
-                        panorama = omni_composite_panorama();
+                        panorama = omni_composite_panorama_no_rotation();
                     }
                     scene = omni_blend_pm(scene, panorama);
                 }
@@ -406,6 +406,9 @@ function draw_quad_shader_create() {
             void main() {
                 // Shading.
                 fragment_color = texture(texture0, tex_coord);
+                if(fragment_color.a == 0) {
+                    discard;
+                }
                 vec4 clip = clip_position;
                 // Depth adjustments.
                 // if(tweak_depth == 1 && tweak_depth == 0) {
@@ -650,7 +653,7 @@ if(configuration.allosphere) {
                     // GL.lightfv(GL.LIGHT0, GL.AMBIENT, [ 0.3, 0.3, 0.3, 1 ]);
                     // GL.lightfv(GL.LIGHT0, GL.DIFFUSE, [ 0.7, 0.7, 0.7, 1 ]);
                     // GL.lightfv(GL.LIGHT0, GL.SPECULAR, [ 1, 1, 1, 1 ]);
-                    obj.render3D({ GL: GL, omnistereo: omnistereo, order: "back" }, dataset);
+                    obj.render3D({ GL: GL, environment: { light_position: light_position }, omnistereo: omnistereo, order: "back" }, dataset);
                 } catch(e) {
                     console.log(e.stack);
                 }
@@ -658,9 +661,12 @@ if(configuration.allosphere) {
         }
 
         GL.blendFunc(GL.ONE, GL.ONE_MINUS_SRC_ALPHA);
+        GL.depthMask(GL.FALSE);
+        quad_renderers.sort(function(a, b) { return b.distance - a.distance; });
         quad_renderers.forEach(function(r) {
             r.render();
         });
+        GL.depthMask(GL.TRUE);
 
         // Render 3D objects.
         if(workspace && workspace.objects) {
@@ -674,7 +680,7 @@ if(configuration.allosphere) {
                     // GL.lightfv(GL.LIGHT0, GL.AMBIENT, [ 0.3, 0.3, 0.3, 1 ]);
                     // GL.lightfv(GL.LIGHT0, GL.DIFFUSE, [ 0.7, 0.7, 0.7, 1 ]);
                     // GL.lightfv(GL.LIGHT0, GL.SPECULAR, [ 1, 1, 1, 1 ]);
-                    obj.render3D({ GL: GL, omnistereo: omnistereo, order: "front" }, dataset);
+                    obj.render3D({ GL: GL, environment: { light_position: light_position }, omnistereo: omnistereo, order: "front" }, dataset);
                 } catch(e) {
                     console.log(e.stack);
                 }

@@ -140,13 +140,10 @@ void main() {
     final_color.rgb *= final_color.a;
     fragment_color = final_color;
 
-    vec4 clip_position = omni_render(p);
-    vec3 pixel_position;
-    pixel_position.xy = clip_position.xy;
-    pixel_position.z = -clip_position.w;
+    vec3 pixel_position = omni_displace(p);
     pixel_position = pixel_position * (length(p) / length(pixel_position));
-    float z2 = pixel_position.z * omni_viewport_projection.z + omni_viewport_projection.w;
-    gl_FragDepth = (z2 / -pixel_position.z * 0.5 + 0.5);
+    vec4 clip_position = omni_project(pixel_position);
+    gl_FragDepth = (clip_position.z / clip_position.w * 0.5 + 0.5);
 }
 */console.log});
 
@@ -171,6 +168,7 @@ var sphereShader_begin = function(g, specular) {
     GL.useProgram(sphereShader);
     g.omnistereo.setUniforms(sphereShader.id());
     GL.uniform1f(GL.getUniformLocation(sphereShader, "specular_term"), specular);
+    GL.uniform3f(GL.getUniformLocation(sphereShader, "light_position"), g.environment.light_position.x, g.environment.light_position.y, g.environment.light_position.z);
     GL.uniform4f(GL.getUniformLocation(sphereShader, "light_ambient"), 0.3, 0.3, 0.3, 1.0);
     GL.uniform4f(GL.getUniformLocation(sphereShader, "light_diffuse"), 0.7, 0.7, 0.7, 1.0);
     GL.uniform4f(GL.getUniformLocation(sphereShader, "light_specular"), 1.0, 1.0, 1.0, 1.0);

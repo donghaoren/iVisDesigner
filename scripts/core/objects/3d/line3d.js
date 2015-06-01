@@ -249,6 +249,7 @@ var lineShader_begin = function(g, specular, line_type, curveness) {
     GL.uniform1f(GL.getUniformLocation(lineShader, "specular_term"), specular);
     GL.uniform1i(GL.getUniformLocation(lineShader, "line_type"), line_type);
     GL.uniform1f(GL.getUniformLocation(lineShader, "curveness"), curveness);
+    GL.uniform3f(GL.getUniformLocation(lineShader, "light_position"), g.environment.light_position.x, g.environment.light_position.y, g.environment.light_position.z);
     GL.uniform4f(GL.getUniformLocation(lineShader, "light_ambient"), 0.3, 0.3, 0.3, 1.0);
     GL.uniform4f(GL.getUniformLocation(lineShader, "light_diffuse"), 0.7, 0.7, 0.7, 1.0);
     GL.uniform4f(GL.getUniformLocation(lineShader, "light_specular"), 1.0, 1.0, 1.0, 1.0);

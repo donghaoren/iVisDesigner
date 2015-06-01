@@ -1,15 +1,65 @@
+// This code is designed for user studies with restricted viewport.
+
 // Arguments.
 var fov_x = 90;
 var fov_y = 50;
 var test_only = false;
 var latency = 0; // seconds
 var lowpass_fc = 1;
+var log_file_name = null;
 
-// Parse arguments.
-if(process.argv[2]) fov_x = parseFloat(process.argv[2]);
-if(process.argv[3]) fov_y = parseFloat(process.argv[3]);
-if(process.argv[4]) test_only = true;
 
+
+for(var i = 2; i < process.argv.length; i++) {
+    var arg = process.argv[i].split("=");
+    if(arg.length == 2) {
+        if(arg[0] == "fovx") fov_x = parseFloat(arg[1]);
+        else if(arg[0] == "fovy") fov_y = parseFloat(arg[1]);
+        else if(arg[0] == "latency") latency = parseFloat(arg[1]);
+        else if(arg[0] == "lowpass_fc") lowpass_fc = parseFloat(arg[1]);
+        else if(arg[0] == "log") log_file_name = arg[1];
+        else {
+            console.log("Invalid arugment: " + arg);
+            process.exit();
+        }
+    } else {
+        console.log("Invalid arugment: " + arg);
+        process.exit();
+    }
+}
+
+if(!log_file_name) {
+    console.log("Phasespace Viewport Controller.");
+    console.log("Usage:");
+    console.log("  node phasespace.js log=file.log [options]");
+    console.log("Options:");
+    console.log("  fovx=deg      : Set field of view in x direction.");
+    console.log("  fovy=deg      : Set field of view in y direction.");
+    console.log("  latency=sec   : Set simulated tracking latency.");
+    console.log("  lowpass_fc=Hz : Set low pass filter in tracking.");
+    process.exit();
+}
+
+var fs = require("fs");
+
+console.log("Writing log to file '" + log_file_name + "'.");
+console.log("fov: " + fov_x + "x" + fov_y + "deg")
+console.log("latency: " + latency)
+console.log("lowpass_fc: " + lowpass_fc)
+
+var log_file = fs.openSync(log_file_name, "wx");
+var log_append = function(data) {
+    data.time = new Date().getTime() / 1000.0;
+    var r = fs.writeSync(log_file, JSON.stringify(data) + "\n");
+};
+
+log_append({
+    type: "startup",
+    fov_x: fov_x,
+    fov_y: fov_y,
+    latency: latency,
+    lowpass_fc: lowpass_fc
+});
 
 var TrackingSimulator = function(latency, lowpass_fc) {
     this.latency = latency;
@@ -56,6 +106,7 @@ publish({
     type: "calibrate_mode",
     value: 1
 });
+console.log("Calibration...");
 
 publish({
     type: "view_angles",
@@ -74,9 +125,6 @@ publish({
         x: 0, y: 0, z: 0, qx: 0, qy: 0, qz: 0, qw: 1
     }
 });
-
-console.log("Fov x:", fov_x, "y:", fov_y);
-console.log("Calibration begin.");
 
 var Quaternion = require("allofwutils").math.Quaternion;
 var Vector3 = require("allofwutils").math.Vector3;
@@ -187,7 +235,6 @@ function setupUpdate() {
         phasespace.start();
     }
     t_launch = gettime();
-    console.log("Started!");
 }
 
 function strip_lastseen(v) { return [ v[0], v[1], v[2] ]; }
@@ -196,6 +243,11 @@ function update() {
     if(!phasespace) return;
     var s1 = 0.8;
     var markers = phasespace.getMarkers(0, 6);
+    var frame_log = {
+        type: "frame",
+        markers: markers
+    };
+
     for(var i = 0; i < 6; i++) {
         LED_positions[i] = [ markers[i][0], markers[i][1], markers[i][2], markers[i][3] ];
         if(LED_positions[i][3] == 0 && LED_positions_prev[i]) {
@@ -216,7 +268,7 @@ function update() {
                 value: 0
             });
         }
-        console.log("Calibration ok.");
+        console.log("Calibration completed.");
     }
     if(initial_reference) {
         var pos_ref = [];
@@ -242,9 +294,9 @@ function update() {
         var q_diff = Q.mul(q_tracked.conj()).conj();
 
         var dx = [ 1, 0, 0 ];
-        dx = numeric.add(numeric.dot(pose_estimated.R, dx));
+        dx = numeric.dot(pose_estimated.R, dx);
         var dy = [ 0, 1, 0 ];
-        dy = numeric.add(numeric.dot(pose_estimated.R, dy));
+        dy = numeric.dot(pose_estimated.R, dy);
         publish({
             type: "view_directions",
             vp_x: {
@@ -257,8 +309,67 @@ function update() {
                 x: 0, y: 0, z: 0, qx: q_diff.v.x, qy: q_diff.v.y, qz: q_diff.v.z, qw: q_diff.w
             }
         });
+        frame_log.pose_estimated = pose_estimated;
+        frame_log.pose = { x: 0, y: 0, z: 0, qx: q_diff.v.x, qy: q_diff.v.y, qz: q_diff.v.z, qw: q_diff.w };
+        frame_log.vp_x = { x: dx[0], y: dx[1], z: dx[2] };
+        frame_log.vp_y = { x: dy[0], y: dy[1], z: dy[2] };
     }
+    log_append(frame_log);
 }
 
 setupUpdate();
-setInterval(update, 10);
+var update_timer = setInterval(update, 10);
+
+var readline = require('readline');
+
+var rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.on("close", function() {
+    clearInterval(update_timer);
+    fs.closeSync(log_file);
+    console.log("Exiting...");
+    process.exit();
+});
+
+var perform_command = function(line) {
+    log_append({
+        "type": "command",
+        "line": line
+    });
+    var cmd = line[0];
+    var args = line.slice(1);
+    if(cmd == "viewport" && args.length == 2) {
+        publish({
+            type: "view_angles",
+            x: parseFloat(args[0]), y: parseFloat(args[1])
+        });
+    } else
+    if(cmd == "latency" && args.length == 2) {
+        tracking_simulator = new TrackingSimulator(parseFloat(args[0]), parseFloat(args[1]));
+    } else {
+        console.log("Commands:");
+        console.log("  viewport fovx(deg) fovy(deg)");
+        console.log("  latency delay(s) lowpass_frequency(Hz)");
+    }
+}
+
+var ask_for_command = function() {
+    rl.question("HeadTracking > ", function(line) {
+        var command = line.replace("\t", " ").split(" ")
+                    .map(function(arg) { return arg.trim(); })
+                    .filter(function(arg) { return arg != ""; });
+        if(command.length > 0) {
+            try {
+                perform_command(command);
+            } catch(e) {
+                console.log(e.stack);
+            }
+        }
+        ask_for_command();
+    });
+}
+
+ask_for_command();
