@@ -33,7 +33,12 @@ def get_allosphere_service(config):
     global current_factory
     current_factory = ServerFactory()
     import subprocess
-    p = subprocess.Popen("PYTHONPATH=. python websocket/allosphere_zmq.py", shell = True)
+    import os
+    newenv = dict(os.environ)
+    newenv['PYTHONPATH'] = ".:" + (newenv['PYTHONPATH'] if 'PYTHONPATH' in newenv else '')
+    import atexit
+    p = subprocess.Popen(["python", "websocket/allosphere_zmq.py"], env = newenv)
+    atexit.register(p.kill)
     return TCPServer(int(config.get("allosphere", "socket_port")), current_factory, interface = config.get("allosphere", "interface"))
 
 def send_message(message):

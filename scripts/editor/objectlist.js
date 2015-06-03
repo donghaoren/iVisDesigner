@@ -197,7 +197,7 @@ Editor.generateObjectList = function() {
             }
         });
         li.contextmenu(function(e) {
-            var parent_collection = parents.length == 0 ? all_objects : parents[parents.length - 1].objects;
+            var parent_collection = parents.length == 0 ? vis.objects : parents[parents.length - 1].objects;
             IV.popups.beginContextMenu(new IV.Vector(e.pageX, e.pageY), [
               { name: "F", display: "Bring to front" },
               { name: "-", display: "Bring forward" },

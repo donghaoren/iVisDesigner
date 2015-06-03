@@ -37,7 +37,8 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
         this.actions = [
             {
                 type: "fill",
-                color: new Objects.Plain(IV.colors.default_fill)
+                color: new Objects.Plain(IV.colors.default_fill),
+                opacity: new Objects.Plain(1)
             }
         ];
     } else if(type == "Line" || type == "Arc" || type == "Polyline" || type == "LineThrough") {
@@ -47,7 +48,8 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
                 color: new Objects.Plain(IV.colors.default_stroke),
                 width: new Objects.Plain(1),
                 join: new Objects.Plain("bevel"),
-                cap: new Objects.Plain("butt")
+                cap: new Objects.Plain("butt"),
+                opacity: new Objects.Plain(1)
             }
         ];
     } else {
@@ -55,14 +57,16 @@ Objects.PathStyle = IV.extend(Objects.Object, function(type) {
         this.actions = [
             {
                 type: "fill",
-                color: new Objects.Plain(IV.colors.default_halffill)
+                color: new Objects.Plain(IV.colors.default_halffill),
+                opacity: new Objects.Plain(1)
             },
             {
                 type: "stroke",
                 color: new Objects.Plain(IV.colors.default_stroke),
                 width: new Objects.Plain(1),
                 join: new Objects.Plain("bevel"),
-                cap: new Objects.Plain("butt")
+                cap: new Objects.Plain("butt"),
+                opacity: new Objects.Plain(1)
             }
         ];
     }
