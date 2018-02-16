@@ -1,4 +1,4 @@
-#!./ENV/bin/python
+#!/usr/bin/python
 
 import os, sys
 import subprocess
@@ -143,14 +143,14 @@ def kill_process_with_pidfile(f, p = None):
 
 add_service(
     "gunicorn",
-    "./ENV/bin/gunicorn -w %d -p %s --bind=%s --log-level=info --log-file=%s -D server.wsgi:application" %
+    "gunicorn -w %d -p %s --bind=%s --log-level=info --log-file=%s -D server.wsgi:application" %
     (django_num_workers, path_gunicorn_pid_file, django_address, path_django_log_file),
     path_gunicorn_pid_file
 )
 
 add_service(
     "twistd",
-    "./ENV/bin/twistd --pidfile=%s --logfile=%s -y server.tac" %
+    "twistd --pidfile=%s --logfile=%s -y server.tac" %
     (path_twistd_pid_file, path_twistd_log_file),
     path_twistd_pid_file
 )
