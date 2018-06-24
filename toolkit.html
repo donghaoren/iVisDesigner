@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<!--
+iVisDesigner
+See ./license.html for copyright information.
+-->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>iVisDesigner</title>
+    <link rel="stylesheet" type="text/css" href="toolkit.css" data-href-black="toolkit-black.css" data-href-white="toolkit.css" />
+
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <style id="style-dimensions" type="text/css"></style>
+    <link rel="icon" href="favicon-512.png" sizes="512x512" />
+    <link rel="icon" href="favicon-64.png" sizes="64x64" />
+</head>
+<body>
+<script type="text/javascript">
+IV_version = {
+  "version": "0.10alpha",
+  "revision": "r35435DC",
+  "build_time": new Date("2018-02-17T08:25:15.267128+08:00")
+};
+</script>
+
+<script type="text/plain" id="about-text">
+<h2>About iVisDesigner</h2>
+<p><i>Version 0.10alpha. Build time: Feb 17, 2018, 08:25 AM, CST.</i></p>
+<ul>
+  <li>Design and Program: <b><a href="https://donghaoren.org">Donghao Ren</a></b>, University of California, Santa Barbara, and previously Peking University.</li>
+  <li>Advisor: <b><a href="http://cs.ucsb.edu/~holl/">Prof. Tobias Höllerer</a></b>, University of California, Santa Barbara.</li>
+  <li>Previous advisor: <b><a href="http://vis.pku.edu.cn/yuanxiaoru/">Prof. Xiaoru Yuan</a></b>, Peking University.</li>
+</ul>
+<pre><code>Copyright (c) 2014, The Regents of the University of California
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors
+   may be used to endorse or promote products derived from this software without
+   specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+</code></pre>
+
+</script>
+
+<!-- Main View -->
+<div id="view">
+  <canvas id="canvas-back"></canvas>
+  <canvas id="canvas-main"></canvas>
+  <canvas id="canvas-front"></canvas>
+  <canvas id="canvas-overlay"></canvas>
+</div>
+
+<!-- Menu Bar -->
+<div id="menubar">
+  <ul class="menu">
+    <li>
+      <span><i class="xicon-tools-ivisdesigner"></i> iVisDesigner</span>
+      <ul>
+        <li><span data-open-page="#about-text" data-open-page-title="About iVisDesigner">
+          <span class="icon"><i class="icon-info-circled"></i></span>
+          About
+        </span></li>
+        <li><span data-open-page="base64:PGgxIGlkPSJqcXVlcnkiPmpRdWVyeTwvaDE+Cgo8cD5Ib21lcGFnZTogPGEgaHJlZj0iaHR0cDovL2pxdWVyeS5jb20iPmh0dHA6Ly9qcXVlcnkuY29tPC9hPjwvcD4KCjxwcmU+PGNvZGU+Q29weXJpZ2h0IDIwMTMgalF1ZXJ5IEZvdW5kYXRpb24gYW5kIG90aGVyIGNvbnRyaWJ1dG9ycwpodHRwOi8vanF1ZXJ5LmNvbS8KClBlcm1pc3Npb24gaXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uIG9idGFpbmluZwphIGNvcHkgb2YgdGhpcyBzb2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uIGZpbGVzICh0aGUKJnF1b3Q7U29mdHdhcmUmcXVvdDspLCB0byBkZWFsIGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0IHJlc3RyaWN0aW9uLCBpbmNsdWRpbmcKd2l0aG91dCBsaW1pdGF0aW9uIHRoZSByaWdodHMgdG8gdXNlLCBjb3B5LCBtb2RpZnksIG1lcmdlLCBwdWJsaXNoLApkaXN0cmlidXRlLCBzdWJsaWNlbnNlLCBhbmQvb3Igc2VsbCBjb3BpZXMgb2YgdGhlIFNvZnR3YXJlLCBhbmQgdG8KcGVybWl0IHBlcnNvbnMgdG8gd2hvbSB0aGUgU29mdHdhcmUgaXMgZnVybmlzaGVkIHRvIGRvIHNvLCBzdWJqZWN0IHRvCnRoZSBmb2xsb3dpbmcgY29uZGl0aW9uczoKClRoZSBhYm92ZSBjb3B5cmlnaHQgbm90aWNlIGFuZCB0aGlzIHBlcm1pc3Npb24gbm90aWNlIHNoYWxsIGJlCmluY2x1ZGVkIGluIGFsbCBjb3BpZXMgb3Igc3Vic3RhbnRpYWwgcG9ydGlvbnMgb2YgdGhlIFNvZnR3YXJlLgoKVEhFIFNPRlRXQVJFIElTIFBST1ZJREVEICZxdW90O0FTIElTJnF1b3Q7LCBXSVRIT1VUIFdBUlJBTlRZIE9GIEFOWSBLSU5ELApFWFBSRVNTIE9SIElNUExJRUQsIElOQ0xVRElORyBCVVQgTk9UIExJTUlURUQgVE8gVEhFIFdBUlJBTlRJRVMgT0YKTUVSQ0hBTlRBQklMSVRZLCBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRSBBTkQKTk9OSU5GUklOR0VNRU5ULiBJTiBOTyBFVkVOVCBTSEFMTCBUSEUgQVVUSE9SUyBPUiBDT1BZUklHSFQgSE9MREVSUyBCRQpMSUFCTEUgRk9SIEFOWSBDTEFJTSwgREFNQUdFUyBPUiBPVEhFUiBMSUFCSUxJVFksIFdIRVRIRVIgSU4gQU4gQUNUSU9OCk9GIENPTlRSQUNULCBUT1JUIE9SIE9USEVSV0lTRSwgQVJJU0lORyBGUk9NLCBPVVQgT0YgT1IgSU4gQ09OTkVDVElPTgpXSVRIIFRIRSBTT0ZUV0FSRSBPUiBUSEUgVVNFIE9SIE9USEVSIERFQUxJTkdTIElOIFRIRSBTT0ZUV0FSRS4KPC9jb2RlPjwvcHJlPgoKPGgxIGlkPSJkMy5qcyI+RDMuanM8L2gxPgoKPHA+SG9tZXBhZ2U6IDxhIGhyZWY9Imh0dHA6Ly9kM2pzLm9yZyI+aHR0cDovL2QzanMub3JnPC9hPjwvcD4KCjxwcmU+PGNvZGU+Q29weXJpZ2h0IChjKSAyMDEzLCBNaWNoYWVsIEJvc3RvY2sKQWxsIHJpZ2h0cyByZXNlcnZlZC4KClJlZGlzdHJpYnV0aW9uIGFuZCB1c2UgaW4gc291cmNlIGFuZCBiaW5hcnkgZm9ybXMsIHdpdGggb3Igd2l0aG91dAptb2RpZmljYXRpb24sIGFyZSBwZXJtaXR0ZWQgcHJvdmlkZWQgdGhhdCB0aGUgZm9sbG93aW5nIGNvbmRpdGlvbnMgYXJlIG1ldDoKCiogUmVkaXN0cmlidXRpb25zIG9mIHNvdXJjZSBjb2RlIG11c3QgcmV0YWluIHRoZSBhYm92ZSBjb3B5cmlnaHQgbm90aWNlLCB0aGlzCiAgbGlzdCBvZiBjb25kaXRpb25zIGFuZCB0aGUgZm9sbG93aW5nIGRpc2NsYWltZXIuCgoqIFJlZGlzdHJpYnV0aW9ucyBpbiBiaW5hcnkgZm9ybSBtdXN0IHJlcHJvZHVjZSB0aGUgYWJvdmUgY29weXJpZ2h0IG5vdGljZSwKICB0aGlzIGxpc3Qgb2YgY29uZGl0aW9ucyBhbmQgdGhlIGZvbGxvd2luZyBkaXNjbGFpbWVyIGluIHRoZSBkb2N1bWVudGF0aW9uCiAgYW5kL29yIG90aGVyIG1hdGVyaWFscyBwcm92aWRlZCB3aXRoIHRoZSBkaXN0cmlidXRpb24uCgoqIFRoZSBuYW1lIE1pY2hhZWwgQm9zdG9jayBtYXkgbm90IGJlIHVzZWQgdG8gZW5kb3JzZSBvciBwcm9tb3RlIHByb2R1Y3RzCiAgZGVyaXZlZCBmcm9tIHRoaXMgc29mdHdhcmUgd2l0aG91dCBzcGVjaWZpYyBwcmlvciB3cml0dGVuIHBlcm1pc3Npb24uCgpUSElTIFNPRlRXQVJFIElTIFBST1ZJREVEIEJZIFRIRSBDT1BZUklHSFQgSE9MREVSUyBBTkQgQ09OVFJJQlVUT1JTICZxdW90O0FTIElTJnF1b3Q7CkFORCBBTlkgRVhQUkVTUyBPUiBJTVBMSUVEIFdBUlJBTlRJRVMsIElOQ0xVRElORywgQlVUIE5PVCBMSU1JVEVEIFRPLCBUSEUKSU1QTElFRCBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJTElUWSBBTkQgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UgQVJFCkRJU0NMQUlNRUQuIElOIE5PIEVWRU5UIFNIQUxMIE1JQ0hBRUwgQk9TVE9DSyBCRSBMSUFCTEUgRk9SIEFOWSBESVJFQ1QsCklORElSRUNULCBJTkNJREVOVEFMLCBTUEVDSUFMLCBFWEVNUExBUlksIE9SIENPTlNFUVVFTlRJQUwgREFNQUdFUyAoSU5DTFVESU5HLApCVVQgTk9UIExJTUlURUQgVE8sIFBST0NVUkVNRU5UIE9GIFNVQlNUSVRVVEUgR09PRFMgT1IgU0VSVklDRVM7IExPU1MgT0YgVVNFLApEQVRBLCBPUiBQUk9GSVRTOyBPUiBCVVNJTkVTUyBJTlRFUlJVUFRJT04pIEhPV0VWRVIgQ0FVU0VEIEFORCBPTiBBTlkgVEhFT1JZCk9GIExJQUJJTElUWSwgV0hFVEhFUiBJTiBDT05UUkFDVCwgU1RSSUNUIExJQUJJTElUWSwgT1IgVE9SVCAoSU5DTFVESU5HCk5FR0xJR0VOQ0UgT1IgT1RIRVJXSVNFKSBBUklTSU5HIElOIEFOWSBXQVkgT1VUIE9GIFRIRSBVU0UgT0YgVEhJUyBTT0ZUV0FSRSwKRVZFTiBJRiBBRFZJU0VEIE9GIFRIRSBQT1NTSUJJTElUWSBPRiBTVUNIIERBTUFHRS4KPC9jb2RlPjwvcHJlPgoKPGgxIGlkPSJqcy15YW1sIj5KUy1ZQU1MPC9oMT4KCjxwPkhvbWVwYWdlOiA8YSBocmVmPSJodHRwczovL2dpdGh1Yi5jb20vbm9kZWNhL2pzLXlhbWwiPmh0dHBzOi8vZ2l0aHViLmNvbS9ub2RlY2EvanMteWFtbDwvYT48L3A+Cgo8cHJlPjxjb2RlPkNvcHlyaWdodCAoQykgMjAxMSwgMjAxMyBieSBWaXRhbHkgUHV6cmluCgpQZXJtaXNzaW9uIGlzIGhlcmVieSBncmFudGVkLCBmcmVlIG9mIGNoYXJnZSwgdG8gYW55IHBlcnNvbiBvYnRhaW5pbmcgYSBjb3B5Cm9mIHRoaXMgc29mdHdhcmUgYW5kIGFzc29jaWF0ZWQgZG9jdW1lbnRhdGlvbiBmaWxlcyAodGhlICZxdW90O1NvZnR3YXJlJnF1b3Q7KSwgdG8gZGVhbAppbiB0aGUgU29mdHdhcmUgd2l0aG91dCByZXN0cmljdGlvbiwgaW5jbHVkaW5nIHdpdGhvdXQgbGltaXRhdGlvbiB0aGUgcmlnaHRzCnRvIHVzZSwgY29weSwgbW9kaWZ5LCBtZXJnZSwgcHVibGlzaCwgZGlzdHJpYnV0ZSwgc3VibGljZW5zZSwgYW5kL29yIHNlbGwKY29waWVzIG9mIHRoZSBTb2Z0d2FyZSwgYW5kIHRvIHBlcm1pdCBwZXJzb25zIHRvIHdob20gdGhlIFNvZnR3YXJlIGlzCmZ1cm5pc2hlZCB0byBkbyBzbywgc3ViamVjdCB0byB0aGUgZm9sbG93aW5nIGNvbmRpdGlvbnM6CgpUaGUgYWJvdmUgY29weXJpZ2h0IG5vdGljZSBhbmQgdGhpcyBwZXJtaXNzaW9uIG5vdGljZSBzaGFsbCBiZSBpbmNsdWRlZCBpbgphbGwgY29waWVzIG9yIHN1YnN0YW50aWFsIHBvcnRpb25zIG9mIHRoZSBTb2Z0d2FyZS4KClRIRSBTT0ZUV0FSRSBJUyBQUk9WSURFRCAmcXVvdDtBUyBJUyZxdW90OywgV0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORCwgRVhQUkVTUyBPUgpJTVBMSUVELCBJTkNMVURJTkcgQlVUIE5PVCBMSU1JVEVEIFRPIFRIRSBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJTElUWSwKRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UgQU5EIE5PTklORlJJTkdFTUVOVC4gSU4gTk8gRVZFTlQgU0hBTEwgVEhFCkFVVEhPUlMgT1IgQ09QWVJJR0hUIEhPTERFUlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMgT1IgT1RIRVIKTElBQklMSVRZLCBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05UUkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcgRlJPTSwKT1VUIE9GIE9SIElOIENPTk5FQ1RJT04gV0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUiBPVEhFUiBERUFMSU5HUyBJTgpUSEUgU09GVFdBUkUuCjwvY29kZT48L3ByZT4KCjxoMSBpZD0iY2hyb21hLmpzIj5DaHJvbWEuanM8L2gxPgoKPHA+Y2hyb21hLmpzIC0gSmF2YVNjcmlwdCBsaWJyYXJ5IGZvciBjb2xvciBjb252ZXJzaW9uczwvcD4KCjxwcmU+PGNvZGU+Q29weXJpZ2h0IChjKSAyMDExLTIwMTMsIEdyZWdvciBBaXNjaApBbGwgcmlnaHRzIHJlc2VydmVkLgoKUmVkaXN0cmlidXRpb24gYW5kIHVzZSBpbiBzb3VyY2UgYW5kIGJpbmFyeSBmb3Jtcywgd2l0aCBvciB3aXRob3V0Cm1vZGlmaWNhdGlvbiwgYXJlIHBlcm1pdHRlZCBwcm92aWRlZCB0aGF0IHRoZSBmb2xsb3dpbmcgY29uZGl0aW9ucyBhcmUgbWV0OgoKKiBSZWRpc3RyaWJ1dGlvbnMgb2Ygc291cmNlIGNvZGUgbXVzdCByZXRhaW4gdGhlIGFib3ZlIGNvcHlyaWdodCBub3RpY2UsIHRoaXMKICBsaXN0IG9mIGNvbmRpdGlvbnMgYW5kIHRoZSBmb2xsb3dpbmcgZGlzY2xhaW1lci4KCiogUmVkaXN0cmlidXRpb25zIGluIGJpbmFyeSBmb3JtIG11c3QgcmVwcm9kdWNlIHRoZSBhYm92ZSBjb3B5cmlnaHQgbm90aWNlLAogIHRoaXMgbGlzdCBvZiBjb25kaXRpb25zIGFuZCB0aGUgZm9sbG93aW5nIGRpc2NsYWltZXIgaW4gdGhlIGRvY3VtZW50YXRpb24KICBhbmQvb3Igb3RoZXIgbWF0ZXJpYWxzIHByb3ZpZGVkIHdpdGggdGhlIGRpc3RyaWJ1dGlvbi4KCiogVGhlIG5hbWUgR3JlZ29yIEFpc2NoIG1heSBub3QgYmUgdXNlZCB0byBlbmRvcnNlIG9yIHByb21vdGUgcHJvZHVjdHMKICBkZXJpdmVkIGZyb20gdGhpcyBzb2Z0d2FyZSB3aXRob3V0IHNwZWNpZmljIHByaW9yIHdyaXR0ZW4gcGVybWlzc2lvbi4KClRISVMgU09GVFdBUkUgSVMgUFJPVklERUQgQlkgVEhFIENPUFlSSUdIVCBIT0xERVJTIEFORCBDT05UUklCVVRPUlMgJnF1b3Q7QVMgSVMmcXVvdDsKQU5EIEFOWSBFWFBSRVNTIE9SIElNUExJRUQgV0FSUkFOVElFUywgSU5DTFVESU5HLCBCVVQgTk9UIExJTUlURUQgVE8sIFRIRQpJTVBMSUVEIFdBUlJBTlRJRVMgT0YgTUVSQ0hBTlRBQklMSVRZIEFORCBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRSBBUkUKRElTQ0xBSU1FRC4gSU4gTk8gRVZFTlQgU0hBTEwgR1JFR09SIEFJU0NIIE9SIENPTlRSSUJVVE9SUyBCRSBMSUFCTEUgRk9SIEFOWSBESVJFQ1QsCklORElSRUNULCBJTkNJREVOVEFMLCBTUEVDSUFMLCBFWEVNUExBUlksIE9SIENPTlNFUVVFTlRJQUwgREFNQUdFUyAoSU5DTFVESU5HLApCVVQgTk9UIExJTUlURUQgVE8sIFBST0NVUkVNRU5UIE9GIFNVQlNUSVRVVEUgR09PRFMgT1IgU0VSVklDRVM7IExPU1MgT0YgVVNFLApEQVRBLCBPUiBQUk9GSVRTOyBPUiBCVVNJTkVTUyBJTlRFUlJVUFRJT04pIEhPV0VWRVIgQ0FVU0VEIEFORCBPTiBBTlkgVEhFT1JZCk9GIExJQUJJTElUWSwgV0hFVEhFUiBJTiBDT05UUkFDVCwgU1RSSUNUIExJQUJJTElUWSwgT1IgVE9SVCAoSU5DTFVESU5HCk5FR0xJR0VOQ0UgT1IgT1RIRVJXSVNFKSBBUklTSU5HIElOIEFOWSBXQVkgT1VUIE9GIFRIRSBVU0UgT0YgVEhJUyBTT0ZUV0FSRSwKRVZFTiBJRiBBRFZJU0VEIE9GIFRIRSBQT1NTSUJJTElUWSBPRiBTVUNIIERBTUFHRS4KPC9jb2RlPjwvcHJlPgoKPGgxIGlkPSJudW1lcmljamF2YXNjcmlwdCI+TnVtZXJpYyBKYXZhc2NyaXB0PC9oMT4KCjxwPkhvbWVwYWdlOiA8YSBocmVmPSJodHRwOi8vd3d3Lm51bWVyaWNqcy5jb20vIj5odHRwOi8vd3d3Lm51bWVyaWNqcy5jb20vPC9hPjwvcD4KCjxwcmU+PGNvZGU+Q29weXJpZ2h0IChDKSAyMDExIGJ5IFPDqWJhc3RpZW4gTG9pc2VsCgpOdW1lcmljIEphdmFzY3JpcHQKQ29weXJpZ2h0IChDKSAyMDExIGJ5IFPDqWJhc3RpZW4gTG9pc2VsCgpQZXJtaXNzaW9uIGlzIGhlcmVieSBncmFudGVkLCBmcmVlIG9mIGNoYXJnZSwgdG8gYW55IHBlcnNvbiBvYnRhaW5pbmcgYSBjb3B5Cm9mIHRoaXMgc29mdHdhcmUgYW5kIGFzc29jaWF0ZWQgZG9jdW1lbnRhdGlvbiBmaWxlcyAodGhlICZxdW90O1NvZnR3YXJlJnF1b3Q7KSwgdG8gZGVhbAppbiB0aGUgU29mdHdhcmUgd2l0aG91dCByZXN0cmljdGlvbiwgaW5jbHVkaW5nIHdpdGhvdXQgbGltaXRhdGlvbiB0aGUgcmlnaHRzCnRvIHVzZSwgY29weSwgbW9kaWZ5LCBtZXJnZSwgcHVibGlzaCwgZGlzdHJpYnV0ZSwgc3VibGljZW5zZSwgYW5kL29yIHNlbGwKY29waWVzIG9mIHRoZSBTb2Z0d2FyZSwgYW5kIHRvIHBlcm1pdCBwZXJzb25zIHRvIHdob20gdGhlIFNvZnR3YXJlIGlzCmZ1cm5pc2hlZCB0byBkbyBzbywgc3ViamVjdCB0byB0aGUgZm9sbG93aW5nIGNvbmRpdGlvbnM6CgpUaGUgYWJvdmUgY29weXJpZ2h0IG5vdGljZSBhbmQgdGhpcyBwZXJtaXNzaW9uIG5vdGljZSBzaGFsbCBiZSBpbmNsdWRlZCBpbgphbGwgY29waWVzIG9yIHN1YnN0YW50aWFsIHBvcnRpb25zIG9mIHRoZSBTb2Z0d2FyZS4KClRIRSBTT0ZUV0FSRSBJUyBQUk9WSURFRCAmcXVvdDtBUyBJUyZxdW90OywgV0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORCwgRVhQUkVTUyBPUgpJTVBMSUVELCBJTkNMVURJTkcgQlVUIE5PVCBMSU1JVEVEIFRPIFRIRSBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJTElUWSwKRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UgQU5EIE5PTklORlJJTkdFTUVOVC4gSU4gTk8gRVZFTlQgU0hBTEwgVEhFCkFVVEhPUlMgT1IgQ09QWVJJR0hUIEhPTERFUlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMgT1IgT1RIRVIKTElBQklMSVRZLCBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05UUkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcgRlJPTSwKT1VUIE9GIE9SIElOIENPTk5FQ1RJT04gV0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUiBPVEhFUiBERUFMSU5HUyBJTgpUSEUgU09GVFdBUkUuCjwvY29kZT48L3ByZT4KCjxoMSBpZD0iY29kZW1pcnJvciI+Q29kZU1pcnJvcjwvaDE+Cgo8cD5Ib21lcGFnZTogPGEgaHJlZj0iaHR0cDovL2NvZGVtaXJyb3IubmV0LyI+aHR0cDovL2NvZGVtaXJyb3IubmV0LzwvYT48L3A+Cgo8cHJlPjxjb2RlPkNvcHlyaWdodCAoQykgMjAxNCBieSBNYXJpam4gSGF2ZXJiZWtlICZsdDttYXJpam5oQGdtYWlsLmNvbSZndDsgYW5kIG90aGVycwoKUGVybWlzc2lvbiBpcyBoZXJlYnkgZ3JhbnRlZCwgZnJlZSBvZiBjaGFyZ2UsIHRvIGFueSBwZXJzb24gb2J0YWluaW5nIGEgY29weQpvZiB0aGlzIHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVkIGRvY3VtZW50YXRpb24gZmlsZXMgKHRoZSAmcXVvdDtTb2Z0d2FyZSZxdW90OyksIHRvIGRlYWwKaW4gdGhlIFNvZnR3YXJlIHdpdGhvdXQgcmVzdHJpY3Rpb24sIGluY2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0cwp0byB1c2UsIGNvcHksIG1vZGlmeSwgbWVyZ2UsIHB1Ymxpc2gsIGRpc3RyaWJ1dGUsIHN1YmxpY2Vuc2UsIGFuZC9vciBzZWxsCmNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJtaXQgcGVyc29ucyB0byB3aG9tIHRoZSBTb2Z0d2FyZSBpcwpmdXJuaXNoZWQgdG8gZG8gc28sIHN1YmplY3QgdG8gdGhlIGZvbGxvd2luZyBjb25kaXRpb25zOgoKVGhlIGFib3ZlIGNvcHlyaWdodCBub3RpY2UgYW5kIHRoaXMgcGVybWlzc2lvbiBub3RpY2Ugc2hhbGwgYmUgaW5jbHVkZWQgaW4KYWxsIGNvcGllcyBvciBzdWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUgU29mdHdhcmUuCgpUSEUgU09GVFdBUkUgSVMgUFJPVklERUQgJnF1b3Q7QVMgSVMmcXVvdDssIFdJVEhPVVQgV0FSUkFOVFkgT0YgQU5ZIEtJTkQsIEVYUFJFU1MgT1IKSU1QTElFRCwgSU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUyBPRiBNRVJDSEFOVEFCSUxJVFksCkZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFIEFORCBOT05JTkZSSU5HRU1FTlQuIElOIE5PIEVWRU5UIFNIQUxMIFRIRQpBVVRIT1JTIE9SIENPUFlSSUdIVCBIT0xERVJTIEJFIExJQUJMRSBGT1IgQU5ZIENMQUlNLCBEQU1BR0VTIE9SIE9USEVSCkxJQUJJTElUWSwgV0hFVEhFUiBJTiBBTiBBQ1RJT04gT0YgQ09OVFJBQ1QsIFRPUlQgT1IgT1RIRVJXSVNFLCBBUklTSU5HIEZST00sCk9VVCBPRiBPUiBJTiBDT05ORUNUSU9OIFdJVEggVEhFIFNPRlRXQVJFIE9SIFRIRSBVU0UgT1IgT1RIRVIgREVBTElOR1MgSU4KVEhFIFNPRlRXQVJFLgo8L2NvZGU+PC9wcmU+Cgo8aDEgaWQ9ImpxdWVyeW1vdXNld2hlZWxwbHVnaW4iPmpRdWVyeSBNb3VzZSBXaGVlbCBQbHVnaW48L2gxPgoKPHByZT48Y29kZT5Db3B5cmlnaHQgKGMpIDIwMTMsIEJyYW5kb24gQWFyb24gKCZsdDtodHRwOi8vYnJhbmRvbmFhcm9uLm5ldC8mZ3Q7KQoKUGVybWlzc2lvbiBpcyBoZXJlYnkgZ3JhbnRlZCwgZnJlZSBvZiBjaGFyZ2UsIHRvIGFueSBwZXJzb24gb2J0YWluaW5nCmEgY29weSBvZiB0aGlzIHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVkIGRvY3VtZW50YXRpb24gZmlsZXMgKHRoZQomcXVvdDtTb2Z0d2FyZSZxdW90OyksIHRvIGRlYWwgaW4gdGhlIFNvZnR3YXJlIHdpdGhvdXQgcmVzdHJpY3Rpb24sIGluY2x1ZGluZwp3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0cyB0byB1c2UsIGNvcHksIG1vZGlmeSwgbWVyZ2UsIHB1Ymxpc2gsCmRpc3RyaWJ1dGUsIHN1YmxpY2Vuc2UsIGFuZC9vciBzZWxsIGNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0bwpwZXJtaXQgcGVyc29ucyB0byB3aG9tIHRoZSBTb2Z0d2FyZSBpcyBmdXJuaXNoZWQgdG8gZG8gc28sIHN1YmplY3QgdG8KdGhlIGZvbGxvd2luZyBjb25kaXRpb25zOgoKVGhlIGFib3ZlIGNvcHlyaWdodCBub3RpY2UgYW5kIHRoaXMgcGVybWlzc2lvbiBub3RpY2Ugc2hhbGwgYmUKaW5jbHVkZWQgaW4gYWxsIGNvcGllcyBvciBzdWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUgU29mdHdhcmUuCgpUSEUgU09GVFdBUkUgSVMgUFJPVklERUQgJnF1b3Q7QVMgSVMmcXVvdDssIFdJVEhPVVQgV0FSUkFOVFkgT0YgQU5ZIEtJTkQsCkVYUFJFU1MgT1IgSU1QTElFRCwgSU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUyBPRgpNRVJDSEFOVEFCSUxJVFksIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFIEFORApOT05JTkZSSU5HRU1FTlQuIElOIE5PIEVWRU5UIFNIQUxMIFRIRSBBVVRIT1JTIE9SIENPUFlSSUdIVCBIT0xERVJTIEJFCkxJQUJMRSBGT1IgQU5ZIENMQUlNLCBEQU1BR0VTIE9SIE9USEVSIExJQUJJTElUWSwgV0hFVEhFUiBJTiBBTiBBQ1RJT04KT0YgQ09OVFJBQ1QsIFRPUlQgT1IgT1RIRVJXSVNFLCBBUklTSU5HIEZST00sIE9VVCBPRiBPUiBJTiBDT05ORUNUSU9OCldJVEggVEhFIFNPRlRXQVJFIE9SIFRIRSBVU0UgT1IgT1RIRVIgREVBTElOR1MgSU4gVEhFIFNPRlRXQVJFLgo8L2NvZGU+PC9wcmU+Cgo8aDEgaWQ9ImZvbnRsaWNlbnNlcyI+Rm9udCBMaWNlbnNlczwvaDE+Cgo8cD5JY29uIGZvbnQgY3JlYXRlZCBieSBmb250ZWxsbzogPGEgaHJlZj0iaHR0cDovL2ZvbnRlbGxvLmNvbS8iPmh0dHA6Ly9mb250ZWxsby5jb20vPC9hPjwvcD4KCjxoMiBpZD0iZm9udGF3ZXNvbWUiPkZvbnQgQXdlc29tZTwvaDI+Cgo8cHJlPjxjb2RlPkNvcHlyaWdodCAoQykgMjAxMiBieSBEYXZlIEdhbmR5CgpBdXRob3I6ICAgIERhdmUgR2FuZHkKTGljZW5zZTogICBTSUwgKGh0dHA6Ly9zY3JpcHRzLnNpbC5vcmcvT0ZMKQpIb21lcGFnZTogIGh0dHA6Ly9mb3J0YXdlc29tZS5naXRodWIuY29tL0ZvbnQtQXdlc29tZS8KPC9jb2RlPjwvcHJlPgoKPGgyIGlkPSJlbHVzaXZlIj5FbHVzaXZlPC9oMj4KCjxwcmU+PGNvZGU+Q29weXJpZ2h0IChDKSAyMDEzIGJ5IEFyaXN0ZWlkZXMgU3RhdGhvcG91bG9zCgpBdXRob3I6ICAgIEFyaXN0ZWlkZXMgU3RhdGhvcG91bG9zCkxpY2Vuc2U6ICAgU0lMIChodHRwOi8vc2NyaXB0cy5zaWwub3JnL09GTCkKSG9tZXBhZ2U6ICBodHRwOi8vYXJpc3RlaWRlcy5jb20vCjwvY29kZT48L3ByZT4KCjxoMiBpZD0iZW50eXBvIj5FbnR5cG88L2gyPgoKPHByZT48Y29kZT5Db3B5cmlnaHQgKEMpIDIwMTIgYnkgRGFuaWVsIEJydWNlCgpBdXRob3I6ICAgIERhbmllbCBCcnVjZQpMaWNlbnNlOiAgIFNJTCAoaHR0cDovL3NjcmlwdHMuc2lsLm9yZy9PRkwpCkhvbWVwYWdlOiAgaHR0cDovL3d3dy5lbnR5cG8uY29tCjwvY29kZT48L3ByZT4KCjxoMiBpZD0iYnJhbmRpY28iPkJyYW5kaWNvPC9oMj4KCjxwcmU+PGNvZGU+KEMpIDIwMTIgYnkgVml0YWx5IFB1enJpbgoKQXV0aG9yOiAgICBDcm93ZHNvdXJjZWQsIGZvciBGb250ZWxsbyBwcm9qZWN0CkxpY2Vuc2U6ICAgU0lMIChodHRwOi8vc2NyaXB0cy5zaWwub3JnL09GTCkKPC9jb2RlPjwvcHJlPgoKPGgxIGlkPSJzdGF0aWN3ZWJzaXRlYnVpbGRlciI+U3RhdGljIFdlYnNpdGUgQnVpbGRlcjwvaDE+Cgo8cHJlPjxjb2RlPkNvcHlyaWdodCAoQykgMjAxMi0yMDE0LCBEb25naGFvIFJlbgpBbGwgcmlnaHRzIHJlc2VydmVkLgoKUmVkaXN0cmlidXRpb24gYW5kIHVzZSBpbiBzb3VyY2UgYW5kIGJpbmFyeSBmb3Jtcywgd2l0aCBvciB3aXRob3V0Cm1vZGlmaWNhdGlvbiwgYXJlIHBlcm1pdHRlZCBwcm92aWRlZCB0aGF0IHRoZSBmb2xsb3dpbmcgY29uZGl0aW9ucyBhcmUgbWV0OgoKICogUmVkaXN0cmlidXRpb25zIG9mIHNvdXJjZSBjb2RlIG11c3QgcmV0YWluIHRoZSBhYm92ZSBjb3B5cmlnaHQKICAgbm90aWNlLCB0aGlzIGxpc3Qgb2YgY29uZGl0aW9ucyBhbmQgdGhlIGZvbGxvd2luZyBkaXNjbGFpbWVyLgoKICogUmVkaXN0cmlidXRpb25zIGluIGJpbmFyeSBmb3JtIG11c3QgcmVwcm9kdWNlIHRoZSBhYm92ZSBjb3B5cmlnaHQKICAgbm90aWNlLCB0aGlzIGxpc3Qgb2YgY29uZGl0aW9ucyBhbmQgdGhlIGZvbGxvd2luZyBkaXNjbGFpbWVyIGluIHRoZQogICBkb2N1bWVudGF0aW9uIGFuZC9vciBvdGhlciBtYXRlcmlhbHMgcHJvdmlkZWQgd2l0aCB0aGUgZGlzdHJpYnV0aW9uLgoKICogVGhlIG5hbWUgb2YgRG9uZ2hhbyBSZW4gbWF5IG5vdCBiZSB1c2VkIHRvIGVuZG9yc2Ugb3IgcHJvbW90ZSBwcm9kdWN0cwogICBkZXJpdmVkIGZyb20gdGhpcyBzb2Z0d2FyZSB3aXRob3V0IHNwZWNpZmljIHByaW9yIHdyaXR0ZW4gcGVybWlzc2lvbi4KClRISVMgU09GVFdBUkUgSVMgUFJPVklERUQgQlkgVEhFIENPUFlSSUdIVCBIT0xERVJTIEFORCBDT05UUklCVVRPUlMgJnF1b3Q7QVMgSVMmcXVvdDsgQU5ECkFOWSBFWFBSRVNTIE9SIElNUExJRUQgV0FSUkFOVElFUywgSU5DTFVESU5HLCBCVVQgTk9UIExJTUlURUQgVE8sIFRIRSBJTVBMSUVECldBUlJBTlRJRVMgT0YgTUVSQ0hBTlRBQklMSVRZIEFORCBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRSBBUkUKRElTQ0xBSU1FRC4gSU4gTk8gRVZFTlQgU0hBTEwgRE9OR0hBTyBSRU4gQkUgTElBQkxFIEZPUiBBTlkKRElSRUNULCBJTkRJUkVDVCwgSU5DSURFTlRBTCwgU1BFQ0lBTCwgRVhFTVBMQVJZLCBPUiBDT05TRVFVRU5USUFMIERBTUFHRVMKKElOQ0xVRElORywgQlVUIE5PVCBMSU1JVEVEIFRPLCBQUk9DVVJFTUVOVCBPRiBTVUJTVElUVVRFIEdPT0RTIE9SIFNFUlZJQ0VTOwpMT1NTIE9GIFVTRSwgREFUQSwgT1IgUFJPRklUUzsgT1IgQlVTSU5FU1MgSU5URVJSVVBUSU9OKSBIT1dFVkVSIENBVVNFRCBBTkQKT04gQU5ZIFRIRU9SWSBPRiBMSUFCSUxJVFksIFdIRVRIRVIgSU4gQ09OVFJBQ1QsIFNUUklDVCBMSUFCSUxJVFksIE9SIFRPUlQKKElOQ0xVRElORyBORUdMSUdFTkNFIE9SIE9USEVSV0lTRSkgQVJJU0lORyBJTiBBTlkgV0FZIE9VVCBPRiBUSEUgVVNFIE9GIFRISVMKU09GVFdBUkUsIEVWRU4gSUYgQURWSVNFRCBPRiBUSEUgUE9TU0lCSUxJVFkgT0YgU1VDSCBEQU1BR0UuCjwvY29kZT48L3ByZT4K" data-open-page-title="Credits">
+          <span class="icon"><i class="icon-bookmark"></i></span>
+          Credits
+        </span></li>
+      </ul>
+    </li>
+    <li>
+      <span>File</span>
+      <ul>
+        <li><span data-command="toolkit.instant"><span class="icon"><i class="icon-folder"></i></span>Load Dataset</span></li>
+        <li><span data-command="toolkit.export.bitmap"><span class="icon"><i class="icon-floppy"></i></span>Export Bitmap</span></li>
+        <li><span data-command="toolkit.export.svg"><span class="icon"><i class="icon-floppy"></i></span>Export SVG</span></li>
+      </ul>
+    </li>
+    <li>
+      <span>Templates</span>
+      <ul>
+        <li><span data-command="toolkit.template" data-parameters="Scatterplot">Scatterplot</span></li>
+        <!--<li><span data-command="toolkit.template" data-parameters="ParallelCoordinates">Parallel Coordinates</span></li>-->
+        <li><span data-command="toolkit.template" data-parameters="Timeline">Timeline</span></li>
+        <li><span data-command="toolkit.template" data-parameters="Graph">Graph</span></li>
+      </ul>
+    </li>
+    <li>
+      <span>View</span>
+      <ul>
+        <li>
+          <span data-toggle="visible-guide">Guide
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="visible-grid">Grid
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="render-2x">2x Resolution
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="colormode-black">Black Mode
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <span>Panel</span>
+      <ul>
+        <li>
+          <span data-toggle="#panel-schema">Schema
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-tools">Tools
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-objects">Objects
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-style">Style
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-property">Property
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-inspector">Data Inspector
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-pose" id="pose-view-toggle">Pose View
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-code-editor">Code Editor
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li>
+          <span data-toggle="#panel-log">Log
+            <span class="toggle-indicator"><i class="xicon-mark"></i></span>
+          </span>
+        </li>
+        <li><span data-command="panels.reset">Reset</span></li>
+      </ul>
+    </li>
+    <li>
+      <span>Help</span>
+      <ul>
+        <li><span data-openurl="doc.html">Documentation</span></li>
+      </ul>
+    </li>
+  </ul>
+  <ul class="menu menu-right">
+    <li>
+      <span>Workspace</span>
+      <ul id="workspace-container">
+      </ul>
+    </li>
+    <li>
+      <span><i class="icon-user"></i> <span class="user-name"></span></span>
+      <ul>
+        <li>
+          <span data-command="account.register">
+            <span class="icon"><i class="icon-user"></i></span>
+            Register...
+          </span>
+        </li>
+        <li>
+          <span data-command="account.login">
+            <span class="icon"><i class="icon-login"></i></span>
+            Login...
+          </span>
+        </li>
+        <li>
+          <span data-command="account.logout">
+            <span class="icon"><i class="icon-logout"></i></span>
+            Logout
+          </span>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<div id="statusbar">
+  <span class="status-text">Ready.</span>
+  <span style="float: right">Copyright 2013-2014, Donghao Ren,
+    University of California, Santa Barbara; Peking University.</span>
+</div>
+
+<!-- Panels -->
+<div id="panel-container">
+  <!-- Schema Panel -->
+  <div id="panel-schema" class="panel" data-title="Schema">
+    <div class="scrollview">
+      <div id="data-schema"></div>
+    </div>
+  </div>
+  <!-- Tools Panel -->
+  <div id="panel-tools" class="panel" data-title="Tools">
+    <div id="tools-container">
+      <div class="tool-icons" data-remove-text-nodes>
+        <span data-apply-children="data-switch=tools:current;class=btn btn-icon" data-remove-text-nodes>
+          <span data-value="Select" title="Select or move objects.">
+            <i class="xicon-tools-arrow"></i>
+          </span>
+          <span data-value="MoveElement" title="Select or move elements.">
+            <i class="xicon-tools-move-element"></i>
+          </span>
+          <span data-value="Brushing" title="Brushing.">
+            <i class="xicon-tools-brushing"></i>
+          </span>
+          <span data-apply-children-resist="yes" class="separator"></span>
+          <span data-value="Move" title="Move the view.">
+            <i class="xicon-tools-move"></i>
+          </span>
+          <span data-value="Zoom" title="Zoom the view.">
+            <i class="xicon-tools-zoom"></i>
+          </span>
+          <span data-value="Artboard" title="Change the artboard.">
+            <i class="xicon-tools-artboard"></i>
+          </span>
+          <span data-apply-children-resist="yes" class="separator"></span>
+          <span data-value="Track" id="tool-icon-track" title="Create a track for selected path.">
+            <i class="xicon-tools-track"></i>
+          </span>
+          <span data-value="Scatter" title="Create a scatterplot with two tracks.">
+            <i class="xicon-tools-scatter"></i>
+          </span>
+          <span data-apply-children-resist="yes" class="separator"></span>
+          <span data-value="Circle" title="Create a circle.">
+            <i class="xicon-tools-circle"></i>
+          </span>
+          <span data-value="Line" title="Create a line.">
+            <i class="xicon-tools-line"></i>
+          </span>
+          <span data-value="Arc" title="Create a arc.">
+            <i class="xicon-tools-arc"></i>
+          </span>
+          <span data-value="Polyline" title="Create a polyline.">
+            <i class="xicon-tools-polyline"></i>
+          </span>
+          <span data-value="Bar" title="Create a bar.">
+            <i class="xicon-tools-bar"></i>
+          </span>
+          <span data-value="LineThrough" title="Create a line through.">
+            <i class="xicon-tools-linethrough"></i>
+          </span>
+          <!--<span data-value="Polygon" title="Create a polygon with several points.">
+            <i class="xicon-tools-polygon"></i>
+          </span>-->
+          <span data-value="LineIntersection" title="Create line intersection.">
+            <i class="xicon-tools-intersection"></i>
+          </span>
+          <span data-value="Text" title="Create a text.">
+            <i class="xicon-tools-text"></i>
+          </span>
+          <span data-value="Component" title="Create component.">
+            <i class="xicon-tools-component"></i>
+          </span>
+          <span data-apply-children-resist="yes" class="btn btn-icon" title="Create Google Map." data-popup="CreateMap">
+            <i class="xicon-tools-map"></i>
+          </span>
+          <span data-apply-children-resist="yes" class="btn btn-icon" title="Create Google Map." data-popup="CreateImage">
+            <i class="xicon-tools-map"></i>
+          </span>
+        </span>
+        <span data-apply-children-resist="yes" class="separator"></span>
+        <span class="btn btn-icon" title="Create graph layout." data-popup="CreateLayout">
+          <i class="xicon-tools-graph-layout"></i>
+        </span>
+        <span class="btn btn-icon" title="Create statistics." data-popup="CreateStatistics">
+          <i class="xicon-tools-statistics"></i>
+        </span>
+        <span data-apply-children-resist="yes" class="separator"></span>
+        <span class="btn btn-icon" data-command="editor.undo" title="Undo.">
+          <i class="xicon-tools-undo"></i>
+        </span>
+        <span class="btn btn-icon" data-command="editor.redo" title="Redo.">
+          <i class="xicon-tools-redo"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+  <!-- Objects Panel -->
+  <div id="panel-objects" class="panel" data-title="Objects">
+    <div class="scrollview">
+      <div id="object-list"></div>
+    </div>
+  </div>
+  <!-- Property Panel -->
+  <div id="panel-property" class="panel" data-title="Property">
+    <div class="scrollview">
+      <div id="panel-property-display"></div>
+    </div>
+  </div>
+  <!-- Style & Property Panel -->
+  <div id="panel-style" class="panel" data-title="Style">
+    <div class="scrollview">
+      <div id="panel-style-display"></div>
+    </div>
+  </div>
+  <!-- Log Panel -->
+  <div id="panel-log" class="panel" data-title="Log">
+    <div id="log-container">
+      <ul></ul>
+    </div>
+  </div>
+  <!-- Inspector Panel -->
+  <div id="panel-inspector" class="panel" data-title="Log">
+    <div class="scrollview">
+      <div id="data-inspector"></div>
+    </div>
+  </div>
+  <!-- 3D Pose Panel -->
+  <div id="panel-pose" class="panel" data-title="Pose">
+    <div id="panel-pose-wrapper">
+      <div class="buttons" style="padding: 3px;">
+        <span data-command="allosphere.sync" class="btn btn-s">ForceSync</span>
+        <span class="color-selector" id="pose-color-selector"></span>
+      </div>
+      <div id="pose-view">
+      </div>
+    </div>
+  </div>
+  <!-- Code Editor Panel -->
+  <div id="panel-code-editor" class="panel" data-title="Code Editor">
+    <div class="buttons" style="padding: 3px;">
+      <span id="code-editor-remote-run" class="btn btn-s">Run Remote</span>
+      <span id="code-editor-local-run"class="btn btn-s">Run Local</span>
+      <select id="code-editor-predefined">
+      </select>
+    </div>
+    <div id="code-editor-container"></div>
+  </div>
+  <!-- Page Panel -->
+  <div id="panel-page" class="panel full-title" data-title="Page">
+    <div class="scrollview">
+      <div id="panel-page-container" class="basic"></div>
+    </div>
+  </div>
+  <!-- Load Panel -->
+  <div id="panel-page" class="panel full-title" data-title="Page">
+    <div class="scrollview">
+      <div id="panel-page-container" class="basic">
+      </div>
+    </div>
+  </div>
+  <!-- Save Panel -->
+  <div id="panel-page" class="panel full-title" data-title="Page">
+    <div class="scrollview">
+      <div id="panel-page-container" class="basic"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Popups -->
+<div id="popup-container"></div>
+
+<div id="editor-messages"></div>
+
+<div id="modal-container"></div>
+
+<!-- System Loading Overlay -->
+<div id="system-loading"
+  style="position:fixed;z-index:100000;left:0;right:0;top:0;bottom:0;padding-top:100px;text-align:center;font-size:16px;background-color:white;">
+  <div style="text-align:left;display:inline-block;">
+    <h3 style="margin-bottom:10px;font-size:20px;">iVisDesigner is Loading...</h3>
+    <p style="margin: 0.3em 0; padding: 0">Browser requirements: HTML5 support (Javascript, Canvas, SVG).</p>
+    <p style="margin: 0.3em 0; padding: 0">Recommended browsers: latest
+        <a href="http://www.google.com/chrome">Chrome</a>,
+        <a href="http://www.apple.com/safari">Safari</a> or
+        <a href="http://www.mozilla.org/firefox">Firefox</a>.
+    </p>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script type="text/javascript" src="libraries.js"></script>
+<script type="text/javascript" src="config.js"></script>
+<script type="text/javascript">
+IV_Config = $.extend({
+  version: IV_version.version,
+  revision: IV_version.revision,
+  build_time: IV_version.build_time
+}, IV_Config);
+</script>
+<script type="text/javascript" src="strings.js"></script>
+<script type="text/javascript" src="toolkit.js"></script>
+</body>
+</html>

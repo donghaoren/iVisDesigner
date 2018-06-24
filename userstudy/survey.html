@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+
+    <title>iVisDesigner</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../pages.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    
+      <script src="../scripts.js"></script>
+
+
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="..">iVisDesigner</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+  <li class=""><a href="..">Home</a></li>
+  <li class=""><a href="../documentation/guide">User Guide</a></li>
+  <!-- <li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <b class="caret"></b></a>
+    <ul class="dropdown-menu">
+      <li class=""><a href="../documentation/guide">User Guide</a></li>
+      <li class=""><a href="../documentation/design">Design</a></li>
+    </ul>
+  </li> -->
+  <li class=""><a href="../credits">Credits</a></li>
+  <li class=""><a href="../license">License</a></li>
+  <!-- <li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+    <ul class="dropdown-menu">
+      <li><a href="#">Action</a></li>
+      <li><a href="#">Another action</a></li>
+      <li><a href="#">Something else here</a></li>
+      <li class="divider"></li>
+      <li class="dropdown-header">Nav header</li>
+      <li><a href="#">Separated link</a></li>
+      <li><a href="#">One more separated link</a></li>
+    </ul>
+  </li> -->
+</ul>
+<!-- <ul class="nav navbar-nav navbar-right">
+  <li><a href="../navbar/">Default</a></li>
+  <li><a href="../navbar-static-top/">Static top</a></li>
+  <li class="active"><a href="./">Fixed top</a></li>
+</ul> -->
+
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="container">
+      
+
+<h1>iVisDesigner User Study - Survey</h1>
+
+<div class="form-horizontal" role="form" id="survey-form"></div>
+
+<script type="text/javascript">
+var survey_201303_informal = {
+  name: "2013.03.InformalUserStudy",
+  questions: [
+    { text: "Username", key: "username", type: "string", required: true, desc: "Your username in iVisDesigner." },
+    { text: "Gender", key: "gender", type: "radios", items: [ "Male", "Female" ], required: true },
+    { text: "Age", key: "age", type: "integer", required: true },
+    { text: "How long did you experiment with this system (minutes)?", key: "experiment_time", type: "integer", required: true },
+    { text: "Field of Study", key: "field", type: "string", required: true, desc: "Example: Computer Science, Media Arts and Technology, Economics." },
+    { text: "iVisDesigner is:", type: "likert-group", required: true,
+      key: "iv_is_",
+      p1: "Strongly Disagree",
+      p2: "Disagree",
+      p3: "Neutral",
+      p4: "Agree",
+      p5: "Strongly Agree",
+      items: [
+        { text: "Expressive", key: "l_expressive" },
+        { text: "Easy to use", key: "l_easy_to_use" },
+        { text: "Easy to understand", key: "l_easy_to_understand" },
+        { text: "Useful", key: "l_useful" }
+      ]
+    },
+    { text: "iVisDesigner is good for:", type: "likert-group", required: true,
+      key: "iv_is_good_for_",
+      p1: "Strongly Disagree",
+      p2: "Disagree",
+      p3: "Neutral",
+      p4: "Agree",
+      p5: "Strongly Agree",
+      items: [
+        { text: "Creating basic visualizations", key: "l_g_basic_visualizations" },
+        { text: "Creating novel visualizations", key: "l_g_novel_visualizations" },
+        { text: "Visualizing multidimensional data", key: "l_g_multidimensional_data" },
+        { text: "Visualizing graph data", key: "l_g_graph_data" },
+        { text: "Visualizing time-series data", key: "l_g_time_series_data" },
+        { text: "Visual analysis of data", key: "l_g_visual_analysis" },
+        { text: "Providing overview of datasets", key: "l_g_providing_overview" },
+        { text: "Artistic designs", key: "l_g_artistic_designs" }
+      ]
+    },
+    { text: "Additional Comments and Suggestions", key: "additional_comments", type: "text", required: false }
+  ]
+};
+
+var surveys = [ survey_201303_informal ];
+
+// The survey to show.
+var survey = survey_201303_informal;
+
+
+var generate_survey_form = function(survey, on_submit) {
+  var div = $("<div />");
+  survey.questions.forEach(function(q) {
+    var g = $("<div />").addClass("form-group col-sm-12").attr("data-label-key", q.key);
+    var label = $("<label />").addClass("control-label").text(q.text);
+    g.append(label);
+    if(q.desc) g.append($('<p class=help-block" />').text(q.desc));
+    var c = $("<div />").addClass("");
+    g.append(c);
+    if(q.type == "string") {
+      c.append($('<input type="text" class="form-control" />').attr("data-key", q.key));
+    }
+    if(q.type == "text") {
+      c.append($('<textarea class="form-control" rows="8" />').attr("data-key", q.key));
+    }
+    if(q.type == "integer") {
+      c.append($('<input type="text" class="form-control" />').attr("data-key", q.key));
+    }
+    if(q.type == "real") {
+      c.append($('<input type="text" class="form-control" />').attr("data-key", q.key));
+    }
+    if(q.type == "likert") {
+      var radios = $("<span />");
+      radios.append('<div class="radio-inline-likert"><input type="radio" value="+2" /></div>');
+      radios.append('<div class="radio-inline-likert"><input type="radio" value="+1" /></div>');
+      radios.append('<div class="radio-inline-likert"><input type="radio" value="00" /></div>');
+      radios.append('<div class="radio-inline-likert"><input type="radio" value="-1" /></div>');
+      radios.append('<div class="radio-inline-likert"><input type="radio" value="-2" /></div>');
+      radios.find("input").attr("name", q.key).attr("data-key", q.key);
+      c.append($('<span class="radio-inline-likert"/>').text(q.p5))
+       .append(radios)
+       .append($('<span class="radio-inline-likert"/>').text(q.p1));
+    }
+    if(q.type == "likert-group") {
+      var table = $('<table class="table table-striped" style="width: auto" />');
+      table.append($("<thead />").append($("<tr />")
+        .append($("<th />"))
+        .append($('<th style="text-align: center; width: 9.5em; font-size: 0.8em"/>').text(q.p5))
+        .append($('<th style="text-align: center; width: 9.5em; font-size: 0.8em"/>').text(q.p4))
+        .append($('<th style="text-align: center; width: 9.5em; font-size: 0.8em"/>').text(q.p3))
+        .append($('<th style="text-align: center; width: 9.5em; font-size: 0.8em"/>').text(q.p2))
+        .append($('<th style="text-align: center; width: 9.5em; font-size: 0.8em"/>').text(q.p1))
+      ));
+      var tbody = $("<tbody />");
+      table.append(tbody);
+      q.items.forEach(function(item) {
+        var tr = $("<tr />");
+        tbody.append(tr);
+        tr.append($('<td style="text-align: right" />').text(item.text));
+        tr.append('<td style="text-align: center; padding-left: 5px; padding-right: 5px"><input type="radio" value="+2" /></td>');
+        tr.append('<td style="text-align: center; padding-left: 5px; padding-right: 5px"><input type="radio" value="+1" /></td>');
+        tr.append('<td style="text-align: center; padding-left: 5px; padding-right: 5px"><input type="radio" value="00" /></td>');
+        tr.append('<td style="text-align: center; padding-left: 5px; padding-right: 5px"><input type="radio" value="-1" /></td>');
+        tr.append('<td style="text-align: center; padding-left: 5px; padding-right: 5px"><input type="radio" value="-2" /></td>');
+        tr.find("input").attr("name", item.key).attr("data-key", item.key);
+      });
+      c.append(table);
+    }
+    if(q.type == "checks") {
+      var radios = $("<span />");
+      q.items.forEach(function(text) {
+        var d = $('<div class="radio-inline-likert"><input type="checkbox" value="+2" /> ' + text + '</div>');
+        radios.append(d);
+        d.find("input").attr("data-item", text);
+      });
+      radios.find("input").attr("name", q.key).attr("data-key", q.key);
+      c.append(radios);
+    }
+    if(q.type == "radios") {
+      var radios = $("<span />");
+      q.items.forEach(function(text) {
+        var d = $('<div class="radio-inline-likert"><input type="radio" value="+2" /> ' + text + '</div>');
+        radios.append(d);
+        d.find("input").attr("data-item", text);
+      });
+      radios.find("input").attr("name", q.key).attr("data-key", q.key);
+      c.append(radios);
+    }
+    div.append(g);
+  });
+  div.append($("<p />")
+    .append($('<button type="submit" class="btn btn-default">Submit</button>'))
+    .append($('<label style="margin-left: 10px" class="status"></label>'))
+  );
+  div.find('[type="submit"]').click(function() {
+    var data = { };
+    div.find('.form-group').removeClass("has-error");
+    var has_error = false;
+    survey.questions.forEach(function(q) {
+      if(q.type == "likert") {
+        var val = parseInt(div.find('[data-key="' + q.key + '"]:checked').val());
+        if(val !== undefined && val == val)
+          data[q.key] = val;
+        else
+          data[q.key] = null;
+      } else if(q.type == "checks") {
+        var items = [];
+        div.find('[data-key="' + q.key + '"]:checked').each(function() {
+          var item = $(this).attr("data-item");
+          items.push(item);
+        });
+        data[q.key] = items;
+      } else if(q.type == "radios") {
+        var items = [];
+        div.find('[data-key="' + q.key + '"]:checked').each(function() {
+          var item = $(this).attr("data-item");
+          items.push(item);
+        });
+        if(items.length == 1)
+          data[q.key] = items[0];
+        else
+          data[q.key] = null;
+      } else if(q.type == "likert-group") {
+        q.items.forEach(function(item) {
+          var val = parseInt(div.find('[data-key="' + item.key + '"]:checked').val());
+          if(val !== undefined && val == val)
+            data[item.key] = val;
+          else
+            data[item.key] = null;
+        });
+      } else {
+        var val = div.find('[data-key="' + q.key + '"]').val();
+        val = val.trim();
+        if(q.type == "real") val = parseFloat(val);
+        if(q.type == "integer") val = parseInt(val);
+        if(val !== undefined && val == val && val != "")
+          data[q.key] = val;
+        else
+          data[q.key] = null;
+      }
+      if(q.required) {
+        if(q.type == "likert-group") {
+          q.items.forEach(function(item) {
+            if(data[item.key] === null) {
+              div.find('[data-label-key="' + q.key + '"]').addClass("has-error");
+              has_error = true;
+            }
+          });
+        } else if(data[q.key] === null) {
+          div.find('[data-label-key="' + q.key + '"]').addClass("has-error");
+          has_error = true;
+        }
+      }
+    });
+    if(!has_error) {
+      div.find(".status").text("");
+      on_submit(data);
+    } else {
+      div.find(".status").text("Sorry, your form is incomplete, please check the red items.");
+    }
+  });
+  div.data().clear = function() {
+    survey.questions.forEach(function(q) {
+      if(q.type == "likert" || q.type == "checks") {
+        div.find('[data-key="' + q.key + '"]').prop("checked", false);
+      } else {
+        div.find('[data-key="' + q.key + '"]').val("");
+      }
+    });
+  };
+  div.data().status = function(text) {
+    div.find(".status").text(text);
+  };
+  return div;
+};
+
+if(window.location.protocol == "http:") {
+ window.location.protocol = "https:";
+}
+
+$("#survey-form").append(generate_survey_form(survey, function(data) {
+  console.log(data);
+  $("#survey-form > div").data().status("Submitting...");
+  $.ajax({
+    url: "https://donghaoren.org/p/phps/ivsurvey.php",
+    dataType: "json",
+    data: {
+      survey: survey.name,
+      data: JSON.stringify(data, null, 2)
+    }
+  }).done(function(data) {
+    if(data.status == "success") {
+      $("#survey-form > div").data().status("Successfully Submitted.");
+    } else {
+      $("#survey-form > div").data().status("Submission Failed...");
+    }
+  }).fail(function() {
+    $("#survey-form > div").data().status("Submission Failed...");
+  });
+}));
+</script>
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <!--<div class="jumbotron">
+
+         <h1>Navbar example</h1>
+        <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
+        <p>To see the difference between static and fixed top navbars, just scroll.</p>
+        <p>
+          <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
+        </p>
+      </div>-->
+
+      <hr>
+
+      <footer>
+        <p>Designed and programmed by Donghao Ren, University of California, Santa Barbara and Peking University. <a href="../credits">Credits</a>, <a href="../license">License</a>.</p>
+      </footer>
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+
+    
+
+  </body>
+</html>

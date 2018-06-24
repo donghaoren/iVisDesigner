@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+
+    <title>Guide | Documentation | iVisDesigner</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../pages.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    
+
+
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="..">iVisDesigner</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+  <li class=""><a href="..">Home</a></li>
+  <li class=""><a href="guide">User Guide</a></li>
+  <!-- <li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <b class="caret"></b></a>
+    <ul class="dropdown-menu">
+      <li class="active"><a href="guide">User Guide</a></li>
+      <li class=""><a href="design">Design</a></li>
+    </ul>
+  </li> -->
+  <li class=""><a href="../credits">Credits</a></li>
+  <li class=""><a href="../license">License</a></li>
+  <!-- <li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+    <ul class="dropdown-menu">
+      <li><a href="#">Action</a></li>
+      <li><a href="#">Another action</a></li>
+      <li><a href="#">Something else here</a></li>
+      <li class="divider"></li>
+      <li class="dropdown-header">Nav header</li>
+      <li><a href="#">Separated link</a></li>
+      <li><a href="#">One more separated link</a></li>
+    </ul>
+  </li> -->
+</ul>
+<!-- <ul class="nav navbar-nav navbar-right">
+  <li><a href="../navbar/">Default</a></li>
+  <li><a href="../navbar-static-top/">Static top</a></li>
+  <li class="active"><a href="./">Fixed top</a></li>
+</ul> -->
+
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="container">
+      
+
+<div class="row" markdown=1>
+
+<div class="col-md-3" id="navbar-container">
+  <div id="navbar">
+    <ul class="nav nav-pills nav-stacked" id="navbar-items">
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#user-interface">User Interface</a></li>
+        <li><a href="#tutorial-video">Tutorial Video</a></li>
+        <li><a href="#drawing-and-editing">Drawing and Editing</a></li>
+        <li><a href="#example-designs">Example Designs</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="col-md-9" markdown=1>
+
+<h1 id="ivisdesigneruserguide">iVisDesigner User Guide</h1>
+
+<div id="introduction" class="nav-anchor"></div>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>iVisDesigner stands for Information Visualziation Designer, which is a web-based system that helps you design data visualizations freely.
+With expressive yet simple interactions, you can create visualization designs without programming.
+In this document, we will guide you through this system.</p>
+
+<div id="tutorial-video" class="nav-anchor"></div>
+
+<h2 id="tutorialvideo">Tutorial Video</h2>
+
+<p>&lt;video width=&#8220;900&#8221; height=&#8220;600&#8221; style=&#8220;width: 100%; height: auto;&#8221; controls&gt;
+<source src="videos/tutorial.mp4" type="video/mp4">
+Your browser does not support the video tag.</p>
+
+</video>
+
+<p><a href="videos/tutorial.mp4" download="iVisDesigner Tutorial.mp4">Download</a></a>
+
+<div id="loading-dataset" class="nav-anchor"></div>
+
+<h2 id="loadingdataset">Loading Dataset</h2>
+
+<p>The first thing is to load the data.
+When you open the webpage for the toolkit, you will see the following dialog.</p>
+
+<p><img alt="Loading Datasets/Visualizations" src="images/loadingdataset.jpg" style="width:700px" /></p>
+
+<p>This dialog shows all the datasets and existing visualization designs for them.
+You can click the &#8220;+ New&#8221; button to start a new visualization design, or click the &#8220;Open (<i class="icon-folder-open"></i>)&#8221; button after each visualization design to load it.</p>
+
+<p>We provide several datasets for you to get started, each with some example visualization designs.</p>
+
+<div id="user-interface" class="nav-anchor"></div>
+
+<h2 id="userinterface">User Interface</h2>
+
+<p>The interface of iVisDesigner consists of a menu bar, several panels, the drawing canvas and a status bar.</p>
+
+<p><img alt="Interface" src="images/interface.jpg" style="width:906px" /></p>
+
+<dl>
+<dt>Schema Panel</dt>
+<dd>Shows the structure of the dataset.</dd>
+
+<dd>In this example, there are a set of stations, each station has attributes name, lng, lat, and a set of measurements. Each measurement has attributes time, SO2, NO2.</dd>
+
+<dt>Objects Panel</dt>
+<dd>A list of objects for the current visualization design.</dd>
+
+<dd>Each object is bound to a certain data location, for example, StationPlots is under stations, that means for each station, there is a StationPlot.</dd>
+
+<dt>Tool Panel</dt>
+<dd>Tools for selecting, creating, and creating components, etc.</dd>
+
+<dt>Style Panel</dt>
+<dd>Define graphical styles for objects.</dd>
+
+<dt>Property Panel</dt>
+<dd>Set properities for objects.</dd>
+</dl>
+
+<p>You can rearrange the panels freely by dragging the thin top bar, use the &#8220;Panel&#8221; menu to toggle them, or reset to the original layout.</p>
+
+<div id="drawing-and-editing" class="nav-anchor"></div>
+
+<h2 id="drawingandediting">Drawing and Editing</h2>
+
+<p>In this section, we show how to create and edit a visualization design in iVisDesigner.
+We start by creating visualizations using predefined templates, and then show how to build them by assembling basic elements.</p>
+
+<h3 id="predefinedtemplates">Predefined Templates</h3>
+
+<p>There is a &#8220;Template&#8221; menu in the top of iVisDesigner&#8217;s interface.</p>
+
+<ul>
+<li><p>Creating a <strong>Scatterplot</strong>: Select the &#8220;Scatterplot&#8221; from the &#8220;Template&#8221; menu, then chosse the two attributes for the scatterplot, for example, &#8220;[cars]:mpg&#8221; and &#8220;[cars]:displacement&#8221;, click the OK mark, then drag a region in the canvas, a scatterplot will then appear.</p></li>
+<li><p>Creating a <strong>Timeline</strong>: Select the &#8220;Timeline&#8221; from the &#8220;Template&#8221; menu, then chosse the two attributes for the scatterplot, for example, &#8220;[days]:day&#8221; and &#8220;[days]:min&#8221;, click the OK mark, then drag a region in the canvas, a timeline will then appear.</p></li>
+<li><p>Creating a <strong>Graph Visualization</strong>: Select the &#8220;Graph&#8221; from the &#8220;Template&#8221; menu, choose the nodes, for example &#8220;[nodes]&#8221;, then edges, for example &#8220;[edges]&#8221;, next the source and target attribute, for example &#8220;[edges]:source&#8221;, and &#8220;[edges]:target&#8221;, finally click OK and drag a region in the canvas, a graph will appear.</p></li>
+</ul>
+
+<p>After creating visualizations from the templates, you can edit the properties of the elements, for example, setting the color and line width, moving things around.</p>
+
+<h3 id="selectingdata">Selecting Data</h3>
+
+<p>The templates are an easy way to create visualizations, here we show how to build them from the basics.
+This will allow you make different designs from the templates, fully utilize your creativity.</p>
+
+<p>After loading the dataset, look at the schema panel to see the structure of it.
+Then drag interested items down to the object panel below the schema panel.
+Next, you can start creating graphics that display the data.</p>
+
+<div id="creating-objects" class="nav-anchor"></div>
+
+<h3 id="creatingobjects">Creating Objects</h3>
+
+<p>Please follow these steps to create objects.</p>
+
+<h4 id="trackaxis">Track (Axis)</h4>
+
+<p>To create basic charts like a scatterplot, Axes and Scatters are necessary.
+Here we show how to create an Axis (another name is Track).
+An Axis is only an axis, that defines positions for upcoming points. There is no points on the axis.</p>
+
+<ol>
+<li>Select the &#8220;Track (<i class="xicon-tools-track"></i>)&#8221; tool from the tool panel.</li>
+<li>Select an attribute from the popup panel, this is what the axis is for.</li>
+<li>Click on the canvas for the starting and ending points respectively.</li>
+</ol>
+
+<h4 id="scatter">Scatter</h4>
+
+<p>The Scatter object can create scatterplots between axes. Like the Axis, the Scatter also provides only positions only.</p>
+
+<ol>
+<li>Select the &#8220;Scatter (<i class="xicon-tools-scatter"></i>)&#8221; tool from the tool panel.</li>
+<li>Click two axes to create a scatter between them.</li>
+</ol>
+
+<h4 id="circle">Circle</h4>
+
+<p>To actually draw the data, one simple way is to put the Circle object on a Axis or a Scatter.
+The Circle object draw a set of circles for a set of data items.</p>
+
+<ol>
+<li>Select the &#8220;Circle (<i class="xicon-tools-circle"></i>)&#8221; tool from the tool panel.</li>
+<li>Select a set of data item(s) from the schema panel.</li>
+<li>Click on the canvas or an axis or a scatter for the center location.</li>
+<li>Set parameters for the circle.</li>
+</ol>
+
+<p>In summary, to draw something, you tell the system what to show, by selecting a set of data items, then tell it where to show, the position can be a fixed location, or determined by an Axis, or a Scatter.</p>
+
+<h4 id="linebar">Line/Bar</h4>
+
+<p>The Line or Bar objects draw a set of Lines or Bars for a set of data items. Similar to the Circle object, but you need to specify the two end points.</p>
+
+<ol>
+<li>Select the &#8220;Line (<i class="xicon-tools-line"></i>)&#8221;/&#8220;Bar (<i class="xicon-tools-bar"></i>)&#8221; tool from the tool panel.</li>
+<li>Select a set of data item(s) from the schema panel.</li>
+<li>Click on the canvas or an axis or a scatter for the starting location.</li>
+<li>Click on the canvas or an axis or a scatter for the ending location.</li>
+<li>Set parameters for the line/bar.</li>
+</ol>
+
+<h4 id="linethrough">LineThrough</h4>
+
+<p>The LineThrough object is a little bit different, it draws a polyline or a curve through a set of points in order.</p>
+
+<ol>
+<li>Select the &#8220;LineThrough (<i class="xicon-tools-linethrough"></i>)&#8221; tool from the tool panel.</li>
+<li>Select a set of data item(s) from the schema panel, you should select the items that corresponds to the lines, not the points for each line.</li>
+<li>Click on the canvas or an axis or a scatter for the locations.</li>
+<li>Set parameters for the line.</li>
+</ol>
+
+<h4 id="text">Text</h4>
+
+<ol>
+<li>Select the &#8220;Text (<i class="xicon-tools-text"></i>)&#8221; tool from the tool panel.</li>
+<li>Select a set of data item(s) from the schema panel.</li>
+<li>Click on the canvas or an axis or a scatter for the anchor location.</li>
+<li>Set parameters for the text.</li>
+</ol>
+
+<h4 id="component">Component</h4>
+
+<ol>
+<li>Select the &#8220;Component (<i class="xicon-tools-component"></i>)&#8221; tool from the tool panel.</li>
+<li>Select a set of data item(s) from the schema panel.</li>
+<li>Click on the canvas or an axis or a scatter for the anchor location.</li>
+<li>Initially the component is empty, so you will not see anything. To edit a component, click it twice in the objects panel, the system will switch to component editing mode, the component will be highlighted orange.</li>
+<li>In the component editing mode, you will see a small cross indicating the representative component, create new object on it, for example, a circle or a axis, you will see the newly created objects be under the component.</li>
+<li>To exit the component editing mode, click the component again, the orange color will go away and the system go to its normal state.</li>
+</ol>
+
+<div id="editing-properties" class="nav-anchor"></div>
+
+<h3 id="editingpropertiesandstyles">Editing Properties and Styles</h3>
+
+<p>Once you have objects on the canvas, you can edit them by first selecting them with the &#8220;Select (<i class="xicon-tools-arrow"></i>)&#8221; tool,
+and change their properties and drawing styles in the property panel and style panel.
+Also, you can drag the free anchors in the canvas directly.</p>
+
+<h3 id="movinggraphicalelements">Moving Graphical Elements</h3>
+
+<p>You can also make changes to the dataset by dragging graphical elements with the &#8220;Move Element (<i class="xicon-tools-move-element"></i>)&#8221; tool.
+Once you move a graphical element, the underlying data for it is changed, and all other objects that use this piece of data will be affected.</p>
+
+<div id="example-designs" class="nav-anchor"></div>
+
+<h2 id="exampledesigns">Example Designs</h2>
+
+<p>Here we show some example designs.</p>
+
+<h3 id="basicscatterplot">Basic Scatterplot</h3>
+
+<p><img alt="Example - Scatterplot" src="images/example-scatterplot.jpg" style="width:563px" /></p>
+
+<p>In this example, we are going to create a scatterplot to show the correlation between the &#8220;Displacement&#8221; and &#8220;Acceleration&#8221; attributes of the CarData.
+The radius of the circles are used to encode the &#8220;Cylinders&#8221; dimension.
+There are four objects: Track1, Track2, Scatter1 and Circle1.</p>
+
+<p>To create this visualization, follow the steps below.</p>
+
+<ol>
+<li>Create Track1:
+
+<ol>
+<li>Select the &#8220;Track (<i class="xicon-tools-track"></i>)&#8221; tool from the tool panel.</li>
+<li>Select the &#8220;cars:displacement&#8221; attribute from the schema panel.</li>
+<li>Click on the two endpoints for Track1.</li>
+</ol></li>
+<li>Create Track2:
+
+<ol>
+<li>Select the &#8220;Track (<i class="xicon-tools-track"></i>)&#8221; tool from the tool panel.</li>
+<li>Select the &#8220;cars:acceleration&#8221; attribute from the schema panel.</li>
+<li>Click on the two endpoints for Track2.</li>
+</ol></li>
+<li>Create Scatter1:
+
+<ol>
+<li>Select the &#8220;Scatter (<i class="xicon-tools-scatter"></i>)&#8221; tool from the tool panel.</li>
+<li>Click on Track1 and then Track2.</li>
+</ol></li>
+<li>Create Circle1:
+
+<ol>
+<li>Select the &#8220;Circle (<i class="xicon-tools-circle"></i>)&#8221; tool from the tool panel.</li>
+<li>Select the &#8220;cars&#8221; set from the schema panel.</li>
+<li>Click on Scatter1 to create the circle.</li>
+</ol></li>
+<li>Modify the radius of Circle1.
+
+<ol>
+<li>Select Circle1 with the &#8220;Select (<i class="xicon-tools-arrow"></i>)&#8221; tool.</li>
+<li>In the property panel, click on the &#8220;<i class="icon-list-ul"></i>&#8221; icon, and choose &#8220;Linear&#8221;.</li>
+<li>Select &#8220;cars:cylinders&#8221; for the path attribute of the linear mapping.</li>
+<li>Input the starting and ending values.</li>
+</ol></li>
+</ol>
+
+<h3 id="basictimeline">Basic Timeline</h3>
+
+<p><img alt="Example - Timeline" src="images/example-timeline.jpg" style="width:427px" /></p>
+
+<p>Here we demonstrate a basic timeline to show the temperature for each day. The underlying dataset is a time-series.
+There are also four objects: Track1, Track2, Scatter1 and LineThrough1.</p>
+
+<p>To create this visualization, follow the steps below.</p>
+
+<ol>
+<li>Create Track1:
+
+<ol>
+<li>Select the &#8220;Track (<i class="xicon-tools-track"></i>)&#8221; tool from the tool panel.</li>
+<li>Select the &#8220;days:day&#8221; attribute from the schema panel.</li>
+<li>Click on the two endpoints for Track1.</li>
+</ol></li>
+<li>Create Track2:
+
+<ol>
+<li>Select the &#8220;Track (<i class="xicon-tools-track"></i>)&#8221; tool from the tool panel.</li>
+<li>Select the &#8220;days:min&#8221; attribute from the schema panel.</li>
+<li>Click on the two endpoints for Track2.</li>
+</ol></li>
+<li>Create Scatter1:
+
+<ol>
+<li>Select the &#8220;Scatter (<i class="xicon-tools-scatter"></i>)&#8221; tool from the tool panel.</li>
+<li>Click on Track1 and then Track2.</li>
+</ol></li>
+<li>Create LineThrough1.
+
+<ol>
+<li>Select the &#8220;LineThrough (<i class="xicon-tools-linethrough"></i>)&#8221; tool from the tool panel.</li>
+<li>Select &#8220;ROOT&#8221; in the schema panel. We are going to show a single line.</li>
+<li>Click on Scatter1 to create the line-through object.</li>
+<li>Select LineThrough1 with the &#8220;Select (<i class="xicon-tools-arrow"></i>)&#8221; tool.</li>
+<li>Remove the default fill action in the style panel.</li>
+<li>Customize the stroke action.</li>
+</ol></li>
+</ol>
+
+<h3 id="graphvisualization">Graph Visualization</h3>
+
+<p><img alt="Example - Graph" src="images/example-graph.jpg" style="width:814px" /></p>
+
+<p>This example visualizes a graph dataset. The graph dataset is special because it contains references.
+In this representation, nodes and edges are objects (entities) in the dataset, and the edges contains &#8220;source&#8221; and &#8220;target&#8221; attributes,
+which are references to node objects.</p>
+
+<p>In this example, we are going to use a ForceLayout object to layout the graph, and use the Track and Scatter objects to place the nodes (just like in the above two examples), and use the Line object with reference to draw the edges.</p>
+
+<p>To create this visualization, follow the steps below.</p>
+
+<ol>
+<li>Create ForceLayout1:
+
+<ol>
+<li>Click on the &#8220;ForceLayout (<i class="xicon-tools-graph-layout"></i>)&#8221; tool in the tool panel.</li>
+<li>Select &#8220;nodes&#8221; for Node, &#8220;links:source&#8221; for Edge A, &#8220;links:target&#8221; for Edge B.</li>
+<li>Click &#8220;OK&#8221; to create the ForceLayout object.</li>
+</ol></li>
+<li>Create Track1:
+
+<ol>
+<li>Select the &#8220;Track (<i class="xicon-tools-track"></i>)&#8221; tool from the tool panel.</li>
+<li>Select the &#8220;node:ForceLayout1:x&#8221; attribute from the schema panel.</li>
+<li>Click on the two endpoints for Track1.</li>
+</ol></li>
+<li>Create Track2:
+
+<ol>
+<li>Select the &#8220;Track (<i class="xicon-tools-track"></i>)&#8221; tool from the tool panel.</li>
+<li>Select the &#8220;node:ForceLayout1:y&#8221; attribute from the schema panel.</li>
+<li>Click on the two endpoints for Track2.</li>
+</ol></li>
+<li>Create Scatter1:
+
+<ol>
+<li>Select the &#8220;Scatter (<i class="xicon-tools-scatter"></i>)&#8221; tool from the tool panel.</li>
+<li>Click on Track1 and then Track2.</li>
+</ol></li>
+<li>Create Circle1:
+
+<ol>
+<li>Select the &#8220;Circle (<i class="xicon-tools-circle"></i>)&#8221; tool from the tool panel.</li>
+<li>Select the &#8220;nodes&#8221; set from the schema panel.</li>
+<li>Click on Scatter1 to create the circle.</li>
+<li>Customize the style of the circle.</li>
+</ol></li>
+<li>Create Line1:
+
+<ol>
+<li>Select the &#8220;Line (<i class="xicon-tools-line"></i>)&#8221; tool from the tool panel.</li>
+<li>Select &#8220;edges&#8221; set from the schema panel.</li>
+<li>Select the &#8220;ref&#8221; button before &#8220;edges:source&#8221;, then click Circle1, to indicate the starting location.</li>
+<li>Select the &#8220;ref&#8221; button before &#8220;edges:target&#8221;, then click Circle1, to indicate the ending location, after that the line will be created.</li>
+<li>Deselect the &#8220;ref&#8221; button.</li>
+<li>Customize the style of the line.</li>
+</ol></li>
+</ol>
+
+</div>
+</div>
+
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <!--<div class="jumbotron">
+
+         <h1>Navbar example</h1>
+        <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
+        <p>To see the difference between static and fixed top navbars, just scroll.</p>
+        <p>
+          <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
+        </p>
+      </div>-->
+
+      <hr>
+
+      <footer>
+        <p>Designed and programmed by Donghao Ren, University of California, Santa Barbara and Peking University. <a href="../credits">Credits</a>, <a href="../license">License</a>.</p>
+      </footer>
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+      <script src="../scripts.js"></script>
+
+    
+        <script type="text/javascript">
+        $('body').scrollspy({ target: '#navbar' })
+        $(window).resize(function() {
+          $("#navbar").css("width", $("#navbar-container").width() + "px");
+        });
+        $("#navbar").css("width", $("#navbar-container").width() + "px");
+        </script>
+
+  </body>
+</html>

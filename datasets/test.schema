@@ -1,0 +1,50 @@
+type: object
+fields:
+  stations:
+    type: collection
+    fields:
+      name: { type: string }
+      lng: { type: number, min: 116, max: 117 }
+      lat: { type: number, min: 40, max: 41 }
+      measurements:
+        type: sequence
+        fields:
+          time: { type: number, min: 1367337600, max: 1367474400 }
+          SO2: { type: number, min: 0, max: 100 }
+          NO2: { type: number, min: 0, max: 100 }
+          CO: { type: number, min: 0, max: 100 }
+          O3: { type: number, min: 0, max: 100 }
+          PM2_5: { type: number, min: 0, max: 100 }
+          PM10: { type: number, min: 0, max: 100 }
+  cars:
+    type: collection
+    fields:
+      name: { type: string }
+      mpg: { type: number, min: 0, max: 50 }
+      cylinders: { type: number, min: 3, max: 8 }
+      displacement: { type: number, min: 0, max: 500 }
+      horsepower: { type: number, min: 0, max: 250 }
+      acceleration: { type: number, min: 0, max: 30 }
+      modelyear: { type: number, min: 70, max: 82 }
+      origin: { type: number, min: 1, max: 3 }
+  nodes:
+    type: collection
+    fields:
+      name: { type: string }
+      group: { type: number, min: 0, max: 10 }
+  links:
+    type: collection
+    fields:
+      source:
+        type: reference
+        of: "[nodes]"
+      target:
+        type: reference
+        of: "[nodes]"
+      value: { type: number, min: 0, max: 10 }
+  days:
+    type: collection
+    fields:
+      day: { type: number, min: 0, max: 114 }
+      min: { type: number, min: 40, max: 80 }
+      max: { type: number, min: 40, max: 80 }
